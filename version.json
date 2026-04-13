@@ -1,12 +1,12 @@
 {
-  "version": "1.8.0",
+  "version": "1.8.1",
   "major": 1,
   "minor": 8,
-  "patch": 0,
+  "patch": 1,
   "prerelease": null,
   "buildNumber": 125,
-  "buildDate": "2026-04-09T00:00:00.000Z",
-  "gitHash": "",
+  "buildDate": "2026-04-13T14:31:22.651Z",
+  "gitHash": "8800c56",
   "branch": "main",
   "changelog": {
     "1.8.0": {

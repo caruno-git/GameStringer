@@ -1813,7 +1813,7 @@ La Chat Community è una funzionalità di messaggistica in tempo reale integrata
 
 ---
 
-## Novità v1.8.0
+## Novità v1.8.1
 
 ### Overlay Traduzione in Tempo Reale
 - Vai alla pagina **/live-translate** o premi **Ctrl+Alt+O**
@@ -1852,4 +1852,4 @@ La Chat Community è una funzionalità di messaggistica in tempo reale integrata
 
 ---
 
-GameStringer v1.8.0 - Guida aggiornata al 09/04/2026
+GameStringer v1.8.1 - Guida aggiornata al 09/04/2026

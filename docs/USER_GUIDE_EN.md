@@ -446,7 +446,7 @@ Real-time community chat integrated into the Community Hub, powered by Supabase 
 
 ---
 
-## What's New v1.8.0
+## What's New v1.8.1
 
 ### Live Translation Overlay
 - Go to **/live-translate** page or press **Ctrl+Alt+O**
@@ -485,4 +485,4 @@ Real-time community chat integrated into the Community Hub, powered by Supabase 
 
 ---
 
-GameStringer v1.8.0 - Guide updated 09/04/2026
+GameStringer v1.8.1 - Guide updated 09/04/2026

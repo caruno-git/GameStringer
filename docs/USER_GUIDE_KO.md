@@ -446,7 +446,7 @@ Community Hub에 통합된 실시간 채팅. Supabase Realtime으로 구동.
 
 ---
 
-## v1.8.0 새 기능
+## v1.8.1 새 기능
 
 ### 실시간 번역 오버레이
 - **/live-translate** 페이지로 이동하거나 **Ctrl+Alt+O** 누르기
@@ -485,4 +485,4 @@ Community Hub에 통합된 실시간 채팅. Supabase Realtime으로 구동.
 
 ---
 
-GameStringer v1.8.0 - 가이드 업데이트 2026/04/09
+GameStringer v1.8.1 - 가이드 업데이트 2026/04/09

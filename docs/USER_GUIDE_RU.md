@@ -446,7 +446,7 @@ Unity (Mono/IL2CPP), Unreal Engine, Godot, RPG Maker, Ren'Py, Source Engine, Cry
 
 ---
 
-## Что нового в v1.8.0
+## Что нового в v1.8.1
 
 ### Оверлей живого перевода
 - Перейдите на страницу **/live-translate** или нажмите **Ctrl+Alt+O**
@@ -485,4 +485,4 @@ Unity (Mono/IL2CPP), Unreal Engine, Godot, RPG Maker, Ren'Py, Source Engine, Cry
 
 ---
 
-GameStringer v1.8.0 - Руководство обновлено 09.04.2026
+GameStringer v1.8.1 - Руководство обновлено 09.04.2026

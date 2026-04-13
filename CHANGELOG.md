@@ -1,6 +1,6 @@
 # GameStringer Changelog
 
-## 🚀 v1.8.0 - 2026-04-09
+## 🚀 v1.8.1 - 2026-04-09
 
 ### Live Translation Overlay
 - **Overlay OCR in tempo reale**: traduzione live del gioco tramite overlay trasparente con cattura schermo continua

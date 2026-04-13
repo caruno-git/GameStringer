@@ -1,4 +1,4 @@
-# GameStringer v1.8.0 — Live Translation Overlay, Hub Marketplace, TM Network, AI Dubbing Pipeline, Plugin System
+# GameStringer v1.8.1 — Live Translation Overlay, Hub Marketplace, TM Network, AI Dubbing Pipeline, Plugin System
 
 ## Live Translation Overlay
 
@@ -60,4 +60,4 @@
 
 ---
 
-**Download**: Scegli `GameStringer-1.8.0-Setup.exe` (installer) o `GameStringer-1.8.0-Portable.zip`
+**Download**: Scegli `GameStringer-1.8.1-Setup.exe` (installer) o `GameStringer-1.8.1-Portable.zip`

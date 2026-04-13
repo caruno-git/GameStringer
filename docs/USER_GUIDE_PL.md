@@ -446,7 +446,7 @@ Czat w czasie rzeczywistym zintegrowany z Community Hub, oparty na Supabase Real
 
 ---
 
-## Nowości v1.8.0
+## Nowości v1.8.1
 
 ### Nakładka tłumaczenia na żywo
 - Przejdź do strony **/live-translate** lub naciśnij **Ctrl+Alt+O**
@@ -485,4 +485,4 @@ Czat w czasie rzeczywistym zintegrowany z Community Hub, oparty na Supabase Real
 
 ---
 
-GameStringer v1.8.0 - Przewodnik zaktualizowany 09.04.2026
+GameStringer v1.8.1 - Przewodnik zaktualizowany 09.04.2026

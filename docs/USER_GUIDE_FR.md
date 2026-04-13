@@ -446,7 +446,7 @@ Chat en temps réel intégré au Community Hub, propulsé par Supabase Realtime.
 
 ---
 
-## Nouveautés v1.8.0
+## Nouveautés v1.8.1
 
 ### Overlay de Traduction en Direct
 - Allez sur la page **/live-translate** ou appuyez sur **Ctrl+Alt+O**
@@ -485,4 +485,4 @@ Chat en temps réel intégré au Community Hub, propulsé par Supabase Realtime.
 
 ---
 
-GameStringer v1.8.0 - Guide mise à jour le 09/04/2026
+GameStringer v1.8.1 - Guide mise à jour le 09/04/2026

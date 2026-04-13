@@ -446,7 +446,7 @@ Community Hubに統合されたリアルタイムチャット。Supabase Realtim
 
 ---
 
-## v1.8.0の新機能
+## v1.8.1の新機能
 
 ### ライブ翻訳オーバーレイ
 - **/live-translate** ページに移動するか、**Ctrl+Alt+O** を押す
@@ -485,4 +485,4 @@ Community Hubに統合されたリアルタイムチャット。Supabase Realtim
 
 ---
 
-GameStringer v1.8.0 - ガイド更新日 2026/04/09
+GameStringer v1.8.1 - ガイド更新日 2026/04/09

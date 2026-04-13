@@ -1,8 +1,8 @@
 # Stato del Progetto GameStringer
 
-## Ultimo Aggiornamento: 13/04/2026 - v1.8.0
+## Ultimo Aggiornamento: 13/04/2026 - v1.8.1
 
-### PROGETTO v1.8.0 RILASCIATO
+### PROGETTO v1.8.1 RILASCIATO
 
 **GameStringer**: Suite completa di localizzazione videogiochi con AI. 20+ provider AI, 20+ engine supportati, 200+ lingue, 11 lingue UI. Live Translation Overlay, Hub Marketplace, AI Dubbing, Plugin System.
 
@@ -39,7 +39,7 @@ Audit generale del codebase con fix sistematici su 380+ file in 4 commit.
 
 ---
 
-### Nuove Feature v1.8.0
+### Nuove Feature v1.8.1
 
 - **Live Translation Overlay**: Traduzione in tempo reale via OCR overlay trasparente sopra qualsiasi gioco. Cattura schermo → OCR multi-engine → AI (Groq/Cerebras) → overlay gaming-style. Hotkey Ctrl+Alt+O. Diff detection + translation cache.
 - **Hub Marketplace**: Marketplace community per translation pack con 1-click install. Supabase backend (10 tabelle, RLS, moderazione). Profili utente con reputazione e badge. Rating, recensioni, commenti.

@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.8.0-blue" alt="Version" />
+  <img src="https://img.shields.io/badge/version-1.8.1-blue" alt="Version" />
   <img src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey" alt="Platform" />
   <img src="https://img.shields.io/badge/license-Source--Available-green" alt="License" />
   <img src="https://img.shields.io/badge/Tauri_2-24C8DB?logo=tauri&logoColor=white" alt="Tauri" />
@@ -187,7 +187,7 @@ GameStringer supports **20+ engines** with varying levels of depth:
 
 ## ✨ Features
 
-### 🆕 New in v1.8.0
+### 🆕 New in v1.8.1
 
 - **Live Translation Overlay** — Real-time game translation with transparent OCR overlay
 - **Hub Marketplace** — Community translation pack marketplace with 1-click install
@@ -418,6 +418,6 @@ See [LICENSE](LICENSE) for details. Questions? Open a [Discussion](https://githu
 
 <p align="center">
   Made with ❤️ for gamers who want to play in their own language<br>
-  <strong>GameStringer v1.8.0</strong> · © 2025-2026 GameStringer Team
+  <strong>GameStringer v1.8.1</strong> · © 2025-2026 GameStringer Team
   <strong>GameStringer v1.7.0</strong> · © 2025-2026 GameStringer Team
 </p>

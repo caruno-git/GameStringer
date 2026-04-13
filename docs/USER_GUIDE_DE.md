@@ -446,7 +446,7 @@ Echtzeit-Community-Chat im Community Hub, betrieben mit Supabase Realtime.
 
 ---
 
-## Neu in v1.8.0
+## Neu in v1.8.1
 
 ### Live-Übersetzungs-Overlay
 - Gehen Sie zur Seite **/live-translate** oder drücken Sie **Strg+Alt+O**
@@ -485,4 +485,4 @@ Echtzeit-Community-Chat im Community Hub, betrieben mit Supabase Realtime.
 
 ---
 
-GameStringer v1.8.0 - Anleitung aktualisiert am 09.04.2026
+GameStringer v1.8.1 - Anleitung aktualisiert am 09.04.2026

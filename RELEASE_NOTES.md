@@ -1,4 +1,4 @@
-# 🎮 GameStringer v1.8.0
+# 🎮 GameStringer v1.8.1
 
 > **Release Date**: April 9, 2026
 > **Type**: Live Translation Overlay + Hub Marketplace + Translation Memory Network + AI Dubbing Pipeline + Plugin System
@@ -84,8 +84,8 @@ Community-created game engine patchers via a `PatcherPlugin` interface:
 
 | File | Description |
 |------|-------------|
-| `GameStringer-1.8.0-Setup.exe` | Windows Installer (recommended) |
-| `GameStringer-1.8.0-Portable.zip` | Portable version (no install) |
+| `GameStringer-1.8.1-Setup.exe` | Windows Installer (recommended) |
+| `GameStringer-1.8.1-Portable.zip` | Portable version (no install) |
 | `checksums-sha256.txt` | SHA256 checksums for verification |
 
 ### System Requirements
@@ -100,14 +100,14 @@ Community-created game engine patchers via a `PatcherPlugin` interface:
 
 ### Setup (Recommended)
 
-1. Download `GameStringer-1.8.0-Setup.exe`
+1. Download `GameStringer-1.8.1-Setup.exe`
 2. Run the installer
 3. Follow the installation wizard
 4. Launch GameStringer from Start Menu
 
 ### Portable
 
-1. Download `GameStringer-1.8.0-Portable.zip`
+1. Download `GameStringer-1.8.1-Portable.zip`
 2. Extract to any folder
 3. Run `GameStringer.exe`
 

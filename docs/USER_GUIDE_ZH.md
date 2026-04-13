@@ -446,7 +446,7 @@ Unity游戏（Mono和IL2CPP）的**最佳方法**。
 
 ---
 
-## v1.8.0 新功能
+## v1.8.1 新功能
 
 ### 实时翻译叠加层
 - 前往 **/live-translate** 页面或按 **Ctrl+Alt+O**
@@ -485,4 +485,4 @@ Unity游戏（Mono和IL2CPP）的**最佳方法**。
 
 ---
 
-GameStringer v1.8.0 - 指南更新于 2026/04/09
+GameStringer v1.8.1 - 指南更新于 2026/04/09

@@ -103,9 +103,9 @@ export async function patch(gamePath, translations, options) {
 2. **Da GitHub**: URL del repository, download automatico
 3. **Da Community Hub**: Browser integrato dei plugin condivisi
 
-## PatcherPlugin Interface (v1.8.0)
+## PatcherPlugin Interface (v1.8.1)
 
-A partire da v1.8.0, i plugin possono implementare il ciclo completo di patching:
+A partire da v1.8.1, i plugin possono implementare il ciclo completo di patching:
 
 ```typescript
 interface PatcherPlugin {
@@ -149,7 +149,7 @@ I plugin vengono distribuiti come cartelle `.gsplugin` contenenti:
 - **v1.5.0**: ✅ Scaffold base, caricamento plugin, API detect
 - **v1.6.0**: ✅ API extract/patch complete, sandbox
 - **v1.7.0**: ✅ Community Hub plugin browser
-- **v1.8.0**: ✅ PatcherPlugin interface completa, template generator, distribuzione .gsplugin
+- **v1.8.1**: ✅ PatcherPlugin interface completa, template generator, distribuzione .gsplugin
 
 ---
 

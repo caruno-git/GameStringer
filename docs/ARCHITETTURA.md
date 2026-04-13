@@ -1,4 +1,4 @@
-# GameStringer - Architettura del Progetto (v1.8.0)
+# GameStringer - Architettura del Progetto (v1.8.1)
 
 ## Visione
 
@@ -6,7 +6,7 @@ Software desktop professionale per la localizzazione di videogiochi che analizza
 
 ---
 
-## Nuovi Moduli v1.8.0
+## Nuovi Moduli v1.8.1
 
 ### LIVE TRANSLATION OVERLAY
 - **Engine**: `lib/live-translation-engine.ts` — Loop cattura→OCR→diff→traduci→overlay
