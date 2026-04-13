@@ -195,6 +195,8 @@ GameStringer unterstützt **20+ Engines** mit unterschiedlichem Tiefgang:
 - **Translation Memory Network** — Föderiertes Community-Übersetzungsteilen
 - **AI Dubbing Pipeline** — Komplette Sprachsynchronisation für Spiele (STT → Übersetzen → TTS → Patch)
 - **Plugin System** — Von der Community erweiterbare Game-Engine-Patcher-Plugins
+- **Code-Qualitätsaudit** — ESLint 1218→20, TypeScript 2427→2, npm audit 39→2 Schwachstellen
+- **Performance** — 11 ungenutzte Abhängigkeiten entfernt, dynamische Imports auf schweren Seiten (-86 kB)
 
 ### 🤖 KI-Übersetzung
 

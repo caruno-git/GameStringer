@@ -194,6 +194,8 @@ GameStringer supports **20+ engines** with varying levels of depth:
 - **Translation Memory Network** — Federated community translation sharing
 - **AI Dubbing Pipeline** — End-to-end game voice dubbing (STT → Translate → TTS → Patch)
 - **Plugin System** — Community-extensible game engine patcher plugins
+- **Code Quality Audit** — ESLint 1218→20, TypeScript 2427→2, npm audit 39→2 vulnerabilities
+- **Performance** — 11 unused deps removed, dynamic imports on heavy pages (-86 kB)
 
 ### 🤖 AI Translation
 

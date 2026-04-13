@@ -195,6 +195,8 @@ GameStringer 支持具有不同深度级别的 **20+ 引擎**:
 - **Translation Memory Network** — 联邦式社区翻译共享
 - **AI Dubbing Pipeline** — 端到端游戏语音配音(STT → 翻译 → TTS → 补丁)
 - **Plugin System** — 社区可扩展的游戏引擎补丁器插件
+- **代码质量审计** — ESLint 1218→20、TypeScript 2427→2、npm audit 39→2 漏洞
+- **性能优化** — 删除11个未使用的依赖项，重型页面动态导入（-86 kB）
 
 ### 🤖 AI 翻译
 

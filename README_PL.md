@@ -195,6 +195,8 @@ GameStringer wspiera **20+ silników** z różnym poziomem głębokości:
 - **Translation Memory Network** — Federacyjne współdzielenie tłumaczeń społeczności
 - **AI Dubbing Pipeline** — Kompleksowy dubbing głosowy gier (STT → Tłumaczenie → TTS → Patch)
 - **Plugin System** — Rozszerzalne przez społeczność wtyczki do patcherów silników gier
+- **Audyt jakości kodu** — ESLint 1218→20, TypeScript 2427→2, npm audit 39→2 podatności
+- **Wydajność** — Usunięto 11 nieużywanych zależności, dynamiczne importy na ciężkich stronach (-86 kB)
 
 ### 🤖 Tłumaczenie SI
 

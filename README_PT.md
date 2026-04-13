@@ -195,6 +195,8 @@ O GameStringer suporta **20+ motores** com diferentes níveis de profundidade:
 - **Translation Memory Network** — Compartilhamento federado de traduções da comunidade
 - **AI Dubbing Pipeline** — Dublagem de voz completa para jogos (STT → Traduzir → TTS → Patch)
 - **Plugin System** — Plugins extensíveis pela comunidade para os patchers de motores de jogo
+- **Auditoria de Qualidade** — ESLint 1218→20, TypeScript 2427→2, npm audit 39→2 vulnerabilidades
+- **Performance** — 11 dependências não utilizadas removidas, importações dinâmicas nas páginas pesadas (-86 kB)
 
 ### 🤖 Tradução por IA
 
