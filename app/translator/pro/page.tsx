@@ -63,13 +63,29 @@ import {
 } from '@/lib/neural-translator';
 import { translationMemory } from '@/lib/translation-memory';
 import { getFlagEmoji } from '@/components/ui/language-flags';
-import { BatchInsightsSummary } from '@/components/translator/translation-insights';
+import dynamic from 'next/dynamic';
 
-// Extracted sub-components
-import { GameSelector } from '@/components/translator-pro/game-selector';
-import { FileSelector } from '@/components/translator-pro/file-selector';
-import { TranslationProgress } from '@/components/translator-pro/translation-progress';
-import { ReviewStep } from '@/components/translator-pro/review-step';
+// Lazy-loaded step components — only one step visible at a time
+const BatchInsightsSummary = dynamic(
+  () => import('@/components/translator/translation-insights').then(m => ({ default: m.BatchInsightsSummary })),
+  { ssr: false }
+);
+const GameSelector = dynamic(
+  () => import('@/components/translator-pro/game-selector').then(m => ({ default: m.GameSelector })),
+  { ssr: false }
+);
+const FileSelector = dynamic(
+  () => import('@/components/translator-pro/file-selector').then(m => ({ default: m.FileSelector })),
+  { ssr: false }
+);
+const TranslationProgress = dynamic(
+  () => import('@/components/translator-pro/translation-progress').then(m => ({ default: m.TranslationProgress })),
+  { ssr: false }
+);
+const ReviewStep = dynamic(
+  () => import('@/components/translator-pro/review-step').then(m => ({ default: m.ReviewStep })),
+  { ssr: false }
+);
 import { getRecommendedProvider, computeCostEstimate } from '@/lib/translator-pro/cost-calculator';
 
 // ============================================================================
