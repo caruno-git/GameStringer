@@ -10,7 +10,7 @@
 
 ### Code Quality Cleanup (April 2026)
 
-Audit generale del codebase con fix sistematici su 380 file in 3 commit.
+Audit generale del codebase con fix sistematici su 380+ file in 4 commit.
 
 1. **ESLint**: Da 1218 errori a 20 (non risolvibili: generic `T` params, `require()` imports, `Function` type, empty shadcn interfaces). 299 file puliti — rimossi import inutili, prefisso `_` su variabili unused, `let`→`const`, escape entità JSX, bare `catch {}`.
 
@@ -28,6 +28,14 @@ Audit generale del codebase con fix sistematici su 380 file in 3 commit.
    - Rimanenti 2: postcss (moderate, pinned da Next.js), webpack buildHttp (low, feature non usata)
 
 4. **Build**: Passa pulito. Test invariati (27/43 falliti — pre-esistenti, mock obsoleti).
+
+5. **Performance & Bundle**:
+   - Rimosse 11 dipendenze inutilizzate (0 import nel codebase): react-use, @headlessui/react, swr, @tanstack/react-query, react-select, @tabler/icons-react, @google-cloud/translate, cheerio, react-flag-kit, @node-steam/vdf, react-is
+   - `dynamic()` imports su /settings (748→686 kB, -62 kB) e /translator/pro (732→708 kB, -24 kB)
+   - Rimosso type orphan `types/react-flag-kit.d.ts`, pulito `next.config.js`
+   - package-lock.json: -1.716 righe (alberi dipendenze rimossi)
+
+6. **Documentazione**: DEVELOPER_GUIDE.md (~310 righe) — architettura, directory map, pattern chiave, howto, testing, 10 gotcha comuni.
 
 ---
 
