@@ -2,7 +2,7 @@
 import { PrismaClient } from '@prisma/client';
 import { logger } from '@/lib/logger';
 import type { UserTutorialProgress } from '@/lib/types/tutorial';
-import type { TranslationMemoryEntry, GlossaryEntry } from '@/lib/types/translation-memory';
+import type { TranslationMemoryEntry, GlossaryEntry, TranslationProject } from '@/lib/types/translation-memory';
 import type { BatchResult } from '@/lib/types/batch';
 
 // Singleton Prisma client
@@ -14,8 +14,8 @@ export const prisma = globalForPrisma.prisma ?? new PrismaClient();
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const db = prisma as any;
+// Type-safe Prisma client with new models
+const db = prisma as unknown;
 
 // Tutorial Progress Database Operations
 export class TutorialDatabase {
@@ -28,10 +28,10 @@ export class TutorialDatabase {
       if (progress.length === 0) return null;
 
       const completedTutorials = progress
-        .filter((p: Record<string, unknown>) => p.completed)
-        .map((p: Record<string, unknown>) => p.tutorialId);
+        .filter((p: unknown) => p.completed)
+        .map((p: unknown) => p.tutorialId);
 
-      const currentTutorial = progress.find((p: Record<string, unknown>) => !p.completed && !p.skipped);
+      const currentTutorial = progress.find((p: unknown) => !p.completed && !p.skipped);
 
       return {
         userId,
@@ -48,7 +48,7 @@ export class TutorialDatabase {
         }
       };
     } catch (error: unknown) {
-      logger.error('Error fetching tutorial progress:', String(error));
+      logger.error('Error fetching tutorial progress:', error);
       return null;
     }
   }
@@ -81,7 +81,7 @@ export class TutorialDatabase {
         }
       });
     } catch (error: unknown) {
-      logger.error('Error updating tutorial progress:', String(error));
+      logger.error('Error updating tutorial progress:', error);
       throw error;
     }
   }
@@ -105,7 +105,7 @@ export class TutorialDatabase {
         }
       });
     } catch (error: unknown) {
-      logger.error('Error marking tutorial as skipped:', String(error));
+      logger.error('Error marking tutorial as skipped:', error);
       throw error;
     }
   }
@@ -157,7 +157,7 @@ export class TranslationMemoryDatabase {
 
       return created.id;
     } catch (error: unknown) {
-      logger.error('Error adding translation memory entry:', String(error));
+      logger.error('Error adding translation memory entry:', error);
       throw error;
     }
   }
@@ -188,8 +188,7 @@ export class TranslationMemoryDatabase {
         take: limit
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return entries.map((entry: any) => ({
+      return entries.map((entry: unknown) => ({
         id: entry.id,
         sourceText: entry.sourceText,
         targetText: entry.targetText,
@@ -206,7 +205,7 @@ export class TranslationMemoryDatabase {
         tags: entry.tags ? JSON.parse(entry.tags) : undefined
       }));
     } catch (error: unknown) {
-      logger.error('Error searching translation memory:', String(error));
+      logger.error('Error searching translation memory:', error);
       return [];
     }
   }
@@ -221,7 +220,7 @@ export class TranslationMemoryDatabase {
         }
       });
     } catch (error: unknown) {
-      logger.error('Error incrementing usage count:', String(error));
+      logger.error('Error incrementing usage count:', error);
     }
   }
 }
@@ -247,7 +246,7 @@ export class GlossaryDatabase {
 
       return created.id;
     } catch (error: unknown) {
-      logger.error('Error adding glossary term:', String(error));
+      logger.error('Error adding glossary term:', error);
       throw error;
     }
   }
@@ -276,8 +275,7 @@ export class GlossaryDatabase {
         ]
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return terms.map((term: any) => ({
+      return terms.map((term: unknown) => ({
         id: term.id,
         term: term.term,
         translation: term.translation,
@@ -293,7 +291,7 @@ export class GlossaryDatabase {
         notes: term.notes || undefined
       }));
     } catch (error: unknown) {
-      logger.error('Error searching glossary terms:', String(error));
+      logger.error('Error searching glossary terms:', error);
       return [];
     }
   }
@@ -316,7 +314,7 @@ export class BatchOperationDatabase {
 
       return operation.id;
     } catch (error: unknown) {
-      logger.error('Error creating batch operation:', String(error));
+      logger.error('Error creating batch operation:', error);
       throw error;
     }
   }
@@ -339,7 +337,7 @@ export class BatchOperationDatabase {
         }
       });
     } catch (error: unknown) {
-      logger.error('Error updating batch operation progress:', String(error));
+      logger.error('Error updating batch operation progress:', error);
     }
   }
 
@@ -360,7 +358,7 @@ export class BatchOperationDatabase {
         }
       });
     } catch (error: unknown) {
-      logger.error('Error completing batch operation:', String(error));
+      logger.error('Error completing batch operation:', error);
     }
   }
 }
@@ -383,7 +381,7 @@ export class DatabaseMaintenance {
         }
       });
     } catch (error: unknown) {
-      logger.error('Error cleaning up old batch operations:', String(error));
+      logger.error('Error cleaning up old batch operations:', error);
     }
   }
 
@@ -405,7 +403,7 @@ export class DatabaseMaintenance {
         totalProjects: projectCount
       };
     } catch (error: unknown) {
-      logger.error('Error getting memory stats:', String(error));
+      logger.error('Error getting memory stats:', error);
       return {
         totalEntries: 0,
         totalGlossaryTerms: 0,

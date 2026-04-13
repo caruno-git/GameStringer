@@ -9,17 +9,6 @@ interface SyncRequest {
   includeUninstalled?: boolean;
 }
 
-interface GameData {
-  id: string;
-  name: string;
-  provider: string;
-  imageUrl?: string;
-  installed?: boolean;
-  lastPlayed?: string;
-  installPath?: string;
-  executablePath?: string;
-}
-
 interface SyncResult {
   success: boolean;
   gamesAdded: number;
@@ -59,11 +48,11 @@ export const POST = withErrorHandler(async function(request: NextRequest) {
     const { tauriIntegration } = await import('@/lib/tauri-integration');
     await tauriIntegration.initialize();
 
-    let allGames: GameData[];
+    let allGames;
     if (provider) {
-      allGames = await tauriIntegration.getGamesFromStore(provider) as GameData[];
+      allGames = await tauriIntegration.getGamesFromStore(provider);
     } else {
-      allGames = await tauriIntegration.getAllGames() as GameData[];
+      allGames = await tauriIntegration.getAllGames();
     }
 
     // Sync games to database
@@ -89,7 +78,7 @@ export const POST = withErrorHandler(async function(request: NextRequest) {
 });
 
 async function syncGamesToDatabase(
-  games: GameData[],
+  games: unknown[],
   forceRefresh: boolean,
   includeUninstalled: boolean
 ): Promise<SyncResult> {
@@ -122,7 +111,7 @@ async function syncGamesToDatabase(
 
         if (existingGame) {
           // Update existing game
-          if (forceRefresh || shouldUpdateGame(existingGame as unknown as Record<string, unknown>, game)) {
+          if (forceRefresh || shouldUpdateGame(existingGame, game)) {
             await prisma.game.update({
               where: { id: existingGame.id },
               data: {
@@ -206,19 +195,19 @@ async function syncGamesToDatabase(
   }
 }
 
-function shouldUpdateGame(existingGame: Record<string, unknown>, newGame: GameData): boolean {
+function shouldUpdateGame(existingGame: Record<string, unknown>, newGame: Record<string, unknown>): boolean {
   // Check if any important fields have changed
   if (existingGame.title !== newGame.name) return true;
   if (existingGame.isInstalled !== newGame.installed) return true;
   if (existingGame.imageUrl !== newGame.imageUrl) return true;
   if (existingGame.installPath !== newGame.installPath) return true;
   if (existingGame.executablePath !== newGame.executablePath) return true;
-
+  
   // Check if last played date has changed
   if (newGame.lastPlayed) {
     const newLastPlayed = new Date(newGame.lastPlayed);
-    const existingLastPlayed = existingGame.lastPlayed ? new Date(String(existingGame.lastPlayed)) : null;
-
+    const existingLastPlayed = existingGame.lastPlayed ? new Date(existingGame.lastPlayed) : null;
+    
     if (!existingLastPlayed || newLastPlayed.getTime() !== existingLastPlayed.getTime()) {
       return true;
     }
