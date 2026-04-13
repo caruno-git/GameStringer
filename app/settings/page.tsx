@@ -44,14 +44,32 @@ import {
 } from 'lucide-react';
 import { getRssFeeds, saveRssFeeds, defaultRssFeeds, type RssFeed } from '@/components/ui/rss-ticker';
 import { toast } from 'sonner';
-import { ProfileNotificationSettings } from '@/components/notifications/profile-notification-settings';
-import { AutoBackupSettings } from '@/components/settings/auto-backup-settings';
-import { MultiLlmComparisonSettings } from '@/components/settings/multi-llm-comparison-settings';
+import dynamic from 'next/dynamic';
 import { useVersion } from '@/lib/version';
 import { useTranslation } from '@/lib/i18n';
 import { InfoTooltip } from '@/components/ui/info-tooltip';
-import { OllamaManager } from '@/components/settings/ollama-manager';
-import { VramSettingsCard } from '@/components/settings/vram-settings-card';
+
+// Lazy-loaded tab components — only loaded when their tab is active
+const ProfileNotificationSettings = dynamic(
+  () => import('@/components/notifications/profile-notification-settings').then(m => ({ default: m.ProfileNotificationSettings })),
+  { ssr: false }
+);
+const AutoBackupSettings = dynamic(
+  () => import('@/components/settings/auto-backup-settings').then(m => ({ default: m.AutoBackupSettings })),
+  { ssr: false }
+);
+const MultiLlmComparisonSettings = dynamic(
+  () => import('@/components/settings/multi-llm-comparison-settings').then(m => ({ default: m.MultiLlmComparisonSettings })),
+  { ssr: false }
+);
+const OllamaManager = dynamic(
+  () => import('@/components/settings/ollama-manager').then(m => ({ default: m.OllamaManager })),
+  { ssr: false }
+);
+const VramSettingsCard = dynamic(
+  () => import('@/components/settings/vram-settings-card').then(m => ({ default: m.VramSettingsCard })),
+  { ssr: false }
+);
 import { invoke } from '@/lib/tauri-api';
 import { saveConfig as saveSupabaseConfig, SUPABASE_MIGRATION_SQL } from '@/lib/community-hub-backend';
 import { clientLogger } from '@/lib/client-logger';

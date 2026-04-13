@@ -33,7 +33,6 @@ const nextConfig = {
     // Ottimizza pacchetti grandi — tree-shaking automatico
     optimizePackageImports: [
       'lucide-react',
-      '@tabler/icons-react',
       'date-fns',
       'radix-ui',
       'framer-motion',
