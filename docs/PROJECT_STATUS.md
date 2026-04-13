@@ -1,10 +1,33 @@
 # Stato del Progetto GameStringer
 
-## Ultimo Aggiornamento: 09/04/2026 - v1.8.0
+## Ultimo Aggiornamento: 13/04/2026 - v1.8.0
 
 ### PROGETTO v1.8.0 RILASCIATO
 
 **GameStringer**: Suite completa di localizzazione videogiochi con AI. 20+ provider AI, 20+ engine supportati, 200+ lingue, 11 lingue UI. Live Translation Overlay, Hub Marketplace, AI Dubbing, Plugin System.
+
+---
+
+### Code Quality Cleanup (April 2026)
+
+Audit generale del codebase con fix sistematici su 380 file in 3 commit.
+
+1. **ESLint**: Da 1218 errori a 20 (non risolvibili: generic `T` params, `require()` imports, `Function` type, empty shadcn interfaces). 299 file puliti — rimossi import inutili, prefisso `_` su variabili unused, `let`→`const`, escape entità JSX, bare `catch {}`.
+
+2. **TypeScript Strict Mode**: Da 2427 errori a 2 (non risolvibili: `.next/types` auto-generato, `vitest.config` moduleResolution). 189 file fixati:
+   - `clientLogger`/`logger` ora accettano `unknown` come 2° arg via `normalizeArgs()`
+   - Aggiunte interfacce e type params a tutti i `invoke<T>()` calls
+   - Import `clientLogger` aggiunto a 23 file lib/
+   - State hooks tipizzati con interfacce proprie invece di `unknown[]`
+   - Guard `instanceof Error` su tutti i catch block
+
+3. **npm Audit**: Da 39 vulnerabilità (7 critical, 17 high) a 2 (0 critical, 0 high):
+   - Patchate 25 vuln via `npm audit fix` (axios, vite, rollup, undici, etc.)
+   - Upgrade lodash 4.17.21→4.18.1 (fix prototype pollution + code injection)
+   - Downgrade to-ico 1.1.5→1.0.1 (rimossa catena vulnerabile request→jimp)
+   - Rimanenti 2: postcss (moderate, pinned da Next.js), webpack buildHttp (low, feature non usata)
+
+4. **Build**: Passa pulito. Test invariati (27/43 falliti — pre-esistenti, mock obsoleti).
 
 ---
 
