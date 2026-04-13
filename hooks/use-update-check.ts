@@ -28,8 +28,8 @@ export const useUpdateCheck = () => {
         setUpdateInfo(info);
         
         if (info.update_available) {
-          // Controlla se è già stato dismissato per questa versione
-          const lastDismissed = localStorage.getItem('update_dismissed_version');
+          // Controlla se è già stato dismissato per questa sessione
+          const lastDismissed = sessionStorage.getItem('update_dismissed_version');
           if (lastDismissed === info.latest_version) {
             setIsDismissed(true);
           }
@@ -43,14 +43,21 @@ export const useUpdateCheck = () => {
   }, [isChecking]);
 
   const dismissUpdate = useCallback(() => {
+    // Usa sessionStorage: il dismiss dura solo per questa sessione.
+    // Al prossimo avvio dell'app la campanella torna verde se l'update
+    // non è stato ancora installato.
     if (updateInfo) {
-      localStorage.setItem('update_dismissed_version', updateInfo.latest_version);
+      sessionStorage.setItem('update_dismissed_version', updateInfo.latest_version);
     }
     setIsDismissed(true);
   }, [updateInfo]);
 
   // Check all'avvio (una sola volta, con delay)
   useEffect(() => {
+    // Migrazione: rimuovi il vecchio dismiss persistente da localStorage
+    // che impediva la campanella di tornare verde al riavvio
+    localStorage.removeItem('update_dismissed_version');
+
     const timer = setTimeout(() => {
       checkForUpdates();
     }, 5000);
