@@ -4298,6 +4298,15 @@
     "caricamentoVisionLlm": "Ładowanie Vision LLM..."
   },
   "changelog": {
+    "v1_8_2": {
+      "0": "Fix Ollama IPC: wszystkie wywołania IPC check_ollama_status zastąpione bezpośrednim HTTP do localhost:11434 — usunięto błędy ipc.localhost ERR_CONNECTION_REFUSED",
+      "1": "Fix Stores: dodano link Stores w sekcji Zasoby paska bocznego",
+      "2": "Fix Epic Connect: Epic Games z uszkodzonego OAuth do modalu poświadczeń (jak GOG/Origin)",
+      "3": "Fix Test Connection: testConnection używa rzeczywistych poleceń Tauri zamiast symulowanego API",
+      "4": "Fix Disconnect: dodane usuwanie poświadczeń Epic/Steam w backendzie Tauri przy rozłączaniu",
+      "5": "Fix Presence: dodano guard sesji w updatePresence aby zapobiec 400 Bad Request w update_user_presence",
+      "6": "i18n: Store → Stores w tłumaczeniach włoskich"
+    },
     "v1_8_0": {
       "0": "Nakładka Tłumaczenia na Żywo: tłumaczenie w czasie rzeczywistym przez przezroczystą nakładkę OCR na dowolnej grze — przechwytywanie ekranu → wielosilnikowe OCR → tłumaczenie AI (Groq/Cerebras) → nakładka w stylu gier. Skrót Ctrl+Alt+O",
       "1": "Hub Marketplace: marketplace do udostępniania społecznościowych paczek tłumaczeń — instalacja jednym kliknięciem, oceny, recenzje, moderacja, profile użytkowników z reputacją. Backend Supabase z 10 tabelami + RLS",

@@ -4298,6 +4298,15 @@
     "errorBatch": "Errore batch"
   },
   "changelog": {
+    "v1_8_2": {
+      "0": "Fix Ollama IPC: sostituiti tutti i check_ollama_status IPC con HTTP diretto a localhost:11434 — eliminati errori ipc.localhost ERR_CONNECTION_REFUSED",
+      "1": "Fix Stores: aggiunto link Stores nella sidebar sezione Risorse",
+      "2": "Fix Epic Connect: Epic Games da OAuth rotto a modal credenziali",
+      "3": "Fix Test Connessione: testConnection usa comandi Tauri reali invece di API simulata",
+      "4": "Fix Disconnect: aggiunta cancellazione credenziali Epic/Steam nel backend Tauri",
+      "5": "Fix Presence: aggiunto guard sessione in updatePresence per evitare 400 Bad Request",
+      "6": "i18n: Store → Stores nelle traduzioni italiane"
+    },
     "v1_8_0": {
       "0": "Overlay di Traduzione Live: traduzione in tempo reale tramite overlay OCR trasparente sopra qualsiasi gioco — cattura schermo → OCR multi-motore → traduzione IA (Groq/Cerebras) → overlay in stile gaming. Scorciatoia Ctrl+Alt+O",
       "1": "Hub Marketplace: marketplace per condividere pacchetti di traduzione della community — installazione con 1 clic, valutazioni, recensioni, moderazione, profili utente con reputazione. Backend Supabase con 10 tabelle + RLS",

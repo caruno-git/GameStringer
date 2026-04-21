@@ -4298,6 +4298,15 @@
     "caricamentoVisionLlm": "Vision LLM 로딩 중..."
   },
   "changelog": {
+    "v1_8_2": {
+      "0": "Fix Ollama IPC: 모든 check_ollama_status IPC 호출을 localhost:11434로의 직접 HTTP로 교체 — ipc.localhost ERR_CONNECTION_REFUSED 오류 제거",
+      "1": "Fix Stores: 사이드바 리소스 섹션에 Stores 링크 추가",
+      "2": "Fix Epic Connect: Epic Games를 손상된 OAuth에서 자격 증명 모달(GOG/Origin과 유사)로 변경",
+      "3": "Fix Test Connection: testConnection이 시뮬레이션된 API 대신 실제 Tauri 명령 사용",
+      "4": "Fix Disconnect: 연결 끊기 시 Tauri 백엔드에서 Epic/Steam 자격 증명 삭제 추가",
+      "5": "Fix Presence: updatePresence에 세션 가드를 추가하여 update_user_presence에서 400 Bad Request 방지",
+      "6": "i18n: 이탈리아어 번역에서 Store → Stores"
+    },
     "v1_8_0": {
       "0": "실시간 번역 오버레이: 모든 게임 위에 투명 OCR 오버레이를 통한 실시간 번역 — 화면 캡처 → 멀티 엔진 OCR → AI 번역 (Groq/Cerebras) → 게이밍 스타일 오버레이. 단축키 Ctrl+Alt+O",
       "1": "허브 마켓플레이스: 커뮤니티 번역 팩 공유 마켓플레이스 — 1클릭 설치, 평점, 리뷰, 관리, 평판 기반 사용자 프로필. Supabase 백엔드(10개 테이블 + RLS)",

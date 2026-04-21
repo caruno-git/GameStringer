@@ -4192,6 +4192,15 @@
     "caricamentoVisionLlm": "Chargement du Vision LLM..."
   },
   "changelog": {
+    "v1_8_2": {
+      "0": "Fix Ollama IPC: remplacé tous les appels IPC check_ollama_status par HTTP direct vers localhost:11434 — éliminé les erreurs ipc.localhost ERR_CONNECTION_REFUSED",
+      "1": "Fix Stores: ajouté le lien Stores dans la section Ressources de la barre latérale",
+      "2": "Fix Epic Connect: Epic Games d'OAuth cassé à modal de crédencielles (comme GOG/Origin)",
+      "3": "Fix Test Connection: testConnection utilise les commandes Tauri réelles au lieu de l'API simulée",
+      "4": "Fix Disconnect: ajouté la suppression des crédencielles Epic/Steam dans le backend Tauri lors de la déconnexion",
+      "5": "Fix Presence: ajouté un guard de session dans updatePresence pour prévenir 400 Bad Request sur update_user_presence",
+      "6": "i18n: Store → Stores dans les traductions italiennes"
+    },
     "v1_8_0": {
       "0": "Overlay de Traduction en Direct : traduction en temps réel via un overlay OCR transparent par-dessus n'importe quel jeu — capture d'écran → OCR multi-moteur → traduction IA (Groq/Cerebras) → overlay style gaming. Raccourci Ctrl+Alt+O",
       "1": "Hub Marketplace : marketplace pour partager des packs de traduction communautaires — installation en 1 clic, notes, avis, modération, profils utilisateur avec réputation. Backend Supabase avec 10 tables + RLS",

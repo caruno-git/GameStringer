@@ -4192,6 +4192,15 @@
     "caricamentoVisionLlm": "Vision LLMを読み込み中..."
   },
   "changelog": {
+    "v1_8_2": {
+      "0": "Fix Ollama IPC: すべてのcheck_ollama_status IPC呼び出しをlocalhost:11434への直接HTTPに置換 — ipc.localhost ERR_CONNECTION_REFUSEDエラーを排除",
+      "1": "Fix Stores: サイドバーのリソースセクションにStoresリンクを追加",
+      "2": "Fix Epic Connect: Epic Gamesを壊れたOAuthから認証情報モーダル（GOG/Originと同様）に変更",
+      "3": "Fix Test Connection: testConnectionがシミュレートされたAPIの代わりに実際のTauriコマンドを使用",
+      "4": "Fix Disconnect: 切断時にTauriバックエンドでEpic/Steam認証情報削除を追加",
+      "5": "Fix Presence: updatePresenceにセッションガードを追加してupdate_user_presenceでの400 Bad Requestを防止",
+      "6": "i18n: イタリア語翻訳でStore → Stores"
+    },
     "v1_8_0": {
       "0": "ライブ翻訳オーバーレイ：あらゆるゲーム上に透明なOCRオーバーレイによるリアルタイム翻訳 — 画面キャプチャ → マルチエンジンOCR → AI翻訳（Groq/Cerebras） → ゲーミングスタイルのオーバーレイ。ホットキー Ctrl+Alt+O",
       "1": "ハブマーケットプレイス：コミュニティ翻訳パックを共有するマーケットプレイス — ワンクリックインストール、評価、レビュー、モデレーション、評判付きユーザープロフィール。Supabaseバックエンド（10テーブル + RLS）",

@@ -4192,6 +4192,15 @@
     "caricamentoVisionLlm": "正在加载Vision LLM..."
   },
   "changelog": {
+    "v1_8_2": {
+      "0": "Fix Ollama IPC: 将所有check_ollama_status IPC调用替换为直接HTTP到localhost:11434 — 消除ipc.localhost ERR_CONNECTION_REFUSED错误",
+      "1": "Fix Stores: 在侧边栏资源部分添加Stores链接",
+      "2": "Fix Epic Connect: Epic Games从损坏的OAuth更改为凭据模态框（如GOG/Origin）",
+      "3": "Fix Test Connection: testConnection使用真实的Tauri命令而不是模拟API",
+      "4": "Fix Disconnect: 在断开连接时添加Tauri后端中的Epic/Steam凭据删除",
+      "5": "Fix Presence: 在updatePresence中添加会话守卫以防止update_user_presence上的400 Bad Request",
+      "6": "i18n: 意大利语翻译中Store → Stores"
+    },
     "v1_8_0": {
       "0": "实时翻译覆盖层：通过透明OCR覆盖层在任何游戏上进行实时翻译 — 屏幕捕获 → 多引擎OCR → AI翻译（Groq/Cerebras） → 游戏风格覆盖层。快捷键 Ctrl+Alt+O",
       "1": "Hub 市场：社区翻译包共享市场 — 一键安装、评分、评论、审核、带声誉的用户档案。Supabase后端，10张表 + RLS",

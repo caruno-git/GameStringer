@@ -4298,6 +4298,15 @@
     "caricamentoVisionLlm": "Загрузка Vision LLM..."
   },
   "changelog": {
+    "v1_8_2": {
+      "0": "Fix Ollama IPC: все вызовы IPC check_ollama_status заменены на прямой HTTP к localhost:11434 — устранены ошибки ipc.localhost ERR_CONNECTION_REFUSED",
+      "1": "Fix Stores: добавлена ссылка Stores в разделе Ресурсы боковой панели",
+      "2": "Fix Epic Connect: Epic Games изменен с сломанного OAuth на модал учетных данных (как GOG/Origin)",
+      "3": "Fix Test Connection: testConnection использует реальные команды Tauri вместо симулированного API",
+      "4": "Fix Disconnect: добавлено удаление учетных данных Epic/Steam в бэкенде Tauri при отключении",
+      "5": "Fix Presence: добавлен guard сессии в updatePresence для предотвращения 400 Bad Request в update_user_presence",
+      "6": "i18n: Store → Stores в итальянских переводах"
+    },
     "v1_8_0": {
       "0": "Оверлей живого перевода: перевод в реальном времени через прозрачный OCR-оверлей поверх любой игры — захват экрана → мульти-движковое OCR → AI-перевод (Groq/Cerebras) → оверлей в игровом стиле. Горячая клавиша Ctrl+Alt+O",
       "1": "Маркетплейс Hub: маркетплейс для обмена пакетами переводов сообщества — установка в 1 клик, рейтинги, отзывы, модерация, профили пользователей с репутацией. Бэкенд Supabase с 10 таблицами + RLS",
