@@ -4194,7 +4194,7 @@
   "changelog": {
     "v1_8_2": {
       "0": "Fix Ollama IPC: alle check_ollama_status IPC-Aufrufe durch direktes HTTP zu localhost:11434 ersetzt — ipc.localhost ERR_CONNECTION_REFUSED-Fehler eliminiert",
-      "1": "Fix Stores: Stores-Link im Sidebar-Bereich Ressources hinzugefügt",
+      "1": "Fix Stores: Stores-Link im Sidebar-Bereich Ressourcen hinzugefügt",
       "2": "Fix Epic Connect: Epic Games von defektem OAuth zu Credential-Modal (wie GOG/Origin)",
       "3": "Fix Test Connection: testConnection verwendet echte Tauri-Befehle statt simulierter API",
       "4": "Fix Disconnect: Epic/Steam-Credential-Löschung im Tauri-Backend beim Trennen hinzugefügt",
