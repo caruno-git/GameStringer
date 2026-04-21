@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useI18n, SUPPORTED_LOCALES, detectBrowserLocale, type Locale } from '@/lib/i18n-new';
+import { useI18n } from '@/lib/i18n';
 import {
   Select,
   SelectContent,
@@ -16,47 +15,52 @@ interface LanguageSelectorProps {
   className?: string;
 }
 
+// Mappa lingue con bandiere e nomi nativi
+const LANGUAGE_INFO: Record<string, { name: string; nativeName: string; flag: string }> = {
+  en: { name: 'English', nativeName: 'English', flag: '🇬🇧' },
+  it: { name: 'Italian', nativeName: 'Italiano', flag: '🇮🇹' },
+  es: { name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
+  de: { name: 'German', nativeName: 'Deutsch', flag: '🇩🇪' },
+  fr: { name: 'French', nativeName: 'Français', flag: '🇫🇷' },
+  ja: { name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
+  zh: { name: 'Chinese', nativeName: '中文', flag: '🇨🇳' },
+  ko: { name: 'Korean', nativeName: '한국어', flag: '🇰🇷' },
+  pt: { name: 'Portuguese', nativeName: 'Português', flag: '🇧🇷' },
+  ru: { name: 'Russian', nativeName: 'Русский', flag: '🇷🇺' },
+  pl: { name: 'Polish', nativeName: 'Polski', flag: '🇵🇱' },
+};
+
 export function LanguageSelector({
   showFlag = true,
   showNativeName = true,
   className,
 }: LanguageSelectorProps) {
-  const { locale, setLocale, isLoading } = useI18n();
+  const { language, setLanguage } = useI18n();
 
-  useEffect(() => {
-    const savedLocale = localStorage.getItem('gamestringer-i18n');
-    if (!savedLocale) {
-      const browserLocale = detectBrowserLocale();
-      if (browserLocale !== locale) {
-        setLocale(browserLocale);
-      }
-    }
-  }, []);
-
-  const handleChange = async (value: string) => {
-    await setLocale(value as Locale);
+  const handleChange = (value: string) => {
+    setLanguage(value as any);
   };
 
-  const currentLocale = SUPPORTED_LOCALES.find(l => l.code === locale);
+  const currentInfo = LANGUAGE_INFO[language];
 
   return (
-    <Select value={locale} onValueChange={handleChange} disabled={isLoading}>
+    <Select value={language} onValueChange={handleChange}>
       <SelectTrigger className={className}>
         <SelectValue>
-          {currentLocale && (
+          {currentInfo && (
             <span className="flex items-center gap-2">
-              {showFlag && <span>{currentLocale.flag}</span>}
-              <span>{showNativeName ? currentLocale.nativeName : currentLocale.name}</span>
+              {showFlag && <span>{currentInfo.flag}</span>}
+              <span>{showNativeName ? currentInfo.nativeName : currentInfo.name}</span>
             </span>
           )}
         </SelectValue>
       </SelectTrigger>
       <SelectContent>
-        {SUPPORTED_LOCALES.map((loc) => (
-          <SelectItem key={loc.code} value={loc.code}>
+        {Object.entries(LANGUAGE_INFO).map(([code, info]) => (
+          <SelectItem key={code} value={code}>
             <span className="flex items-center gap-2">
-              {showFlag && <span>{loc.flag}</span>}
-              <span>{showNativeName ? loc.nativeName : loc.name}</span>
+              {showFlag && <span>{info.flag}</span>}
+              <span>{showNativeName ? info.nativeName : info.name}</span>
             </span>
           </SelectItem>
         ))}
@@ -66,27 +70,27 @@ export function LanguageSelector({
 }
 
 export function LanguageSelectorCompact({ className }: { className?: string }) {
-  const { locale, setLocale, isLoading } = useI18n();
+  const { language, setLanguage } = useI18n();
 
-  const handleChange = async (value: string) => {
-    await setLocale(value as Locale);
+  const handleChange = (value: string) => {
+    setLanguage(value as any);
   };
 
-  const currentLocale = SUPPORTED_LOCALES.find(l => l.code === locale);
+  const currentInfo = LANGUAGE_INFO[language];
 
   return (
-    <Select value={locale} onValueChange={handleChange} disabled={isLoading}>
+    <Select value={language} onValueChange={handleChange}>
       <SelectTrigger className={`w-16 ${className}`}>
         <SelectValue>
-          {currentLocale?.flag}
+          {currentInfo?.flag}
         </SelectValue>
       </SelectTrigger>
       <SelectContent>
-        {SUPPORTED_LOCALES.map((loc) => (
-          <SelectItem key={loc.code} value={loc.code}>
+        {Object.entries(LANGUAGE_INFO).map(([code, info]) => (
+          <SelectItem key={code} value={code}>
             <span className="flex items-center gap-2">
-              <span>{loc.flag}</span>
-              <span className="text-sm">{loc.code.toUpperCase()}</span>
+              <span>{info.flag}</span>
+              <span className="text-sm">{code.toUpperCase()}</span>
             </span>
           </SelectItem>
         ))}
