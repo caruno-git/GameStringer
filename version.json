@@ -1,14 +1,27 @@
 {
-  "version": "1.8.1",
+  "version": "1.8.2",
   "major": 1,
   "minor": 8,
-  "patch": 1,
+  "patch": 2,
   "prerelease": null,
-  "buildNumber": 125,
-  "buildDate": "2026-04-13T14:31:22.651Z",
-  "gitHash": "8800c56",
+  "buildNumber": 126,
+  "buildDate": "2026-04-21T22:03:00.000Z",
+  "gitHash": "0805f0b",
   "branch": "main",
   "changelog": {
+    "1.8.2": {
+      "date": "2026-04-22",
+      "type": "patch",
+      "changes": [
+        "Fix Ollama IPC: sostituiti tutti i check_ollama_status IPC con HTTP diretto a localhost:11434 — eliminati errori ipc.localhost ERR_CONNECTION_REFUSED",
+        "Fix Stores: aggiunto link Stores nella sidebar sezione Risorse",
+        "Fix Epic Connect: Epic Games da OAuth rotto a modal credenziali",
+        "Fix Test Connessione: testConnection usa comandi Tauri reali invece di API simulata",
+        "Fix Disconnect: aggiunta cancellazione credenziali Epic/Steam nel backend Tauri",
+        "Fix Presence: aggiunto guard sessione in updatePresence per evitare 400 Bad Request",
+        "i18n: Store → Stores nelle traduzioni italiane"
+      ]
+    },
     "1.8.1": {
       "date": "2026-04-14",
       "type": "patch",

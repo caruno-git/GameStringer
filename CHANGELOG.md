@@ -1,6 +1,19 @@
 # GameStringer Changelog
 
-## � v1.8.1 - 2026-04-14
+## 🐛 v1.8.2 - 2026-04-22
+
+### Bug Fix & Stores
+- **Fix Ollama IPC**: sostituiti tutti i `check_ollama_status` IPC con HTTP diretto a localhost:11434 (main-layout, page.tsx, ollama-manager.ts, ollama-setup-wizard.tsx, ollama-manager settings) — eliminati errori `ipc.localhost ERR_CONNECTION_REFUSED`
+- **Fix Stores**: aggiunto link "Stores" nella sidebar sezione Risorse
+- **Fix Epic Connect**: Epic Games da OAuth rotto a modal credenziali (come GOG/Origin)
+- **Fix Test Connessione**: testConnection usa comandi Tauri reali invece di API simulata
+- **Fix Disconnect**: aggiunta cancellazione credenziali Epic/Steam nel backend Tauri al disconnect
+- **Fix Presence**: aggiunto guard sessione in `updatePresence` per evitare 400 Bad Request su `update_user_presence`
+- **i18n**: "Store" → "Stores" nelle traduzioni italiane
+
+---
+
+## 🐛 v1.8.1 - 2026-04-14
 
 ### Bug Fix & Miglioramenti
 - **Fix CSP**: aggiunto `'unsafe-eval'` per compatibilità Next.js dev mode
