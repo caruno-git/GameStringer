@@ -321,13 +321,11 @@ export async function updatePresence(
   if (!userId || !isTableAvailable('user_presence') || !isSupabaseConfigured()) return;
   try {
     const supabase = await getSupabase();
-    // Verifica sessione valida prima di chiamare la RPC
+    // Verifica sessione valida: deve avere identities reali (non solo anon key)
     const { data: { session } } = await supabase.auth.getSession();
     if (!session?.user) return;
-    // Verifica che l'utente abbia un provider reale (non solo anon key)
-    const identities = session.user.app_metadata?.provider || session.user.identities;
-    const isRealUser = identities && (Array.isArray(identities) ? identities.length > 0 : !!identities);
-    if (!isRealUser) return;
+    const hasRealAuth = Array.isArray(session.user.identities) && session.user.identities.length > 0;
+    if (!hasRealAuth) return;
     // Usa RPC update_user_presence (definita in forum-schema.sql) per evitare 409 su upsert
     const { error } = await supabase.rpc('update_user_presence', {
       p_user_id: userId,
@@ -336,23 +334,8 @@ export async function updatePresence(
       p_game: game || null,
     });
     if (error) {
-      // Se la RPC ritorna 400 o non esiste, marca la tabella per evitare retry
-      if (error.code === '42883' || error.code === '44000' || error.message?.includes('does not exist') || error.message?.includes('Bad Request')) {
-        markTableMissing('user_presence');
-        return;
-      }
-      // Fallback: se la RPC non esiste prova upsert diretto
-      const { error: upsertErr } = await supabase.from('user_presence').upsert({
-        user_id: userId,
-        status,
-        current_activity: activity || null,
-        current_game: game || null,
-        last_heartbeat: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      }, { onConflict: 'user_id' });
-      if (upsertErr?.code === '42P01' || upsertErr?.message?.includes('does not exist')) {
-        markTableMissing('user_presence');
-      }
+      // Qualsiasi errore dalla RPC → marca tabella come mancante per evitare retry
+      markTableMissing('user_presence');
     }
   } catch { /* silenzioso */ }
 }
