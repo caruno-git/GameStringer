@@ -1,6 +1,6 @@
 'use client';
 
-import { useI18n } from '@/lib/i18n';
+import { useTranslation } from '@/lib/i18n';
 import {
   Select,
   SelectContent,
@@ -35,7 +35,7 @@ export function LanguageSelector({
   showNativeName = true,
   className,
 }: LanguageSelectorProps) {
-  const { language, setLanguage } = useI18n();
+  const { language, setLanguage } = useTranslation();
 
   const handleChange = (value: string) => {
     setLanguage(value as any);
@@ -70,7 +70,7 @@ export function LanguageSelector({
 }
 
 export function LanguageSelectorCompact({ className }: { className?: string }) {
-  const { language, setLanguage } = useI18n();
+  const { language, setLanguage } = useTranslation();
 
   const handleChange = (value: string) => {
     setLanguage(value as any);

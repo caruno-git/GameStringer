@@ -323,7 +323,7 @@ export async function updatePresence(
     const supabase = await getSupabase();
     // Verifica sessione valida prima di chiamare la RPC
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
+    if (!session?.user?.id || session.user.is_anonymous) return;
     // Usa RPC update_user_presence (definita in forum-schema.sql) per evitare 409 su upsert
     const { error } = await supabase.rpc('update_user_presence', {
       p_user_id: userId,
