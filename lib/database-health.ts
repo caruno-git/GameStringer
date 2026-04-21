@@ -246,7 +246,9 @@ export class DatabaseHealthMonitor {
    */
   private async getDiskSpaceInfo(): Promise<{ used: number; available: number; total: number }> {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const fs = require('fs');
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const _path = require('path');
       
       // Get database file path from DATABASE_URL

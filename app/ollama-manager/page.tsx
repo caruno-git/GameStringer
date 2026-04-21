@@ -185,7 +185,7 @@ export default function OllamaManagerPage() {
             )}>
               {ollamaOnline === true ? '● Online' : ollamaOnline === false ? '● Offline' : '● Checking...'}
             </Badge>
-            <Button onClick={refresh} disabled={loading} variant="ghost" size="icon" aria-label="Aggiorna" className="h-8 w-8 text-white/70 hover:text-white hover:bg-white/10">
+            <Button onClick={refresh} disabled={loading} variant="ghost" size="icon" aria-label={t('common.aggiorna')} className="h-8 w-8 text-white/70 hover:text-white hover:bg-white/10">
               <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
             </Button>
           </div>
@@ -252,7 +252,7 @@ export default function OllamaManagerPage() {
                             {speedTesting === m.name ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Timer className="h-3.5 w-3.5" />}
                           </Button>
                           <Button
-                            variant="ghost" size="icon" aria-label="Elimina" className="h-7 w-7 text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                            variant="ghost" size="icon" aria-label={t('common.elimina')} className="h-7 w-7 text-red-400 hover:text-red-300 hover:bg-red-500/10"
                             onClick={() => handleDelete(m.name)}
                             disabled={deleting === m.name}
                           >
@@ -373,7 +373,7 @@ export default function OllamaManagerPage() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1.5 mb-0.5">
                               <span className="text-xs font-semibold">{dm.name}</span>
-                              {dm.isNew && <Badge className="text-2xs h-3 px-1 bg-purple-500/20 text-purple-300 border-purple-500/30">NUOVO</Badge>}
+                              {dm.isNew && <Badge className="text-2xs h-3 px-1 bg-purple-500/20 text-purple-300 border-purple-500/30">{t('common.nuovo')}</Badge>}
                               <Badge variant="outline" className="text-2xs h-3 px-1 text-purple-400 border-purple-500/30">
                                 {dm.relevanceScore}% rilevante
                               </Badge>

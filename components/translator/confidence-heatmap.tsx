@@ -343,7 +343,7 @@ export function ConfidenceHeatmap({ data, onSelectPair, className }: ConfidenceH
           <Select value={filterLevel} onValueChange={(v) => setFilterLevel(v as "all" | "critical" | "low" | "medium" | "high")}>
             <SelectTrigger className="w-[150px]">
               <Filter className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="Filtra" />
+              <SelectValue placeholder={t('common.filtra')} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t('confidenceHeatmapComp.tutti')}</SelectItem>

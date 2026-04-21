@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Cpu, Monitor, Thermometer, ChevronDown, ChevronUp, Zap, Cloud, HardDrive } from 'lucide-react';
 import { vramManager, type SystemStats, type VramTier } from '@/lib/vram-manager';
+import { useTranslation } from '@/lib/i18n';
 
 const TIER_COLORS: Record<VramTier, string> = {
   ultra: 'text-emerald-400',
@@ -75,6 +76,7 @@ interface SystemOverlayProps {
 }
 
 export function SystemOverlay({ position = 'bottom-right', compact: initialCompact = true }: SystemOverlayProps) {
+  const { t } = useTranslation();
   const [stats, setStats] = useState<SystemStats | null>(null);
   const [tier, setTier] = useState<VramTier>('cloud');
   const [expanded, setExpanded] = useState(!initialCompact);
@@ -110,7 +112,7 @@ export function SystemOverlay({ position = 'bottom-right', compact: initialCompa
 
   const positionClasses = {
     'top-right': 'top-16 right-4',
-    'bottom-right': 'bottom-4 right-4',
+    'bottom-right': 'hidden',
     'bottom-left': 'bottom-4 left-4',
   };
 
@@ -152,7 +154,7 @@ export function SystemOverlay({ position = 'bottom-right', compact: initialCompa
         <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/[0.06]">
           <div className="flex items-center gap-2">
             <Cpu className="h-3.5 w-3.5 text-slate-400" />
-            <span className="text-[11px] font-bold text-slate-300">Monitor Sistema</span>
+            <span className="text-[11px] font-bold text-slate-300">{t('common.monitorSistema')}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className={`text-micro font-bold px-2 py-0.5 rounded-md border ${tierBg} ${tierColor}`}>

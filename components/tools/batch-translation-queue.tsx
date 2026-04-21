@@ -249,14 +249,14 @@ export function BatchTranslationQueue({ onTranslateFile: _onTranslateFile }: Bat
     setCurrentJobId(null);
     
     if (!isPaused) {
-      toast.success('Queue processing completed!');
+      toast.success(t('common.queueProcessingCompleted'));
     }
   }, [queue, isPaused]);
 
   // Pause processing
   const pauseProcessing = useCallback(() => {
     setIsPaused(true);
-    toast.info('Processing paused');
+    toast.info(t('common.processingPaused'));
   }, []);
 
   // Resume processing
@@ -276,7 +276,7 @@ export function BatchTranslationQueue({ onTranslateFile: _onTranslateFile }: Bat
       j.status === 'translating' ? { ...j, status: 'pending', progress: 0 } : j
     ));
     
-    toast.info('Processing stopped');
+    toast.info(t('common.processingStopped'));
   }, []);
 
   // Remove job from queue
@@ -293,7 +293,7 @@ export function BatchTranslationQueue({ onTranslateFile: _onTranslateFile }: Bat
   const removeSelectedJobs = useCallback(() => {
     setQueue(prev => prev.filter(j => !selectedJobs.has(j.id)));
     setSelectedJobs(new Set());
-    toast.success('Selected jobs removed');
+    toast.success(t('common.selectedJobsRemoved'));
   }, [selectedJobs]);
 
   // Clear queue

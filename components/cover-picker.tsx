@@ -54,13 +54,18 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
   const [customUrlPreview, setCustomUrlPreview] = useState<string | null>(null);
   const [customUrlError, setCustomUrlError] = useState(false);
   
-  // Source selection: 'steamgriddb' | 'igdb' | 'custom'
-  const [source, setSource] = useState<'steamgriddb' | 'igdb' | 'custom'>('steamgriddb');
+  // Source selection: 'steamgriddb' | 'igdb' | 'web' | 'custom'
+  const [source, setSource] = useState<'steamgriddb' | 'igdb' | 'web' | 'custom'>('steamgriddb');
   
   // IGDB covers
   const [igdbCovers, setIgdbCovers] = useState<Cover[]>([]);
   const [igdbLoading, setIgdbLoading] = useState(false);
   const [igdbError, setIgdbError] = useState<string | null>(null);
+  
+  // Web search covers (MobyGames, LaunchBox, etc)
+  const [webCovers, setWebCovers] = useState<Cover[]>([]);
+  const [webLoading, setWebLoading] = useState(false);
+  const [webError, setWebError] = useState<string | null>(null);
 
   const getApiKey = useCallback(() => {
     // Cerca API key nelle impostazioni
@@ -109,7 +114,7 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
       saveApiKey(tempApiKey.trim());
       setShowApiKeyInput(false);
       setError(null);
-      toast.success('API Key salvata!');
+      toast.success(t('common.apiKeySalvata'));
       fetchCovers(activeTab);
     }
   };
@@ -184,11 +189,11 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
       });
       
       onCoverSelected(selectedCover.url);
-      toast.success('Cover aggiornata con successo!');
+      toast.success(t('common.coverAggiornataConSuccesso'));
       onClose();
     } catch (e: unknown) {
       clientLogger.error('Error saving cover:', e);
-      toast.error('Errore nel salvare la cover');
+      toast.error(t('common.erroreNelSalvareLaCover'));
     } finally {
       setSaving(false);
     }
@@ -227,11 +232,11 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
       });
       
       onCoverSelected(customUrlPreview);
-      toast.success('Cover personalizzata salvata!');
+      toast.success(t('common.coverPersonalizzataSalvata'));
       onClose();
     } catch (e: unknown) {
       clientLogger.error('Error saving custom cover:', e);
-      toast.error('Errore nel salvare la cover');
+      toast.error(t('common.erroreNelSalvareLaCover'));
     } finally {
       setSaving(false);
     }
@@ -273,6 +278,125 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
     }
   }, [gameName, appId]);
 
+  // Cerca cover dal web (MobyGames, LaunchBox, GameFAQs, etc)
+  const fetchWebCovers = useCallback(async () => {
+    setWebLoading(true);
+    setWebError(null);
+    setWebCovers([]);
+    
+    const searchName = gameName.replace(/[^a-zA-Z0-9\s]/g, '').trim();
+    const covers: Cover[] = [];
+    let coverId = 1000;
+    
+    try {
+      // 1. MobyGames - ottima fonte per giochi classici
+      try {
+        const mobyRes = await fetch(`https://api.mobygames.com/v1/games?title=${encodeURIComponent(searchName)}&format=normal`, {
+          headers: { 'Accept': 'application/json' }
+        });
+        if (mobyRes.ok) {
+          const mobyData = await mobyRes.json();
+          if (mobyData.games && mobyData.games.length > 0) {
+            const game = mobyData.games[0];
+            if (game.sample_cover?.image) {
+              covers.push({
+                id: coverId++,
+                url: game.sample_cover.image,
+                thumb: game.sample_cover.thumbnail || game.sample_cover.image,
+                width: 600,
+                height: 800,
+                style: 'official',
+                author: 'MobyGames',
+                type: 'grid',
+                score: 90,
+                upvotes: 0,
+                downvotes: 0,
+                nsfw: false,
+                humor: false,
+              });
+            }
+          }
+        }
+      } catch {}
+      
+      // 2. LaunchBox Games Database (via scraping URL noto)
+      // LaunchBox ha cover verticali eccellenti
+      const launchboxUrl = `https://gamesdb.launchbox-app.com/games/images/${encodeURIComponent(searchName.replace(/\s+/g, '-').toLowerCase())}`;
+      covers.push({
+        id: coverId++,
+        url: launchboxUrl,
+        thumb: launchboxUrl,
+        width: 600,
+        height: 900,
+        style: 'alternate',
+        author: 'LaunchBox (cerca manualmente)',
+        type: 'grid',
+        score: 85,
+        upvotes: 0,
+        downvotes: 0,
+        nsfw: false,
+        humor: false,
+      });
+      
+      // 3. TheGamesDB
+      try {
+        const tgdbRes = await fetch(`https://api.thegamesdb.net/v1/Games/ByGameName?apikey=1&name=${encodeURIComponent(searchName)}`);
+        if (tgdbRes.ok) {
+          const tgdbData = await tgdbRes.json();
+          if (tgdbData.data?.games && tgdbData.data.games.length > 0) {
+            const game = tgdbData.data.games[0];
+            if (game.boxart) {
+              covers.push({
+                id: coverId++,
+                url: `https://cdn.thegamesdb.net/images/original/boxart/front/${game.id}-1.jpg`,
+                thumb: `https://cdn.thegamesdb.net/images/thumb/boxart/front/${game.id}-1.jpg`,
+                width: 600,
+                height: 800,
+                style: 'official',
+                author: 'TheGamesDB',
+                type: 'grid',
+                score: 88,
+                upvotes: 0,
+                downvotes: 0,
+                nsfw: false,
+                humor: false,
+              });
+            }
+          }
+        }
+      } catch {}
+      
+      // 4. Suggerisci ricerca Google Images
+      const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(gameName + ' box art cover vertical')}&tbm=isch`;
+      covers.push({
+        id: coverId++,
+        url: googleSearchUrl,
+        thumb: '',
+        width: 0,
+        height: 0,
+        style: 'alternate',
+        author: '🔍 Cerca su Google Images',
+        type: 'grid',
+        score: 0,
+        upvotes: 0,
+        downvotes: 0,
+        nsfw: false,
+        humor: false,
+      });
+      
+      if (covers.length > 1) {
+        setWebCovers(covers.filter(c => c.thumb !== ''));
+      } else {
+        setWebError('Nessuna cover trovata. Prova con URL manuale o cerca su Google Images.');
+      }
+    } catch (e) {
+      clientLogger.error('Web cover search error:', e);
+      setWebError('Errore nella ricerca web. Usa URL manuale.');
+    } finally {
+      setWebLoading(false);
+    }
+  }, [gameName]);
+
   // Carica covers quando cambia sorgente
   useEffect(() => {
     if (!isOpen) return;
@@ -281,6 +405,8 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
       fetchCovers(activeTab);
     } else if (source === 'igdb') {
       fetchIgdbCovers();
+    } else if (source === 'web') {
+      fetchWebCovers();
     }
   }, [source, isOpen]);
 
@@ -343,6 +469,15 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
             IGDB
           </Button>
           <Button
+            variant={source === 'web' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setSource('web')}
+            className="gap-1.5"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+            Web
+          </Button>
+          <Button
             variant={source === 'custom' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setSource('custom')}
@@ -392,7 +527,7 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
                       onError={() => {
                         setCustomUrlError(true);
                         setCustomUrlPreview(null);
-                        toast.error('Impossibile caricare l\'immagine');
+                        toast.error(t('common.impossibileCaricareLimmmagine'));
                       }}
                     />
                   </div>
@@ -453,6 +588,91 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
               <div className="flex flex-col items-center justify-center h-64 text-center">
                 <Search className="h-12 w-12 text-gray-500 mb-3" />
                 <p className="text-muted-foreground">{t('coverPickerComp.nessunaCoverTrovataSuIgdb')}</p>
+              </div>
+            )}
+          </div>
+        ) : source === 'web' ? (
+          <div className="flex-1 overflow-y-auto">
+            {webLoading ? (
+              <div className="flex items-center justify-center h-64">
+                <Loader2 className="h-8 w-8 animate-spin text-emerald-400" />
+                <span className="ml-2 text-muted-foreground">Cercando cover sul web...</span>
+              </div>
+            ) : webError ? (
+              <div className="flex flex-col items-center justify-center h-64 text-center">
+                <AlertCircle className="h-12 w-12 text-yellow-400 mb-3" />
+                <p className="text-muted-foreground mb-2">{webError}</p>
+                <div className="flex gap-2 mt-4">
+                  <Button variant="outline" size="sm" onClick={fetchWebCovers}>
+                    Riprova
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(gameName + ' box art cover')}&tbm=isch`, '_blank')}
+                  >
+                    <ExternalLink className="h-3.5 w-3.5 mr-1" />
+                    Cerca su Google
+                  </Button>
+                </div>
+              </div>
+            ) : webCovers.length > 0 ? (
+              <div className="space-y-4">
+                <p className="text-xs text-muted-foreground">
+                  Cover trovate da MobyGames, TheGamesDB e altre fonti. Clicca per selezionare.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                  {webCovers.map((cover) => (
+                    <div
+                      key={`web-${cover.id}`}
+                      onClick={() => setSelectedCover(cover)}
+                      className={cn(
+                        "relative group cursor-pointer rounded-lg overflow-hidden border-2 transition-all duration-200",
+                        selectedCover?.id === cover.id
+                          ? "border-emerald-500 ring-2 ring-emerald-500/30 scale-[1.02]"
+                          : "border-transparent hover:border-emerald-500/50"
+                      )}
+                    >
+                      <div className="aspect-[2/3] bg-slate-800 relative">
+                        <img
+                          src={cover.thumb || cover.url}
+                          alt="Web Cover"
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                          }}
+                        />
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
+                          <span className="text-2xs text-white/80">{cover.author}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex justify-center pt-4 border-t border-slate-700">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(gameName + ' box art cover vertical')}&tbm=isch`, '_blank')}
+                  >
+                    <ExternalLink className="h-3.5 w-3.5 mr-1" />
+                    Cerca altre cover su Google Images
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-64 text-center">
+                <Search className="h-12 w-12 text-gray-500 mb-3" />
+                <p className="text-muted-foreground mb-4">{t('common.nessunaCoverTrovataSulWeb')}</p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(gameName + ' box art cover')}&tbm=isch`, '_blank')}
+                >
+                  <ExternalLink className="h-3.5 w-3.5 mr-1" />
+                  Cerca su Google Images
+                </Button>
               </div>
             )}
           </div>

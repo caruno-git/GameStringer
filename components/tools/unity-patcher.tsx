@@ -618,7 +618,7 @@ export function UnityPatcher() {
               <Download className="w-4 h-4 text-emerald-400" />
               {selectedGame ? getGameName(selectedGame) : gamePath ? t('gamePatcher.folder') : t('gamePatcher.patchConfiguration')}
             </CardTitle>
-            <Button size="sm" variant="outline" onClick={handleExportPO} className="h-7 text-xs" aria-label="Esporta file PO">
+            <Button size="sm" variant="outline" onClick={handleExportPO} className="h-7 text-xs" aria-label={t('common.esportaFilePo')}>
               <Download className="h-3 w-3 mr-1" />
               PO
             </Button>

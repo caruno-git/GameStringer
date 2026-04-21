@@ -17,8 +17,8 @@ import {
   Rss,
   Settings2,
   Cpu,
-  Workflow,
-  ArrowUpCircle
+  ArrowUpCircle,
+  Wrench
 } from 'lucide-react';
 import { decode } from 'html-entities';
 import Link from 'next/link';
@@ -29,7 +29,6 @@ import { blogService, BlogPost } from '@/lib/blog';
 import { storageManager } from '@/lib/storage-manager';
 import { get } from 'idb-keyval';
 import { newsFeedService, type NewsFeedItem, FEED_CATEGORIES } from '@/lib/news-feeds';
-import { loadBenchmarkHistory, type BenchmarkEntry } from '@/lib/ai-pipeline';
 import { clientLogger } from '@/lib/client-logger';
 
 interface RecentActivityProps {
@@ -93,6 +92,7 @@ export default function Dashboard() {
     estimatedSavings: 0
   });
   const [loading, setLoading] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
   const [activities, setActivities] = useState<RecentActivityProps[]>([]);
   const [_lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
@@ -104,10 +104,13 @@ export default function Dashboard() {
   const [newsSource, setNewsSource] = useState<'rss' | 'blog'>('rss');
   const [rssLoading, setRssLoading] = useState(false);
   const [ollamaStatus, setOllamaStatus] = useState<{ running: boolean; models: number; bestModel: string } | null>(null);
-  const [lastBenchmark, setLastBenchmark] = useState<BenchmarkEntry | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [ollamaStarting, setOllamaStarting] = useState(false);
   const newsFeedRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleNewsScroll = useCallback(() => {
     if (newsFeedRef.current) {
@@ -123,29 +126,18 @@ export default function Dashboard() {
     if (ollamaStarting || ollamaStatus?.running) return;
     setOllamaStarting(true);
     try {
-      const { invoke: tauriInvoke } = await import('@tauri-apps/api/core');
-      // Avvia Ollama via backend Tauri (bypassa CORS)
-      await tauriInvoke('start_ollama').catch(() => {});
-      // Retry con backoff: Ollama può impiegare fino a 15s ad avviarsi
+      // Prova ad avviare Ollama via Tauri backend (solo per start, non per check)
+      try {
+        const { invoke: tauriInvoke } = await import('@tauri-apps/api/core');
+        await tauriInvoke('start_ollama').catch(() => {});
+      } catch {
+        // Non in ambiente Tauri, l'utente deve avviare Ollama manualmente
+      }
+      // Retry con backoff usando HTTP diretto (no IPC errors)
       const checkIntervals = [2000, 4000, 6000, 10000];
       let found = false;
       for (const delay of checkIntervals) {
         await new Promise(r => setTimeout(r, delay));
-        try {
-          const status = await tauriInvoke<{ installed: boolean; running: boolean; models: string[] }>('check_ollama_status');
-          if (status.running) {
-            setOllamaStatus({
-              running: true,
-              models: status.models?.length || 0,
-              bestModel: status.models?.[0] || '',
-            });
-            found = true;
-            break;
-          }
-        } catch {}
-      }
-      if (!found) {
-        // Ultimo tentativo diretto
         try {
           const r = await fetch('http://localhost:11434/api/tags', { signal: AbortSignal.timeout(3000) });
           if (r.ok) {
@@ -153,11 +145,12 @@ export default function Dashboard() {
             const models = data.models as unknown[];
             setOllamaStatus({ running: true, models: models.length, bestModel: (models[0] as { name?: string })?.name || '' });
             found = true;
+            break;
           }
         } catch {}
-        if (!found) {
-          setOllamaStatus({ running: false, models: 0, bestModel: '' });
-        }
+      }
+      if (!found) {
+        setOllamaStatus({ running: false, models: 0, bestModel: '' });
       }
       setOllamaStarting(false);
     } catch {
@@ -178,35 +171,21 @@ export default function Dashboard() {
       setRssNews(items);
       setRssLoading(false);
     }).catch(() => setRssLoading(false));
-    // Ollama status — use Tauri backend to avoid CORS issues with direct fetch
+    // Ollama status — HTTP diretto (funziona sia in browser che in Tauri)
     (async () => {
       try {
-        const { invoke: tauriInvoke } = await import('@tauri-apps/api/core');
-        const status = await tauriInvoke<{ installed: boolean; running: boolean; models: string[] }>('check_ollama_status');
-        setOllamaStatus({
-          running: status.running,
-          models: status.models?.length || 0,
-          bestModel: status.models?.[0] || '',
-        });
-      } catch {
-        // Fallback: try direct fetch (works if OLLAMA_ORIGINS is set)
-        try {
-          const r = await fetch('http://localhost:11434/api/tags', { signal: AbortSignal.timeout(3000) });
-          if (r.ok) {
-            const data = await r.json();
-            const models = data.models as unknown[];
-            setOllamaStatus({ running: true, models: models.length, bestModel: (models[0] as { name?: string })?.name || '' });
-          } else {
-            setOllamaStatus({ running: false, models: 0, bestModel: '' });
-          }
-        } catch {
+        const r = await fetch('http://localhost:11434/api/tags', { signal: AbortSignal.timeout(3000) });
+        if (r.ok) {
+          const data = await r.json();
+          const models = data.models as unknown[];
+          setOllamaStatus({ running: true, models: models.length, bestModel: (models[0] as { name?: string })?.name || '' });
+        } else {
           setOllamaStatus({ running: false, models: 0, bestModel: '' });
         }
+      } catch {
+        setOllamaStatus({ running: false, models: 0, bestModel: '' });
       }
     })();
-    // Ultimo benchmark
-    const history = loadBenchmarkHistory();
-    if (history.length > 0) setLastBenchmark(history[history.length - 1]);
     const interval = setInterval(fetchDashboardData, 120000);
     return () => clearInterval(interval);
   }, []);
@@ -438,6 +417,24 @@ export default function Dashboard() {
   const totalGames = Object.values(stats.storeStats).reduce((s, v) => s + v.games, 0);
   const totalTranslated = stats.translationStats.completed;
 
+  // Evita flash durante hydration - mostra schermata di caricamento pulita
+  if (!isMounted) {
+    return (
+      <div className="relative overflow-hidden h-full flex flex-col items-center justify-center" style={{ background: 'linear-gradient(180deg, #141c27 0%, #0f1923 60%, #0a1018 100%)' }}>
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative">
+            <Gamepad2 className="h-12 w-12 text-[#67c1f5] animate-pulse" />
+            <div className="absolute inset-0 blur-xl bg-[#1a9fff]/20 rounded-full" />
+          </div>
+          <div className="flex items-center gap-2">
+            <RefreshCw className="h-4 w-4 text-[#67c1f5] animate-spin" />
+            <span className="text-sm text-[#8f98a0]">{t('common.loading')}</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative overflow-hidden h-full flex flex-col" style={{ background: 'linear-gradient(180deg, #141c27 0%, #0f1923 60%, #0a1018 100%)' }}>
       
@@ -447,7 +444,7 @@ export default function Dashboard() {
           <div className="flex items-center gap-2">
             <Link href="/library" className="group flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#1a9fff]/20 to-[#1a9fff]/5 hover:from-[#1a9fff]/30 hover:to-[#1a9fff]/15 border border-[#1a9fff]/25 hover:border-[#1a9fff]/50 transition-all hover:shadow-[0_0_20px_rgba(26,159,255,0.15)] hover:-translate-y-0.5">
               <Sparkles className="h-4 w-4 text-[#67c1f5] group-hover:text-[#1a9fff]" />
-              <span className="text-xs font-semibold text-[#c6d4df] group-hover:text-white transition-colors">{language === 'it' ? 'Traduci un gioco' : 'Translate a game'}</span>
+              <span className="text-xs font-semibold text-[#c6d4df] group-hover:text-white transition-colors">{t('common.translateAGame')}</span>
             </Link>
             <Link href="/community-hub" className="group flex items-center gap-2 px-3 py-2 rounded-lg bg-[#2a475e]/20 hover:bg-[#2a475e]/40 border border-[#2a475e]/30 hover:border-[#67c1f5]/30 transition-all hover:-translate-y-0.5">
               <Globe className="h-3.5 w-3.5 text-[#8f98a0] group-hover:text-[#67c1f5]" />
@@ -455,24 +452,34 @@ export default function Dashboard() {
             </Link>
             <Link href="/editor" className="group flex items-center gap-2 px-3 py-2 rounded-lg bg-[#2a475e]/20 hover:bg-[#2a475e]/40 border border-[#2a475e]/30 hover:border-[#67c1f5]/30 transition-all hover:-translate-y-0.5">
               <Layers className="h-3.5 w-3.5 text-[#8f98a0] group-hover:text-[#67c1f5]" />
-              <span className="text-[11px] font-medium text-[#8f98a0] group-hover:text-[#c6d4df]">{language === 'it' ? 'Progetti' : 'Projects'}</span>
+              <span className="text-[11px] font-medium text-[#8f98a0] group-hover:text-[#c6d4df]">{t('common.projects')}</span>
             </Link>
           </div>
           <div className="ml-auto flex items-center gap-3">
             <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0e1419]/60 border border-[#2a475e]/30 transition-opacity duration-300 ${totalGames > 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
               <Gamepad2 className="h-3.5 w-3.5 text-[#67c1f5]" />
               <span className="text-sm font-bold text-[#67c1f5]">{totalGames}</span>
-              <span className="text-micro text-[#8f98a0] uppercase tracking-wider">{language === 'it' ? 'giochi' : 'games'}</span>
+              <span className="text-micro text-[#8f98a0] uppercase tracking-wider">{t('common.games')}</span>
             </div>
             <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0e1419]/60 border border-emerald-500/20 transition-opacity duration-300 ${(totalTranslated > 0 || stats.tmEntries > 0) ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
               <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
               <span className="text-sm font-bold text-emerald-400">{(totalTranslated + stats.tmEntries).toLocaleString()}</span>
-              <span className="text-micro text-[#8f98a0] uppercase tracking-wider">{language === 'it' ? 'stringhe tradotte' : 'translated strings'}</span>
+              <span className="text-micro text-[#8f98a0] uppercase tracking-wider">{t('common.translatedStrings')}</span>
             </div>
             <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0e1419]/60 border border-purple-500/20 transition-opacity duration-300 ${(stats.tmEntries > 0 && totalTranslated > 0) ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
               <Zap className="h-3.5 w-3.5 text-purple-400" />
               <span className="text-sm font-bold text-purple-400">{stats.tmEntries.toLocaleString()}</span>
               <span className="text-micro text-[#8f98a0] uppercase tracking-wider">TM</span>
+            </div>
+            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0e1419]/60 border border-amber-500/20 transition-opacity duration-300 ${stats.patches > 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+              <Wrench className="h-3.5 w-3.5 text-amber-400" />
+              <span className="text-sm font-bold text-amber-400">{stats.patches}</span>
+              <span className="text-micro text-[#8f98a0] uppercase tracking-wider">{t('common.patches')}</span>
+            </div>
+            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0e1419]/60 border border-cyan-500/20 transition-opacity duration-300 ${stats.timeSavedMinutes > 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+              <Clock className="h-3.5 w-3.5 text-cyan-400" />
+              <span className="text-sm font-bold text-cyan-400">{stats.timeSavedMinutes >= 60 ? `${Math.round(stats.timeSavedMinutes / 60)}h` : `${stats.timeSavedMinutes}m`}</span>
+              <span className="text-micro text-[#8f98a0] uppercase tracking-wider">{t('common.saved')}</span>
             </div>
           </div>
         </div>
@@ -506,7 +513,7 @@ export default function Dashboard() {
                     : 'text-[#8f98a0] hover:text-[#c6d4df] hover:bg-[#2a475e]/20'
                 }`}
               >
-                <Newspaper className="h-3.5 w-3.5" /> {language === 'it' ? 'Mie Notizie' : 'My News'}
+                <Newspaper className="h-3.5 w-3.5" /> {t('common.myNews')}
               </button>
             </div>
             <div className="flex items-center gap-2">
@@ -517,7 +524,7 @@ export default function Dashboard() {
               >
                 {newsSource === 'rss' ? (
                   <>
-                    <option value="all">{language === 'it' ? 'Tutte le categorie' : 'All categories'}</option>
+                    <option value="all">{t('common.allCategories')}</option>
                     {uniqueRssCategories.map(cat => {
                       const info = FEED_CATEGORIES.find(c => c.id === cat);
                       return info ? <option key={cat} value={cat}>{info.icon} {info.labels?.[language] || info.labels?.['en'] || info.id}</option> : null;
@@ -525,7 +532,7 @@ export default function Dashboard() {
                   </>
                 ) : (
                   <>
-                    <option value="all">{language === 'it' ? 'Tutte le notizie' : 'All news'}</option>
+                    <option value="all">{t('common.allNews')}</option>
                     {uniqueGameNames.map(g => <option key={g} value={g}>{g}</option>)}
                     {uniqueTags.map(tag => <option key={tag} value={tag}>{tag}</option>)}
                   </>
@@ -575,7 +582,7 @@ export default function Dashboard() {
                         </p>
                         <div className="flex items-center gap-2 mt-auto pt-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <ExternalLink className="h-3 w-3 text-[#1a9fff]/60" />
-                          <span className="text-micro text-[#1a9fff]/60">{language === 'it' ? 'Leggi articolo' : 'Read article'}</span>
+                          <span className="text-micro text-[#1a9fff]/60">{t('common.readArticle')}</span>
                         </div>
                       </div>
                     </div>
@@ -589,7 +596,7 @@ export default function Dashboard() {
                         <RefreshCw className="h-8 w-8 opacity-30 animate-spin" />
                         <div className="absolute inset-0 blur-lg bg-[#1a9fff]/10 rounded-full animate-pulse" />
                       </div>
-                      <p className="text-xs text-[#8f98a0]/60">{language === 'it' ? 'Caricamento feed...' : 'Loading feeds...'}</p>
+                      <p className="text-xs text-[#8f98a0]/60">{t('common.loadingFeeds')}</p>
                       <div className="w-full max-w-lg space-y-3 mt-2">
                         {[1,2,3].map(i => (
                           <div key={i} className="flex gap-3.5 p-3 rounded-lg bg-[#16202d]/60 animate-pulse">
@@ -611,10 +618,10 @@ export default function Dashboard() {
                         <div className="absolute inset-0 blur-xl bg-[#1a9fff]/5 rounded-full" />
                       </div>
                       <div className="text-center">
-                        <p className="text-sm font-medium text-[#8f98a0]/50">{language === 'it' ? 'Nessun feed attivo' : 'No active feeds'}</p>
+                        <p className="text-sm font-medium text-[#8f98a0]/50">{t('common.noActiveFeeds')}</p>
                         <Link href="/news-feeds" className="text-xs text-[#1a9fff] hover:text-[#67c1f5] mt-3 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#1a9fff]/10 hover:bg-[#1a9fff]/20 border border-[#1a9fff]/20 transition-all">
                           <Settings2 className="h-3.5 w-3.5" />
-                          {language === 'it' ? 'Configura i feed' : 'Configure feeds'}
+                          {t('common.configureFeeds')}
                         </Link>
                       </div>
                     </>
@@ -648,7 +655,7 @@ export default function Dashboard() {
                       )}
                       <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                         <div>
-                          <span className="text-micro font-bold text-[#8f98a0] uppercase tracking-widest">{post.tag || (language === 'it' ? 'NOTIZIE' : 'NEWS')}</span>
+                          <span className="text-micro font-bold text-[#8f98a0] uppercase tracking-widest">{post.tag || (t('common.news'))}</span>
                           <h3 className="text-[13px] font-bold text-[#e5e9ed] group-hover:text-white leading-snug transition-colors line-clamp-2 mt-1">
                             {post.title}
                           </h3>
@@ -664,9 +671,9 @@ export default function Dashboard() {
                 <div className="flex flex-col items-center justify-center h-full text-[#8f98a0]/40 gap-4 py-16">
                   <Newspaper className="h-12 w-12 opacity-15" />
                   <div className="text-center">
-                    <p className="text-sm font-medium text-[#8f98a0]/50">{language === 'it' ? 'Nessuna notizia' : 'No news yet'}</p>
+                    <p className="text-sm font-medium text-[#8f98a0]/50">{t('common.noNewsYet')}</p>
                     <Link href="/blog" className="text-xs text-[#1a9fff] hover:text-[#67c1f5] mt-3 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#1a9fff]/10 hover:bg-[#1a9fff]/20 border border-[#1a9fff]/20 transition-all">
-                      {language === 'it' ? 'Scrivi la prima notizia' : 'Write the first news'}
+                      {t('common.writeTheFirstNews')}
                     </Link>
                   </div>
                 </div>
@@ -678,11 +685,11 @@ export default function Dashboard() {
             {showScrollTop && (
               <button
                 onClick={scrollToTop}
-                title={language === 'it' ? 'Torna in cima' : 'Back to top'}
+                title={t('common.backToTop')}
                 className="sticky bottom-4 ml-auto mr-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1a9fff]/90 hover:bg-[#1a9fff] text-white text-2xs font-bold shadow-lg shadow-[#1a9fff]/20 hover:shadow-[#1a9fff]/40 transition-all hover:-translate-y-0.5 backdrop-blur-sm z-10"
               >
                 <ArrowUpCircle className="h-3.5 w-3.5" />
-                {language === 'it' ? 'Torna in cima' : 'Back to top'}
+                {t('common.backToTop')}
               </button>
             )}
           </div>
@@ -704,7 +711,7 @@ export default function Dashboard() {
                       <div className="absolute bottom-0 left-0 right-0 p-3.5">
                         <div className="flex items-center gap-1.5 mb-1.5 opacity-80 group-hover:opacity-100 transition-opacity">
                           <Play className="h-3 w-3 text-[#67c1f5]" fill="currentColor" />
-                          <span className="text-micro text-[#8f98a0] uppercase tracking-[0.2em] font-bold">{language === 'it' ? 'Ultimo gioco' : 'Last opened'}</span>
+                          <span className="text-micro text-[#8f98a0] uppercase tracking-[0.2em] font-bold">{t('common.lastOpened')}</span>
                         </div>
                         <p className="text-[15px] font-bold text-white truncate drop-shadow-md">{lastGame.title}</p>
                       </div>
@@ -724,7 +731,7 @@ export default function Dashboard() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5 mb-0.5">
                             <Play className="h-2.5 w-2.5 text-[#67c1f5]" fill="currentColor" />
-                            <span className="text-2xs text-[#8f98a0] uppercase tracking-[0.15em] font-bold">{language === 'it' ? 'Ultimo gioco' : 'Last opened'}</span>
+                            <span className="text-2xs text-[#8f98a0] uppercase tracking-[0.15em] font-bold">{t('common.lastOpened')}</span>
                           </div>
                           <p className="text-xs font-bold text-[#c6d4df] truncate group-hover:text-white transition-colors">{lastGame.title}</p>
                         </div>
@@ -735,7 +742,7 @@ export default function Dashboard() {
                     <button
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.location.href = `/auto-translate?gameId=${lastGame.id}&gameName=${encodeURIComponent(lastGame.title)}&installPath=&platform=${lastGame.platform}`; }}
                       className="w-full py-2 bg-gradient-to-r from-[#1a9fff]/15 to-[#1a9fff]/5 hover:from-[#1a9fff]/25 hover:to-[#1a9fff]/15 border-t border-[#2a475e]/30 text-2xs font-bold text-[#67c1f5] flex items-center justify-center gap-1.5 transition-all uppercase tracking-wider">
-                      <Zap className="h-3 w-3" fill="currentColor" /> {language === 'it' ? 'Continua Traduzione' : 'Continue Translation'}
+                      <Zap className="h-3 w-3" fill="currentColor" /> {t('common.continueTranslation')}
                     </button>
                   )}
                 </div>
@@ -794,84 +801,27 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Stats Cards */}
-            <div className="grid grid-cols-3 gap-2">
-              <div className="rounded-lg bg-[#1b2838] border border-[#2a475e]/50 p-2.5 text-center hover:border-[#67c1f5]/40 transition-colors">
-                <div className="text-base font-bold text-[#67c1f5]">{totalTranslated.toLocaleString()}</div>
-                <div className="text-2xs text-[#8f98a0] uppercase tracking-wider mt-0.5 font-medium">{dash.totalTranslations}</div>
+            {/* Ollama Status - Compact */}
+            <div className="flex items-center justify-between px-2 py-1.5 rounded-lg bg-[#1b2838]/60 border border-[#2a475e]/30">
+              <div className="flex items-center gap-1.5">
+                <Cpu className="h-3 w-3 text-[#67c1f5]" />
+                <span className="text-micro text-[#8f98a0] uppercase font-medium">Ollama</span>
               </div>
-              <div className="rounded-lg bg-[#1b2838] border border-[#2a475e]/50 p-2.5 text-center hover:border-[#67c1f5]/40 transition-colors">
-                <div className="text-base font-bold text-[#67c1f5]">{stats.patches}</div>
-                <div className="text-2xs text-[#8f98a0] uppercase tracking-wider mt-0.5 font-medium">{dash.gamesPatched}</div>
-              </div>
-              <div className="rounded-lg bg-[#1b2838] border border-[#2a475e]/50 p-2.5 text-center hover:border-[#67c1f5]/40 transition-colors">
-                <div className="text-base font-bold text-[#67c1f5]">{stats.timeSavedMinutes >= 60 ? `${Math.round(stats.timeSavedMinutes / 60)}h` : `${stats.timeSavedMinutes}m`}</div>
-                <div className="text-2xs text-[#8f98a0] uppercase tracking-wider mt-0.5 font-medium">{dash.timeSaved}</div>
-              </div>
-            </div>
-
-            {/* Ollama + Pipeline Status */}
-            <div className="rounded-lg bg-[#1b2838] border border-[#2a475e]/50 overflow-hidden">
-              <div className="flex items-center gap-2 px-3 py-2 bg-[#15202e] border-b border-[#2a475e]/50">
-                <Cpu className="h-3.5 w-3.5 text-[#67c1f5]" />
-                <h3 className="text-[11px] font-bold text-[#e5e9ed] uppercase tracking-wider">{t('settings.ollamaSettings') || 'AI Engine'}</h3>
-                {ollamaStatus && (
-                  <button
-                    onClick={!ollamaStatus.running ? startOllama : undefined}
-                    title={ollamaStatus.running ? `Ollama — ${ollamaStatus.models} ${t('settings.availableModels') || 'models'}` : t('settings.startOllama') || 'Start Ollama'}
-                    className={`ml-auto h-2 w-2 rounded-full transition-all ${ollamaStatus.running ? 'bg-emerald-400' : ollamaStarting ? 'bg-yellow-400 animate-pulse' : 'bg-red-400 hover:bg-red-300 cursor-pointer hover:scale-125'}`}
-                  />
-                )}
-              </div>
-              <div className="p-3 space-y-2">
-                {ollamaStatus ? (
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xs text-[#8f98a0]">Ollama</span>
-                    {ollamaStarting ? (
-                      <span className="text-2xs font-bold text-yellow-400 flex items-center gap-1">
-                        <RefreshCw className="h-2.5 w-2.5 animate-spin" /> {t('common.loading') || 'Starting...'}
-                      </span>
-                    ) : ollamaStatus.running ? (
-                      <span className="text-2xs font-bold text-emerald-400">{ollamaStatus.models} {t('settings.availableModels') || 'models'}</span>
-                    ) : (
-                      <button
-                        onClick={startOllama}
-                        title={t('settings.startOllama') || 'Start Ollama'}
-                        className="text-2xs font-bold text-red-400 hover:text-red-300 transition-colors cursor-pointer"
-                      >
-                        Offline — {t('settings.startOllama') || 'Start'} ↗
-                      </button>
-                    )}
-                  </div>
+              {ollamaStatus ? (
+                ollamaStarting ? (
+                  <span className="text-micro font-bold text-yellow-400 flex items-center gap-1">
+                    <RefreshCw className="h-2.5 w-2.5 animate-spin" />
+                  </span>
+                ) : ollamaStatus.running ? (
+                  <span className="text-micro font-bold text-emerald-400">{ollamaStatus.models} models</span>
                 ) : (
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xs text-[#8f98a0]">Ollama</span>
-                    <RefreshCw className="h-2.5 w-2.5 text-[#8f98a0] animate-spin" />
-                  </div>
-                )}
-                {lastBenchmark && (
-                  <>
-                    <div className="h-px bg-[#2a475e]/30" />
-                    <Link href="/ai-pipeline" className="block group">
-                      <div className="flex items-center gap-1.5 mb-1">
-                        <Workflow className="h-2.5 w-2.5 text-violet-400" />
-                        <span className="text-micro text-[#8f98a0] uppercase tracking-wider font-bold">{language === 'it' ? 'Ultimo Pipeline' : 'Last Pipeline'}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-2xs text-[#c6d4df] group-hover:text-white transition-colors">{lastBenchmark.presetName}</span>
-                        <span className={`text-xs font-bold ${lastBenchmark.averageScore >= 80 ? 'text-emerald-400' : lastBenchmark.averageScore >= 60 ? 'text-yellow-400' : 'text-red-400'}`}>
-                          {lastBenchmark.averageScore}%
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 mt-0.5 text-micro text-[#8f98a0]">
-                        <span>{lastBenchmark.totalStrings} str</span>
-                        <span>{(lastBenchmark.totalDurationMs / 1000).toFixed(1)}s</span>
-                        <span>{lastBenchmark.msPerString}ms/str</span>
-                      </div>
-                    </Link>
-                  </>
-                )}
-              </div>
+                  <button onClick={startOllama} className="text-micro font-bold text-red-400 hover:text-red-300">
+                    Offline ↗
+                  </button>
+                )
+              ) : (
+                <RefreshCw className="h-2.5 w-2.5 text-[#8f98a0] animate-spin" />
+              )}
             </div>
 
             {/* Support banner */}
@@ -880,10 +830,10 @@ export default function Dashboard() {
               <span className="text-base">❤️</span>
               <div className="flex-1 min-w-0">
                 <p className="text-2xs font-semibold text-amber-300 group-hover:text-amber-200 transition-colors">
-                  {language === 'it' ? 'Supporta GameStringer' : 'Support GameStringer'}
+                  {t('common.supportGamestringer')}
                 </p>
                 <p className="text-2xs text-[#8f98a0]/70">
-                  {language === 'it' ? 'Aiutaci a mantenere le API e lo sviluppo' : 'Help us maintain APIs and development'}
+                  {t('common.helpUsMaintainApisAndDevelopment')}
                 </p>
               </div>
               <ExternalLink className="h-3 w-3 text-amber-400/50 group-hover:text-amber-400 transition-colors" />

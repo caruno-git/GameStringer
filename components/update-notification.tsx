@@ -6,6 +6,7 @@ import { X, Download, Sparkles } from 'lucide-react';
 import { open } from '@tauri-apps/plugin-shell';
 import { toast } from 'sonner';
 import { clientLogger } from '@/lib/client-logger';
+import { useTranslation } from '@/lib/i18n';
 
 interface UpdateInfo {
   current_version: string;
@@ -17,6 +18,7 @@ interface UpdateInfo {
 }
 
 export function UpdateNotification() {
+  const { t } = useTranslation();
   const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
   const [dismissed, setDismissed] = useState(false);
   const [checking, setChecking] = useState(false);
@@ -72,7 +74,7 @@ export function UpdateNotification() {
         window.open(updateInfo.download_url, '_blank', 'noopener,noreferrer');
       }
     } else {
-      toast.error('URL download non disponibile');
+      toast.error(t('common.urlDownloadNonDisponibile'));
     }
   };
 

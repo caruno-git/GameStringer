@@ -9,7 +9,6 @@ import { MainLayout } from '@/components/layout/main-layout';
 import { sessionPersistence } from '@/lib/session-persistence';
 import { isProtectedRoute } from '@/lib/route-config';
 import { Loader2 } from 'lucide-react';
-import { useTranslation } from '@/lib/i18n';
 import { clientLogger } from '@/lib/client-logger';
 
 interface ProfileWrapperProps {
@@ -17,7 +16,6 @@ interface ProfileWrapperProps {
 }
 
 export function ProfileWrapper({ children }: ProfileWrapperProps) {
-  const { t } = useTranslation();
   const [isInitializing, setIsInitializing] = useState(true);
   const pathname = usePathname();
 
@@ -71,8 +69,8 @@ export function ProfileWrapper({ children }: ProfileWrapperProps) {
           <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4 mx-auto">
             <Loader2 className="w-8 h-8 text-white animate-spin" />
           </div>
-          <h1 className="text-2xl font-bold text-white mb-2">{t('profileWrapperComp.gamestringer')}</h1>
-          <p className="text-blue-200">{t('profileWrapperComp.inizializzazioneSistemaDiAuthe')}</p>
+          <h1 className="text-2xl font-bold text-white mb-2">GameStringer</h1>
+          <p className="text-blue-200">Inizializzazione...</p>
         </div>
       </div>
     );
@@ -81,12 +79,22 @@ export function ProfileWrapper({ children }: ProfileWrapperProps) {
   // Determina se la route corrente richiede authentication
   const requireAuth = isProtectedRoute(pathname);
 
-  // Route che non devono avere MainLayout (finestre secondarie)
-  const noLayoutRoutes = ['/ocr-overlay'];
-  const skipLayout = noLayoutRoutes.some(route => pathname?.startsWith(route));
-
-  if (skipLayout) {
+  // Route che non devono avere NIENTE (ocr overlay trasparente)
+  const bareRoutes = ['/ocr-overlay'];
+  if (bareRoutes.some(route => pathname?.startsWith(route))) {
     return <>{children}</>;
+  }
+
+  // Route finestre secondarie: niente MainLayout ma servono i provider profilo
+  const popupRoutes = ['/chat-popup'];
+  if (popupRoutes.some(route => pathname?.startsWith(route))) {
+    return (
+      <ProfilesProvider>
+        <ProfileAuthProvider>
+          {children}
+        </ProfileAuthProvider>
+      </ProfilesProvider>
+    );
   }
 
   return (

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Search, CheckCircle, XCircle, AlertTriangle, Loader2, BarChart3, Gamepad2 } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 interface DryRunGameResult {
   title: string;
@@ -79,11 +80,12 @@ export default function DryRunScanner() {
     return () => { if (unlisten) unlisten(); };
   }, []);
 
+  const { t } = useTranslation();
   const startScan = useCallback(async () => {
     setRunning(true);
     setReport(null);
     setProgress({ current: 0, total: 0, message: 'Avvio scansione...' });
-    toast.info('🔍 Dry Run: scansione di tutti i giochi installati...');
+    toast.info(t('common.dryRunScansioneDiTuttiIGiochiInstallati'));
 
     try {
       const result = await invoke('dry_run_scan_all_games') as DryRunReport;
@@ -152,7 +154,7 @@ export default function DryRunScanner() {
         <>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
             <SummaryCard label="Scansionati" value={report.scanned} icon={<Gamepad2 className="w-4 h-4" />} color="text-white" />
-            <SummaryCard label="Pronti" value={report.ready} icon={<CheckCircle className="w-4 h-4" />} color="text-green-400" />
+            <SummaryCard label={t('common.pronti')} value={report.ready} icon={<CheckCircle className="w-4 h-4" />} color="text-green-400" />
             <SummaryCard label="Errori" value={report.errors} icon={<XCircle className="w-4 h-4" />} color="text-red-400" />
             <SummaryCard label="Non supportati" value={report.unsupported} icon={<AlertTriangle className="w-4 h-4" />} color="text-zinc-400" />
             <SummaryCard label="Tempo" value={`${report.duration_seconds.toFixed(0)}s`} icon={<BarChart3 className="w-4 h-4" />} color="text-indigo-400" />
@@ -188,13 +190,13 @@ export default function DryRunScanner() {
             <table className="w-full text-[11px]">
               <thead className="bg-slate-900/80 sticky top-0">
                 <tr className="text-slate-500 uppercase tracking-wider">
-                  <th className="text-left p-2">Gioco</th>
+                  <th className="text-left p-2">{t('common.gioco')}</th>
                   <th className="text-left p-2">Engine</th>
                   <th className="text-left p-2">Fast Path</th>
-                  <th className="text-right p-2">Stringhe</th>
-                  <th className="text-right p-2">File</th>
+                  <th className="text-right p-2">{t('common.stringhe')}</th>
+                  <th className="text-right p-2">{t('common.file')}</th>
                   <th className="text-right p-2">ms</th>
-                  <th className="text-center p-2">Stato</th>
+                  <th className="text-center p-2">{t('common.stato')}</th>
                 </tr>
               </thead>
               <tbody>

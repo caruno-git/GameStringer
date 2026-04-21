@@ -1,0 +1,34 @@
+System.Management.Automation.RemoteException
+<--- Last few GCs --->
+System.Management.Automation.RemoteException
+[43324:000002FA2F6B3000]   157208 ms: Mark-Compact 4010.6 (4131.3) -> 3995.4 (4132.3) MB, pooled: 1 MB, 1192.77 / 0.00 ms  (average mu = 0.096, current mu = 0.037) allocation failure; scavenge might not succeed
+[43324:000002FA2F6B3000]   158458 ms: Mark-Compact 4011.9 (4132.3) -> 3996.7 (4133.5) MB, pooled: 0 MB, 1209.66 / 0.00 ms  (average mu = 0.065, current mu = 0.033) allocation failure; scavenge might not succeed
+System.Management.Automation.RemoteException
+System.Management.Automation.RemoteException
+<--- JS stacktrace --->
+System.Management.Automation.RemoteException
+FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+System.Management.Automation.RemoteException
+ 1: 00007FF6269C711D node::SetCppgcReference+17725
+ 2: 00007FF62692A138 SSL_get_quiet_shutdown+92344
+ 3: 00007FF6274B0C51 v8::Isolate::ReportExternalAllocationLimitReached+65
+ 4: 00007FF62749D8D6 v8::Function::Experimental_IsNopFunction+2870
+ 5: 00007FF6272EAA20 v8::internal::StrongRootAllocatorBase::StrongRootAllocatorBase+31456
+ 6: 00007FF6272E471A v8::internal::StrongRootAllocatorBase::StrongRootAllocatorBase+6106
+ 7: 00007FF6272DFDB5 v8::CpuProfileNode::GetScriptResourceNameStr+188453
+ 8: 00007FF626C6309D BIO_ssl_shutdown+189
+System.Management.Automation.RemoteException
+[31mÔÄ»ÔÄ»ÔÄ»ÔÄ»[39m[1m[41m Unhandled Rejection [49m[22m[31mÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[39m
+[31m[1mError[22m: Channel closed[39m
+[90m [2mÔØ»[22m target.send node:internal/child_process:[2m753:16[22m[39m
+[90m [2mÔØ»[22m ProcessWorker.send node_modules/tinypool/dist/index.js:[2m140:41[22m[39m
+[90m [2mÔØ»[22m MessagePort.<anonymous> node_modules/tinypool/dist/index.js:[2m149:62[22m[39m
+[90m [2mÔØ»[22m [nodejs.internal.kHybridDispatch] node:internal/event_target:[2m827:20[22m[39m
+[90m [2mÔØ»[22m MessagePort.<anonymous> node:internal/per_context/messageport:[2m23:28[22m[39m
+System.Management.Automation.RemoteException
+[31m[2mÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'ERR_IPC_CHANNEL_CLOSED' }[39m
+System.Management.Automation.RemoteException
+System.Management.Automation.RemoteException
+System.Management.Automation.RemoteException

@@ -63,6 +63,7 @@ export function LipSyncPanel({ audioPath: initialPath, dialogText: initialDialog
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [activeViseme, setActiveViseme] = useState<MouthCue | null>(null);
+  const { t } = useTranslation();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const animFrameRef = useRef<number>(0);
 
@@ -247,7 +248,7 @@ export function LipSyncPanel({ audioPath: initialPath, dialogText: initialDialog
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
             <div className="p-2.5 rounded-lg bg-zinc-800/50 border border-zinc-700">
-              <div className="text-[10px] text-zinc-500">Durata</div>
+              <div className="text-[10px] text-zinc-500">{t('common.durata')}</div>
               <div className="text-sm font-bold text-white">{stats.duration.toFixed(2)}s</div>
             </div>
             <div className="p-2.5 rounded-lg bg-zinc-800/50 border border-zinc-700">
@@ -272,7 +273,7 @@ export function LipSyncPanel({ audioPath: initialPath, dialogText: initialDialog
           <div className="bg-zinc-800/30 rounded-lg border border-zinc-700 p-3">
             <div className="flex items-center gap-2 mb-2">
               <BarChart3 className="w-4 h-4 text-pink-400" />
-              <span className="text-xs font-medium text-zinc-400">Timeline Visemi</span>
+              <span className="text-xs font-medium text-zinc-400">{t('common.timelineVisemi')}</span>
               {/* Playback controls */}
               <div className="ml-auto flex items-center gap-2">
                 <Button variant="ghost" size="sm" onClick={togglePlayback} className="h-6 w-6 p-0">
@@ -358,7 +359,7 @@ export function LipSyncPanel({ audioPath: initialPath, dialogText: initialDialog
           <div className="bg-zinc-800/30 rounded-lg border border-zinc-700 p-3 space-y-3">
             <div className="flex items-center gap-2">
               <Download className="w-4 h-4 text-pink-400" />
-              <span className="text-xs font-medium text-zinc-400">Esporta Lip Sync</span>
+              <span className="text-xs font-medium text-zinc-400">{t('common.esportaLipSync')}</span>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -378,7 +379,7 @@ export function LipSyncPanel({ audioPath: initialPath, dialogText: initialDialog
 
               {exportEngine === 'raw' && (
                 <div>
-                  <Label className="text-[10px] text-zinc-500 mb-1 block">Formato</Label>
+                  <Label className="text-[10px] text-zinc-500 mb-1 block">{t('common.formato')}</Label>
                   <Select value={exportFormat} onValueChange={(v) => setExportFormat(v as 'json' | 'xml' | 'tsv')}>
                     <SelectTrigger className="bg-zinc-800/50 border-zinc-700 h-8 text-xs">
                       <SelectValue />

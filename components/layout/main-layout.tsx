@@ -44,7 +44,8 @@ import {
   Library,
   Languages,
   Shield,
-  Disc
+  Disc,
+  Store
 } from 'lucide-react';
 import { invoke } from '@/lib/tauri-api';
 // Image import removed — not currently used
@@ -59,6 +60,7 @@ import { NotificationCenter } from '@/components/notifications/notification-cent
 import { useNotificationShortcuts } from '@/hooks/use-global-shortcuts';
 import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts';
 import { UpdateBell } from '@/components/notifications/update-bell';
+import { AutoUpdater } from '@/components/notifications/auto-updater';
 import { FeaturedGameWidget } from '@/components/ui/featured-game-widget';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
@@ -125,7 +127,7 @@ const getNavGroups = (t: (key: string) => string) => [
     items: [
       { name: t('nav.dashboard'), href: '/', icon: Home },
       { name: t('nav.library'), href: '/library', icon: Gamepad2 },
-      { name: 'Traduci Gioco', href: '/auto-translate', icon: Rocket, highlight: true },
+      { name: t('nav.projects'), href: '/projects', icon: Rocket, highlight: true },
     ],
     colorClass: 'text-slate-400 hover:text-slate-200 hover:bg-slate-500/20',
     activeClass: 'bg-slate-500/20 backdrop-blur-md text-slate-200 border border-slate-500/30 shadow-lg shadow-slate-500/20',
@@ -194,6 +196,7 @@ const getNavGroups = (t: (key: string) => string) => [
     collapsible: true,
     items: [
       { name: t('nav.community'), href: '/community-hub', icon: Users },
+      { name: t('nav.stores'), href: '/stores', icon: Store },
       { name: 'Ollama / AI', href: '/ollama-manager', icon: Package, ollamaIndicator: true },
       { name: t('nav.settings'), href: '/settings', icon: Settings },
       { name: t('nav.guide'), href: '/guide', icon: BookOpen },
@@ -243,7 +246,7 @@ export function MainLayout({ children }: MainLayoutProps) {
     steamApi: { status: 'connected', color: 'bg-blue-500', text: 'OK' },
     cache: { percentage: 0, color: 'bg-cyan-500', text: '0%' }
   });
-  const [isOnline, setIsOnline] = useState(true);
+  const [isOnline, setIsOnline] = useState<boolean>(typeof navigator !== 'undefined' ? navigator.onLine : true);
   const pathname = usePathname();
   const router = useRouter();
   const { version, buildInfo: _buildInfo, allVersions } = useVersion();
@@ -335,6 +338,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   // Ollama status polling per indicatore sidebar
   useEffect(() => {
     const checkOllama = async () => {
+      // Usa solo HTTP diretto (funziona sia in browser che in Tauri)
       try {
         const res = await fetch('http://127.0.0.1:11434/api/tags', { signal: AbortSignal.timeout(3000) });
         setOllamaOnline(res.ok);
@@ -742,7 +746,7 @@ export function MainLayout({ children }: MainLayoutProps) {
             {sidebarOpen ? (
               <div className="w-full flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-slate-800/50 transition-colors cursor-pointer group">
                 <TutorialMenu />
-                <span className="text-2xs font-medium text-slate-500 group-hover:text-slate-300 transition-colors uppercase tracking-widest">Tutorial & Guide</span>
+                <span className="text-2xs font-medium text-slate-500 group-hover:text-slate-300 transition-colors uppercase tracking-widest">{t('nav.tutorialAndGuide')}</span>
               </div>
             ) : (
               <TutorialMenu />
@@ -1054,7 +1058,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                 <button 
                   onClick={() => setChangelogOpen(true)}
                   className="flex items-center gap-1.5 px-2 py-1 text-2xs font-medium text-slate-400 hover:text-emerald-400 hover:bg-slate-800/50 rounded-md transition-all"
-                  title="Changelog"
+                  title={t('common.changelog')}
                 >
                   {isOnline ? (
                     <Wifi className="w-3 h-3 text-emerald-500" />
@@ -1101,6 +1105,9 @@ export function MainLayout({ children }: MainLayoutProps) {
         
         {/* System Monitor Overlay */}
         <SystemOverlay position="bottom-right" compact />
+        
+        {/* Auto Updater Notification */}
+        <AutoUpdater />
         
         {/* Notification Center */}
         <NotificationCenter 

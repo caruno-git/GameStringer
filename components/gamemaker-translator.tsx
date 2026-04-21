@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from 'sonner';
+import { useTranslation } from '@/lib/i18n';
 import {
   Loader2, Search, Languages, Download, Upload, RotateCcw, 
   ChevronLeft, ChevronRight, FileText, Zap, Check, X,
@@ -63,6 +64,7 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
   const [translateProgress, setTranslateProgress] = useState(0);
   const [translateTotal, setTranslateTotal] = useState(0);
   const [showOnlyUntranslated, setShowOnlyUntranslated] = useState(false);
+  const { t } = useTranslation();
   const abortRef = useRef(false);
 
   // Scan data.win on mount
@@ -151,7 +153,7 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
   const translateBatch = async () => {
     const toTranslate = strings.filter(s => !translations[s.index] && s.is_translatable);
     if (toTranslate.length === 0) {
-      toast.info('Tutte le stringhe visibili sono già tradotte');
+      toast.info(t('common.tutteLeStringheVisibiliSonoGiàTradotte'));
       return;
     }
 
@@ -266,7 +268,7 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
   // Patch data.win with translations
   const patchDataWin = async () => {
     if (Object.keys(translations).length === 0) {
-      toast.error('Nessuna traduzione da applicare');
+      toast.error(t('common.nessunaTraduzioneDaApplicare'));
       return;
     }
 
@@ -317,7 +319,7 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
     a.download = `${gameName.replace(/[^a-zA-Z0-9]/g, '_')}_gm_translations.json`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success('Traduzioni esportate');
+    toast.success(t('common.traduzioniEsportate'));
   };
 
   // Import translations from JSON
@@ -342,7 +344,7 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
           toast.success(`${Object.keys(imported).length} traduzioni importate`);
         }
       } catch {
-        toast.error('File JSON non valido');
+        toast.error(t('common.fileJsonNonValido'));
       }
     };
     input.click();
@@ -419,7 +421,7 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
             <Card className="bg-slate-800/50 border-slate-700/50">
               <CardContent className="p-2.5 text-center">
                 <div className="text-lg font-bold text-amber-400">{dataInfo.translatable_strings.toLocaleString()}</div>
-                <div className="text-micro text-slate-400 uppercase">Traducibili</div>
+                <div className="text-micro text-slate-400 uppercase">{t('common.traducibili')}</div>
               </CardContent>
             </Card>
             <Card className="bg-slate-800/50 border-slate-700/50">
@@ -431,7 +433,7 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
             <Card className="bg-slate-800/50 border-slate-700/50">
               <CardContent className="p-2.5 text-center">
                 <div className="text-lg font-bold text-sky-400">{translationPercent}%</div>
-                <div className="text-micro text-slate-400 uppercase">Progresso</div>
+                <div className="text-micro text-slate-400 uppercase">{t('common.progresso')}</div>
               </CardContent>
             </Card>
           </div>
@@ -501,7 +503,7 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
               <div className="relative flex-1">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
                 <Input
-                  aria-label="Cerca" placeholder="Cerca stringhe..."
+                  aria-label={t('common.cerca')} placeholder="Cerca stringhe..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter') searchStrings(); }}
@@ -526,7 +528,7 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
               <div className="grid grid-cols-[50px_1fr_1fr_60px] gap-2 px-3 py-2 bg-slate-800/80 text-2xs uppercase text-slate-400 font-bold tracking-wider">
                 <span>#</span>
                 <span>Originale</span>
-                <span>Traduzione</span>
+                <span>{t('common.traduzione')}</span>
                 <span className="text-center">Azioni</span>
               </div>
 
@@ -572,7 +574,7 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
                     </div>
                     
                     <div className="flex items-center justify-center gap-0.5">
-                      <Button size="sm" variant="ghost" className="h-6 w-6 p-0" onClick={() => startEdit(s)} title="Modifica">
+                      <Button size="sm" variant="ghost" className="h-6 w-6 p-0" onClick={() => startEdit(s)} title={t('common.modifica')}>
                         <Edit3 className="h-3 w-3 text-slate-400" />
                       </Button>
                       {translations[s.index] && (
@@ -581,7 +583,7 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
                             const { [s.index]: _, ...rest } = translations;
                             setTranslations(rest);
                           }}
-                          title="Rimuovi traduzione">
+                          title={t('common.rimuoviTraduzione')}>
                           <X className="h-3 w-3 text-red-400" />
                         </Button>
                       )}

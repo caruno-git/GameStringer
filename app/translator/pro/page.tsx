@@ -1706,7 +1706,7 @@ export default function TranslatorProPage() {
                     <Label>{t('common.sourceLanguage') || 'Source language'}</Label>
                     <Select value={sourceLanguage} onValueChange={setSourceLanguage}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select language" />
+                        <SelectValue placeholder={t('common.selectLanguage')} />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="en"><span className="flex items-center gap-2">{getFlagEmoji('GB')} English</span></SelectItem>
@@ -1726,7 +1726,7 @@ export default function TranslatorProPage() {
                     <Label>{t('common.targetLanguage') || 'Target language'}</Label>
                     <Select value={targetLanguage} onValueChange={setTargetLanguage}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select language" />
+                        <SelectValue placeholder={t('common.selectLanguage')} />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="it"><span className="flex items-center gap-2">{getFlagEmoji('IT')} Italiano</span></SelectItem>

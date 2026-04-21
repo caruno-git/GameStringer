@@ -60,3 +60,20 @@ global.console = {
   warn: vi.fn(),
   error: vi.fn(),
 };
+
+// Mock globale i18n: evita "useTranslation must be used within an I18nProvider"
+// nei test che non wrappano i componenti con <I18nProvider>.
+// Il testo restituito è la key stessa (pattern comune nei test).
+vi.mock('@/lib/i18n', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/lib/i18n')>().catch(() => ({}));
+  return {
+    ...actual,
+    useTranslation: () => ({
+      t: (key: string, fallback?: string) => fallback ?? key,
+      language: 'it',
+      setLanguage: vi.fn(),
+      availableLanguages: ['it', 'en'],
+    }),
+    I18nProvider: ({ children }: { children: React.ReactNode }) => children,
+  };
+});

@@ -2,8 +2,10 @@
 
 import { Gamepad2 } from 'lucide-react';
 import { RomPatcherUI } from '@/components/tools/rom-patcher-ui';
+import { useTranslation } from '@/lib/i18n';
 
 export default function RomPatcherPage() {
+  const { t } = useTranslation();
   return (
     <div className="container mx-auto p-4 space-y-3">
       {/* Hero Header */}
@@ -14,7 +16,7 @@ export default function RomPatcherPage() {
             <Gamepad2 className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h1 className="text-base font-bold text-white">ROM Patcher</h1>
+            <h1 className="text-base font-bold text-white">{t('common.romPatcher')}</h1>
             <p className="text-white/60 text-2xs">
               Applica e crea patch IPS/BPS per traduzioni retro gaming
             </p>

@@ -21,6 +21,7 @@ import {
 } from '@/lib/news-feeds';
 
 export default function NewsFeedsPage() {
+  const { t } = useTranslation();
   const { language } = useTranslation();
   const [sources, setSources] = useState<NewsFeedSource[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<NewsFeedCategory | 'all'>('all');
@@ -45,18 +46,18 @@ export default function NewsFeedsPage() {
   const handleEnableAll = () => {
     sources.forEach(s => newsFeedService.toggleSource(s.id, true));
     setSources(newsFeedService.getSources());
-    toast.success(language === 'it' ? 'Tutti i feed attivati' : 'All feeds enabled');
+    toast.success(t('common.allFeedsEnabled'));
   };
 
   const handleDisableAll = () => {
     sources.forEach(s => newsFeedService.toggleSource(s.id, false));
     setSources(newsFeedService.getSources());
-    toast.success(language === 'it' ? 'Tutti i feed disattivati' : 'All feeds disabled');
+    toast.success(t('common.allFeedsDisabled'));
   };
 
   const handleRefreshCache = () => {
     newsFeedService.clearCache();
-    toast.success(language === 'it' ? 'Cache pulita. Le notizie saranno ricaricate.' : 'Cache cleared. News will reload.');
+    toast.success(t('common.cacheClearedNewsWillReload'));
   };
 
   const enabledCount = sources.filter(s => s.enabled).length;
@@ -78,22 +79,22 @@ export default function NewsFeedsPage() {
           </Link>
           <Rss className="h-5 w-5 text-[#67c1f5]" />
           <div>
-            <h1 className="text-base font-bold text-[#c6d4df]">{language === 'it' ? 'Gestisci Feed Notizie' : 'Manage News Feeds'}</h1>
+            <h1 className="text-base font-bold text-[#c6d4df]">{t('common.manageNewsFeeds')}</h1>
             <p className="text-2xs text-[#8f98a0]">
-              {enabledCount} {language === 'it' ? 'feed attivi su' : 'active feeds out of'} {sources.length}
+              {enabledCount} {t('common.activeFeedsOutOf')} {sources.length}
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
           <button onClick={handleRefreshCache} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm bg-[#2a475e]/30 hover:bg-[#2a475e]/50 text-[#8f98a0] hover:text-[#c6d4df] text-2xs transition-colors">
-            <RefreshCw className="h-3 w-3" /> {language === 'it' ? 'Pulisci cache' : 'Clear cache'}
+            <RefreshCw className="h-3 w-3" /> {t('common.clearCache')}
           </button>
           <button onClick={handleEnableAll} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm bg-[#1a9fff]/10 hover:bg-[#1a9fff]/20 text-[#67c1f5] text-2xs transition-colors border border-[#1a9fff]/20">
-            <Check className="h-3 w-3" /> {language === 'it' ? 'Attiva tutti' : 'Enable all'}
+            <Check className="h-3 w-3" /> {t('common.enableAll')}
           </button>
           <button onClick={handleDisableAll} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm bg-red-500/10 hover:bg-red-500/20 text-red-400 text-2xs transition-colors border border-red-500/20">
-            <X className="h-3 w-3" /> {language === 'it' ? 'Disattiva tutti' : 'Disable all'}
+            <X className="h-3 w-3" /> {t('common.disableAll')}
           </button>
         </div>
       </div>
@@ -108,7 +109,7 @@ export default function NewsFeedsPage() {
               : 'bg-[#1b2838]/60 border-[#2a475e]/30 text-[#8f98a0] hover:border-[#2a475e]/60 hover:text-[#c6d4df]'
           }`}
         >
-          {language === 'it' ? 'Tutti' : 'All'} ({sources.length})
+          {t('common.all')} ({sources.length})
         </button>
         {FEED_CATEGORIES.map(cat => {
           const count = sources.filter(s => s.category === cat.id).length;
@@ -162,10 +163,10 @@ export default function NewsFeedsPage() {
                 }`}
               >
                 {allEnabled 
-                  ? (language === 'it' ? 'Tutti attivi' : 'All on') 
+                  ? (t('common.allOn')) 
                   : someEnabled
-                    ? (language === 'it' ? 'Alcuni attivi' : 'Some on')
-                    : (language === 'it' ? 'Tutti spenti' : 'All off')}
+                    ? (t('common.someOn'))
+                    : (t('common.allOff'))}
               </button>
             </div>
 
@@ -225,9 +226,7 @@ export default function NewsFeedsPage() {
         <Globe className="h-4 w-4 text-[#8f98a0]/40 flex-shrink-0 mt-0.5" />
         <div>
           <p className="text-2xs text-[#8f98a0]/60 leading-relaxed">
-            {language === 'it' 
-              ? 'I feed vengono aggiornati automaticamente ogni 15 minuti. Le notizie sono recuperate tramite RSS pubblici. Nessun dato personale viene inviato.'
-              : 'Feeds are automatically refreshed every 15 minutes. News are fetched via public RSS. No personal data is sent.'}
+            {t('common.feedsAreAutomaticallyRefreshedEvery15MinutesNewsAreFetchedViaPublicRssNoPersonalDataIsSent')}
           </p>
         </div>
       </div>

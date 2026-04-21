@@ -14,6 +14,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
+import { useTranslation } from '@/lib/i18n';
 
 // ── Types ──────────────────────────────────────────────────
 interface ExtractResult {
@@ -87,6 +88,7 @@ type Step = 'select' | 'extract' | 'translate' | 'inject' | 'done';
 
 // ── Main Component ─────────────────────────────────────────
 export function UnityInkTranslator() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [step, setStep] = useState<Step>('select');
   const [gameDir, setGameDir] = useState('');
@@ -614,7 +616,7 @@ export function UnityInkTranslator() {
 
                 <div className="flex gap-2">
                   <div className="flex-1">
-                    <label className="text-xs text-slate-500 mb-1 block">Lingua target</label>
+                    <label className="text-xs text-slate-500 mb-1 block">{t('common.linguaTarget')}</label>
                     <select 
                       value={targetLang} 
                       onChange={e => setTargetLang(e.target.value)}
@@ -633,7 +635,7 @@ export function UnityInkTranslator() {
                     </select>
                   </div>
                   <div className="flex-1">
-                    <label className="text-xs text-slate-500 mb-1 block">Modello Ollama</label>
+                    <label className="text-xs text-slate-500 mb-1 block">{t('common.modelloOllama')}</label>
                     <select 
                       value={ollamaModel} 
                       onChange={e => setOllamaModel(e.target.value)}
@@ -668,9 +670,9 @@ export function UnityInkTranslator() {
                 
                 {extractResult ? (
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <StatCard label="File" value={extractResult.totalFiles} icon={FileText} color="blue" />
+                    <StatCard label={t('common.file')} value={extractResult.totalFiles} icon={FileText} color="blue" />
                     <StatCard label="Blob Ink" value={extractResult.totalBlobs} icon={Search} color="purple" />
-                    <StatCard label="Stringhe" value={extractResult.totalCarets} icon={Languages} color="green" />
+                    <StatCard label={t('common.stringhe')} value={extractResult.totalCarets} icon={Languages} color="green" />
                     <StatCard label="Uniche" value={extractResult.uniqueStrings} icon={BarChart3} color="amber" />
                   </div>
                 ) : (
@@ -683,7 +685,7 @@ export function UnityInkTranslator() {
                     {extracting ? (
                       <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Estrazione in corso...</>
                     ) : (
-                      <><Search className="h-4 w-4 mr-2" />Avvia Estrazione</>
+                      <><Search className="h-4 w-4 mr-2" />{t('common.avviaEstrazione')}</>
                     )}
                   </Button>
                 )}
@@ -847,7 +849,7 @@ export function UnityInkTranslator() {
                     <div className="grid grid-cols-3 gap-2">
                       <StatCard label="Tradotte" value={translateProgress.done} icon={CheckCircle2} color="green" small />
                       <StatCard label="Errori" value={translateProgress.errors} icon={AlertCircle} color="red" small />
-                      <StatCard label="Velocità" value={`${translateProgress.rate.toFixed(1)}/s`} icon={Zap} color="amber" small />
+                      <StatCard label={t('common.velocità')} value={`${translateProgress.rate.toFixed(1)}/s`} icon={Zap} color="amber" small />
                     </div>
                   </div>
                 )}
@@ -910,10 +912,10 @@ export function UnityInkTranslator() {
                 {injectResult.status === 'done' && (
                   <div className="space-y-3">
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      <StatCard label="File" value={`${injectResult.filesProcessed}/${injectResult.totalFiles}`} icon={FileText} color="green" />
+                      <StatCard label={t('common.file')} value={`${injectResult.filesProcessed}/${injectResult.totalFiles}`} icon={FileText} color="green" />
                       <StatCard label="Storie" value={injectResult.storiesModified} icon={Search} color="purple" />
                       <StatCard label="Sostituzioni" value={injectResult.totalReplacements} icon={Languages} color="blue" />
-                      <StatCard label="Stato" value="OK" icon={CheckCircle2} color="green" />
+                      <StatCard label={t('common.stato')} value="OK" icon={CheckCircle2} color="green" />
                     </div>
                     
                     <Button 
@@ -959,9 +961,9 @@ export function UnityInkTranslator() {
                 </p>
                 
                 <div className="grid grid-cols-3 gap-3 max-w-sm mx-auto">
-                  <StatCard label="File" value={injectResult.filesProcessed} icon={FileText} color="green" small />
+                  <StatCard label={t('common.file')} value={injectResult.filesProcessed} icon={FileText} color="green" small />
                   <StatCard label="Storie" value={injectResult.storiesModified} icon={Search} color="purple" small />
-                  <StatCard label="Stringhe" value={injectResult.totalReplacements} icon={Languages} color="blue" small />
+                  <StatCard label={t('common.stringhe')} value={injectResult.totalReplacements} icon={Languages} color="blue" small />
                 </div>
 
                 <div className="flex gap-2 justify-center pt-2">
@@ -1026,7 +1028,7 @@ export function UnityInkTranslator() {
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                       <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-2 text-center">
                         <div className="text-lg font-bold text-green-400">{previewStats.coverage}%</div>
-                        <div className="text-micro text-green-400/70">Copertura</div>
+                        <div className="text-micro text-green-400/70">{t('common.coverage')}</div>
                       </div>
                       <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-2 text-center">
                         <div className="text-lg font-bold text-blue-400">{previewStats.translatedCount.toLocaleString()}</div>
@@ -1038,7 +1040,7 @@ export function UnityInkTranslator() {
                       </div>
                       <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-2 text-center">
                         <div className="text-lg font-bold text-purple-400">{previewStats.totalStrings.toLocaleString()}</div>
-                        <div className="text-micro text-purple-400/70">Totale</div>
+                        <div className="text-micro text-purple-400/70">{t('common.totale')}</div>
                       </div>
                     </div>
                   )}
@@ -1047,7 +1049,7 @@ export function UnityInkTranslator() {
                   {previewStats && (
                     <div className="space-y-1">
                       <div className="flex items-center justify-between text-2xs text-slate-500">
-                        <span>Copertura traduzione</span>
+                        <span>{t('common.coperturaTraduzione')}</span>
                         <span>{previewStats.translatedCount}/{previewStats.totalStrings}</span>
                       </div>
                       <div className="h-2.5 bg-slate-800 rounded-full overflow-hidden">
@@ -1073,7 +1075,7 @@ export function UnityInkTranslator() {
                         value={previewSearch}
                         onChange={(e) => setPreviewSearch(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && loadPreview(0, previewSearch)}
-                        aria-label="Cerca" placeholder="Cerca nelle traduzioni..."
+                        aria-label={t('common.cerca')} placeholder="Cerca nelle traduzioni..."
                         className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-violet-500/50"
                       />
                     </div>
@@ -1082,9 +1084,9 @@ export function UnityInkTranslator() {
                       onChange={(e) => { setPreviewFilter(e.target.value as "all" | "translated" | "untranslated"); loadPreview(0, previewSearch); }}
                       className="bg-slate-800/50 border border-slate-600/50 rounded-lg px-2 py-1.5 text-xs text-slate-300"
                     >
-                      <option value="all">Tutte</option>
-                      <option value="translated">Tradotte</option>
-                      <option value="untranslated">Mancanti</option>
+                      <option value="all">{t('common.all')}</option>
+                      <option value="translated">{t('common.translated')}</option>
+                      <option value="untranslated">{t('common.missing')}</option>
                     </select>
                   </div>
 
@@ -1224,7 +1226,7 @@ export function UnityInkTranslator() {
               <div className="space-y-2 text-[11px] text-slate-500">
                 <div className="flex gap-2">
                   <span className="text-violet-400 font-bold">1.</span>
-                  <span>Seleziona la cartella <code className="text-violet-300">_Data</code> del gioco Unity</span>
+                  <span>{t('common.selezionaLaCartella')}<code className="text-violet-300">_Data</code> del gioco Unity</span>
                 </div>
                 <div className="flex gap-2">
                   <span className="text-blue-400 font-bold">2.</span>

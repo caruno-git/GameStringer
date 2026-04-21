@@ -101,7 +101,7 @@ export function SecretsDashboard() {
       logUserAction('validate_secret', { key });
     } catch (error: unknown) {
       clientLogger.error('Error validating secret:', error);
-      toast.error('Failed to validate secret');
+      toast.error(t('common.failedToValidateSecret'));
     } finally {
       setIsValidating(false);
     }

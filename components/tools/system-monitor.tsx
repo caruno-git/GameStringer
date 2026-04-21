@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { safeInvoke as invoke } from '@/lib/tauri-wrapper';
 import { clientLogger } from '@/lib/client-logger';
+import { useTranslation } from '@/lib/i18n';
 
 interface SystemStats {
   cpu_usage_percent: number;
@@ -53,6 +54,7 @@ export function SystemMonitor({ compact = false }: { compact?: boolean }) {
   const [expanded, setExpanded] = useState(!compact);
   const [autoRefresh, _setAutoRefresh] = useState(true);
 
+  const { t } = useTranslation();
   const fetchStats = useCallback(async () => {
     try {
       setLoading(true);
@@ -179,7 +181,7 @@ export function SystemMonitor({ compact = false }: { compact?: boolean }) {
             </div>
           ) : (
             <div className="p-2 rounded-lg bg-slate-950/30 border border-slate-500/10 text-center">
-              <span className="text-2xs text-slate-500">Nessuna GPU NVIDIA rilevata</span>
+              <span className="text-2xs text-slate-500">{t('common.nessunaGpuNvidiaRilevata')}</span>
             </div>
           )}
 

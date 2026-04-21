@@ -179,7 +179,7 @@ export function SteamWorkshopBrowser() {
                 <CheckCircle className="h-4 w-4" />
                 <span className="text-lg font-bold">{items.length}</span>
               </div>
-              <p className="text-xs text-orange-200/50">Mostrati</p>
+              <p className="text-xs text-orange-200/50">{t('common.mostrati')}</p>
             </div>
           </div>
         </div>
@@ -188,7 +188,7 @@ export function SteamWorkshopBrowser() {
           <div className="relative mt-4 p-3 rounded-lg bg-amber-500/10 border border-amber-500/30">
             <div className="flex items-center gap-2 mb-2">
               <AlertTriangle className="h-4 w-4 text-amber-400" />
-              <span className="text-sm text-amber-300 font-medium">Steam non configurato</span>
+              <span className="text-sm text-amber-300 font-medium">{t('common.steamNonConfigurato')}</span>
             </div>
             <p className="text-xs text-amber-200/60">
               Per usare il Workshop, configura prima le credenziali Steam nella sezione{' '}
@@ -306,7 +306,7 @@ export function SteamWorkshopBrowser() {
                               onClick={() => openWorkshopPage(item.url)}
                             >
                               <Download className="h-3.5 w-3.5" />
-                              <span className="ml-1">Download</span>
+                              <span className="ml-1">{t('common.download')}</span>
                             </Button>
                           </div>
                         </div>

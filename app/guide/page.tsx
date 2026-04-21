@@ -467,7 +467,7 @@ export default function GuidePage() {
                 <CardContent className="p-3 space-y-3">
                   {/* Pipeline diagram */}
                   <div className="rounded-lg border border-purple-500/20 bg-slate-950/40 p-3">
-                    <div className="text-2xs text-purple-300 font-semibold mb-2 uppercase tracking-wider">Pipeline di analisi</div>
+                    <div className="text-2xs text-purple-300 font-semibold mb-2 uppercase tracking-wider">{t('common.pipelineDiAnalisi')}</div>
                     <div className="flex items-center justify-between gap-1 text-2xs">
                       {[
                         { icon: FolderTree, label: 'Input', sub: 'game path' },
@@ -590,7 +590,7 @@ export default function GuidePage() {
                     </div>
                     <div className="rounded border border-slate-500/30 bg-slate-950/40 p-2 text-center">
                       <div className="text-sm font-bold text-slate-300">— Unsupported</div>
-                      <div className="text-[10px] text-muted-foreground">Engine ignoto o senza stringhe</div>
+                      <div className="text-[10px] text-muted-foreground">{t('common.engineIgnotoOSenzaStringhe')}</div>
                     </div>
                   </div>
 

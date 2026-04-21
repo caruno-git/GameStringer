@@ -116,6 +116,7 @@ export function CommunityChat() {
     return false;
   });
 
+  const { t } = useTranslation();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const unsubMessageRef = useRef<(() => void) | null>(null);
@@ -361,7 +362,7 @@ export function CommunityChat() {
       setShowNewRoom(false);
       setNewRoomName('');
       setNewRoomDesc('');
-      toast.success('Stanza creata!');
+      toast.success(t('common.stanzaCreata'));
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : 'Errore creazione stanza');
     }
@@ -374,7 +375,7 @@ export function CommunityChat() {
       <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-center gap-4">
         <WifiOff className="h-12 w-12 text-slate-500" />
         <div>
-          <h3 className="text-lg font-semibold text-slate-200">Chat offline</h3>
+          <h3 className="text-lg font-semibold text-slate-200">{t('common.chatOffline')}</h3>
           <p className="text-sm text-slate-400 mt-1 max-w-md">
             Per usare la chat, configura il backend Supabase in <strong>Impostazioni → Community Hub Backend</strong>.
           </p>
@@ -396,7 +397,7 @@ export function CommunityChat() {
           setRooms(chatRooms);
           if (chatRooms.length > 0) setActiveRoom(chatRooms[0]);
           updatePresence('online');
-          toast.success('Connesso alla chat community!');
+          toast.success(t('common.connessoAllaChatCommunity'));
         } else {
           toast.error('Devi prima effettuare il login in GameStringer.');
         }
@@ -410,7 +411,7 @@ export function CommunityChat() {
       <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-center gap-4">
         <LogIn className="h-12 w-12 text-slate-500" />
         <div>
-          <h3 className="text-lg font-semibold text-slate-200">Accedi per chattare</h3>
+          <h3 className="text-lg font-semibold text-slate-200">{t('common.accediPerChattare')}</h3>
           <p className="text-sm text-slate-400 mt-1 max-w-md">
             Effettua il login in GameStringer per partecipare alla chat community.
           </p>
@@ -484,7 +485,7 @@ export function CommunityChat() {
               </div>
             ))}
             {onlineUsers.length === 0 && (
-              <span className="text-2xs text-slate-600 px-1">Nessuno online</span>
+              <span className="text-2xs text-slate-600 px-1">{t('common.nessunoOnline')}</span>
             )}
           </div>
         </div>
@@ -706,7 +707,7 @@ export function CommunityChat() {
       <Dialog open={showNewRoom} onOpenChange={setShowNewRoom}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Nuova stanza</DialogTitle>
+            <DialogTitle>{t('common.nuovaStanza')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div>
@@ -719,7 +720,7 @@ export function CommunityChat() {
               />
             </div>
             <div>
-              <Label className="text-xs">Descrizione</Label>
+              <Label className="text-xs">{t('common.descrizione')}</Label>
               <Textarea
                 value={newRoomDesc}
                 onChange={(e) => setNewRoomDesc(e.target.value)}
@@ -729,7 +730,7 @@ export function CommunityChat() {
               />
             </div>
             <div>
-              <Label className="text-xs">Tipo</Label>
+              <Label className="text-xs">{t('common.tipo')}</Label>
               <Select value={newRoomType} onValueChange={(v: string) => setNewRoomType(v as ChatRoom['type'])}>
                 <SelectTrigger className="mt-1">
                   <SelectValue />

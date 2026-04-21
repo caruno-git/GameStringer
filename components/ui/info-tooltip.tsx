@@ -59,6 +59,7 @@ export function InfoTooltip({
   className,
   iconSize = 'md',
 }: InfoTooltipProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { t } = useTranslation();
   const styles = variantStyles[variant];
   const Icon = styles.icon;

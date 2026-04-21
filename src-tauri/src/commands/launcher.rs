@@ -722,3 +722,39 @@ pub async fn test_launcher_functionality(launcher: String) -> Result<LaunchResul
         }
     }
 }
+
+// ================================================================================================
+// OPEN PATH IN EXPLORER
+// ================================================================================================
+
+/// Apre un percorso (file o cartella) nel file manager di sistema
+#[tauri::command]
+pub async fn open_path(path: String) -> Result<(), String> {
+    info!("📂 Apertura percorso: {}", path);
+    
+    #[cfg(target_os = "windows")]
+    {
+        Command::new("explorer")
+            .arg(&path)
+            .spawn()
+            .map_err(|e| format!("Errore apertura: {}", e))?;
+    }
+    
+    #[cfg(target_os = "macos")]
+    {
+        Command::new("open")
+            .arg(&path)
+            .spawn()
+            .map_err(|e| format!("Errore apertura: {}", e))?;
+    }
+    
+    #[cfg(target_os = "linux")]
+    {
+        Command::new("xdg-open")
+            .arg(&path)
+            .spawn()
+            .map_err(|e| format!("Errore apertura: {}", e))?;
+    }
+    
+    Ok(())
+}

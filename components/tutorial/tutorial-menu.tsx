@@ -60,7 +60,12 @@ export function TutorialMenu({ userId: _userId }: TutorialMenuProps) {
           <HelpCircle className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-64">
+      <DropdownMenuContent
+        side="right"
+        align="end"
+        sideOffset={8}
+        className="w-72 max-h-[calc(100vh-2rem)] overflow-y-auto"
+      >
         <div className="px-2 py-1.5">
           <p className="text-xs font-medium text-slate-400">{t('tutorial.menu.available')}</p>
         </div>
@@ -71,7 +76,7 @@ export function TutorialMenu({ userId: _userId }: TutorialMenuProps) {
             <DropdownMenuItem
               key={tutorial.id}
               onClick={() => handleStart(tutorial)}
-              className="flex items-center gap-2 cursor-pointer"
+              className="flex items-start gap-2 cursor-pointer py-2"
             >
               {isDone ? (
                 <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0" />
@@ -79,8 +84,8 @@ export function TutorialMenu({ userId: _userId }: TutorialMenuProps) {
                 <Play className="h-3.5 w-3.5 text-purple-400 shrink-0" />
               )}
               <div className="flex-1 min-w-0">
-                <p className="text-sm truncate">{getGuideText(tutorial.id, 'name', tutorial.name)}</p>
-                <p className="text-2xs text-slate-500 truncate">{getGuideText(tutorial.id, 'description', tutorial.description)}</p>
+                <p className="text-sm font-medium leading-tight">{getGuideText(tutorial.id, 'name', tutorial.name)}</p>
+                <p className="text-2xs text-slate-500 leading-snug mt-0.5 line-clamp-2">{getGuideText(tutorial.id, 'description', tutorial.description)}</p>
               </div>
             </DropdownMenuItem>
           );

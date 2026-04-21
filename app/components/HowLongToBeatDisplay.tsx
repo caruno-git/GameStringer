@@ -1,17 +1,19 @@
 import React from 'react';
 import { Clock, PlusSquare, CheckSquare } from 'lucide-react';
 import { HowLongToBeatData } from '@/lib/types';
+import { useTranslation } from '@/lib/i18n';
 
 interface HowLongToBeatDisplayProps {
   data: HowLongToBeatData | undefined;
 }
 
 const HowLongToBeatDisplay: React.FC<HowLongToBeatDisplayProps> = ({ data }) => {
+  const { t } = useTranslation();
   if (!data || (data.main === 0 && data.mainExtra === 0 && data.completionist === 0)) {
     return (
       <div className="text-xs text-gray-500 mt-2 flex items-center">
         <Clock className="h-4 w-4 mr-1.5 flex-shrink-0" />
-        <span>Durata non disponibile</span>
+        <span>{t('common.durataNonDisponibile')}</span>
       </div>
     );
   }

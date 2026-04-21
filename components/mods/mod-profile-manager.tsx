@@ -93,7 +93,7 @@ export function ModProfileManager({ gameId, gameName }: ModProfileManagerProps) 
       setMods(modsResult as InstalledMod[]);
     } catch (error: unknown) {
       clientLogger.error('Error loading mod profiles:', error);
-      toast.error('Error loading mod profiles');
+      toast.error(t('common.errorLoadingModProfiles'));
     } finally {
       setLoading(false);
     }
@@ -107,7 +107,7 @@ export function ModProfileManager({ gameId, gameName }: ModProfileManagerProps) 
 
   const createProfile = async () => {
     if (!newProfileName.trim()) {
-      toast.error('Profile name required');
+      toast.error(t('common.profileNameRequired'));
       return;
     }
 
@@ -120,19 +120,19 @@ export function ModProfileManager({ gameId, gameName }: ModProfileManagerProps) 
       });
       
       setProfiles(prev => [...prev, result as ModProfile]);
-      toast.success('Profile created!');
+      toast.success(t('common.profileCreated'));
       setShowCreateDialog(false);
       setNewProfileName('');
       setNewProfileDesc('');
     } catch (error: unknown) {
       clientLogger.error('Error creating profile:', error);
-      toast.error('Error creating profile');
+      toast.error(t('common.errorCreatingProfile'));
     }
   };
 
   const cloneProfile = async () => {
     if (!cloneSourceId || !newProfileName.trim()) {
-      toast.error('Select a profile and enter a name');
+      toast.error(t('common.selectAProfileAndEnterAName'));
       return;
     }
 
@@ -144,13 +144,13 @@ export function ModProfileManager({ gameId, gameName }: ModProfileManagerProps) 
       });
       
       setProfiles(prev => [...prev, result as ModProfile]);
-      toast.success('Profile cloned!');
+      toast.success(t('common.profileCloned'));
       setShowCloneDialog(false);
       setCloneSourceId('');
       setNewProfileName('');
     } catch (error: unknown) {
       clientLogger.error('Error cloning profile:', error);
-      toast.error('Error cloning profile');
+      toast.error(t('common.errorCloningProfile'));
     }
   };
 
@@ -158,10 +158,10 @@ export function ModProfileManager({ gameId, gameName }: ModProfileManagerProps) 
     try {
       await invoke('activate_mod_profile', { gameId, profileId });
       setActiveProfileId(profileId);
-      toast.success('Profile activated!');
+      toast.success(t('common.profileActivated'));
     } catch (error: unknown) {
       clientLogger.error('Error activating profile:', error);
-      toast.error('Error activating profile');
+      toast.error(t('common.errorActivatingProfile'));
     }
   };
 
@@ -169,10 +169,10 @@ export function ModProfileManager({ gameId, gameName }: ModProfileManagerProps) 
     try {
       await invoke('delete_mod_profile', { gameId, profileId });
       setProfiles(prev => prev.filter(p => p.id !== profileId));
-      toast.success('Profile deleted');
+      toast.success(t('common.profileDeleted'));
     } catch (error: unknown) {
       clientLogger.error('Error deleting profile:', error);
-      toast.error('Error deleting profile');
+      toast.error(t('common.errorDeletingProfile'));
     }
   };
 
@@ -230,7 +230,7 @@ export function ModProfileManager({ gameId, gameName }: ModProfileManagerProps) 
                   <Label>{t('modProfileManagerComp.profileToClone')}</Label>
                   <Select value={cloneSourceId} onValueChange={setCloneSourceId}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select profile" />
+                      <SelectValue placeholder={t('common.selectProfile')} />
                     </SelectTrigger>
                     <SelectContent>
                       {profiles.map(p => (
@@ -244,7 +244,7 @@ export function ModProfileManager({ gameId, gameName }: ModProfileManagerProps) 
                   <Input
                     value={newProfileName}
                     onChange={(e) => setNewProfileName(e.target.value)}
-                    placeholder="Profile name"
+                    placeholder={t('common.profileName')}
                   />
                 </div>
               </div>
@@ -286,7 +286,7 @@ export function ModProfileManager({ gameId, gameName }: ModProfileManagerProps) 
                   <Input
                     value={newProfileDesc}
                     onChange={(e) => setNewProfileDesc(e.target.value)}
-                    placeholder="Profile description"
+                    placeholder={t('common.profileDescription')}
                   />
                 </div>
               </div>

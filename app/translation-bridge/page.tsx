@@ -257,7 +257,7 @@ export default function TranslationBridgePage() {
               {isRunning ? (
                 <><CheckCircle className="h-3 w-3 mr-1" />{t('ocrTranslator.active')}</>
               ) : (
-                <><XCircle className="h-3 w-3 mr-1" /> Inattivo</>
+                <><XCircle className="h-3 w-3 mr-1" />{t('common.inattivo')}</>
               )}
             </Badge>
             
@@ -270,7 +270,7 @@ export default function TranslationBridgePage() {
               {isRunning ? (
                 <><Square className="h-4 w-4 mr-2" />{t('subtitleOverlay.stop')}</>
               ) : (
-                <><Play className="h-4 w-4 mr-2" /> Avvia</>
+                <><Play className="h-4 w-4 mr-2" />{t('common.avvia')}</>
               )}
             </Button>
           </div>

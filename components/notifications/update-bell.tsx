@@ -34,7 +34,7 @@ export function UpdateBell() {
         await downloadAndInstall();
       } else if (updateInfo?.download_url) {
         await open(updateInfo.download_url);
-        toast.success('Browser aperto per il download!');
+        toast.success(t('common.browserApertoPerIlDownload'));
         setIsOpen(false);
       }
     } catch {

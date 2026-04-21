@@ -256,7 +256,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
   // One-Click Translation - Inizia processo automatico
   const startAutoTranslation = useCallback(async () => {
     if (!recommendation?.optimal_strategy?.tools) {
-      toast.error('Nessuna strategia disponibile');
+      toast.error(t('common.nessunaStrategiaDisponibile'));
       return;
     }
 
@@ -367,7 +367,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
 
     // Tutto completato!
     setAutoState(prev => ({ ...prev, isRunning: false }));
-    toast.success('🎉 Traduzione completata e applicata!');
+    toast.success(t('common.traduzioneCompletataEApplicata'));
   }, [recommendation, autoState.isPaused]);
 
   // Esegui singolo step
@@ -828,7 +828,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
           if (xp3Files && xp3Files.length > 0) {
             updateProgress(50, `Trovati ${xp3Files.length} archivi .xp3`);
             updateProgress(100, '📦 Usa KrkrExtract per estrarre gli archivi');
-            toast.info('Kirikiri: usa KrkrExtract per estrarre i file .xp3');
+            toast.info(t('common.kirikiriUsaKrkrextractPerEstrarreIFileXp3'));
           } else {
             updateProgress(100, '⚠️ Nessun archivio XP3 trovato');
           }
@@ -844,7 +844,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
         const _dataWin = gamePath + '/data.win';
         updateProgress(50, 'Analizzando struttura GameMaker...');
         updateProgress(100, '📦 Usa UndertaleModTool per estrarre stringhe');
-        toast.info('GameMaker: usa UndertaleModTool per modificare data.win');
+        toast.info(t('common.gamemakerUsaUndertalemodtoolPerModificareDatawin'));
         break;
 
       case 'spike_chunsoft_patcher':
@@ -860,8 +860,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
           
           if (!available) {
             updateProgress(100, '⚠️ Nessun provider disponibile');
-            toast.error(
-              '🔑 NESSUN PROVIDER DISPONIBILE!\n\n' +
+            toast.error(t('common.nessunProviderDisponibilenn') +
               'Configura almeno una chiave API nelle Impostazioni,\n' +
               'oppure seleziona una chain che include provider gratuiti.',
               { duration: 3000 }
@@ -1161,8 +1160,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
           await new Promise(r => setTimeout(r, 500));
           
           updateProgress(100, '📖 Istruzioni manuali');
-          toast.info(
-            '🎮 WORKFLOW MANUALE DANGANRONPA:\n\n' +
+          toast.info(t('common.workflowManualeDanganronpann') +
             '1️⃣ Scarica DRAT:\n' +
             '   github.com/Liquid-S/Danganronpa-Another-Tool\n\n' +
             '2️⃣ Estrai i .pak → file .PO\n' +
@@ -1191,7 +1189,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
   const cancelAutoTranslation = () => {
     setAutoState(prev => ({ ...prev, isRunning: false, isPaused: false }));
     setShowProgressDialog(false);
-    toast.info('Traduzione annullata');
+    toast.info(t('common.traduzioneAnnullata'));
   };
 
   if (isLoading) {
@@ -1736,7 +1734,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
                     try {
                       await open(`${gamePath}/GameStringer_Translation`);
                     } catch {
-                      toast.error('Impossibile aprire la cartella');
+                      toast.error(t('common.impossibileAprireLaCartella'));
                     }
                   }}
                   className="flex items-center gap-2 p-2.5 rounded-lg border border-slate-600 bg-slate-800/50 hover:bg-slate-700/50 hover:border-cyan-500/40 transition-all text-left group"
@@ -1827,7 +1825,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
         onOpenChange={setShowDonationDialog}
         onUnlocked={() => {
           setShowDonationDialog(false);
-          toast.success('🎉 Traduzioni illimitate sbloccate!');
+          toast.success(t('common.traduzioniIllimitateSbloccate'));
         }}
       />
     </div>

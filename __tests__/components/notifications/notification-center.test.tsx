@@ -5,6 +5,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import '@testing-library/jest-dom';
 import { NotificationCenter } from '@/components/notifications/notification-center';
 import { Notification, NotificationType, NotificationPriority } from '@/types/notifications';
+import { useNotifications } from '@/hooks/use-notifications';
 
 // Mock delle dipendenze
 vi.mock('@/hooks/use-notifications', () => ({
@@ -85,7 +86,7 @@ describe('NotificationCenter', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (require('@/hooks/use-notifications').useNotifications as unknown).mockReturnValue(mockUseNotifications);
+    vi.mocked(useNotifications).mockReturnValue(mockUseNotifications);
   });
 
   describe('Rendering', () => {
@@ -112,7 +113,7 @@ describe('NotificationCenter', () => {
     });
 
     it('should show loading state', () => {
-      (require('@/hooks/use-notifications').useNotifications as unknown).mockReturnValue({
+      vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
         isLoading: true,
         notifications: []
@@ -124,7 +125,7 @@ describe('NotificationCenter', () => {
     });
 
     it('should show empty state when no notifications', () => {
-      (require('@/hooks/use-notifications').useNotifications as unknown).mockReturnValue({
+      vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
         notifications: [],
         unreadCount: 0

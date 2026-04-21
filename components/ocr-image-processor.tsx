@@ -40,6 +40,7 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { clientLogger } from '@/lib/client-logger';
+import { useTranslation } from '@/lib/i18n';
 
 interface OCRResult {
   id: string;
@@ -115,6 +116,7 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
   });
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
+  const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -241,7 +243,7 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
 
     const file = files[0];
     if (!file.type.startsWith('image/')) {
-      toast.error('Select a valid image file');
+      toast.error(t('common.selectAValidImageFile'));
       return;
     }
 
@@ -272,7 +274,7 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
       toast.success(`Text extracted with ${result.confidence.toFixed(1)}% confidence`);
     } catch (error: unknown) {
       clientLogger.error('OCR error:', error);
-      toast.error('Error during image processing');
+      toast.error(t('common.errorDuringImageProcessing'));
     } finally {
       setIsProcessing(false);
       setProgress(0);
@@ -326,7 +328,7 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">OCR Image Processor</h2>
+          <h2 className="text-2xl font-bold">{t('common.ocrImageProcessor')}</h2>
           <p className="text-muted-foreground">
             Extract text from screenshots and game images
           </p>
@@ -402,10 +404,10 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
 
               {/* Preprocessing */}
               <div className="space-y-4">
-                <Label className="text-base font-medium">Preprocessing Immagine</Label>
+                <Label className="text-base font-medium">{t('common.preprocessingImmagine')}</Label>
                 
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="enhance">Migliora Immagine</Label>
+                  <Label htmlFor="enhance">{t('common.miglioraImmagine')}</Label>
                   <Switch
                     id="enhance"
                     checked={settings.enhanceImage}
@@ -449,7 +451,7 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="background">Rimuovi Sfondo</Label>
+                  <Label htmlFor="background">{t('common.rimuoviSfondo')}</Label>
                   <Switch
                     id="background"
                     checked={settings.removeBackground}
@@ -607,7 +609,7 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
               <CardContent className="space-y-4">
                 {/* Testo estratto */}
                 <div className="space-y-2">
-                  <Label>Testo Estratto</Label>
+                  <Label>{t('common.testoEstratto')}</Label>
                   <Textarea
                     value={result.text}
                     readOnly
@@ -618,7 +620,7 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
                 {/* Bounding boxes */}
                 {showBoundingBoxes && result.boundingBoxes.length > 0 && (
                   <div className="space-y-2">
-                    <Label>Elementi Rilevati</Label>
+                    <Label>{t('common.elementiRilevati')}</Label>
                     <div className="space-y-2 max-h-40 overflow-y-auto">
                       {result.boundingBoxes.map((box, index) => (
                         <div key={index} className="flex items-center justify-between p-2 border rounded text-sm">

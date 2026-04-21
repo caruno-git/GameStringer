@@ -48,7 +48,7 @@ export class ProgressBatchProcessor {
     });
   }
 
-  async processBatch<T, R>(
+  async processBatch<R>(
     items: BatchItem[],
     processor: (item: BatchItem) => Promise<R>,
     operationType: BatchOperationType = 'translate',

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/core';
+import { useTranslation } from '@/lib/i18n';
 import {
   Brain, ChevronLeft, Loader2, Shield, ShieldOff, Globe,
   Clock, DollarSign, AlertTriangle, CheckCircle, ArrowUpDown,
@@ -61,6 +62,7 @@ function formatStrings(n: number): string {
 }
 
 export default function PredictionRankingPage() {
+  const { t } = useTranslation();
   const [summaries, setSummaries] = useState<GameQuickSummary[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -197,7 +199,7 @@ export default function PredictionRankingPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 mb-6">
               <div className="bg-slate-800/60 rounded-xl p-3 border border-slate-700/50 text-center">
                 <div className="text-2xl font-bold text-white">{stats.total}</div>
-                <div className="text-2xs text-slate-400 uppercase tracking-wider">Giochi</div>
+                <div className="text-2xs text-slate-400 uppercase tracking-wider">{t('common.giochi')}</div>
               </div>
               <div className="bg-green-500/10 rounded-xl p-3 border border-green-500/20 text-center">
                 <div className="text-2xl font-bold text-green-400">{stats.easy}</div>
@@ -251,7 +253,7 @@ export default function PredictionRankingPage() {
                 <button onClick={() => toggleSort('cost')} className="flex items-center gap-1 hover:text-white transition-colors">
                   Costo {sortKey === 'cost' && <ArrowUpDown className="h-3 w-3" />}
                 </button>
-                <span className="text-center">Lingue</span>
+                <span className="text-center">{t('common.lingue')}</span>
                 <span className="text-center">GS</span>
               </div>
             </div>
@@ -369,7 +371,7 @@ export default function PredictionRankingPage() {
         {!scanned && !loading && (
           <div className="text-center py-24">
             <Brain className="h-20 w-20 mx-auto mb-6 text-purple-500/30" />
-            <h2 className="text-xl font-semibold text-slate-300 mb-2">Classifica Difficoltà Traduzione</h2>
+            <h2 className="text-xl font-semibold text-slate-300 mb-2">{t('common.classificaDifficoltàTraduzione')}</h2>
             <p className="text-slate-500 max-w-md mx-auto mb-8">
               Clicca &quot;Scansiona Tutti&quot; per analizzare tutti i giochi installati e ottenere
               una classifica ordinata per difficoltà di traduzione, con stime di tempo e costo.
@@ -378,8 +380,8 @@ export default function PredictionRankingPage() {
               <div className="flex items-center gap-2"><BarChart3 className="h-4 w-4" /> Difficoltà</div>
               <div className="flex items-center gap-2"><Clock className="h-4 w-4" /> Tempi</div>
               <div className="flex items-center gap-2"><DollarSign className="h-4 w-4" /> Costi</div>
-              <div className="flex items-center gap-2"><Globe className="h-4 w-4" /> Lingue</div>
-              <div className="flex items-center gap-2"><Shield className="h-4 w-4" /> Supporto GS</div>
+              <div className="flex items-center gap-2"><Globe className="h-4 w-4" />{t('common.lingue')}</div>
+              <div className="flex items-center gap-2"><Shield className="h-4 w-4" />{t('common.supportoGs')}</div>
             </div>
           </div>
         )}

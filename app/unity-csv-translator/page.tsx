@@ -518,30 +518,30 @@ export default function UnityCsvTranslatorPage() {
             <Button onClick={doExport} variant="outline" size="sm" className="gap-1 h-7 text-xs" disabled={!scan.done}><Download className="h-3 w-3" />{t("common.export")}</Button>
           </div>
           <div className="space-y-1.5">
-            {scan.tables.map((t, ti) => {
-              const k = `${t.name}-${ti}`;
+            {scan.tables.map((table, ti) => {
+              const k = `${table.name}-${ti}`;
               const isExp = expanded === k;
-              const wt = t.entries.filter(e => e.english).length;
+              const wt = table.entries.filter(e => e.english).length;
               return (
                 <div key={k} className="rounded-lg border border-slate-700/60 bg-slate-800/40">
                   <button className="w-full flex items-center gap-3 px-3 py-2 hover:bg-slate-700/30 text-left" onClick={() => setExpanded(isExp ? null : k)}>
                     {isExp ? <ChevronDown className="h-3.5 w-3.5 text-slate-400" /> : <ChevronRight className="h-3.5 w-3.5 text-slate-400" />}
                     <Database className="h-3.5 w-3.5 text-amber-400" />
-                    <span className="text-sm font-semibold text-white flex-1">{t.name}</span>
-                    <span className="text-2xs text-slate-500">{t.source}</span>
+                    <span className="text-sm font-semibold text-white flex-1">{table.name}</span>
+                    <span className="text-2xs text-slate-500">{table.source}</span>
                     <span className="text-2xs px-1.5 py-0.5 rounded bg-slate-700 text-slate-300">{wt} str</span>
-                    {t.doneCount > 0 && <span className="text-2xs px-1.5 py-0.5 rounded bg-emerald-900/50 text-emerald-300">{t.doneCount} ✓</span>}
+                    {table.doneCount > 0 && <span className="text-2xs px-1.5 py-0.5 rounded bg-emerald-900/50 text-emerald-300">{table.doneCount} ✓</span>}
                   </button>
                   {isExp && (
                     <div className="px-3 pb-3 max-h-[350px] overflow-y-auto">
                       <table className="w-full text-[11px]">
                         <thead><tr className="text-slate-500 border-b border-slate-700/50">
                           <th className="text-left py-1 w-24">ID</th><th className="text-left py-1 w-14">Cat</th>
-                          <th className="text-left py-1">English</th><th className="text-left py-1">Traduzione</th>
+                          <th className="text-left py-1">English</th><th className="text-left py-1">{t('common.traduzione')}</th>
                           <th className="w-8"></th>
                         </tr></thead>
-                        <tbody>{t.entries.slice(0, 100).map((e, ei) => {
-                          const peKey = `${t.name}-${e.id}`;
+                        <tbody>{table.entries.slice(0, 100).map((e, ei) => {
+                          const peKey = `${table.name}-${e.id}`;
                           const isPostEditing = postEditId === peKey;
                           return (<React.Fragment key={ei}>
                           <tr className="border-b border-slate-800/50 hover:bg-slate-700/20">
@@ -554,7 +554,7 @@ export default function UnityCsvTranslatorPage() {
                                 <button
                                   onClick={() => handlePostEdit(peKey, e.english, e.translated)}
                                   className="p-0.5 rounded hover:bg-amber-500/20 transition-colors"
-                                  title="Suggerisci miglioramento AI"
+                                  title={t('common.suggerisciMiglioramentoAi')}
                                 >
                                   {postEditLoading && isPostEditing
                                     ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" />
@@ -569,7 +569,7 @@ export default function UnityCsvTranslatorPage() {
                                 <div className="rounded-lg border border-amber-700/30 bg-amber-900/15 p-2.5 space-y-1.5">
                                   <div className="flex items-center gap-2">
                                     <Sparkles className="h-3 w-3 text-amber-400" />
-                                    <span className="text-2xs font-semibold text-amber-300">Suggerimento AI</span>
+                                    <span className="text-2xs font-semibold text-amber-300">{t('common.suggerimentoAi')}</span>
                                     <span className="text-micro px-1.5 py-0.5 rounded bg-amber-800/40 text-amber-400">{postEditSuggestion.confidence}% sicurezza</span>
                                   </div>
                                   <div className="text-[11px] text-white bg-slate-800/60 rounded px-2 py-1.5">{postEditSuggestion.improved}</div>
@@ -596,7 +596,7 @@ export default function UnityCsvTranslatorPage() {
                           </React.Fragment>);
                         })}</tbody>
                       </table>
-                      {t.entries.length > 100 && <p className="text-2xs text-slate-500 mt-2 text-center">100/{t.entries.length}</p>}
+                      {table.entries.length > 100 && <p className="text-2xs text-slate-500 mt-2 text-center">100/{table.entries.length}</p>}
                     </div>
                   )}
                 </div>
@@ -611,7 +611,7 @@ export default function UnityCsvTranslatorPage() {
         <div className="rounded-xl border border-blue-800/40 bg-blue-900/15 p-4">
           <div className="flex items-center gap-2 mb-2">
             <Zap className="h-4 w-4 text-blue-400" />
-            <h3 className="text-sm font-bold text-blue-300">Aggiornamento rilevato</h3>
+            <h3 className="text-sm font-bold text-blue-300">{t('common.aggiornamentoRilevato')}</h3>
             <span className="text-2xs text-blue-400/70">rispetto alla traduzione precedente</span>
           </div>
           <div className="flex gap-3 flex-wrap">
@@ -702,7 +702,7 @@ export default function UnityCsvTranslatorPage() {
                 </select>
               </div>
               <div className="flex gap-2 items-center">
-                <label className="text-xs text-slate-400">Genere</label>
+                <label className="text-xs text-slate-400">{t('common.genere')}</label>
                 <select value={genre} onChange={e => setGenre(e.target.value as GameGenre)} className="bg-slate-700 text-white text-xs rounded px-2 py-1 border border-slate-600">
                   {getAllGenres().map(g => <option key={g.value} value={g.value}>{g.icon} {g.label}</option>)}
                 </select>
@@ -730,7 +730,7 @@ export default function UnityCsvTranslatorPage() {
             <div className="mb-3 p-3 rounded-lg bg-amber-900/20 border border-amber-700/30 flex items-center gap-3">
               <CheckCircle2 className="h-4 w-4 text-amber-400 shrink-0" />
               <span className="text-xs text-amber-300 flex-1">
-                Checkpoint trovato: <b className="text-white">{(scan?.done || 0) + inkStrings.filter(s => s.done).length}</b> stringhe già tradotte. Clicca <b>Traduci</b> per continuare da dove eri rimasto.
+                Checkpoint trovato: <b className="text-white">{(scan?.done || 0) + inkStrings.filter(s => s.done).length}</b> stringhe già tradotte. Clicca <b>{t('common.traduci')}</b> per continuare da dove eri rimasto.
               </span>
               <Button onClick={clearCheckpoint} variant="ghost" size="xs" className="text-2xs text-slate-500 hover:text-red-400">Cancella checkpoint</Button>
             </div>
@@ -759,8 +759,8 @@ export default function UnityCsvTranslatorPage() {
           </div>
           <div className="mb-3 p-3 rounded-lg bg-slate-800/40 border border-slate-700/30">
             <div className="flex items-center gap-4 text-xs text-slate-300">
-              <span><b className="text-white">{scan.done}</b> CSV pronte</span>
-              {inkStrings.filter(s => s.done).length > 0 && <span><b className="text-purple-300">{inkStrings.filter(s => s.done).length.toLocaleString()}</b> Ink pronte</span>}
+              <span><b className="text-white">{scan.done}</b>{t('common.csvPronte')}</span>
+              {inkStrings.filter(s => s.done).length > 0 && <span><b className="text-purple-300">{inkStrings.filter(s => s.done).length.toLocaleString()}</b>{t('common.inkPronte')}</span>}
               <span><b className="text-emerald-300">{scan.done + inkStrings.filter(s => s.done).length}</b> totali</span>
               <span className="text-slate-500">{t('unityCsvPage.backupInfo')}</span>
             </div>

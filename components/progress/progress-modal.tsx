@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { ProgressBar, CircularProgress } from './progress-bar';
 import { formatDuration } from '@/lib/utils/progress-calculations';
 import type { OperationProgress } from '@/lib/types/progress';
+import { useTranslation } from '@/lib/i18n';
 
 interface ProgressModalProps {
   operation: OperationProgress;
@@ -24,6 +25,7 @@ export function ProgressModal({
   isMinimized = false,
   className
 }: ProgressModalProps) {
+  const { t } = useTranslation();
   const [isVisible, _setIsVisible] = useState(true);
   const [elapsedTime, setElapsedTime] = useState(0);
 
@@ -89,7 +91,7 @@ export function ProgressModal({
             <button
               onClick={onMinimize}
               className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-              title="Expand"
+              title={t('common.expand')}
             >
               <Maximize2 className="w-4 h-4" />
             </button>

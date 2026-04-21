@@ -76,7 +76,7 @@ import { clientLogger } from '@/lib/client-logger';
 
 // Supabase Settings Component
 function SupabaseSettingsCard() {
-  const { t: _t, language } = useTranslation();
+  const { t } = useTranslation();
   const [url, setUrl] = useState('');
   const [anonKey, setAnonKey] = useState('');
   const [enabled, setEnabled] = useState(false);
@@ -97,12 +97,12 @@ function SupabaseSettingsCard() {
 
   const handleSave = () => {
     saveSupabaseConfig({ url, anonKey, enabled: enabled && !!url && !!anonKey });
-    toast.success(language === 'it' ? 'Configurazione Supabase salvata' : 'Supabase config saved');
+    toast.success(t('common.supabaseConfigSaved'));
   };
 
   const handleCopySql = () => {
     navigator.clipboard.writeText(SUPABASE_MIGRATION_SQL);
-    toast.success(language === 'it' ? 'SQL copiato negli appunti' : 'SQL copied to clipboard');
+    toast.success(t('common.sqlCopiedToClipboard'));
   };
 
   return (
@@ -113,9 +113,7 @@ function SupabaseSettingsCard() {
           Community Hub — Supabase Backend
         </CardTitle>
         <p className="text-xs text-muted-foreground mt-1">
-          {language === 'it'
-            ? 'Collega il Community Hub a un database Supabase per condividere pack di traduzione online.'
-            : 'Connect the Community Hub to a Supabase database to share translation packs online.'}
+          {t('common.connectTheCommunityHubToASupabaseDatabaseToShareTranslationPacksOnline')}
         </p>
       </CardHeader>
       <CardContent className="p-0 space-y-4">
@@ -124,8 +122,8 @@ function SupabaseSettingsCard() {
             <div className={`h-2.5 w-2.5 rounded-full ${enabled && url && anonKey ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}`} />
             <span className="text-sm font-medium">
               {enabled && url && anonKey
-                ? (language === 'it' ? 'Backend attivo' : 'Backend active')
-                : (language === 'it' ? 'Backend disattivo (solo locale)' : 'Backend disabled (local only)')}
+                ? (t('common.backendActive'))
+                : (t('common.backendDisabledLocalOnly'))}
             </span>
           </div>
           <Switch checked={enabled} onCheckedChange={setEnabled} />
@@ -133,7 +131,7 @@ function SupabaseSettingsCard() {
 
         <div className="space-y-3">
           <div>
-            <Label className="text-xs">{language === 'it' ? 'URL Progetto Supabase' : 'Supabase Project URL'}</Label>
+            <Label className="text-xs">{t('common.supabaseProjectUrl')}</Label>
             <Input
               value={url}
               onChange={(e) => setUrl(e.target.value)}
@@ -142,7 +140,7 @@ function SupabaseSettingsCard() {
             />
           </div>
           <div>
-            <Label className="text-xs">{language === 'it' ? 'Chiave Anonima (anon key)' : 'Anonymous Key (anon key)'}</Label>
+            <Label className="text-xs">{t('common.anonymousKeyAnonKey')}</Label>
             <div className="relative mt-1">
               <Input
                 value={anonKey}
@@ -165,20 +163,18 @@ function SupabaseSettingsCard() {
         <div className="flex items-center gap-2">
           <Button size="sm" onClick={handleSave} className="gap-1.5">
             <Save className="h-3.5 w-3.5" />
-            {language === 'it' ? 'Salva' : 'Save'}
+            {t('common.save')}
           </Button>
           <Button size="sm" variant="outline" onClick={() => setShowSql(!showSql)} className="gap-1.5">
             <Database className="h-3.5 w-3.5" />
-            {showSql ? (language === 'it' ? 'Nascondi SQL' : 'Hide SQL') : (language === 'it' ? 'Mostra SQL Setup' : 'Show SQL Setup')}
+            {showSql ? (t('common.hideSql')) : (t('common.showSqlSetup'))}
           </Button>
         </div>
 
         {showSql && (
           <div className="space-y-2">
             <p className="text-2xs text-muted-foreground">
-              {language === 'it'
-                ? 'Esegui questo SQL nel SQL Editor di Supabase per creare le tabelle necessarie:'
-                : 'Run this SQL in Supabase SQL Editor to create required tables:'}
+              {t('common.runThisSqlInSupabaseSqlEditorToCreateRequiredTables')}
             </p>
             <div className="relative">
               <pre className="text-micro bg-slate-900 border border-slate-700 rounded-md p-3 max-h-48 overflow-y-auto custom-scrollbar font-mono text-slate-300 whitespace-pre-wrap">
@@ -186,7 +182,7 @@ function SupabaseSettingsCard() {
                 {SUPABASE_MIGRATION_SQL.length > 2000 ? '\n\n... (copia per vedere tutto)' : ''}
               </pre>
               <Button size="sm" variant="outline" onClick={handleCopySql} className="absolute top-2 right-2 h-6 text-micro gap-1">
-                {language === 'it' ? 'Copia SQL' : 'Copy SQL'}
+                {t('common.copySql')}
               </Button>
             </div>
           </div>
@@ -455,7 +451,7 @@ export default function SettingsPage() {
 
   const handleAddRssFeed = () => {
     if (!newFeedUrl.trim() || !newFeedName.trim()) {
-      toast.error('Inserisci URL e nome del feed');
+      toast.error(t('common.inserisciUrlENomeDelFeed'));
       return;
     }
     const newFeed: RssFeed = { url: newFeedUrl.trim(), name: newFeedName.trim(), enabled: true };
@@ -485,7 +481,7 @@ export default function SettingsPage() {
   const handleResetRssFeeds = () => {
     setRssFeeds(defaultRssFeeds);
     saveRssFeeds(defaultRssFeeds);
-    toast.success('Feed RSS ripristinati');
+    toast.success(t('common.feedRssRipristinati'));
   };
 
   const startNormalTutorial = () => {

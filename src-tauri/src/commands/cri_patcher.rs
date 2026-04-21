@@ -1888,7 +1888,7 @@ mod tests {
         let mut string_table = Vec::new();
         let mut string_offsets: HashMap<String, u32> = HashMap::new();
 
-        let mut add_string = |s: &str, table: &mut Vec<u8>, offsets: &mut HashMap<String, u32>| -> u32 {
+        let add_string = |s: &str, table: &mut Vec<u8>, offsets: &mut HashMap<String, u32>| -> u32 {
             if let Some(&off) = offsets.get(s) {
                 return off;
             }

@@ -329,10 +329,10 @@ export function PlayerFeedbackPanel() {
             </Select>
             <Select value={filterCategory} onValueChange={setFilterCategory}>
               <SelectTrigger className="w-[150px] h-8 text-xs">
-                <SelectValue placeholder="Categoria" />
+                <SelectValue placeholder={t('common.categoria')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tutte le categorie</SelectItem>
+                <SelectItem value="all">{t('common.allCategories')}</SelectItem>
                 {Object.keys(FEEDBACK_CATEGORIES).map((cat) => (
                   <SelectItem key={cat} value={cat}>
                     {FEEDBACK_CATEGORIES[cat as FeedbackCategory].icon} {cat}

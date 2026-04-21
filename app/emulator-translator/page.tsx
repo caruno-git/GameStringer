@@ -96,6 +96,7 @@ export default function EmulatorTranslatorPage() {
   const [screenshotSrc, setScreenshotSrc] = useState<string | null>(null);
   const [screenshotTexts, setScreenshotTexts] = useState<{ original: string; translated: string }[]>([]);
   const [screenshotProcessing, setScreenshotProcessing] = useState(false);
+  const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const translationCache = useRef(new Map<string, string>());
@@ -208,7 +209,7 @@ export default function EmulatorTranslatorPage() {
     // First capture immediately
     doCapture();
     intervalRef.current = setInterval(doCapture, captureInterval);
-    toast.success('Cattura emulatore avviata');
+    toast.success(t('common.catturaEmulatoreAvviata'));
   }, [doCapture, captureInterval]);
 
   const stopCapture = useCallback(() => {
@@ -216,7 +217,7 @@ export default function EmulatorTranslatorPage() {
     intervalRef.current = null;
     setIsRunning(false);
     setIsPaused(false);
-    toast.info('Cattura fermata');
+    toast.info(t('common.catturaFermata'));
   }, []);
 
   const togglePause = useCallback(() => {
@@ -241,7 +242,7 @@ export default function EmulatorTranslatorPage() {
       const ocrResult = await recognizeText(imageDataUrl, ocrLang);
       
       if (!ocrResult.lines || ocrResult.lines.length === 0) {
-        toast.error('Nessun testo rilevato nello screenshot');
+        toast.error(t('common.nessunTestoRilevatoNelloScreenshot'));
         setScreenshotProcessing(false);
         return;
       }
@@ -299,7 +300,7 @@ export default function EmulatorTranslatorPage() {
           return;
         }
       }
-      toast.error('Nessuna immagine negli appunti');
+      toast.error(t('common.nessunaImmagineNegliAppunti'));
     } catch {
       toast.error('Impossibile leggere gli appunti');
     }
@@ -319,7 +320,7 @@ export default function EmulatorTranslatorPage() {
             </div>
             <div>
               <h1 className="text-lg font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">Emulator Translator</h1>
-              <p className="text-white/70 text-2xs">Traduzione in tempo reale per giochi retro via emulatore</p>
+              <p className="text-white/70 text-2xs">{t('common.traduzioneInTempoRealePerGiochiRetroViaEmulatore')}</p>
             </div>
           </div>
           <div className="hidden md:flex items-center gap-2">
@@ -395,8 +396,8 @@ export default function EmulatorTranslatorPage() {
                 <p className="text-2xs text-slate-500">oppure</p>
                 <div className="flex items-center justify-center gap-2">
                   <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileSelect} />
-                  <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => fileInputRef.current?.click()}><Upload className="h-3.5 w-3.5" />Upload</Button>
-                  <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={handlePaste}><Clipboard className="h-3.5 w-3.5" />Incolla</Button>
+                  <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => fileInputRef.current?.click()}><Upload className="h-3.5 w-3.5" />{t('common.upload')}</Button>
+                  <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={handlePaste}><Clipboard className="h-3.5 w-3.5" />{t('common.incolla')}</Button>
                 </div>
               </div>
             )}
@@ -409,7 +410,7 @@ export default function EmulatorTranslatorPage() {
                     <Scan className="h-4 w-4 text-purple-400" />
                     <span className="text-sm font-medium text-white">{screenshotTexts.length} righe</span>
                   </div>
-                  <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => { navigator.clipboard.writeText(screenshotTexts.map(t => t.translated).join('\n')); toast.success('Copiato!'); }}>
+                  <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => { navigator.clipboard.writeText(screenshotTexts.map(t => t.translated).join('\n')); toast.success(t('common.copiato')); }}>
                     <Copy className="h-3 w-3" />Copia
                   </Button>
                 </div>
@@ -419,7 +420,7 @@ export default function EmulatorTranslatorPage() {
                       <div key={i} className="flex gap-3 p-2.5 rounded-lg bg-slate-800/40 border border-slate-700/30">
                         <div className="flex-1 min-w-0"><p className="text-2xs text-slate-500">Originale</p><p className="text-xs text-slate-300">{tx.original}</p></div>
                         <ArrowRight className="h-3 w-3 text-purple-400 mt-4 shrink-0" />
-                        <div className="flex-1 min-w-0"><p className="text-2xs text-emerald-500">Traduzione</p><p className="text-xs text-emerald-300">{tx.translated}</p></div>
+                        <div className="flex-1 min-w-0"><p className="text-2xs text-emerald-500">{t('common.traduzione')}</p><p className="text-xs text-emerald-300">{tx.translated}</p></div>
                       </div>
                     ))}
                   </div>
@@ -544,7 +545,7 @@ export default function EmulatorTranslatorPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Zap className="h-4 w-4 text-purple-400" />
-                <span className="text-sm font-semibold text-purple-300">Traduzione corrente</span>
+                <span className="text-sm font-semibold text-purple-300">{t('common.traduzioneCorrente')}</span>
                 {isTranslating && <Loader2 className="h-3 w-3 animate-spin text-purple-400" />}
               </div>
               {currentText && <p className="text-xs text-slate-400 mb-1">{currentText}</p>}
@@ -569,7 +570,7 @@ export default function EmulatorTranslatorPage() {
                   <span className="text-sm font-medium">Cronologia ({history.length})</span>
                 </div>
                 <div className="flex gap-1.5">
-                  <Button variant="outline" size="xs" className="text-2xs" onClick={() => { navigator.clipboard.writeText(history.map(h => `${h.original}\n→ ${h.translated}`).join('\n\n')); toast.success('Copiato!'); }}>
+                  <Button variant="outline" size="xs" className="text-2xs" onClick={() => { navigator.clipboard.writeText(history.map(h => `${h.original}\n→ ${h.translated}`).join('\n\n')); toast.success(t('common.copiato')); }}>
                     <Copy className="h-2.5 w-2.5 mr-1" />Copia
                   </Button>
                   <Button variant="ghost" size="xs" className="text-2xs text-red-400" onClick={() => setHistory([])}>Svuota</Button>

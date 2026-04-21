@@ -60,32 +60,27 @@ export function OllamaManager() {
 
   const checkStatus = useCallback(async () => {
     try {
-      if (typeof window !== 'undefined' && ((window as unknown as Record<string, unknown>).__TAURI_INTERNALS__ || (window as unknown as Record<string, unknown>).__TAURI_IPC__)) {
-        const { invoke } = await import('@tauri-apps/api/core');
-        const result = await invoke<OllamaStatus>('check_ollama_status');
-        setStatus(result);
-        setIsTauri(true);
-      } else {
-        // Browser fallback: check via fetch
-        try {
-          const resp = await fetch('http://localhost:11434/api/tags', { 
-            signal: AbortSignal.timeout(3000) 
+      // Usa HTTP diretto (funziona sia in browser che in Tauri)
+      const isTauriEnv = typeof window !== 'undefined' && ((window as unknown as Record<string, unknown>).__TAURI_INTERNALS__ || (window as unknown as Record<string, unknown>).__TAURI_IPC__);
+      setIsTauri(!!isTauriEnv);
+      try {
+        const resp = await fetch('http://localhost:11434/api/tags', { 
+          signal: AbortSignal.timeout(3000) 
+        });
+        if (resp.ok) {
+          const data = await resp.json();
+          setStatus({
+            installed: true,
+            running: true,
+            version: '',
+            models: data.models?.map((m: { name: string }) => m.name) || [],
+            install_path: '',
           });
-          if (resp.ok) {
-            const data = await resp.json();
-            setStatus({
-              installed: true,
-              running: true,
-              version: '',
-              models: data.models?.map((m: { name: string }) => m.name) || [],
-              install_path: '',
-            });
-          } else {
-            setStatus({ installed: false, running: false, version: '', models: [], install_path: '' });
-          }
-        } catch {
+        } else {
           setStatus({ installed: false, running: false, version: '', models: [], install_path: '' });
         }
+      } catch {
+        setStatus({ installed: false, running: false, version: '', models: [], install_path: '' });
       }
     } catch (error: unknown) {
       clientLogger.error('[OllamaManager] Check status error:', error);
@@ -184,7 +179,7 @@ export function OllamaManager() {
     try {
       const { invoke } = await import('@tauri-apps/api/core');
       await invoke<string>('download_ollama');
-      toast.success('Installer Ollama avviato!');
+      toast.success(t('common.installerOllamaAvviato'));
     } catch (error: unknown) {
       toast.error(`Errore download: ${error}`);
     } finally {
@@ -201,7 +196,7 @@ export function OllamaManager() {
         const result = await invoke<string>('start_ollama');
         toast.success(result);
       } else {
-        toast.error('Avvia Ollama manualmente: ollama serve');
+        toast.error(t('common.avviaOllamaManualmenteOllamaServe'));
       }
       await checkStatus();
     } catch (error: unknown) {

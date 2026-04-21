@@ -145,7 +145,7 @@ export function ExtensionManager() {
         extensionType: newExtension.type
       });
       
-      toast.success('Extension template created! Check the extensions folder.');
+      toast.success(t('common.extensionTemplateCreatedCheckTheExtensionsFolder'));
       setShowCreateDialog(false);
       setNewExtension({ name: '', description: '', author: '', type: 'Utility' });
       
@@ -153,7 +153,7 @@ export function ExtensionManager() {
       await loadExtensions();
     } catch (error: unknown) {
       clientLogger.error('Error creating template:', error);
-      toast.error('Error creating template');
+      toast.error(t('common.errorCreatingTemplate'));
     }
   };
 

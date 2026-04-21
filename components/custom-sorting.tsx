@@ -30,6 +30,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { clientLogger } from '@/lib/client-logger';
+import { useTranslation } from '@/lib/i18n';
 
 interface Game {
   id: string;
@@ -137,6 +138,7 @@ const CustomSorting: React.FC<CustomSortingProps> = ({
   onSortChange,
   className
 }) => {
+  const { t } = useTranslation();
   const [presets, setPresets] = useState<SortPreset[]>(defaultPresets);
   const [activePreset, setActivePreset] = useState<string>('alphabetical');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -372,7 +374,7 @@ const CustomSorting: React.FC<CustomSortingProps> = ({
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Create New Sort Preset</DialogTitle>
+            <DialogTitle>{t('common.createNewSortPreset')}</DialogTitle>
             <DialogDescription>
               Configure sorting rules for your custom preset.
             </DialogDescription>

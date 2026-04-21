@@ -49,7 +49,7 @@ class InjektTranslator {
     translationsApplied: 0,
     cachedTranslations: 0
   };
-  private listeners: Map<string, Function[]> = new Map();
+  private listeners: Map<string, ((data: unknown) => void)[]> = new Map();
 
   // Trova processi di gioco in esecuzione
   async findProcesses(): Promise<ProcessInfo[]> {
@@ -303,7 +303,7 @@ class InjektTranslator {
   }
   
   // Metodo per registrare listener
-  on(event: string, listener: Function): void {
+  on(event: string, listener: (data: unknown) => void): void {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, []);
     }
@@ -311,7 +311,7 @@ class InjektTranslator {
   }
   
   // Metodo per rimuovere listener
-  off(event: string, listener: Function): void {
+  off(event: string, listener: (data: unknown) => void): void {
     const listeners = this.listeners.get(event) || [];
     const index = listeners.indexOf(listener);
     if (index > -1) {

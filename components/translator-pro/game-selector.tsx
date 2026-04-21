@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Search, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n';
 
 // ============================================================================
 // TYPES
@@ -35,12 +36,13 @@ export function GameSelector({
   onSearchChange,
   onGameSelect,
 }: GameSelectorProps) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-4">
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          aria-label="Cerca" placeholder="Cerca tra i tuoi games..."
+          aria-label={t('common.cerca')} placeholder="Cerca tra i tuoi games..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           className="pl-10 h-10"

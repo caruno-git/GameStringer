@@ -341,7 +341,7 @@ export function NexusModsBrowser() {
                 {userInfo.is_premium && (
                   <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black/30 shadow-lg shadow-black/40 border border-white/10">
                     <Star className="h-3.5 w-3.5 text-yellow-400" />
-                    <span className="text-sm font-bold text-white">Premium</span>
+                    <span className="text-sm font-bold text-white">{t('common.premium')}</span>
                   </div>
                 )}
               </>

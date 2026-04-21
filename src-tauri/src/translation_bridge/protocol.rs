@@ -54,6 +54,7 @@ pub const IDLE_SLEEP_US: u64 = 50;
 // ─── Layout offsets (calcolati a compile-time) ────────────────────
 
 /// Offset dell'header nella shared memory
+#[allow(dead_code)]
 pub const HEADER_OFFSET: usize = 0;
 
 /// Dimensione dell'header (incluso padding del compilatore)
@@ -133,6 +134,7 @@ impl SharedMemoryHeader {
         }
     }
 
+    #[allow(dead_code)]
     pub fn is_valid(&self) -> bool {
         self.magic == MAGIC_NUMBER && self.version == PROTOCOL_VERSION
     }
@@ -223,10 +225,12 @@ impl TranslationSlot {
         }
     }
 
+    #[allow(dead_code)]
     pub fn get_state(&self) -> SlotState {
         SlotState::from(self.state)
     }
 
+    #[allow(dead_code)]
     pub fn set_state(&mut self, state: SlotState) {
         self.state = state as u8;
     }

@@ -62,16 +62,28 @@ if (typeof globalThis !== 'undefined') {
   }, 5 * 60 * 1000);
 }
 
-// CSP policy — mirrors Tauri CSP but enforced at HTTP level too
-const CSP_POLICY = [
-  "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://steamcdn-a.akamaihd.net https://cdn.akamai.steamstatic.com https://shared.akamai.steamstatic.com https://cdn.steamgriddb.com https://cdn2.steamgriddb.com https://media.steampowered.com https://cdn.cloudflare.steamstatic.com https://store.steampowered.com https://avatars.githubusercontent.com",
-  "connect-src 'self' https://api.openai.com https://api.anthropic.com https://generativelanguage.googleapis.com https://api.deepseek.com https://api.mistral.ai https://openrouter.ai https://api.github.com https://api.nexusmods.com https://api.steampowered.com https://api.rawg.io https://api.igdb.com https://howlongtobeat.com https://www.steamgriddb.com http://127.0.0.1:* http://localhost:*",
-  "font-src 'self' data:",
-  "media-src 'self' blob:",
-].join('; ');
+// CSP policy — permissive in dev, stricter in production
+const IS_DEV = process.env.NODE_ENV === 'development';
+
+const CSP_POLICY = IS_DEV
+  ? [
+      "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:",
+      "script-src * 'unsafe-inline' 'unsafe-eval'",
+      "style-src * 'unsafe-inline'",
+      "img-src * data: blob:",
+      "connect-src * data: blob: ws: wss: http: https:",
+      "font-src * data:",
+      "media-src * data: blob:",
+    ].join('; ')
+  : [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: blob: https://*.akamaihd.net https://*.steamstatic.com https://*.steamgriddb.com https://media.steampowered.com https://store.steampowered.com https://avatars.githubusercontent.com",
+      "connect-src 'self' http://ipc.localhost https://*.supabase.co https://*.openai.com https://*.anthropic.com https://generativelanguage.googleapis.com https://*.deepseek.com https://*.mistral.ai https://openrouter.ai https://api.github.com https://*.nexusmods.com https://*.steampowered.com https://*.rawg.io https://*.igdb.com https://howlongtobeat.com https://*.steamgriddb.com https://*.gamestranslator.it https://api.allorigins.win https://corsproxy.io http://127.0.0.1:* http://localhost:* ws://127.0.0.1:* ws://localhost:*",
+      "font-src 'self' data:",
+      "media-src 'self' blob:",
+    ].join('; ');
 
 // Allowed origins for CSRF protection (Tauri + local dev)
 const ALLOWED_ORIGINS = [

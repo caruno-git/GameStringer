@@ -19,6 +19,8 @@ export const ProfilesContext = createContext<UseProfilesReturn | null>(null);
 export { ProfilesProvider } from '@/hooks/profiles-provider';
 
 // Broadcast helper for cross-instance synchronization
+// 1. window.dispatchEvent: propaga in altre istanze hook della stessa webview
+// 2. Tauri emit: propaga a TUTTE le webview (es. chat-popup apre da tray)
 const dispatchAuthChanged = () => {
   try {
     if (typeof window !== 'undefined') {
@@ -27,6 +29,10 @@ const dispatchAuthChanged = () => {
   } catch (e: unknown) {
     clientLogger.warn(`dispatchAuthChanged failed: ${String(e)}`);
   }
+  // Propaga anche tra webview Tauri (main ↔ chat-popup)
+  import('@tauri-apps/api/event')
+    .then(({ emit }) => emit('profile-auth-changed'))
+    .catch(() => { /* non fatale */ });
 };
 
 /**
@@ -124,6 +130,7 @@ export function useProfilesCore(): UseProfilesReturn {
   }, []); // NESSUNA DIPENDENZA per evitare loop infinito
 
   // Listen for auth changes from other instances and refresh current profile
+  // Ascolta sia DOM events (stessa webview) che Tauri events (cross-webview: main ↔ popup)
   useEffect(() => {
     const handler = () => {
       loadCurrentProfile().catch(err => clientLogger.warn(`useProfiles loadCurrentProfile error: ${String(err)}`));
@@ -131,10 +138,19 @@ export function useProfilesCore(): UseProfilesReturn {
     if (typeof window !== 'undefined') {
       window.addEventListener('profile-auth-changed', handler);
     }
+
+    // Tauri cross-webview listener (propaga tra main window e chat-popup)
+    let unlisten: (() => void) | undefined;
+    import('@tauri-apps/api/event')
+      .then(({ listen }) => listen('profile-auth-changed', handler))
+      .then(fn => { unlisten = fn; })
+      .catch(() => { /* non in contesto Tauri */ });
+
     return () => {
       if (typeof window !== 'undefined') {
         window.removeEventListener('profile-auth-changed', handler);
       }
+      if (unlisten) unlisten();
     };
   }, [loadCurrentProfile]);
 

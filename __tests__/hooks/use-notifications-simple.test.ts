@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useNotifications } from '@/hooks/use-notifications';
+import { useProfileAuth } from '@/lib/profile-auth';
 
 // Mock delle dipendenze
 vi.mock('@/lib/profile-auth', () => ({
@@ -31,7 +32,7 @@ describe('useNotifications - Simple Tests', () => {
     vi.clearAllMocks();
     
     // Mock profile auth
-    (require('@/lib/profile-auth').useProfileAuth as unknown).mockReturnValue({
+    vi.mocked(useProfileAuth).mockReturnValue({
       currentProfile: mockProfile
     });
 
@@ -40,7 +41,7 @@ describe('useNotifications - Simple Tests', () => {
   });
 
   it('should initialize with empty state when no profile', () => {
-    (require('@/lib/profile-auth').useProfileAuth as unknown).mockReturnValue({
+    vi.mocked(useProfileAuth).mockReturnValue({
       currentProfile: null
     });
 

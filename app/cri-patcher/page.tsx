@@ -16,6 +16,7 @@ import {
   Archive, User, ChevronRight, Copy, RefreshCw, Filter, HardDrive,
 } from 'lucide-react';
 import { clientLogger } from '@/lib/client-logger';
+import { useTranslation } from '@/lib/i18n';
 import {
   type CriGameInfo,
   type CpkFileInfo,
@@ -84,6 +85,7 @@ export default function CriPatcherPage() {
   const [copiedFeedback, setCopiedFeedback] = useState(false);
 
   // Extracted text files reference for patching
+  const { t } = useTranslation();
   const extractedFilesRef = useRef<CriTextFile[]>([]);
   const entriesRef = useRef<CriStringEntry[]>([]);
   entriesRef.current = entries;
@@ -474,7 +476,7 @@ export default function CriPatcherPage() {
             <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black/30 shadow-lg shadow-black/40 border border-white/10">
               <Languages className="h-3.5 w-3.5 text-white" />
               <span className="text-sm font-bold text-white">AI</span>
-              <span className="text-xs text-white/70">Traduzione</span>
+              <span className="text-xs text-white/70">{t('common.traduzione')}</span>
             </div>
           </div>
         </div>
@@ -564,7 +566,7 @@ export default function CriPatcherPage() {
             </CardHeader>
             <CardContent padding="compact" className="space-y-3">
               <div className="flex gap-2">
-                <Button onClick={handleSelectFolder} variant="outline" size="sm" className="h-9 text-xs" aria-label="Sfoglia cartella">
+                <Button onClick={handleSelectFolder} variant="outline" size="sm" className="h-9 text-xs" aria-label={t('common.sfogliaCartella')}>
                   <FolderOpen className="mr-1.5 h-3.5 w-3.5" />
                   Sfoglia...
                 </Button>
@@ -573,7 +575,7 @@ export default function CriPatcherPage() {
                   disabled={!gamePath || analyzing}
                   size="sm"
                   className="h-9 bg-violet-600 hover:bg-violet-500 text-xs"
-                  aria-label="Analizza cartella"
+                  aria-label={t('common.analizzaCartella')}
                 >
                   {analyzing ? (
                     <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
@@ -701,7 +703,7 @@ export default function CriPatcherPage() {
                       disabled={extracting || selectedTextFiles.size === 0}
                       size="xs"
                       className="bg-violet-600 hover:bg-violet-500 text-xs"
-                      aria-label="Estrai file selezionati"
+                      aria-label={t('common.estraiFileSelezionati')}
                     >
                       {extracting ? (
                         <Loader2 className="mr-1 h-3 w-3 animate-spin" />
@@ -828,7 +830,7 @@ export default function CriPatcherPage() {
                   <Input
                     value={searchFilter}
                     onChange={(e) => setSearchFilter(e.target.value)}
-                    aria-label="Cerca stringhe"
+                    aria-label={t('common.cercaStringhe')}
                     placeholder="Cerca chiave, testo o speaker..."
                     className="h-8 text-xs pl-8 bg-slate-950/50 border-slate-700/50"
                   />
@@ -839,7 +841,7 @@ export default function CriPatcherPage() {
                   disabled={translating || entries.length === 0}
                   size="sm"
                   className="h-8 text-xs bg-emerald-600 hover:bg-emerald-500"
-                  aria-label="Traduci tutte le stringhe"
+                  aria-label={t('common.traduciTutteLeStringhe')}
                 >
                   {translating ? (
                     <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
@@ -920,7 +922,7 @@ export default function CriPatcherPage() {
                     size="xs"
                     className="text-xs"
                     onClick={handleImportCSV}
-                    aria-label="Importa traduzioni da CSV"
+                    aria-label={t('common.importaTraduzioniDaCsv')}
                   >
                     Importa CSV
                   </Button>
@@ -929,7 +931,7 @@ export default function CriPatcherPage() {
                     size="xs"
                     className="text-xs"
                     onClick={handleImportPO}
-                    aria-label="Importa traduzioni da PO"
+                    aria-label={t('common.importaTraduzioniDaPo')}
                   >
                     Importa PO
                   </Button>
@@ -971,7 +973,7 @@ export default function CriPatcherPage() {
                 </div>
                 <div className="p-3 rounded-lg bg-violet-500/10 border border-violet-500/20 text-center">
                   <p className="text-2xl font-bold text-violet-400">{entries.length}</p>
-                  <p className="text-xs text-slate-400 mt-0.5">Totale</p>
+                  <p className="text-xs text-slate-400 mt-0.5">{t('common.totale')}</p>
                 </div>
                 <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-center">
                   <p className="text-2xl font-bold text-yellow-400">{stats.errors}</p>
@@ -1000,21 +1002,21 @@ export default function CriPatcherPage() {
                   onClick={handleBuildPatchedCpk}
                   disabled={exporting || !selectedCpk}
                   className="h-auto py-3 flex flex-col items-center gap-1.5 bg-violet-600 hover:bg-violet-500 text-xs"
-                  aria-label="Crea CPK patchato"
+                  aria-label={t('common.creaCpkPatchato')}
                 >
                   {exporting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Package className="h-5 w-5" />}
-                  <span className="font-medium">CPK Patchato</span>
-                  <span className="text-2xs text-violet-200/70">Pronto per il gioco</span>
+                  <span className="font-medium">{t('common.cpkPatchato')}</span>
+                  <span className="text-2xs text-violet-200/70">{t('common.prontoPerIlGioco')}</span>
                 </Button>
 
                 <Button
                   onClick={handleExportCSV}
                   variant="outline"
                   className="h-auto py-3 flex flex-col items-center gap-1.5 text-xs"
-                  aria-label="Esporta traduzioni in CSV"
+                  aria-label={t('common.esportaTraduzioniInCsv')}
                 >
                   <FileText className="h-5 w-5" />
-                  <span className="font-medium">Esporta CSV</span>
+                  <span className="font-medium">{t('common.esportaCsv')}</span>
                   <span className="text-2xs text-slate-400">Foglio di calcolo</span>
                 </Button>
 
@@ -1022,10 +1024,10 @@ export default function CriPatcherPage() {
                   onClick={handleExportPO}
                   variant="outline"
                   className="h-auto py-3 flex flex-col items-center gap-1.5 text-xs"
-                  aria-label="Esporta traduzioni in PO gettext"
+                  aria-label={t('common.esportaTraduzioniInPoGettext')}
                 >
                   <Languages className="h-5 w-5" />
-                  <span className="font-medium">Esporta PO</span>
+                  <span className="font-medium">{t('common.esportaPo')}</span>
                   <span className="text-2xs text-slate-400">Gettext</span>
                 </Button>
 
@@ -1033,18 +1035,18 @@ export default function CriPatcherPage() {
                   onClick={handleImportCSV}
                   variant="outline"
                   className="h-auto py-3 flex flex-col items-center gap-1.5 text-xs"
-                  aria-label="Importa traduzioni da CSV"
+                  aria-label={t('common.importaTraduzioniDaCsv')}
                 >
                   <RefreshCw className="h-5 w-5" />
-                  <span className="font-medium">Importa CSV</span>
-                  <span className="text-2xs text-slate-400">Da file esterno</span>
+                  <span className="font-medium">{t('common.importaCsv')}</span>
+                  <span className="text-2xs text-slate-400">{t('common.daFileEsterno')}</span>
                 </Button>
 
                 <Button
                   onClick={handleCopyAll}
                   variant="outline"
                   className="h-auto py-3 flex flex-col items-center gap-1.5 text-xs"
-                  aria-label="Copia tutto negli appunti"
+                  aria-label={t('common.copiaTuttoNegliAppunti')}
                 >
                   {copiedFeedback ? <CheckCircle2 className="h-5 w-5 text-emerald-400" /> : <Copy className="h-5 w-5" />}
                   <span className="font-medium">{copiedFeedback ? 'Copiato!' : 'Copia Tutto'}</span>
@@ -1061,7 +1063,7 @@ export default function CriPatcherPage() {
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-emerald-400">Esportazione completata</p>
+                    <p className="text-sm font-medium text-emerald-400">{t('common.esportazioneCompletata')}</p>
                     <p className="text-xs text-slate-400 font-mono truncate mt-0.5" title={exportResult}>
                       {exportResult}
                     </p>

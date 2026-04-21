@@ -119,7 +119,7 @@ export function WadExtractor() {
             setEntries(data);
             toast.success(`Caricati ${data.length} stringhe`);
           } else {
-            toast.error('Errore lettura file');
+            toast.error(t('common.erroreLetturaFile'));
           }
         }
       }
@@ -156,7 +156,7 @@ export function WadExtractor() {
           await writeTextFile(selected, JSON.stringify(exportData, null, 2));
           toast.success(`Salvate ${exportData.length} traduzioni`);
         } catch {
-          toast.error('Errore salvataggio');
+          toast.error(t('common.erroreSalvataggio'));
         }
       }
     } catch (e: unknown) {
@@ -181,7 +181,7 @@ export function WadExtractor() {
   const translateBatch = useCallback(async () => {
     const untranslated = entries.filter(e => !e.translated || e.translated.length === 0);
     if (untranslated.length === 0) {
-      toast.info('Tutte le stringhe sono gia tradotte');
+      toast.info(t('common.tutteLeStringheSonoGiaTradotte'));
       return;
     }
 
@@ -260,7 +260,7 @@ export function WadExtractor() {
       ? `node scripts/extract-wad-text.mjs "${wadPath}" extracted_text.json`
       : 'node scripts/extract-wad-text.mjs "<percorso-wad>" extracted_text.json';
     navigator.clipboard.writeText(cmd);
-    toast.success('Comando copiato negli appunti');
+    toast.success(t('common.comandoCopiatoNegliAppunti'));
   }, [wadPath]);
 
   return (
@@ -460,7 +460,7 @@ export function WadExtractor() {
                   <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
-                      aria-label="Cerca" placeholder="Cerca testo, file..."
+                      aria-label={t('common.cerca')} placeholder="Cerca testo, file..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-9 h-8"

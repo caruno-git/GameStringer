@@ -220,6 +220,7 @@ impl TranslationBridge {
     ///
     /// Utile per i Tauri commands quando il frontend vuole testare una traduzione.
     /// Non passa attraverso la shared memory — lookup diretto nel dizionario.
+    #[allow(dead_code)]
     pub fn translate(&self, text: &str) -> Option<String> {
         let start = Instant::now();
         let dict = self.dictionary.read();

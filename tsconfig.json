@@ -45,6 +45,14 @@
   "exclude": [
     "node_modules",
     "src-tauri/target",
-    "src-tauri/target/**"
+    "src-tauri/target/**",
+    "__tests__/**",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "vitest.config.ts",
+    "playwright.config.ts",
+    "tests/**"
   ]
 }

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { useSearchParams } from 'next/navigation';
+import { useTranslation } from '@/lib/i18n';
 import {
   Brain, Globe, FileText, Clock, AlertTriangle, CheckCircle, XCircle,
   ChevronLeft, Loader2, Zap, Server, Cloud, Layers,
@@ -1020,6 +1021,7 @@ function _getAutomationLevelColor(level: AutomationLevel): string {
 // ── Main Component ───────────────────────────────────────────────────
 
 export default function PredictionToolPage() {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const gameTitle = searchParams.get('name') || 'Unknown Game';
   const installDir = searchParams.get('installDir') || '';
@@ -1148,7 +1150,7 @@ export default function PredictionToolPage() {
         <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5 mb-6">
           <div className="flex flex-wrap items-end gap-4">
             <div className="flex-1 min-w-[200px]">
-              <label className="text-xs font-medium text-slate-400 mb-1.5 block">Lingua Origine</label>
+              <label className="text-xs font-medium text-slate-400 mb-1.5 block">{t('common.linguaOrigine')}</label>
               <select value={sourceLang} onChange={e => setSourceLang(e.target.value)}
                 className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
                 {LANGUAGES.map(l => <option key={l.code} value={l.code}>{l.name} ({l.code})</option>)}
@@ -1158,7 +1160,7 @@ export default function PredictionToolPage() {
               <ArrowRight className="w-5 h-5 text-purple-400" />
             </div>
             <div className="flex-1 min-w-[200px]">
-              <label className="text-xs font-medium text-slate-400 mb-1.5 block">Lingua Destinazione</label>
+              <label className="text-xs font-medium text-slate-400 mb-1.5 block">{t('common.linguaDestinazione')}</label>
               <select value={targetLang} onChange={e => setTargetLang(e.target.value)}
                 className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
                 {LANGUAGES.map(l => <option key={l.code} value={l.code}>{l.name} ({l.code})</option>)}
@@ -1200,7 +1202,7 @@ export default function PredictionToolPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Difficulty Gauge */}
               <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6 flex flex-col items-center justify-center">
-                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Difficoltà Traduzione</h3>
+                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">{t('common.difficoltàTraduzione')}</h3>
                 <DifficultyGauge score={result.difficultyScore} label={result.difficultyLabel} />
                 <div className="mt-4 flex items-center gap-2">
                   {result.gsSupported ? (
@@ -1217,11 +1219,11 @@ export default function PredictionToolPage() {
 
               {/* Stats Grid */}
               <div className="lg:col-span-2 grid grid-cols-2 sm:grid-cols-3 gap-3">
-                <StatCard icon={Cpu} label="Motore" value={result.engine} color="text-cyan-400" />
-                <StatCard icon={FileText} label="File Testo" value={String(result.textStats.totalTextFiles)} sub={`${result.textStats.totalTextSizeKb} KB totali`} color="text-blue-400" />
-                <StatCard icon={BarChart3} label="Stringhe Stimate" value={result.textStats.estimatedStrings.toLocaleString()} color="text-purple-400" />
-                <StatCard icon={Languages} label="Lingue Trovate" value={String(result.detectedLanguages.length)} color="text-emerald-400" />
-                <StatCard icon={Layers} label="Formati Traducibili" value={String(translatableFormats.length)} sub={`su ${result.fileFormats.length} formati`} color="text-yellow-400" />
+                <StatCard icon={Cpu} label={t('common.motore')} value={result.engine} color="text-cyan-400" />
+                <StatCard icon={FileText} label={t('common.fileTesto')} value={String(result.textStats.totalTextFiles)} sub={`${result.textStats.totalTextSizeKb} KB totali`} color="text-blue-400" />
+                <StatCard icon={BarChart3} label={t('common.stringheStimate')} value={result.textStats.estimatedStrings.toLocaleString()} color="text-purple-400" />
+                <StatCard icon={Languages} label={t('common.lingueTrovate')} value={String(result.detectedLanguages.length)} color="text-emerald-400" />
+                <StatCard icon={Layers} label={t('common.formatiTraducibili')} value={String(translatableFormats.length)} sub={`su ${result.fileFormats.length} formati`} color="text-yellow-400" />
                 <StatCard icon={HardDrive} label="Metodo" value={result.gsSupported ? 'GS Nativo' : 'Manuale'} sub={result.recommendedMethod.slice(0, 50)} color="text-pink-400" />
               </div>
             </div>
@@ -1336,7 +1338,7 @@ export default function PredictionToolPage() {
                     <p className="text-slate-200 font-bold">{result.translationComplexity.variableCount.toLocaleString()}</p>
                   </div>
                   <div className="bg-slate-900/40 rounded-lg px-3 py-2">
-                    <span className="text-slate-500">Tag Markup</span>
+                    <span className="text-slate-500">{t('common.tagMarkup')}</span>
                     <p className="text-slate-200 font-bold">{result.translationComplexity.markupCount.toLocaleString()}</p>
                   </div>
                   <div className="bg-slate-900/40 rounded-lg px-3 py-2">
@@ -1353,7 +1355,7 @@ export default function PredictionToolPage() {
                     <span className="text-2xs bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded-full">Plurali</span>
                   )}
                   {result.translationComplexity.hasGenderForms && (
-                    <span className="text-2xs bg-pink-500/10 text-pink-400 border border-pink-500/20 px-2 py-0.5 rounded-full">Genere</span>
+                    <span className="text-2xs bg-pink-500/10 text-pink-400 border border-pink-500/20 px-2 py-0.5 rounded-full">{t('common.genere')}</span>
                   )}
                   {result.translationComplexity.variableFormats.map((fmt, i) => (
                     <span key={i} className="text-2xs bg-slate-700/50 text-slate-400 border border-slate-600/30 px-2 py-0.5 rounded-full font-mono">{fmt}</span>
@@ -1370,7 +1372,7 @@ export default function PredictionToolPage() {
               <div className="flex items-center gap-4 mb-3">
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-slate-400">Score Qualità</span>
+                    <span className="text-xs text-slate-400">{t('common.scoreQualità')}</span>
                     <span className="text-sm font-bold text-purple-400">{result.translationQualityScore}/100</span>
                   </div>
                   <div className="w-full bg-slate-700 rounded-full h-2">
@@ -1395,7 +1397,7 @@ export default function PredictionToolPage() {
               {/* Translation Files */}
               {result.existingTools.hasTranslationFiles && (
                 <div className="mb-4">
-                  <h4 className="text-xs font-medium text-blue-300 mb-2">File di Traduzione Rilevati</h4>
+                  <h4 className="text-xs font-medium text-blue-300 mb-2">{t('common.fileDiTraduzioneRilevati')}</h4>
                   <div className="space-y-1">
                     {result.existingTools.translationFiles.slice(0, 5).map((file, i) => (
                       <div key={i} className="flex items-center justify-between bg-slate-900/50 rounded-lg px-3 py-2">
@@ -1433,7 +1435,7 @@ export default function PredictionToolPage() {
               {/* Community Patches */}
               {result.existingTools.hasCommunityPatches && (
                 <div className="mb-4">
-                  <h4 className="text-xs font-medium text-purple-300 mb-2">Patch Community</h4>
+                  <h4 className="text-xs font-medium text-purple-300 mb-2">{t('common.patchCommunity')}</h4>
                   <div className="space-y-1">
                     {result.existingTools.communityPatches.slice(0, 3).map((patch, i) => (
                       <div key={i} className="flex items-center justify-between bg-slate-900/50 rounded-lg px-3 py-2">
@@ -1510,7 +1512,7 @@ export default function PredictionToolPage() {
               {/* Alternative Tools */}
               {result.selectedTools.alternativeTextTools.length > 0 && (
                 <div className="mb-4">
-                  <h4 className="text-xs font-medium text-orange-300 mb-2">Tool Alternativi</h4>
+                  <h4 className="text-xs font-medium text-orange-300 mb-2">{t('common.toolAlternativi')}</h4>
                   <div className="space-y-2">
                     {result.selectedTools.alternativeTextTools.slice(0, 3).map((tool, i) => (
                       <div key={i} className="flex items-center justify-between bg-slate-900/30 rounded-lg px-3 py-2">
@@ -1689,7 +1691,7 @@ export default function PredictionToolPage() {
 
               {/* Budget Options */}
               <div className="mt-4">
-                <h4 className="text-xs font-medium text-yellow-300 mb-2">Opzioni Budget</h4>
+                <h4 className="text-xs font-medium text-yellow-300 mb-2">{t('common.opzioniBudget')}</h4>
                 <div className="grid grid-cols-3 gap-2">
                   {result.llmChains.filter(c => c.targetBudget).slice(0, 3).map((chain, i) => (
                     <div key={i} className="bg-slate-900/30 rounded-lg px-3 py-2 text-center">
@@ -1760,7 +1762,7 @@ export default function PredictionToolPage() {
                     <span className="text-xs font-medium text-slate-300">Costi</span>
                   </div>
                   <div className="text-lg font-bold text-white">${result.multimediaAnalysis.multimediaEstimates.toolCostsUsd.toFixed(0)}</div>
-                  <div className="text-xs text-slate-400">Tool professionali</div>
+                  <div className="text-xs text-slate-400">{t('common.toolProfessionali')}</div>
                 </div>
               </div>
 
@@ -1785,7 +1787,7 @@ export default function PredictionToolPage() {
                   
                   <div className="bg-slate-900/30 rounded-lg p-2">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-slate-400">Qualità</span>
+                      <span className="text-xs text-slate-400">{t('common.qualità')}</span>
                       <div className="flex items-center gap-1">
                         <div 
                           className="w-2 h-2 rounded-full" 
@@ -1814,7 +1816,7 @@ export default function PredictionToolPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   <div className="bg-slate-900/30 rounded-lg p-2">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-slate-400">Con testo</span>
+                      <span className="text-xs text-slate-400">{t('common.conTesto')}</span>
                       <span className="text-xs font-mono text-emerald-400">{result.multimediaAnalysis.graphicsStats.textContainingGraphics}</span>
                     </div>
                     <div className="flex items-center justify-between mb-1">
@@ -1829,7 +1831,7 @@ export default function PredictionToolPage() {
                   
                   <div className="bg-slate-900/30 rounded-lg p-2">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-slate-400">Testo embedded</span>
+                      <span className="text-xs text-slate-400">{t('common.testoEmbedded')}</span>
                       <span className="text-xs font-mono text-orange-400">{result.multimediaAnalysis.graphicsStats.embeddedTextFiles}</span>
                     </div>
                     <div className="flex items-center justify-between mb-1">
@@ -1887,7 +1889,7 @@ export default function PredictionToolPage() {
               {/* Problematic Files */}
               {result.multimediaAnalysis.problematicFiles.length > 0 && (
                 <div className="mb-4">
-                  <h4 className="text-xs font-medium text-orange-300 mb-2">File Problematici</h4>
+                  <h4 className="text-xs font-medium text-orange-300 mb-2">{t('common.fileProblematici')}</h4>
                   <div className="space-y-1">
                     {result.multimediaAnalysis.problematicFiles.slice(0, 3).map((problem, i) => (
                       <div key={i} className="bg-slate-900/30 rounded-lg p-2">
@@ -1983,7 +1985,7 @@ export default function PredictionToolPage() {
                   ))}
                 </div>
                 <div className="flex gap-3 mt-3 pt-3 border-t border-slate-700/50 text-2xs text-slate-500">
-                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500" /> Traducibile</span>
+                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500" />{t('common.traducibile')}</span>
                   <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-slate-600" /> Binario</span>
                 </div>
               </div>
@@ -2030,7 +2032,7 @@ export default function PredictionToolPage() {
                       <p className="text-2xs text-slate-500">{te.speedStringsPerMin}/min</p>
                     </div>
                     <div className="mt-2">
-                      <p className="text-2xs text-slate-500 mb-0.5">Qualità</p>
+                      <p className="text-2xs text-slate-500 mb-0.5">{t('common.qualità')}</p>
                       <QualityBar score={te.qualityScore} />
                     </div>
                   </div>
@@ -2085,7 +2087,7 @@ export default function PredictionToolPage() {
                       </div>
                       {isExpanded && (
                         <div className="px-4 pb-3 pt-1 border-t border-slate-700/30">
-                          <p className="text-2xs text-slate-500 uppercase tracking-wider mb-2">Pipeline</p>
+                          <p className="text-2xs text-slate-500 uppercase tracking-wider mb-2">{t('common.pipeline')}</p>
                           <div className="space-y-1.5">
                             {ce.steps.map((step, i) => (
                               <div key={i} className="flex items-start gap-2 text-xs text-slate-400">

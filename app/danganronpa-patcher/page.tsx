@@ -246,7 +246,7 @@ export default function DanganronpaPatcherPage() {
 
   const selectPatchFile = async () => {
     if (!selectedSteamGame) {
-      toast.error('Seleziona prima un gioco');
+      toast.error(t('common.selezionaPrimaUnGioco'));
       return;
     }
     
@@ -267,7 +267,7 @@ export default function DanganronpaPatcherPage() {
         if (result.success) {
           toast.success(result.message);
           if (result.backup_path) {
-            toast.info('Backup creato automaticamente');
+            toast.info(t('common.backupCreatoAutomaticamente'));
           }
           loadBackups(selectedSteamGame.path);
           findSteamGames(); // Refresh
@@ -307,7 +307,7 @@ export default function DanganronpaPatcherPage() {
 
   const exportPatch = async () => {
     if (!selectedSteamGame) {
-      toast.error('Seleziona prima un gioco');
+      toast.error(t('common.selezionaPrimaUnGioco'));
       return;
     }
 
@@ -452,7 +452,7 @@ export default function DanganronpaPatcherPage() {
   const translateWithAI = async () => {
     const untranslated = linDialogues.filter(d => !d.translated);
     if (untranslated.length === 0) {
-      toast.info('Tutti i dialoghi sono già tradotti');
+      toast.info(t('common.tuttiIDialoghiSonoGiàTradotti'));
       return;
     }
 
@@ -519,7 +519,7 @@ export default function DanganronpaPatcherPage() {
   const importFromDrat = async () => {
     try {
       if (linDialogues.length === 0) {
-        toast.error('Prima carica un file LIN');
+        toast.error(t('common.primaCaricaUnFileLin'));
         return;
       }
       
@@ -666,7 +666,7 @@ export default function DanganronpaPatcherPage() {
       const stats = await invoke<PoStats>('get_po_stats', { poPath: poFile.path });
       setPoStats(stats);
       
-      toast.success('File PO salvato');
+      toast.success(t('common.filePoSalvato'));
     } catch (e: unknown) {
       toast.error(`Errore salvataggio: ${e}`);
     } finally {
@@ -985,7 +985,7 @@ export default function DanganronpaPatcherPage() {
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
-                      aria-label="Cerca" placeholder="Cerca testi..."
+                      aria-label={t('common.cerca')} placeholder="Cerca testi..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-9"
@@ -1397,7 +1397,7 @@ export default function DanganronpaPatcherPage() {
                     </Button>
                     <Button onClick={saveLinDialogues} size="xs" className="bg-emerald-600 hover:bg-emerald-500">
                       <Download className="w-3 h-3 mr-1" />{t('glossaryManager.save')}</Button>
-                    <Button size="sm" variant="outline" onClick={handleExportPO} disabled={linDialogues.length === 0} className="h-8" aria-label="Esporta file PO">
+                    <Button size="sm" variant="outline" onClick={handleExportPO} disabled={linDialogues.length === 0} className="h-8" aria-label={t('common.esportaFilePo')}>
                       <Download className="h-4 w-4 mr-1.5" />
                       PO
                     </Button>
@@ -1430,7 +1430,7 @@ export default function DanganronpaPatcherPage() {
                     <div className="relative flex-1">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <Input
-                        aria-label="Cerca" placeholder="Cerca dialoghi o personaggi..."
+                        aria-label={t('common.cerca')} placeholder="Cerca dialoghi o personaggi..."
                         value={linSearchTerm}
                         onChange={(e) => setLinSearchTerm(e.target.value)}
                         className="pl-9"

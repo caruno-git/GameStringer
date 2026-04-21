@@ -113,7 +113,7 @@ export function AutoTranslateStepper({
           <div className="mt-3 flex items-center gap-2 p-2.5 rounded-lg bg-red-500/10 border border-red-500/20 text-2xs text-red-300">
             <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
             <span>{error}</span>
-            <button className="ml-auto text-micro font-bold text-red-400 hover:text-red-300 uppercase tracking-wider" onClick={onClose}>Chiudi</button>
+            <button className="ml-auto text-micro font-bold text-red-400 hover:text-red-300 uppercase tracking-wider" onClick={onClose}>{t('common.chiudi')}</button>
           </div>
         )}
 
@@ -176,16 +176,39 @@ export function AutoTranslateStepper({
                 <button
                   onClick={async () => {
                     try {
-                      if (game.appid) {
+                      const { invoke: tauriInvoke } = await import('@tauri-apps/api/core');
+                      
+                      // Prima prova Steam se ha appid
+                      if (game.appid && game.appid > 0) {
                         window.open(`steam://run/${game.appid}`, '_blank');
-                        toast.info('Avvio gioco da Steam per test...');
-                      } else if (game.installPath) {
-                        const { invoke: tauriInvoke } = await import('@tauri-apps/api/core');
-                        await tauriInvoke('open_path', { path: game.installPath });
-                        toast.info('Cartella gioco aperta — avvia il gioco per testare');
+                        toast.info(t('common.avvioGiocoDaSteamPerTest'));
+                        return;
                       }
-                    } catch {
-                      toast.error('Impossibile avviare il gioco');
+                      
+                      // Altrimenti cerca l'exe nella cartella
+                      if (game.installPath) {
+                        // Cerca exe nella cartella
+                        const exeList = await tauriInvoke<string[]>('find_executables_in_folder', { 
+                          folderPath: game.installPath 
+                        }).catch(() => [] as string[]);
+                        
+                        if (exeList && exeList.length > 0) {
+                          // Avvia il primo exe trovato
+                          const exePath = `${game.installPath}\\${exeList[0]}`;
+                          await tauriInvoke('launch_game_direct', { executablePath: exePath, launchOptions: null });
+                          toast.success(`Avviato: ${exeList[0]}`);
+                        } else {
+                          // Fallback: apri la cartella
+                          await tauriInvoke('open_path', { path: game.installPath });
+                          toast.info(t('common.cartellaGiocoApertaAvviaIlGiocoPerTestare'));
+                        }
+                        return;
+                      }
+                      
+                      toast.warning('Percorso di installazione non disponibile');
+                    } catch (e) {
+                      console.error('[TestGame]', e);
+                      toast.error(t('common.impossibileAvviareIlGioco'));
                     }
                   }}
                   className="group flex flex-col items-center gap-2 px-4 py-4 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 hover:border-emerald-500/40 transition-all text-center"
@@ -193,7 +216,7 @@ export function AutoTranslateStepper({
                   <div className="w-9 h-9 rounded-xl bg-emerald-500/15 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Play className="h-4.5 w-4.5 text-emerald-400" />
                   </div>
-                  <span className="text-xs font-bold text-emerald-300">Testa il Gioco</span>
+                  <span className="text-xs font-bold text-emerald-300">{t('common.testaIlGioco')}</span>
                   <span className="text-2xs text-slate-500 leading-tight">Avvia il gioco per verificare le traduzioni in-game</span>
                 </button>
 
@@ -202,13 +225,13 @@ export function AutoTranslateStepper({
                   onClick={async () => {
                     try {
                       const { invoke: tauriInvoke } = await import('@tauri-apps/api/core');
-                      toast.info('Creazione patch in corso...');
+                      toast.info(t('common.creazionePatchInCorso'));
                       const patchPath = await tauriInvoke<string>('export_translation_patch', {
                         installPath: game.installPath,
                         gameTitle: game.title || game.name || 'Game',
                         targetLang: result?.targetLang || 'it',
                       });
-                      toast.success('Patch creata!');
+                      toast.success(t('common.patchCreata'));
                       await tauriInvoke('open_path', { path: patchPath }).catch(() => {});
                     } catch (e: unknown) {
                       toast.error(`Errore creazione patch: ${e}`);
@@ -219,8 +242,8 @@ export function AutoTranslateStepper({
                   <div className="w-9 h-9 rounded-xl bg-amber-500/15 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Package className="h-4.5 w-4.5 text-amber-400" />
                   </div>
-                  <span className="text-xs font-bold text-amber-300">Crea Patch</span>
-                  <span className="text-2xs text-slate-500 leading-tight">Esporta un pacchetto pronto da condividere nella community</span>
+                  <span className="text-xs font-bold text-amber-300">{t('common.creaPatch')}</span>
+                  <span className="text-2xs text-slate-500 leading-tight">{t('common.esportaUnPacchettoProntoDaCondividereNellaCommunity')}</span>
                 </button>
               </div>
             </div>

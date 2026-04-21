@@ -171,9 +171,15 @@ export function FeaturedGameWidget({ collapsed = false }: FeaturedGameWidgetProp
       return;
     }
     const targetLang = language || 'it';
-    const userGame = gamesWithoutLang[currentIndex];
+    // Guard contro currentIndex fuori dai limiti (es. dopo reload lista con meno elementi)
+    const safeIndex = currentIndex % gamesWithoutLang.length;
+    const userGame = gamesWithoutLang[safeIndex];
+    if (!userGame) {
+      if (safeIndex !== 0) setCurrentIndex(0);
+      return;
+    }
     const langName = LANG_NAMES[targetLang]?.[language] || targetLang;
-    
+
     setImageError(false); // Reset errore immagine quando cambia gioco
     setNeedsMarquee(false); // Reset marquee quando cambia gioco
     setGame({

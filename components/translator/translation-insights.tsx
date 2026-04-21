@@ -68,6 +68,7 @@ interface ContentTypeBadgeProps {
 }
 
 export function ContentTypeBadge({ type, confidence, showConfidence = false, size = 'sm' }: ContentTypeBadgeProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { t } = useTranslation();
   const Icon = CONTENT_TYPE_ICONS[type];
   const colorClass = CONTENT_TYPE_COLORS[type];

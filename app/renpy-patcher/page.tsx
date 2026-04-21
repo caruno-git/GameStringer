@@ -380,7 +380,7 @@ export default function RenpyPatcherPage() {
                 </Button>
                 <Button onClick={saveTranslations} size="xs" className="bg-emerald-600 hover:bg-emerald-500">
                   <Save className="w-3 h-3 mr-1" />{t('glossaryManager.save')}</Button>
-                <Button size="sm" variant="outline" onClick={handleExportPO} disabled={strings.length === 0} className="h-8" aria-label="Esporta file PO">
+                <Button size="sm" variant="outline" onClick={handleExportPO} disabled={strings.length === 0} className="h-8" aria-label={t('common.esportaFilePo')}>
                   <Download className="h-4 w-4 mr-1.5" />
                   PO
                 </Button>
@@ -429,7 +429,7 @@ export default function RenpyPatcherPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
-                  aria-label="Cerca" placeholder="Cerca testi o personaggi..."
+                  aria-label={t('common.cerca')} placeholder="Cerca testi o personaggi..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-9 h-8 bg-slate-950/50 border-slate-700"

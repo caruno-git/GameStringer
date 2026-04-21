@@ -55,6 +55,7 @@ export function LiveOcrOverlay() {
   const [fps, setFps] = useState(0);
   const [totalDetected, setTotalDetected] = useState(0);
   
+  const { t } = useTranslation();
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const _lastCaptureTime = useRef<number>(0);
   const frameCount = useRef<number>(0);
@@ -198,7 +199,7 @@ export function LiveOcrOverlay() {
   const handleStart = async () => {
     setIsRunning(true);
     setIsPaused(false);
-    toast.success('🎮 Live OCR avviato!');
+    toast.success(t('common.liveOcrAvviato'));
     
     // Apri finestra overlay
     if (showOverlay) {
@@ -215,7 +216,7 @@ export function LiveOcrOverlay() {
     setIsRunning(false);
     setIsPaused(false);
     setDetectedTexts([]);
-    toast.info('Live OCR fermato');
+    toast.info(t('common.liveOcrFermato'));
     
     // Chiudi overlay
     try {
@@ -230,7 +231,7 @@ export function LiveOcrOverlay() {
 
   const selectRegion = async () => {
     setIsSelectingRegion(true);
-    toast.info('Seleziona una regione dello schermo...');
+    toast.info(t('common.selezionaUnaRegioneDelloSchermo'));
     
     try {
       const { invoke } = await import('@tauri-apps/api/core');
@@ -239,7 +240,7 @@ export function LiveOcrOverlay() {
       setCaptureMode('region');
       toast.success(`Regione selezionata: ${region.width}x${region.height}`);
     } catch {
-      toast.error('Selezione regione annullata');
+      toast.error(t('common.selezioneRegioneAnnullata'));
     } finally {
       setIsSelectingRegion(false);
     }
@@ -248,7 +249,7 @@ export function LiveOcrOverlay() {
   const copyAllTranslations = () => {
     const text = detectedTexts.map(t => `${t.original}\n→ ${t.translated}`).join('\n\n');
     navigator.clipboard.writeText(text);
-    toast.success('Traduzioni copiate!');
+    toast.success(t('common.traduzioniCopiate'));
   };
 
   const exportTranslations = () => {
@@ -330,7 +331,7 @@ export function LiveOcrOverlay() {
           <CardContent className="space-y-4">
             {/* Modalità cattura */}
             <div className="space-y-2">
-              <Label className="text-xs">Modalità cattura</Label>
+              <Label className="text-xs">{t('common.modalitàCattura')}</Label>
               <Select value={captureMode} onValueChange={(v: string) => setCaptureMode(v as "region" | "window" | "fullscreen")}>
                 <SelectTrigger className="h-8 text-xs">
                   <SelectValue />
@@ -408,12 +409,12 @@ export function LiveOcrOverlay() {
             {/* Toggle */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <Label className="text-xs">Traduzione automatica</Label>
+                <Label className="text-xs">{t('common.traduzioneAutomatica')}</Label>
                 <Switch checked={autoTranslate} onCheckedChange={setAutoTranslate} />
               </div>
               
               <div className="flex items-center justify-between">
-                <Label className="text-xs">Mostra overlay</Label>
+                <Label className="text-xs">{t('common.mostraOverlay')}</Label>
                 <Switch checked={showOverlay} onCheckedChange={setShowOverlay} />
               </div>
             </div>
@@ -422,7 +423,7 @@ export function LiveOcrOverlay() {
             {showOverlay && (
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <Label className="text-xs">Opacità overlay</Label>
+                  <Label className="text-xs">{t('common.opacitàOverlay')}</Label>
                   <span className="text-xs text-gray-400">{Math.round(overlayOpacity * 100)}%</span>
                 </div>
                 <Slider
@@ -464,8 +465,8 @@ export function LiveOcrOverlay() {
               {detectedTexts.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-gray-500">
                   <Eye className="h-12 w-12 mb-4 opacity-30" />
-                  <p className="text-sm">Nessun testo rilevato</p>
-                  <p className="text-xs opacity-70">Avvia la cattura per vedere i testi</p>
+                  <p className="text-sm">{t('common.nessunTestoRilevato')}</p>
+                  <p className="text-xs opacity-70">{t('common.avviaLaCatturaPerVedereITesti')}</p>
                 </div>
               ) : (
                 <div className="space-y-2">

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import GameImage from '@/components/game-image';
 import { Cog, Timer } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 interface DisplayGame {
   id: string;
@@ -36,6 +37,8 @@ interface DisplayGame {
 }
 
 const GameCard = ({ game, index }: { game: DisplayGame; index: number }) => {
+  const { t } = useTranslation();
+
   // Funzione per ottenere il codice paese dalla lingua
   const getCountryCode = (language: string): string | null => {
     const languageToCountry: { [key: string]: string } = {
@@ -223,7 +226,7 @@ const GameCard = ({ game, index }: { game: DisplayGame; index: number }) => {
                   src={`https://flagcdn.com/32x24/${countryCode}.png`}
                   alt={countryCode}
                   className="w-6 h-4 rounded-sm shadow-md border border-gray-200/20"
-                  title="Lingua supportata"
+                  title={t('common.linguaSupportata')}
                   loading="lazy"
                 />
               ))

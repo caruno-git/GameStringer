@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { useNotifications } from '@/hooks/use-notifications';
+import { useTranslation } from '@/lib/i18n';
 import {
   Notification,
   NotificationType,
@@ -80,6 +81,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
   // Stati per virtual scrolling
   const [scrollTop, setScrollTop] = useState(0);
   const [containerHeight, setContainerHeight] = useState(400);
+  const { t } = useTranslation();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   
   // Stati per navigazione tastiera
@@ -453,7 +455,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
       onClick={onClose}
       role="dialog"
       aria-modal="true"
-      aria-label="Notification Center"
+      aria-label={t('common.notificationCenter')}
     >
       <div 
         className="fixed top-16 right-4 w-[420px] max-h-[80vh] bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 border border-slate-700/50 rounded-2xl shadow-2xl shadow-purple-500/10 overflow-hidden"
@@ -468,7 +470,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center shadow-lg shadow-purple-500/30">
               <Bell className="h-4 w-4 text-white" aria-hidden="true" />
             </div>
-            <h3 id="notification-center-title" className="font-semibold text-white">Notifications</h3>
+            <h3 id="notification-center-title" className="font-semibold text-white">{t('common.notifications')}</h3>
             {filteredUnreadCount > 0 && (
               <Badge variant="secondary" className="text-xs">
                 {filteredUnreadCount} new
@@ -599,8 +601,8 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
               size="icon"
               className="h-8 w-8"
               onClick={() => setShowKeyboardHelp(true)}
-              title="Mostra scorciatoie da tastiera"
-              aria-label="Mostra guida scorciatoie da tastiera"
+              title={t('common.mostraScorciatoieDaTastiera')}
+              aria-label={t('common.mostraGuidaScorciatoieDaTastiera')}
             >
               <HelpCircle className="h-4 w-4" />
             </Button>
@@ -802,6 +804,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
   isKeyboardSelected = false,
   onFocus
 }) => {
+  const { t } = useTranslation();
   const isUnread = !notification.readAt;
   const itemId = `notification-item-${notification.id}`;
   const titleId = `${itemId}-title`;
@@ -981,7 +984,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
                     e.stopPropagation();
                     onDelete(notification.id);
                   }}
-                  title="Delete notification"
+                  title={t('common.deleteNotification')}
                 >
                   <Trash2 className="h-3 w-3" />
                 </Button>

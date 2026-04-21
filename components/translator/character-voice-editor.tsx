@@ -70,6 +70,7 @@ interface CharacterVoiceEditorProps {
 }
 
 export function CharacterVoiceEditor({ gameId, onProfileSelect }: CharacterVoiceEditorProps) {
+  const { t } = useTranslation();
   const { t: _t } = useTranslation();
   const [profiles, setProfiles] = useState<CharacterProfile[]>([]);
   const [selectedProfile, setSelectedProfile] = useState<CharacterProfile | null>(null);
@@ -131,7 +132,7 @@ export function CharacterVoiceEditor({ gameId, onProfileSelect }: CharacterVoice
 
   const handleCreate = () => {
     if (!formName.trim()) {
-      toast.error('Inserisci un nome per il personaggio');
+      toast.error(t('common.inserisciUnNomePerIlPersonaggio'));
       return;
     }
 
@@ -180,7 +181,7 @@ export function CharacterVoiceEditor({ gameId, onProfileSelect }: CharacterVoice
     if (selectedProfile?.id === id) {
       setSelectedProfile(null);
     }
-    toast.success('Personaggio eliminato');
+    toast.success(t('common.personaggioEliminato'));
   };
 
   const handleTestTranslation = async () => {
@@ -194,9 +195,9 @@ export function CharacterVoiceEditor({ gameId, onProfileSelect }: CharacterVoice
         'it'
       );
       setTranslatedText(result.translated);
-      toast.success('Traduzione completata!');
+      toast.success(t('common.traduzioneCompletata'));
     } catch {
-      toast.error('Errore nella traduzione');
+      toast.error(t('common.erroreNellaTraduzione'));
     } finally {
       setIsTranslating(false);
     }
@@ -255,7 +256,7 @@ export function CharacterVoiceEditor({ gameId, onProfileSelect }: CharacterVoice
             </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle>Crea Nuovo Personaggio</DialogTitle>
+                  <DialogTitle>{t('common.creaNuovoPersonaggio')}</DialogTitle>
                 </DialogHeader>
                 
                 <div className="space-y-4 py-4">
@@ -270,7 +271,7 @@ export function CharacterVoiceEditor({ gameId, onProfileSelect }: CharacterVoice
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Archetipo</Label>
+                      <Label>{t('common.archetipo')}</Label>
                       <Select value={formArchetype} onValueChange={(v: CharacterArchetype) => applyPreset(v)}>
                         <SelectTrigger>
                           <SelectValue />
@@ -418,7 +419,7 @@ export function CharacterVoiceEditor({ gameId, onProfileSelect }: CharacterVoice
               {profiles.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   <User className="h-12 w-12 mx-auto mb-2 opacity-30" />
-                  <p className="text-sm">Nessun personaggio</p>
+                  <p className="text-sm">{t('common.nessunPersonaggio')}</p>
                   <p className="text-xs">Crea il primo!</p>
                 </div>
               ) : (
@@ -527,7 +528,7 @@ export function CharacterVoiceEditor({ gameId, onProfileSelect }: CharacterVoice
                       size="sm"
                       onClick={() => {
                         navigator.clipboard.writeText(translatedText);
-                        toast.success('Copiato!');
+                        toast.success(t('common.copiato'));
                       }}
                     >
                       <Copy className="h-3 w-3 mr-2" />
@@ -539,7 +540,7 @@ export function CharacterVoiceEditor({ gameId, onProfileSelect }: CharacterVoice
             ) : (
               <div className="flex flex-col items-center justify-center h-[300px] text-gray-500">
                 <User className="h-16 w-16 mb-4 opacity-30" />
-                <p className="text-sm">Seleziona un personaggio</p>
+                <p className="text-sm">{t('common.selezionaUnPersonaggio')}</p>
                 <p className="text-xs">per testare la traduzione con personalità</p>
               </div>
             )}

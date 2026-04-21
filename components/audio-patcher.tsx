@@ -30,7 +30,7 @@ export default function AudioPatcher({ gamePath }: AudioPatcherProps) {
 
   const scanAudioFiles = async () => {
     if (!gamePath) {
-      toast.error('Path del gioco non disponibile');
+      toast.error(t('common.pathDelGiocoNonDisponibile'));
       return;
     }
     setIsScanning(true);
@@ -47,7 +47,7 @@ export default function AudioPatcher({ gamePath }: AudioPatcherProps) {
       }
     } catch (err: unknown) {
       clientLogger.error('Errore durante la scansione audio:', err);
-      toast.error('Errore durante la scansione audio', { description: (err as Error).message });
+      toast.error(t('common.erroreDuranteLaScansioneAudio'), { description: (err as Error).message });
     } finally {
       setIsScanning(false);
     }
@@ -56,7 +56,7 @@ export default function AudioPatcher({ gamePath }: AudioPatcherProps) {
   const handlePatch = async () => {
     if (!selectedFile) return;
     if (!xttsText.trim()) {
-      toast.error('Inserisci il testo da sintetizzare.');
+      toast.error(t('common.inserisciIlTestoDaSintetizzare'));
       return;
     }
 
@@ -79,11 +79,11 @@ export default function AudioPatcher({ gamePath }: AudioPatcherProps) {
         newAudioBase64: base64Audio,
       });
 
-      toast.success('File audio patchato con successo! Backup originale creato.', { id: toastId });
+      toast.success(t('common.fileAudioPatchatoConSuccessoBackupOriginaleCreato'), { id: toastId });
       setXttsText(''); // Pulisci l'input
     } catch (err: unknown) {
       clientLogger.error('Errore patch audio:', err);
-      toast.error('Errore durante la patch audio', { description: (err as Error).message, id: toastId });
+      toast.error(t('common.erroreDuranteLaPatchAudio'), { description: (err as Error).message, id: toastId });
     } finally {
       setIsPatching(false);
     }
@@ -95,10 +95,10 @@ export default function AudioPatcher({ gamePath }: AudioPatcherProps) {
     setIsRestoring(true);
     try {
       await invoke('restore_audio_file', { originalPath: selectedFile.path });
-      toast.success('File originale ripristinato con successo.');
+      toast.success(t('common.fileOriginaleRipristinatoConSuccesso'));
     } catch (err: unknown) {
       clientLogger.error('Errore restore audio:', err);
-      toast.error('Errore durante il ripristino del file audio', { description: (err as Error).message });
+      toast.error(t('common.erroreDuranteIlRipristinoDelFileAudio'), { description: (err as Error).message });
     } finally {
       setIsRestoring(false);
     }

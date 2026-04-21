@@ -16,6 +16,7 @@ import {
   Swords, ScrollText, Users, MessageSquare, Archive,
 } from 'lucide-react'
 import { clientLogger } from '@/lib/client-logger';
+import { useTranslation } from '@/lib/i18n';
 import {
   type BethesdaGameInfo,
   type PluginInfo,
@@ -133,6 +134,7 @@ export default function BethesdaPatcherPage() {
   // Step 1: Game selection & detection
   // -----------------------------------------------------------------------
 
+  const { t } = useTranslation();
   const handleSelectFolder = useCallback(async () => {
     try {
       const { open } = await import('@tauri-apps/plugin-dialog')
@@ -762,7 +764,7 @@ export default function BethesdaPatcherPage() {
                   disabled={analyzing}
                 >
                   {analyzing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
-                  <span className="ml-1.5">Ricarica</span>
+                  <span className="ml-1.5">{t('common.ricarica')}</span>
                 </Button>
               </div>
             </CardHeader>
@@ -844,7 +846,7 @@ export default function BethesdaPatcherPage() {
                 {editorMode === 'plugin' && (
                   <Select value={recordTypeFilter} onValueChange={setRecordTypeFilter}>
                     <SelectTrigger className="h-8 w-[140px] text-xs bg-slate-950/50 border-slate-700/50">
-                      <SelectValue placeholder="Tipo record" />
+                      <SelectValue placeholder={t('common.tipoRecord')} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all" className="text-xs">Tutti i tipi</SelectItem>
@@ -862,7 +864,7 @@ export default function BethesdaPatcherPage() {
                   <Input
                     value={searchFilter}
                     onChange={(e) => setSearchFilter(e.target.value)}
-                    aria-label="Cerca stringhe"
+                    aria-label={t('common.cercaStringhe')}
                     placeholder="Cerca..."
                     className="h-8 text-xs pl-8 bg-slate-950/50 border-slate-700/50"
                   />
@@ -1025,8 +1027,8 @@ export default function BethesdaPatcherPage() {
                     className="h-auto py-3 flex flex-col items-center gap-1.5 bg-cyan-600 hover:bg-cyan-500 text-xs"
                   >
                     {exporting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Package className="h-5 w-5" />}
-                    <span className="font-medium">File STRINGS</span>
-                    <span className="text-2xs text-cyan-200/70">Patch diretto</span>
+                    <span className="font-medium">{t('common.fileStrings')}</span>
+                    <span className="text-2xs text-cyan-200/70">{t('common.patchDiretto')}</span>
                   </Button>
                 )}
 
@@ -1037,7 +1039,7 @@ export default function BethesdaPatcherPage() {
                   className="h-auto py-3 flex flex-col items-center gap-1.5 text-xs"
                 >
                   <FileText className="h-5 w-5" />
-                  <span className="font-medium">Esporta CSV</span>
+                  <span className="font-medium">{t('common.esportaCsv')}</span>
                   <span className="text-2xs text-slate-400">Foglio di calcolo</span>
                 </Button>
 
@@ -1048,7 +1050,7 @@ export default function BethesdaPatcherPage() {
                   className="h-auto py-3 flex flex-col items-center gap-1.5 text-xs"
                 >
                   <Globe className="h-5 w-5" />
-                  <span className="font-medium">Esporta PO</span>
+                  <span className="font-medium">{t('common.esportaPo')}</span>
                   <span className="text-2xs text-slate-400">Gettext</span>
                 </Button>
 
@@ -1072,7 +1074,7 @@ export default function BethesdaPatcherPage() {
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-emerald-400">Esportazione completata</p>
+                    <p className="text-sm font-medium text-emerald-400">{t('common.esportazioneCompletata')}</p>
                     <p className="text-xs text-slate-400 font-mono truncate mt-0.5" title={exportResult}>
                       {exportResult}
                     </p>

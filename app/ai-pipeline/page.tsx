@@ -351,7 +351,7 @@ export default function AIPipelinePage() {
                     </div>
 
                     {ollamaModels.length === 0 ? (
-                      <p className="text-2xs text-muted-foreground">Ollama offline o nessun modello installato</p>
+                      <p className="text-2xs text-muted-foreground">{t('common.ollamaOfflineONessunModelloInstallato')}</p>
                     ) : (
                       <>
                         <p className="text-micro text-muted-foreground">Assegna modelli diversi a ogni step. Vuoto = usa provider chain di default.</p>
@@ -605,14 +605,14 @@ export default function AIPipelinePage() {
                   <table className="w-full text-2xs">
                     <thead>
                       <tr className="border-b border-border/50 text-muted-foreground">
-                        <th className="text-left py-1 pr-2">Data</th>
+                        <th className="text-left py-1 pr-2">{t('common.data')}</th>
                         <th className="text-left py-1 pr-2">Preset</th>
                         <th className="text-right py-1 pr-2">Score</th>
                         <th className="text-right py-1 pr-2">1st Pass</th>
                         <th className="text-right py-1 pr-2">Fixed</th>
-                        <th className="text-right py-1 pr-2">Improved</th>
+                        <th className="text-right py-1 pr-2">{t('common.improved')}</th>
                         <th className="text-right py-1 pr-2">ms/str</th>
-                        <th className="text-right py-1">Totale</th>
+                        <th className="text-right py-1">{t('common.totale')}</th>
                       </tr>
                     </thead>
                     <tbody>

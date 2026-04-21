@@ -24,6 +24,7 @@ interface QuickStartStep {
 }
 
 export function QuickStartGuide() {
+  const { t } = useTranslation();
   const { t: _t } = useTranslation();
   const [isDismissed, setIsDismissed] = useState(true);
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
@@ -90,7 +91,7 @@ export function QuickStartGuide() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Rocket className="h-5 w-5 text-primary" />
-            <CardTitle className="text-lg">Guida Rapida</CardTitle>
+            <CardTitle className="text-lg">{t('common.guidaRapida')}</CardTitle>
             <Badge variant="secondary" className="ml-2">
               {completedSteps.length}/{steps.length}
             </Badge>

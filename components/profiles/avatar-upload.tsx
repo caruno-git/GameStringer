@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Camera, X, Check, ImagePlus } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n';
 
 interface AvatarUploadProps {
   currentAvatar?: string;
@@ -19,6 +20,7 @@ interface AvatarUploadProps {
 export function AvatarUpload({ currentAvatar, userName, onAvatarChange, open, onOpenChange }: AvatarUploadProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const getInitials = (name: string) => {
@@ -35,12 +37,12 @@ export function AvatarUpload({ currentAvatar, userName, onAvatarChange, open, on
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      toast.error('File non valido', { description: 'Seleziona un\'immagine (JPG, PNG, GIF)' });
+      toast.error(t('common.fileNonValido'), { description: 'Seleziona un\'immagine (JPG, PNG, GIF)' });
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('File troppo grande', { description: 'Massimo 5MB' });
+      toast.error(t('common.fileTroppoGrande'), { description: 'Massimo 5MB' });
       return;
     }
 

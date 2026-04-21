@@ -9,6 +9,18 @@
   "gitHash": "8800c56",
   "branch": "main",
   "changelog": {
+    "1.8.1": {
+      "date": "2026-04-14",
+      "type": "patch",
+      "changes": [
+        "Fix CSP: aggiunto 'unsafe-eval' per compatibilità Next.js dev mode",
+        "Fix CSP: CSP permissiva in development, restrittiva in production",
+        "Fix CSP: aggiunto http://ipc.localhost per Tauri IPC",
+        "Fix i18n: corrette chiavi offlineTranslator.* nel widget Ollama dashboard",
+        "Fix Rust warnings: rimossi unused_mut e dead_code in 9 file backend",
+        "Middleware: CSP dinamica basata su NODE_ENV"
+      ]
+    },
     "1.8.0": {
       "date": "2026-04-09",
       "type": "feature",

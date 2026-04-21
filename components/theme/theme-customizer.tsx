@@ -295,7 +295,7 @@ export function ThemeCustomizer({ open, onOpenChange }: ThemeCustomizerProps) {
     root.style.removeProperty('--header-gradient');
     
     localStorage.removeItem('gamestringer-custom-theme');
-    toast.success('Tema resettato ai valori predefiniti');
+    toast.success(t('common.temaResettatoAiValoriPredefiniti'));
   };
 
   const applyTheme = (themeData: CustomTheme) => {
@@ -323,7 +323,7 @@ export function ThemeCustomizer({ open, onOpenChange }: ThemeCustomizerProps) {
     localStorage.setItem('gamestringer-user-themes', JSON.stringify(updated));
     localStorage.setItem('gamestringer-custom-theme', JSON.stringify(newTheme));
     
-    toast.success('Tema personalizzato salvato!');
+    toast.success(t('common.temaPersonalizzatoSalvato'));
   };
 
   const exportTheme = () => {
@@ -341,7 +341,7 @@ export function ThemeCustomizer({ open, onOpenChange }: ThemeCustomizerProps) {
     a.click();
     URL.revokeObjectURL(url);
     
-    toast.success('Tema esportato!');
+    toast.success(t('common.temaEsportato'));
   };
 
   const importTheme = () => {
@@ -359,10 +359,10 @@ export function ThemeCustomizer({ open, onOpenChange }: ThemeCustomizerProps) {
         if (data.colors) {
           setCustomColors(data.colors);
           applyThemeColors(data.colors);
-          toast.success('Tema importato!');
+          toast.success(t('common.temaImportato'));
         }
       } catch {
-        toast.error('Errore importazione tema');
+        toast.error(t('common.erroreImportazioneTema'));
       }
     };
     input.click();
@@ -539,27 +539,27 @@ export function ThemeCustomizer({ open, onOpenChange }: ThemeCustomizerProps) {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <ColorPicker 
-                    label="Colore Primario"
+                    label={t('common.colorePrimario')}
                     value={customColors.primary}
                     onChange={(v) => setCustomColors(prev => ({ ...prev, primary: v }))}
                   />
                   <ColorPicker 
-                    label="Colore Accent"
+                    label={t('common.coloreAccent')}
                     value={customColors.accent}
                     onChange={(v) => setCustomColors(prev => ({ ...prev, accent: v }))}
                   />
                   <ColorPicker 
-                    label="Successo"
+                    label={t('common.successo')}
                     value={customColors.success}
                     onChange={(v) => setCustomColors(prev => ({ ...prev, success: v }))}
                   />
                   <ColorPicker 
-                    label="Avviso"
+                    label={t('common.avviso')}
                     value={customColors.warning}
                     onChange={(v) => setCustomColors(prev => ({ ...prev, warning: v }))}
                   />
                   <ColorPicker 
-                    label="Errore"
+                    label={t('common.errore')}
                     value={customColors.destructive}
                     onChange={(v) => setCustomColors(prev => ({ ...prev, destructive: v }))}
                   />

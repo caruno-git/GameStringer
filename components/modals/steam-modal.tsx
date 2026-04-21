@@ -309,7 +309,7 @@ export function SteamModal({ isOpen, onClose, onSubmit, isLoading }: SteamModalP
                   type="password"
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
-                  placeholder="Inserisci la tua Steam API Key"
+                  placeholder={t('common.inserisciLaTuaSteamApiKey')}
                   className="w-full px-3 py-2 bg-muted border rounded-md text-sm mb-2"
                   autoComplete="off"
                 />

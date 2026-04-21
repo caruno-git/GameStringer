@@ -321,7 +321,7 @@ export function VisionTranslator() {
             {loading ? (
               <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Traduzione con Vision in corso...</>
             ) : (
-              <><Eye className="h-4 w-4 mr-2" /> Traduci con Vision LLM</>
+              <><Eye className="h-4 w-4 mr-2" />{t('common.traduciConVisionLlm')}</>
             )}
           </Button>
         </div>

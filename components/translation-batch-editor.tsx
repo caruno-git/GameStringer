@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { motion } from 'framer-motion';
+import { useTranslation } from '@/lib/i18n';
 
 interface Translation {
   id: string;
@@ -37,6 +38,7 @@ export function TranslationBatchEditor({
   onSave,
   onGenerateSuggestions 
 }: TranslationBatchEditorProps) {
+  const { t } = useTranslation();
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [editedTranslations, setEditedTranslations] = useState<Record<string, string>>({});
   const [isSaving, setIsSaving] = useState(false);
@@ -194,7 +196,7 @@ export function TranslationBatchEditor({
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>Batch Editor</CardTitle>
+          <CardTitle>{t('common.batchEditor')}</CardTitle>
           <div className="flex items-center space-x-2">
             <span className="text-sm text-muted-foreground">
               {selectedIds.size} of {translations.length} selected

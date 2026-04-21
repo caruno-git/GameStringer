@@ -750,7 +750,7 @@ export function TranslationProfileManager({
                       className="w-40"
                     />
                     <Input
-                      placeholder="Traduzione"
+                      placeholder={t('common.traduzione')}
                       value={newTranslation.translated}
                       onChange={(e) => setNewTranslation({
                         ...newTranslation,

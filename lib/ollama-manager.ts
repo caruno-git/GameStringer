@@ -335,6 +335,7 @@ export const RECOMMENDED_MODELS: RecommendedModel[] = [
 
 /** Verifica se Ollama è in esecuzione */
 export async function isOllamaRunning(): Promise<boolean> {
+  // Usa solo HTTP diretto (funziona sia in browser che in Tauri)
   try {
     const res = await fetch(`${OLLAMA_URL}/api/tags`, { signal: AbortSignal.timeout(2000) });
     return res.ok;
@@ -345,6 +346,7 @@ export async function isOllamaRunning(): Promise<boolean> {
 
 /** Lista modelli installati */
 export async function listInstalledModels(): Promise<OllamaModel[]> {
+  // Usa solo HTTP diretto (restituisce dati completi, funziona sia in browser che in Tauri)
   const res = await fetch(`${OLLAMA_URL}/api/tags`, { signal: AbortSignal.timeout(5000) });
   if (!res.ok) throw new Error('Ollama non raggiungibile');
   const data = await res.json();

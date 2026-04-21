@@ -40,6 +40,7 @@ import {
 } from '@/components/ui/dialog';
 // Tabs imports removed — not currently used
 import { toast } from 'sonner';
+import { useTranslation } from '@/lib/i18n';
 
 interface CommunityTranslation {
   id: string;
@@ -131,6 +132,7 @@ const CommunityTranslations: React.FC<CommunityTranslationsProps> = ({
   onTranslationSubmit,
   className
 }) => {
+  const { t } = useTranslation();
   const [translations, setTranslations] = useState<CommunityTranslation[]>([]);
   const [newTranslation, setNewTranslation] = useState({
     originalText: '',
@@ -244,7 +246,7 @@ const CommunityTranslations: React.FC<CommunityTranslationsProps> = ({
       category: 'dialogue'
     });
     setIsSubmitDialogOpen(false);
-    toast.success('Traduzione inviata per revisione');
+    toast.success(t('common.traduzioneInviataPerRevisione'));
   };
 
   const handleVote = (translationId: string, isUpvote: boolean) => {
@@ -264,7 +266,7 @@ const CommunityTranslations: React.FC<CommunityTranslationsProps> = ({
 
   const handleSubmitReview = () => {
     if (!selectedTranslation || !reviewText) {
-      toast.error('Compila tutti i campi della recensione');
+      toast.error(t('common.compilaTuttiICampiDellaRecensione'));
       return;
     }
 
@@ -290,7 +292,7 @@ const CommunityTranslations: React.FC<CommunityTranslationsProps> = ({
     setReviewText('');
     setReviewRating(5);
     setIsReviewDialogOpen(false);
-    toast.success('Recensione inviata');
+    toast.success(t('common.recensioneInviata'));
   };
 
   const getStatusColor = (status: string) => {
@@ -334,7 +336,7 @@ const CommunityTranslations: React.FC<CommunityTranslationsProps> = ({
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Contribuisci con una Traduzione</DialogTitle>
+              <DialogTitle>{t('common.contribuisciConUnaTraduzione')}</DialogTitle>
               <DialogDescription>
                 Aiuta la community con una nuova traduzione
               </DialogDescription>
@@ -343,7 +345,7 @@ const CommunityTranslations: React.FC<CommunityTranslationsProps> = ({
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Lingua Origine</Label>
+                  <Label>{t('common.linguaOrigine')}</Label>
                   <Select 
                     value={newTranslation.sourceLanguage} 
                     onValueChange={(value) => setNewTranslation(prev => ({ ...prev, sourceLanguage: value }))}
@@ -378,7 +380,7 @@ const CommunityTranslations: React.FC<CommunityTranslationsProps> = ({
               </div>
 
               <div className="space-y-2">
-                <Label>Categoria</Label>
+                <Label>{t('common.categoria')}</Label>
                 <Select 
                   value={newTranslation.category} 
                   onValueChange={(value) => setNewTranslation(prev => ({ ...prev, category: value }))}
@@ -397,7 +399,7 @@ const CommunityTranslations: React.FC<CommunityTranslationsProps> = ({
               </div>
 
               <div className="space-y-2">
-                <Label>Testo Originale</Label>
+                <Label>{t('common.testoOriginale')}</Label>
                 <Textarea
                   value={newTranslation.originalText}
                   onChange={(e) => setNewTranslation(prev => ({ ...prev, originalText: e.target.value }))}
@@ -407,7 +409,7 @@ const CommunityTranslations: React.FC<CommunityTranslationsProps> = ({
               </div>
 
               <div className="space-y-2">
-                <Label>Traduzione</Label>
+                <Label>{t('common.traduzione')}</Label>
                 <Textarea
                   value={newTranslation.translatedText}
                   onChange={(e) => setNewTranslation(prev => ({ ...prev, translatedText: e.target.value }))}
@@ -448,7 +450,7 @@ const CommunityTranslations: React.FC<CommunityTranslationsProps> = ({
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  aria-label="Cerca" placeholder="Cerca traduzioni..."
+                  aria-label={t('common.cerca')} placeholder="Cerca traduzioni..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"
@@ -462,8 +464,8 @@ const CommunityTranslations: React.FC<CommunityTranslationsProps> = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Tutti gli stati</SelectItem>
-                <SelectItem value="pending">In attesa</SelectItem>
-                <SelectItem value="approved">Approvate</SelectItem>
+                <SelectItem value="pending">{t('common.inAttesa')}</SelectItem>
+                <SelectItem value="approved">{t('common.approvate')}</SelectItem>
                 <SelectItem value="needs_review">Da rivedere</SelectItem>
                 <SelectItem value="rejected">Rifiutate</SelectItem>
               </SelectContent>
@@ -474,7 +476,7 @@ const CommunityTranslations: React.FC<CommunityTranslationsProps> = ({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tutte le lingue</SelectItem>
+                <SelectItem value="all">{t('common.tutteLeLingue')}</SelectItem>
                 <SelectItem value="it">🇮🇹 Italiano</SelectItem>
                 <SelectItem value="en">🇺🇸 Inglese</SelectItem>
                 <SelectItem value="es">🇪🇸 Spagnolo</SelectItem>
@@ -516,7 +518,7 @@ const CommunityTranslations: React.FC<CommunityTranslationsProps> = ({
               <Globe className="h-5 w-5 text-purple-600" />
               <div>
                 <p className="text-2xl font-bold">12</p>
-                <p className="text-sm text-muted-foreground">Lingue Supportate</p>
+                <p className="text-sm text-muted-foreground">{t('common.lingueSupportate')}</p>
               </div>
             </div>
           </CardContent>
@@ -528,7 +530,7 @@ const CommunityTranslations: React.FC<CommunityTranslationsProps> = ({
               <Award className="h-5 w-5 text-yellow-600" />
               <div>
                 <p className="text-2xl font-bold">94%</p>
-                <p className="text-sm text-muted-foreground">Tasso Approvazione</p>
+                <p className="text-sm text-muted-foreground">{t('common.tassoApprovazione')}</p>
               </div>
             </div>
           </CardContent>
@@ -578,14 +580,14 @@ const CommunityTranslations: React.FC<CommunityTranslationsProps> = ({
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium">Testo Originale</Label>
+                  <Label className="text-sm font-medium">{t('common.testoOriginale')}</Label>
                   <div className="bg-muted p-3 rounded-md">
                     <p className="text-sm">{translation.originalText}</p>
                   </div>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium">Traduzione</Label>
+                  <Label className="text-sm font-medium">{t('common.traduzione')}</Label>
                   <div className="bg-primary/10 p-3 rounded-md">
                     <p className="text-sm font-medium">{translation.translatedText}</p>
                   </div>
@@ -594,7 +596,7 @@ const CommunityTranslations: React.FC<CommunityTranslationsProps> = ({
 
               {translation.context && (
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium">Contesto</Label>
+                  <Label className="text-sm font-medium">{t('common.contesto')}</Label>
                   <p className="text-sm text-muted-foreground">{translation.context}</p>
                 </div>
               )}
@@ -688,7 +690,7 @@ const CommunityTranslations: React.FC<CommunityTranslationsProps> = ({
       <Dialog open={isReviewDialogOpen} onOpenChange={setIsReviewDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Recensisci Traduzione</DialogTitle>
+            <DialogTitle>{t('common.recensisciTraduzione')}</DialogTitle>
             <DialogDescription>
               Fornisci feedback per aiutare a migliorare la traduzione
             </DialogDescription>
@@ -696,7 +698,7 @@ const CommunityTranslations: React.FC<CommunityTranslationsProps> = ({
           
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Valutazione</Label>
+              <Label>{t('common.valutazione')}</Label>
               <div className="flex gap-1">
                 {[1, 2, 3, 4, 5].map((rating) => (
                   <Button
@@ -714,7 +716,7 @@ const CommunityTranslations: React.FC<CommunityTranslationsProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label>Commento</Label>
+              <Label>{t('common.commento')}</Label>
               <Textarea
                 value={reviewText}
                 onChange={(e) => setReviewText(e.target.value)}

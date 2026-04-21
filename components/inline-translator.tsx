@@ -371,7 +371,7 @@ MAIN_QUEST_01=Find the ancient artifact`;
                       {isLoadingFile ? (
                         <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Loading...</>
                       ) : (
-                        <><Wand2 className="h-4 w-4 mr-2" /> Proceed with Translation</>
+                        <><Wand2 className="h-4 w-4 mr-2" />{t('common.proceedWithTranslation')}</>
                       )}
                     </Button>
                   </div>
@@ -392,7 +392,7 @@ MAIN_QUEST_01=Find the ancient artifact`;
                         value={originalContent}
                         readOnly
                         className="h-[300px] font-mono text-sm bg-muted/50"
-                        placeholder="File content will appear here"
+                        placeholder={t('common.fileContentWillAppearHere')}
                       />
                     </div>
                     <div className="space-y-2">
@@ -422,7 +422,7 @@ MAIN_QUEST_01=Find the ancient artifact`;
                         <Label>{t('inlineTranslatorComp.aiService')}</Label>
                         <Select value={provider} onValueChange={(value: 'openai' | 'deepl' | 'google') => setProvider(value)}>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select provider" />
+                            <SelectValue placeholder={t('common.selectProvider')} />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="openai">{t('inlineTranslatorComp.openaiGpt4')}</SelectItem>

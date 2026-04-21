@@ -1026,7 +1026,7 @@ export default function EditorPage() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" aria-label="Importa" className="h-7 w-7 rounded-lg text-slate-400 hover:text-indigo-300 hover:bg-indigo-500/10" onClick={() => setShowImportDialog(true)}>
+                    <Button variant="ghost" size="icon" aria-label={t('common.importa')} className="h-7 w-7 rounded-lg text-slate-400 hover:text-indigo-300 hover:bg-indigo-500/10" onClick={() => setShowImportDialog(true)}>
                       <Upload className="h-3.5 w-3.5" />
                     </Button>
                   </TooltipTrigger>
@@ -1056,13 +1056,13 @@ export default function EditorPage() {
           <div className="relative group">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
             <Input 
-              aria-label="Cerca" placeholder="Cerca stringa o gioco..." 
+              aria-label={t('common.cerca')} placeholder="Cerca stringa o gioco..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="h-8 pl-9 pr-8 text-xs bg-slate-950/60 border-slate-700/50 focus-visible:ring-indigo-500/30 rounded-lg shadow-inner text-slate-200 placeholder:text-slate-500"
             />
             {searchTerm && (
-              <Button variant="ghost" size="icon" aria-label="Chiudi" className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 hover:bg-slate-800 rounded-md" onClick={() => setSearchTerm('')}>
+              <Button variant="ghost" size="icon" aria-label={t('common.chiudi')} className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 hover:bg-slate-800 rounded-md" onClick={() => setSearchTerm('')}>
                 <X className="h-3 w-3 text-slate-400" />
               </Button>
             )}
@@ -1158,7 +1158,7 @@ export default function EditorPage() {
             <div className="flex flex-col">
               {/* Header con back button */}
               <div className="flex items-center gap-2 p-2 border-b border-slate-800/50 bg-slate-900/80 backdrop-blur-md sticky top-0 z-10 shadow-sm">
-                <Button variant="ghost" size="icon" aria-label="Indietro" className="h-7 w-7 rounded-lg hover:bg-slate-800" onClick={() => { setExplorerView('games'); setSelectedProject(null); }}>
+                <Button variant="ghost" size="icon" aria-label={t('common.indietro')} className="h-7 w-7 rounded-lg hover:bg-slate-800" onClick={() => { setExplorerView('games'); setSelectedProject(null); }}>
                   <ChevronRight className="h-4 w-4 rotate-180 text-slate-400" />
                 </Button>
                 <span className="font-bold text-xs text-slate-300 truncate tracking-wide">{selectedProject.game.title}</span>
@@ -1217,7 +1217,7 @@ export default function EditorPage() {
             <div className="flex flex-col">
               {/* Header con back button */}
               <div className="flex items-center gap-2 p-2 border-b border-slate-800/50 bg-slate-900/80 backdrop-blur-md sticky top-0 z-10 shadow-sm">
-                <Button variant="ghost" size="icon" aria-label="Indietro" className="h-7 w-7 rounded-lg hover:bg-slate-800" onClick={() => { setExplorerView('files'); setSelectedFile(null); }}>
+                <Button variant="ghost" size="icon" aria-label={t('common.indietro')} className="h-7 w-7 rounded-lg hover:bg-slate-800" onClick={() => { setExplorerView('files'); setSelectedFile(null); }}>
                   <ChevronRight className="h-4 w-4 rotate-180 text-slate-400" />
                 </Button>
                 <span className="font-bold text-xs text-slate-300 truncate tracking-wide">{selectedFile?.filename || 'Stringhe'}</span>
@@ -1462,7 +1462,7 @@ export default function EditorPage() {
                   <div className="px-4 py-3 bg-slate-900/60 border-b border-slate-800/50 flex justify-between items-center backdrop-blur-md">
                     <span className="text-2xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
                       <FileText className="h-3.5 w-3.5" />{t('qaCheck.originalText')}</span>
-                    <Button variant="ghost" size="icon" aria-label="Copia" className="h-7 w-7 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-indigo-300 transition-colors" onClick={() => {
+                    <Button variant="ghost" size="icon" aria-label={t('common.copia')} className="h-7 w-7 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-indigo-300 transition-colors" onClick={() => {
                       navigator.clipboard.writeText(selectedTranslation.originalText);
                       toast({ title: 'Copiato negli appunti' });
                     }}>
@@ -1492,7 +1492,7 @@ export default function EditorPage() {
                           <FileText className="h-3.5 w-3.5" />{t('mangaTranslator.source')}</span>
                         <Badge variant="outline" className="text-micro h-4 bg-slate-800/50 text-slate-400 border-slate-700/50">Riga {selectedLine.lineNumber}</Badge>
                       </div>
-                      <Button variant="ghost" size="icon" aria-label="Copia" className="h-7 w-7 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-indigo-300 transition-colors" onClick={() => {
+                      <Button variant="ghost" size="icon" aria-label={t('common.copia')} className="h-7 w-7 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-indigo-300 transition-colors" onClick={() => {
                         navigator.clipboard.writeText(selectedLine.originalText);
                         toast({ title: 'Copiato negli appunti' });
                       }}>
@@ -1629,7 +1629,7 @@ export default function EditorPage() {
                             <span className="text-amber-200/60 font-medium group-hover:text-amber-200 transition-colors">{term.sourceTerm}</span>
                             <ChevronRight className="h-3 w-3 text-amber-500/40" />
                             <span className="text-amber-300 font-bold group-hover:text-amber-100 transition-colors">{term.targetTerm}</span>
-                            {term.tier === 'locked' && <span className="text-red-400 text-2xs ml-0.5" title="Termine bloccato">🔒</span>}
+                            {term.tier === 'locked' && <span className="text-red-400 text-2xs ml-0.5" title={t('common.termineBloccato')}>🔒</span>}
                           </button>
                         ))}
                       </div>

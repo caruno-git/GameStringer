@@ -14,7 +14,7 @@ import {
   Loader2, Download, ArrowRight, Sparkles, Package, Search,
   FileText, BookOpen, Braces, Shield, RefreshCw, Copy, ChevronRight
 } from "lucide-react";
-// import { useTranslation } from "@/lib/i18n";
+import { useTranslation } from "@/lib/i18n";
 import {
   type StringTableEntry,
   type StringTableInfo,
@@ -74,7 +74,7 @@ const ALL_LOCALE_CODES = Object.keys(SUPPORTED_LOCALES);
 // ---------------------------------------------------------------------------
 
 export default function UnityLocalizationPage() {
-  // const { t } = useTranslation();
+  const { t } = useTranslation();
 
   // Wizard state
   const [step, setStep] = useState(1);
@@ -440,7 +440,7 @@ export default function UnityLocalizationPage() {
             <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black/30 shadow-lg shadow-black/40 border border-white/10">
               <Languages className="h-3.5 w-3.5 text-white" />
               <span className="text-sm font-bold text-white">AI</span>
-              <span className="text-xs text-white/70">Traduzione</span>
+              <span className="text-xs text-white/70">{t('common.traduzione')}</span>
             </div>
           </div>
         </div>
@@ -654,7 +654,7 @@ export default function UnityLocalizationPage() {
                   disabled={analyzing}
                 >
                   {analyzing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
-                  <span className="ml-1.5">Ricarica</span>
+                  <span className="ml-1.5">{t('common.ricarica')}</span>
                 </Button>
               </div>
             </CardHeader>
@@ -734,7 +734,7 @@ export default function UnityLocalizationPage() {
                   <Input
                     value={searchFilter}
                     onChange={(e) => setSearchFilter(e.target.value)}
-                    aria-label="Cerca" placeholder="Cerca chiave o valore..."
+                    aria-label={t('common.cerca')} placeholder="Cerca chiave o valore..."
                     className="h-9 text-xs pl-8 bg-slate-950/50 border-slate-700/50"
                   />
                 </div>
@@ -881,7 +881,7 @@ export default function UnityLocalizationPage() {
                 </div>
                 <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-center">
                   <p className="text-2xl font-bold text-cyan-400">{stats.valid}</p>
-                  <p className="text-xs text-slate-400 mt-0.5">Validate</p>
+                  <p className="text-xs text-slate-400 mt-0.5">{t('common.validate')}</p>
                 </div>
                 <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-center">
                   <p className="text-2xl font-bold text-yellow-400">{stats.warnings}</p>
@@ -912,8 +912,8 @@ export default function UnityLocalizationPage() {
                   className="h-auto py-3 flex flex-col items-center gap-1.5 bg-cyan-600 hover:bg-cyan-500 text-xs"
                 >
                   {exporting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Package className="h-5 w-5" />}
-                  <span className="font-medium">Bundle Patchato</span>
-                  <span className="text-2xs text-cyan-200/70">Pronto per Unity</span>
+                  <span className="font-medium">{t('common.bundlePatchato')}</span>
+                  <span className="text-2xs text-cyan-200/70">{t('common.prontoPerUnity')}</span>
                 </Button>
 
                 <Button
@@ -923,7 +923,7 @@ export default function UnityLocalizationPage() {
                   className="h-auto py-3 flex flex-col items-center gap-1.5 text-xs"
                 >
                   <FileText className="h-5 w-5" />
-                  <span className="font-medium">Esporta CSV</span>
+                  <span className="font-medium">{t('common.esportaCsv')}</span>
                   <span className="text-2xs text-slate-400">Foglio di calcolo</span>
                 </Button>
 
@@ -934,7 +934,7 @@ export default function UnityLocalizationPage() {
                   className="h-auto py-3 flex flex-col items-center gap-1.5 text-xs"
                 >
                   <Braces className="h-5 w-5" />
-                  <span className="font-medium">Esporta JSON</span>
+                  <span className="font-medium">{t('common.esportaJson')}</span>
                   <span className="text-2xs text-slate-400">Strutturato</span>
                 </Button>
 
@@ -958,7 +958,7 @@ export default function UnityLocalizationPage() {
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-emerald-400">Esportazione completata</p>
+                    <p className="text-sm font-medium text-emerald-400">{t('common.esportazioneCompletata')}</p>
                     <p className="text-xs text-slate-400 font-mono truncate mt-0.5" title={exportResult}>
                       {exportResult}
                     </p>

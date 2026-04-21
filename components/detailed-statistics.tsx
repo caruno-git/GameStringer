@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTranslation } from '@/lib/i18n';
 import {
   Select,
   SelectContent,
@@ -82,6 +83,7 @@ const DetailedStatistics: React.FC<DetailedStatisticsProps> = ({
   const [_selectedGame, _setSelectedGame] = useState<string>('all');
 
   // Calcola statistiche globali
+  const { t } = useTranslation();
   const globalStats = useMemo((): GlobalStatistics => {
     const totalGames = gameStats.length;
     const totalPlaytime = gameStats.reduce((sum, game) => sum + game.totalPlaytime, 0);
@@ -409,7 +411,7 @@ const DetailedStatistics: React.FC<DetailedStatisticsProps> = ({
           <Card>
             <CardHeader>
               <CardTitle>Achievement Recenti</CardTitle>
-              <CardDescription>I tuoi ultimi traguardi sbloccati</CardDescription>
+              <CardDescription>{t('common.iTuoiUltimiTraguardiSbloccati')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">

@@ -41,7 +41,7 @@ export class BatchProcessor {
     this.callbacks = callbacks;
   }
 
-  async processBatch<T, R>(
+  async processBatch<R>(
     items: BatchItem[],
     processor: (item: BatchItem) => Promise<R>,
     operationType: BatchOperationType = 'translate'
@@ -119,7 +119,7 @@ export class BatchProcessor {
     }
   }
 
-  private async processWithConcurrency<T, R>(
+  private async processWithConcurrency<R>(
     items: BatchItem[],
     processor: (item: BatchItem) => Promise<R>
   ): Promise<void> {
@@ -137,7 +137,7 @@ export class BatchProcessor {
     await Promise.all(promises);
   }
 
-  private async processItemWithRetry<T, R>(
+  private async processItemWithRetry<R>(
     item: BatchItem,
     processor: (item: BatchItem) => Promise<R>
   ): Promise<R> {

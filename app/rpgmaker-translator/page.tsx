@@ -144,6 +144,7 @@ export default function RPGMakerTranslatorPage() {
   const [models, setModels] = useState<string[]>([]);
   const [showCfg, setShowCfg] = useState(false);
   const [genre, setGenre] = useState<GameGenre>('jrpg');
+  const { t } = useTranslation();
   const abort = useRef(false);
   const logRef = useRef<HTMLDivElement>(null);
 
@@ -345,7 +346,7 @@ export default function RPGMakerTranslatorPage() {
       <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
         <div className="flex items-center gap-2 mb-3">
           <div className="w-7 h-7 rounded-full bg-emerald-600 flex items-center justify-center text-white text-sm font-bold">1</div>
-          <h2 className="text-base font-bold text-white">Seleziona progetto RPG Maker</h2>
+          <h2 className="text-base font-bold text-white">{t('common.selezionaProgettoRpgMaker')}</h2>
         </div>
         <div className="flex gap-2 items-center">
           <Button onClick={browse} variant="outline" className="gap-2"><FolderOpen className="h-4 w-4" />Sfoglia</Button>
@@ -374,7 +375,7 @@ export default function RPGMakerTranslatorPage() {
             <div className="w-7 h-7 rounded-full bg-teal-600 flex items-center justify-center text-white text-sm font-bold">2</div>
             <h2 className="text-base font-bold text-white">File del gioco ({files.length})</h2>
             <div className="flex-1" />
-            <Button onClick={doExport} variant="outline" size="sm" className="gap-1 h-7 text-xs" disabled={totalDone === 0}><Download className="h-3 w-3" />Esporta</Button>
+            <Button onClick={doExport} variant="outline" size="sm" className="gap-1 h-7 text-xs" disabled={totalDone === 0}><Download className="h-3 w-3" />{t('common.esporta')}</Button>
           </div>
           <div className="space-y-1.5 max-h-[400px] overflow-y-auto">
             {files.map((f, fi) => {
@@ -395,7 +396,7 @@ export default function RPGMakerTranslatorPage() {
                         <thead><tr className="text-slate-500 border-b border-slate-700/50">
                           <th className="text-left py-1 w-40">Key</th>
                           <th className="text-left py-1">English</th>
-                          <th className="text-left py-1">Traduzione</th>
+                          <th className="text-left py-1">{t('common.traduzione')}</th>
                         </tr></thead>
                         <tbody>{f.entries.slice(0, 80).map((e, ei) => (
                           <tr key={ei} className="border-b border-slate-800/50 hover:bg-slate-700/20">
@@ -420,26 +421,26 @@ export default function RPGMakerTranslatorPage() {
         <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-7 h-7 rounded-full bg-cyan-600 flex items-center justify-center text-white text-sm font-bold">3</div>
-            <h2 className="text-base font-bold text-white">Traduci con AI</h2>
+            <h2 className="text-base font-bold text-white">{t('common.traduciConAi')}</h2>
             <div className="flex-1" />
             <Button onClick={() => setShowCfg(!showCfg)} variant="ghost" size="xs" className="gap-1 text-xs text-slate-400"><Settings2 className="h-3 w-3" />Config</Button>
           </div>
           {showCfg && (
             <div className="mb-3 p-3 rounded-lg bg-slate-800/60 border border-slate-700/50 flex gap-4 items-center flex-wrap">
               <div className="flex gap-2 items-center">
-                <label className="text-xs text-slate-400">Modello</label>
+                <label className="text-xs text-slate-400">{t('common.modello')}</label>
                 <select value={model} onChange={e => setModel(e.target.value)} className="bg-slate-700 text-white text-xs rounded px-2 py-1 border border-slate-600">
                   {models.map(m => <option key={m} value={m}>{m}</option>)}
                 </select>
               </div>
               <div className="flex gap-2 items-center">
-                <label className="text-xs text-slate-400">Lingua</label>
+                <label className="text-xs text-slate-400">{t('common.lingua')}</label>
                 <select value={targetLang} onChange={e => setTargetLang(e.target.value)} className="bg-slate-700 text-white text-xs rounded px-2 py-1 border border-slate-600">
                   {['it','de','es','fr','pt','zh','ja','ko','ru'].map(l => <option key={l} value={l}>{l.toUpperCase()}</option>)}
                 </select>
               </div>
               <div className="flex gap-2 items-center">
-                <label className="text-xs text-slate-400">Genere</label>
+                <label className="text-xs text-slate-400">{t('common.genere')}</label>
                 <select value={genre} onChange={e => setGenre(e.target.value as GameGenre)} className="bg-slate-700 text-white text-xs rounded px-2 py-1 border border-slate-600">
                   {getAllGenres().map(g => <option key={g.value} value={g.value}>{g.icon} {g.label}</option>)}
                 </select>

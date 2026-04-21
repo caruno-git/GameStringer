@@ -236,7 +236,7 @@ export function AITranslationAssistant() {
           </button>
         ))}
         
-        {providers.find(p => p.id === selectedProvider)?.models.length! > 0 && (
+        {(providers.find(p => p.id === selectedProvider)?.models.length ?? 0) > 0 && (
           <>
             <div className="h-4 w-px bg-slate-600 mx-1" />
             <Select value={selectedModel} onValueChange={setSelectedModel}>
@@ -539,7 +539,7 @@ export function AITranslationAssistant() {
           {translationHistory.length > 0 && (
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Cronologia</CardTitle>
+                <CardTitle className="text-lg">{t('common.cronologia')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2 max-h-[300px] overflow-y-auto">

@@ -1,6 +1,18 @@
 # GameStringer Changelog
 
-## 🚀 v1.8.1 - 2026-04-09
+## � v1.8.1 - 2026-04-14
+
+### Bug Fix & Miglioramenti
+- **Fix CSP**: aggiunto `'unsafe-eval'` per compatibilità Next.js dev mode
+- **Fix CSP**: CSP permissiva in development, restrittiva in production
+- **Fix CSP**: aggiunto `http://ipc.localhost` per Tauri IPC
+- **Fix i18n**: corrette chiavi `offlineTranslator.*` nel widget Ollama dashboard
+- **Fix Rust warnings**: rimossi `unused_mut` e `dead_code` in 9 file backend
+- **Middleware**: CSP dinamica basata su `NODE_ENV`
+
+---
+
+## �🚀 v1.8.0 - 2026-04-09
 
 ### Live Translation Overlay
 - **Overlay OCR in tempo reale**: traduzione live del gioco tramite overlay trasparente con cattura schermo continua

@@ -1,6 +1,6 @@
-use std::process::Command;
 use std::path::PathBuf;
 use serde::Serialize;
+use super::process_util::no_window_command;
 
 #[derive(Debug, Serialize)]
 pub struct OllamaStatus {
@@ -21,7 +21,7 @@ pub struct OllamaModelInfo {
 /// Trova il path dell'eseguibile Ollama su Windows
 fn find_ollama_path() -> Option<PathBuf> {
     // 1. Controlla PATH di sistema
-    if let Ok(output) = Command::new("where").arg("ollama").output() {
+    if let Ok(output) = no_window_command("where").arg("ollama").output() {
         if output.status.success() {
             let path = String::from_utf8_lossy(&output.stdout).trim().lines().next().unwrap_or("").to_string();
             if !path.is_empty() {
@@ -60,7 +60,7 @@ fn is_ollama_running() -> bool {
 
 /// Ottieni la versione di Ollama installata
 fn get_ollama_version(ollama_path: &PathBuf) -> String {
-    if let Ok(output) = Command::new(ollama_path).arg("--version").output() {
+    if let Ok(output) = no_window_command(ollama_path).arg("--version").output() {
         if output.status.success() {
             return String::from_utf8_lossy(&output.stdout).trim().to_string();
         }
@@ -186,9 +186,9 @@ pub async fn download_ollama(app: tauri::AppHandle) -> Result<String, String> {
         "message": "Download completato! Avvio installazione..."
     }));
     
-    // Avvia l'installer
+    // Avvia l'installer (questo è un GUI, non serve no_window)
     let installer_str = installer_path.to_string_lossy().to_string();
-    Command::new(&installer_str)
+    std::process::Command::new(&installer_str)
         .spawn()
         .map_err(|e| format!("Impossibile avviare installer: {}", e))?;
     
@@ -213,25 +213,11 @@ pub async fn start_ollama() -> Result<String, String> {
     
     println!("[OLLAMA] Avvio {:?} serve", ollama_path);
     
-    // Avvia ollama serve in background
-    #[cfg(target_os = "windows")]
-    {
-        use std::os::windows::process::CommandExt;
-        const CREATE_NO_WINDOW: u32 = 0x08000000;
-        Command::new(&ollama_path)
-            .arg("serve")
-            .creation_flags(CREATE_NO_WINDOW)
-            .spawn()
-            .map_err(|e| format!("Impossibile avviare Ollama: {}", e))?;
-    }
-    
-    #[cfg(not(target_os = "windows"))]
-    {
-        Command::new(&ollama_path)
-            .arg("serve")
-            .spawn()
-            .map_err(|e| format!("Impossibile avviare Ollama: {}", e))?;
-    }
+    // Avvia ollama serve in background (usa no_window_command che ha già CREATE_NO_WINDOW)
+    no_window_command(&ollama_path)
+        .arg("serve")
+        .spawn()
+        .map_err(|e| format!("Impossibile avviare Ollama: {}", e))?;
     
     // Attendi che sia pronto (max 15 secondi)
     for i in 0..30 {
@@ -255,17 +241,17 @@ pub async fn stop_ollama() -> Result<String, String> {
     
     #[cfg(target_os = "windows")]
     {
-        let _ = Command::new("taskkill")
+        let _ = no_window_command("taskkill")
             .args(["/F", "/IM", "ollama.exe"])
             .output();
-        let _ = Command::new("taskkill")
+        let _ = no_window_command("taskkill")
             .args(["/F", "/IM", "ollama_llama_server.exe"])
             .output();
     }
     
     #[cfg(not(target_os = "windows"))]
     {
-        let _ = Command::new("pkill").arg("ollama").output();
+        let _ = no_window_command("pkill").arg("ollama").output();
     }
     
     // Attendi arresto

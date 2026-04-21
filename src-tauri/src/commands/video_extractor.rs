@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 use std::fs;
 use walkdir::WalkDir;
+use super::process_util::no_window_command;
 
 // ── Data Models ────────────────────────────────────────────────────────
 
@@ -46,6 +47,7 @@ impl VideoFormat {
         }
     }
 
+    #[allow(dead_code)]
     pub fn extension(&self) -> &'static str {
         match self {
             VideoFormat::VMD => "vmd",
@@ -737,7 +739,7 @@ pub async fn analyze_video_header(file_path: String) -> Result<VideoHeaderInfo, 
 /// Verifica se FFmpeg è disponibile nel sistema
 #[command]
 pub async fn check_ffmpeg_available() -> Result<bool, String> {
-    let output = std::process::Command::new("ffmpeg")
+    let output = no_window_command("ffmpeg")
         .arg("-version")
         .output();
 
@@ -783,7 +785,7 @@ pub async fn convert_video_file(
 
     log::info!("FFmpeg args: {:?}", ffmpeg_args);
 
-    let output = std::process::Command::new("ffmpeg")
+    let output = no_window_command("ffmpeg")
         .args(&ffmpeg_args)
         .output()
         .map_err(|e| format!("Errore esecuzione FFmpeg: {}. Assicurati che FFmpeg sia installato e nel PATH.", e))?;
@@ -874,7 +876,7 @@ pub async fn extract_video_thumbnail(
     };
     let out_str = out.to_string_lossy().to_string();
 
-    let output = std::process::Command::new("ffmpeg")
+    let output = no_window_command("ffmpeg")
         .args([
             "-y", "-i", &file_path,
             "-vframes", "1",
@@ -1006,7 +1008,7 @@ pub async fn extract_video_thumbnail_base64(file_path: String) -> Result<String,
     }
 
     let thumb_str = thumb_path.to_string_lossy().to_string();
-    let output = std::process::Command::new("ffmpeg")
+    let output = no_window_command("ffmpeg")
         .args(["-y", "-i", &file_path, "-vframes", "1", "-vf", "scale=160:-1", "-f", "image2", &thumb_str])
         .output()
         .map_err(|e| format!("Errore FFmpeg: {}", e))?;
@@ -1025,7 +1027,7 @@ pub async fn extract_video_thumbnail_base64(file_path: String) -> Result<String,
 pub async fn check_realesrgan_available() -> Result<bool, String> {
     // Prova diversi nomi dell'eseguibile
     for name in &["realesrgan-ncnn-vulkan", "realesrgan-ncnn-vulkan.exe", "realesrgan"] {
-        if std::process::Command::new(name).arg("-h").output().is_ok() {
+        if no_window_command(name).arg("-h").output().is_ok() {
             return Ok(true);
         }
     }
@@ -1063,7 +1065,7 @@ pub async fn upscale_video_realesrgan(
 
     // Step 1: Estrai frame con FFmpeg
     log::info!("  Step 1/3: Estrazione frame...");
-    let extract = std::process::Command::new("ffmpeg")
+    let extract = no_window_command("ffmpeg")
         .args(["-y", "-i", &input_path, "-qscale:v", "2", &frames_dir.join("frame_%06d.png").to_string_lossy()])
         .output()
         .map_err(|e| format!("FFmpeg errore estrazione frame: {}", e))?;
@@ -1080,7 +1082,7 @@ pub async fn upscale_video_realesrgan(
     // Step 2: Upscale frame con Real-ESRGAN
     log::info!("  Step 2/3: AI Upscaling con Real-ESRGAN...");
     let esrgan_name = if cfg!(windows) { "realesrgan-ncnn-vulkan.exe" } else { "realesrgan-ncnn-vulkan" };
-    let upscale = std::process::Command::new(esrgan_name)
+    let upscale = no_window_command(esrgan_name)
         .args([
             "-i", &frames_dir.to_string_lossy(),
             "-o", &upscaled_dir.to_string_lossy(),
@@ -1102,7 +1104,7 @@ pub async fn upscale_video_realesrgan(
 
     // Step 3: Riassembla in video con FFmpeg (copia audio dall'originale)
     log::info!("  Step 3/3: Riassemblaggio video...");
-    let reassemble = std::process::Command::new("ffmpeg")
+    let reassemble = no_window_command("ffmpeg")
         .args([
             "-y",
             "-framerate", "15",  // FMV tipicamente 15fps

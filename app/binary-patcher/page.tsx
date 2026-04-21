@@ -68,7 +68,7 @@ const CATEGORY_NAMES: Record<string, string> = {
 };
 
 export default function BinaryPatcherPage() {
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
 
   // State
@@ -678,7 +678,7 @@ export default function BinaryPatcherPage() {
             <div>
               <h1 className="text-lg font-bold text-white">{t('binaryPatcherPage.title')}</h1>
               <p className="text-xs text-white/50">
-                {language === 'it' ? 'Traduci giochi con stringhe nel binario' : 'Translate games with strings in binary'}
+                {t('common.translateGamesWithStringsInBinary')}
               </p>
             </div>
           </div>
@@ -1078,7 +1078,7 @@ export default function BinaryPatcherPage() {
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/30" />
                 <Input
                   value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                  aria-label="Cerca" placeholder="Cerca stringhe..."
+                  aria-label={t('common.cerca')} placeholder="Cerca stringhe..."
                   className="pl-8 h-8 text-sm bg-white/5 border-white/10"
                 />
               </div>

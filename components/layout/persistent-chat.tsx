@@ -95,6 +95,7 @@ function formatTime(iso: string): string {
 // ─── PERSISTENT CHAT WIDGET ─────────────────────────────────────
 
 export function PersistentChat() {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const [open, setOpen] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -169,7 +170,11 @@ export function PersistentChat() {
           }), 5000).catch(() => null);
         }
       } catch (e: unknown) {
-        clientLogger.error('[PersistentChat] Init error:', e);
+        const errObj = e as { message?: string; code?: string; details?: string };
+        const errMsg = e instanceof Error 
+          ? e.message 
+          : errObj?.message || errObj?.code || errObj?.details || JSON.stringify(e) || 'Unknown error';
+        clientLogger.error(`[PersistentChat] Init error: ${errMsg}`, { raw: String(e) });
       } finally {
         setIsLoading(false);
       }
@@ -220,7 +225,18 @@ export function PersistentChat() {
           });
         });
       } catch (e: unknown) {
-        clientLogger.error('[PersistentChat] Load room error:', e);
+        const errObj = e as { message?: string; code?: string; details?: string; hint?: string; status?: number };
+        const errMsg = e instanceof Error 
+          ? e.message 
+          : errObj?.message || errObj?.code || errObj?.details || JSON.stringify(e) || 'Unknown error';
+        clientLogger.error(`[PersistentChat] Load room error: ${errMsg}`, {
+          message: errObj?.message,
+          code: errObj?.code,
+          details: errObj?.details,
+          hint: errObj?.hint,
+          status: errObj?.status,
+          raw: String(e),
+        });
       }
     };
     loadRoom();
@@ -361,7 +377,7 @@ export function PersistentChat() {
       setShowNewRoom(false);
       setNewRoomName('');
       setNewRoomDesc('');
-      toast.success('Stanza creata!');
+      toast.success(t('common.stanzaCreata'));
     } catch (e: unknown) {
       const errMsg = e instanceof Error ? e.message : 'Errore creazione stanza';
       toast.error(errMsg);
@@ -380,24 +396,23 @@ export function PersistentChat() {
   // ─── FLOATING TOGGLE BUTTON ─────────────────────────────────
   if (!open) {
     return (
-      <button
-        onClick={() => setOpen(true)}
-        className="fixed bottom-4 right-48 z-50 flex items-center gap-2 px-3 py-2.5 rounded-full bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-900/40 transition-all hover:scale-105 active:scale-95"
-      >
-        <MessageSquare className="h-5 w-5" />
-        <span className="text-sm font-medium">Chat</span>
-        {unreadCount > 0 && (
-          <span className="flex items-center justify-center h-5 min-w-[20px] px-1 rounded-full bg-red-500 text-2xs font-bold">
-            {unreadCount > 99 ? '99+' : unreadCount}
-          </span>
-        )}
-        {onlineUsers.length > 0 && (
-          <span className="flex items-center gap-1 text-[11px] opacity-80">
-            <Circle className="h-2 w-2 fill-emerald-400 text-emerald-400" />
-            {onlineUsers.length}
-          </span>
-        )}
-      </button>
+      <div className="fixed bottom-4 right-4 z-[60] flex items-center gap-0 rounded-full bg-slate-900/95 shadow-xl backdrop-blur-md border border-slate-700/60 overflow-hidden">
+        <button
+          onClick={() => setOpen(true)}
+          className="relative flex items-center gap-1.5 px-3 py-2 hover:bg-slate-800/80 transition-colors"
+        >
+          <MessageSquare className="h-3.5 w-3.5 text-cyan-400" />
+          <span className="text-2xs font-bold text-cyan-400">Chat</span>
+          {onlineUsers.length > 0 && (
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+          )}
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-0.5 flex items-center justify-center h-4 min-w-[16px] px-1 rounded-full bg-red-500 text-micro font-bold">
+              {unreadCount > 99 ? '99+' : unreadCount}
+            </span>
+          )}
+        </button>
+      </div>
     );
   }
 
@@ -516,7 +531,7 @@ export function PersistentChat() {
                 {messages.length === 0 && (
                   <div className="flex flex-col items-center justify-center h-32 text-slate-500">
                     <MessageSquare className="h-6 w-6 mb-1.5 opacity-30" />
-                    <span className="text-xs">Nessun messaggio</span>
+                    <span className="text-xs">{t('common.nessunMessaggio')}</span>
                   </div>
                 )}
                 {messages.map((msg, i) => {
@@ -532,7 +547,7 @@ export function PersistentChat() {
                       <div className="w-6 flex-shrink-0">
                         {showAvatar && (
                           <Avatar className="h-5 w-5">
-                            <AvatarImage src={msg.authorAvatar} />
+                            <AvatarImage src={msg.authorAvatar?.startsWith('gradient-') || msg.authorAvatar?.startsWith('avatar_') ? undefined : msg.authorAvatar} />
                             <AvatarFallback className="text-2xs bg-slate-700">
                               {(msg.authorName || '?')[0].toUpperCase()}
                             </AvatarFallback>
@@ -646,7 +661,7 @@ export function PersistentChat() {
       <Dialog open={showNewRoom} onOpenChange={setShowNewRoom}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Nuova stanza</DialogTitle>
+            <DialogTitle>{t('common.nuovaStanza')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div>
@@ -654,11 +669,11 @@ export function PersistentChat() {
               <Input value={newRoomName} onChange={(e) => setNewRoomName(e.target.value)} placeholder="es. Hollow Knight IT" className="mt-1" />
             </div>
             <div>
-              <Label className="text-xs">Descrizione</Label>
+              <Label className="text-xs">{t('common.descrizione')}</Label>
               <Textarea value={newRoomDesc} onChange={(e) => setNewRoomDesc(e.target.value)} placeholder="Di cosa si parla?" className="mt-1" rows={2} />
             </div>
             <div>
-              <Label className="text-xs">Tipo</Label>
+              <Label className="text-xs">{t('common.tipo')}</Label>
               <Select value={newRoomType} onValueChange={(v: string) => setNewRoomType(v as ChatRoom['type'])}>
                 <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -671,8 +686,8 @@ export function PersistentChat() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowNewRoom(false)}>Annulla</Button>
-            <Button onClick={handleCreateRoom} disabled={!newRoomName.trim()}>Crea stanza</Button>
+            <Button variant="outline" onClick={() => setShowNewRoom(false)}>{t('common.annulla')}</Button>
+            <Button onClick={handleCreateRoom} disabled={!newRoomName.trim()}>{t('common.creaStanza')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

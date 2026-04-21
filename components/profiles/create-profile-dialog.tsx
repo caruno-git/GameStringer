@@ -54,6 +54,7 @@ const LANGUAGES: { code: Language; name: string; Flag: React.ComponentType<{ cla
 ];
 
 export function CreateProfileDialog({ open, onOpenChange, onProfileCreated }: CreateProfileDialogProps) {
+  const { t, setLanguage } = useTranslation();
   const [formData, setFormData] = useState({
     name: '',
     password: '',
@@ -61,7 +62,6 @@ export function CreateProfileDialog({ open, onOpenChange, onProfileCreated }: Cr
     avatarPath: '',
     language: 'en' as Language,
   });
-  const { t, setLanguage } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isCreating, setIsCreating] = useState(false);

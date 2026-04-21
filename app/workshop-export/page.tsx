@@ -368,7 +368,7 @@ export default function WorkshopExportPage() {
             ) : exporting ? (
               'Esportazione...'
             ) : (
-              <><Download className="h-4 w-4 mr-1" /> Esporta per Workshop</>
+              <><Download className="h-4 w-4 mr-1" />{t('common.esportaPerWorkshop')}</>
             )}
           </Button>
           

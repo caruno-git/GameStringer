@@ -39,6 +39,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { clientLogger } from '@/lib/client-logger';
+import { useTranslation } from '@/lib/i18n';
 
 interface AudioTranscription {
   id: string;
@@ -137,6 +138,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
   });
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
+  const { t } = useTranslation();
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -164,7 +166,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
     const { openai: openaiKey } = getApiKeys();
 
     if (!openaiKey) {
-      toast.error('OpenAI API key non configurata. Vai nelle Impostazioni.');
+      toast.error(t('common.openaiApiKeyNonConfigurataVaiNelleImpostazioni'));
       return { id: `transcription-${Date.now()}`, text: '', confidence: 0, language: 'en', timestamp: new Date(), duration: 0, audioUrl, segments: [] };
     }
 
@@ -220,7 +222,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
         audioUrl: settings.enableTTS ? undefined : undefined
       };
     } catch {
-      toast.error('Nessuna API key configurata. Vai nelle Impostazioni.');
+      toast.error(t('common.nessunaApiKeyConfigurataVaiNelleImpostazioni'));
       return { id: `translation-${Date.now()}`, originalText: text, translatedText: text, sourceLanguage: 'en', targetLanguage: targetLang, confidence: 0, timestamp: new Date() };
     }
   };
@@ -294,10 +296,10 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
         onTranslationComplete(translation);
       }
 
-      toast.success('Audio processed successfully');
+      toast.success(t('common.audioProcessedSuccessfully'));
     } catch (error: unknown) {
       clientLogger.error('Audio processing error:', error);
-      toast.error('Audio processing error');
+      toast.error(t('common.audioProcessingError'));
     } finally {
       setIsProcessing(false);
       setProgress(0);
@@ -310,7 +312,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
 
     const file = files[0];
     if (!file.type.startsWith('audio/')) {
-      toast.error('Seleziona un file audio valido');
+      toast.error(t('common.selezionaUnFileAudioValido'));
       return;
     }
 
@@ -401,7 +403,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
 
               <TabsContent value="recording" className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Input Device</Label>
+                  <Label>{t('common.inputDevice')}</Label>
                   <Select 
                     value={settings.inputDevice} 
                     onValueChange={(value) => setSettings(prev => ({ ...prev, inputDevice: value }))}
@@ -447,7 +449,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <Label>Controllo Automatico Guadagno</Label>
+                    <Label>{t('common.controlloAutomaticoGuadagno')}</Label>
                     <Switch
                       checked={settings.autoGainControl}
                       onCheckedChange={(checked) => setSettings(prev => ({ ...prev, autoGainControl: checked }))}

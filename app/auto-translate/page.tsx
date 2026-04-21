@@ -2124,7 +2124,7 @@ export default function AutoTranslatePage() {
                 {/* Provider Benchmark */}
                 {Object.keys(providerStats).length > 0 && (
                   <div className="bg-muted/20 rounded-lg p-2.5 border border-white/5">
-                    <div className="text-2xs font-medium text-muted-foreground mb-1.5 flex items-center gap-1"><Activity className="h-3 w-3" /> Provider Benchmark</div>
+                    <div className="text-2xs font-medium text-muted-foreground mb-1.5 flex items-center gap-1"><Activity className="h-3 w-3" />{t('common.providerBenchmark')}</div>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-1.5">
                       {Object.entries(providerStats).sort((a, b) => b[1].calls - a[1].calls).map(([name, s]) => {
                         const avgMs = s.calls > 0 ? Math.round(s.totalMs / s.calls) : 0
@@ -2474,9 +2474,9 @@ export default function AutoTranslatePage() {
                           {testPatchStatus === 'backing_up' && <><Loader2 className="h-4 w-4 animate-spin text-blue-400" /> Backup in corso...</>}
                           {testPatchStatus === 'applying' && <><Loader2 className="h-4 w-4 animate-spin text-blue-400" /> Applicazione patch...</>}
                           {testPatchStatus === 'launching' && <><Loader2 className="h-4 w-4 animate-spin text-violet-400" /> Avvio gioco...</>}
-                          {testPatchStatus === 'monitoring' && <><Shield className="h-4 w-4 text-violet-400 animate-pulse" /> Monitoraggio attivo</>}
+                          {testPatchStatus === 'monitoring' && <><Shield className="h-4 w-4 text-violet-400 animate-pulse" />{t('common.monitoraggioAttivo')}</>}
                           {testPatchStatus === 'restoring' && <><Loader2 className="h-4 w-4 animate-spin text-amber-400" /> Ripristino...</>}
-                          {testPatchStatus === 'done' && <><CheckCircle2 className="h-4 w-4 text-emerald-400" /> Test completato</>}
+                          {testPatchStatus === 'done' && <><CheckCircle2 className="h-4 w-4 text-emerald-400" />{t('common.testCompletato')}</>}
                           {testPatchStatus === 'error' && <><XCircle className="h-4 w-4 text-red-400" />{t('qaCheck.error')}</>}
                         </CardTitle>
                         {testPatchApplied && (

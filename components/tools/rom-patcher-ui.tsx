@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { useTranslation } from '@/lib/i18n';
 import {
   applyPatch,
   createPatch,
@@ -57,6 +58,7 @@ function downloadBlob(data: Uint8Array, filename: string) {
 }
 
 export function RomPatcherUI() {
+  const { t } = useTranslation();
   const router = useRouter();
 
   // === APPLY TAB STATE ===
@@ -139,7 +141,7 @@ export function RomPatcherUI() {
     const applied = applyPatchFn(createOriginal.data, createResult.patch);
     if (!applied.success || !applied.output) {
       setVerifyStatus('fail');
-      toast.error('Verifica fallita: la patch non si applica correttamente');
+      toast.error(t('common.verificaFallitaLaPatchNonSiApplicaCorrettamente'));
       return;
     }
     if (applied.output.length !== createModified.data.length) {
@@ -260,7 +262,7 @@ export function RomPatcherUI() {
 
               {/* Patch input */}
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium">File Patch</Label>
+                <Label className="text-xs font-medium">{t('common.filePatch')}</Label>
                 <div
                   className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:border-purple-400/50 transition-colors"
                   onClick={() => applyPatchRef.current?.click()}
@@ -307,7 +309,7 @@ export function RomPatcherUI() {
                 {isApplying ? (
                   <><RefreshCw className="h-4 w-4 mr-2 animate-spin" />Applicazione in corso...</>
                 ) : (
-                  <><Zap className="h-4 w-4 mr-2" />Applica Patch</>
+                  <><Zap className="h-4 w-4 mr-2" />{t('common.applicaPatch')}</>
                 )}
               </Button>
 
@@ -399,7 +401,7 @@ export function RomPatcherUI() {
                   ) : (
                     <>
                       <Upload className="h-6 w-6 mx-auto mb-1 text-muted-foreground" />
-                      <p className="text-xs text-muted-foreground">ROM con la traduzione applicata</p>
+                      <p className="text-xs text-muted-foreground">{t('common.romConLaTraduzioneApplicata')}</p>
                     </>
                   )}
                 </div>
@@ -444,7 +446,7 @@ export function RomPatcherUI() {
                 {isCreating ? (
                   <><RefreshCw className="h-4 w-4 mr-2 animate-spin" />Creazione in corso...</>
                 ) : (
-                  <><FileUp className="h-4 w-4 mr-2" />Crea Patch</>
+                  <><FileUp className="h-4 w-4 mr-2" />{t('common.creaPatch')}</>
                 )}
               </Button>
 
@@ -502,7 +504,7 @@ export function RomPatcherUI() {
                 <div className="text-xs text-muted-foreground space-y-1">
                   <p><strong>IPS</strong> — formato classico, supportato da tutti gli emulatori e patcher. Max 16MB. Non verifica integrita.</p>
                   <p><strong>BPS</strong> — formato moderno di byuu. Nessun limite dimensione. Include checksum CRC32 per ROM sorgente, target e patch.</p>
-                  <p>Le patch contengono <strong>solo le differenze</strong> tra le due ROM — non includono contenuto protetto da copyright.</p>
+                  <p>{t('common.lePatchContengono')}<strong>solo le differenze</strong> tra le due ROM — non includono contenuto protetto da copyright.</p>
                 </div>
               </div>
             </CardContent>

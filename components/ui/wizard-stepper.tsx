@@ -3,6 +3,7 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 import { CheckCircle2, ArrowRight } from "lucide-react"
+import { useTranslation } from '@/lib/i18n';
 
 // ═══════════════════════════════════════════════════════════════════
 // WizardStepper — reusable step indicator for wizard flows
@@ -37,6 +38,7 @@ export function WizardStepper({
   size = "sm",
   className,
 }: WizardStepperProps) {
+  const { t } = useTranslation();
   const isSm = size === "sm"
 
   return (
@@ -46,7 +48,7 @@ export function WizardStepper({
         className
       )}
       role="navigation"
-      aria-label="Wizard steps"
+      aria-label={t('common.wizardSteps')}
     >
       {steps.map((step, idx) => {
         const isPast = step.num < currentStep

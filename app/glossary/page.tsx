@@ -122,7 +122,7 @@ export default function GlossaryPage() {
 
   function handleCreateGlossary() {
     if (!createGameId || !createGameName) {
-      toast.error('Inserisci ID e nome del gioco');
+      toast.error(t('common.inserisciIdENomeDelGioco'));
       return;
     }
     createGlossary(createGameId, createGameName, createSourceLang, createTargetLang);
@@ -136,7 +136,7 @@ export default function GlossaryPage() {
 
   function handleAddTerm() {
     if (!selectedGameId || !formSource || !formTarget) {
-      toast.error('Compila termine e traduzione');
+      toast.error(t('common.compilaTermineETraduzione'));
       return;
     }
 
@@ -148,7 +148,7 @@ export default function GlossaryPage() {
         context: formContext || undefined,
         doNotTranslate: formDoNotTranslate,
       });
-      toast.success('Termine aggiornato');
+      toast.success(t('common.termineAggiornato'));
     } else {
       const result = addTerm(selectedGameId, {
         sourceTerm: formSource,
@@ -162,7 +162,7 @@ export default function GlossaryPage() {
         autoExtracted: false,
       });
       if (!result) {
-        toast.error('Termine duplicato');
+        toast.error(t('common.termineDuplicato'));
         return;
       }
       toast.success('Termine aggiunto');
@@ -177,7 +177,7 @@ export default function GlossaryPage() {
   function handleDeleteTerm(termId: string) {
     if (!selectedGameId) return;
     deleteTerm(selectedGameId, termId);
-    toast.success('Termine eliminato');
+    toast.success(t('common.termineEliminato'));
     refreshGlossaries();
   }
 
@@ -214,7 +214,7 @@ export default function GlossaryPage() {
         'The quest "Dragon Slayer" has been completed.',
       ];
 
-      toast.info('Estrazione termini in corso...');
+      toast.info(t('common.estrazioneTerminiInCorso'));
 
       const result = await extractTerms(
         selectedGlossary.gameId,
@@ -227,12 +227,12 @@ export default function GlossaryPage() {
       if (result.newTerms.length > 0) {
         toast.success(`${result.newTerms.length} nuovi termini estratti (${result.duplicates} duplicati) via ${result.provider}`);
       } else {
-        toast.info('Nessun nuovo termine trovato');
+        toast.info(t('common.nessunNuovoTermineTrovato'));
       }
 
       refreshGlossaries();
     } catch (err: unknown) {
-      toast.error('Errore durante l\'estrazione');
+      toast.error(t('common.erroreDuranteLEstrazione'));
       clientLogger.error(String(err));
     } finally {
       setExtracting(false);
@@ -288,7 +288,7 @@ export default function GlossaryPage() {
   function handleDeleteGlossary() {
     if (!selectedGameId) return;
     deleteGlossary(selectedGameId);
-    toast.success('Glossario eliminato');
+    toast.success(t('common.glossarioEliminato'));
     setSelectedGameId(null);
     refreshGlossaries();
   }
@@ -339,7 +339,7 @@ export default function GlossaryPage() {
             <Label className="text-sm text-muted-foreground whitespace-nowrap">{t('glossaryPage.game')}</Label>
             <Select value={selectedGameId || ''} onValueChange={setSelectedGameId}>
               <SelectTrigger className="max-w-xs h-8 text-xs">
-                <SelectValue placeholder="Select a game" />
+                <SelectValue placeholder={t('common.selectAGame')} />
               </SelectTrigger>
               <SelectContent>
                 {glossaries.map(g => (
@@ -477,10 +477,10 @@ export default function GlossaryPage() {
                         </span>
                         <span className="text-2xs text-muted-foreground">{term.confidence}</span>
                         <div className="flex gap-0.5 justify-end">
-                          <Button variant="ghost" size="icon" aria-label="Modifica" className="h-6 w-6" onClick={() => handleEditTerm(term)}>
+                          <Button variant="ghost" size="icon" aria-label={t('common.modifica')} className="h-6 w-6" onClick={() => handleEditTerm(term)}>
                             <Edit className="h-3 w-3" />
                           </Button>
-                          <Button variant="ghost" size="icon" aria-label="Elimina" className="h-6 w-6 text-red-400" onClick={() => handleDeleteTerm(term.id)}>
+                          <Button variant="ghost" size="icon" aria-label={t('common.elimina')} className="h-6 w-6 text-red-400" onClick={() => handleDeleteTerm(term.id)}>
                             <Trash2 className="h-3 w-3" />
                           </Button>
                         </div>

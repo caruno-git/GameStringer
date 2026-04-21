@@ -168,7 +168,7 @@ export function TranslationImportDialog({
             <Label htmlFor="game">{t('translationImportDialogComp.game')}</Label>
             <Select value={selectedGame} onValueChange={setSelectedGame}>
               <SelectTrigger id="game">
-                <SelectValue placeholder="Select a game" />
+                <SelectValue placeholder={t('common.selectAGame')} />
               </SelectTrigger>
               <SelectContent>
                 {games.map(game => (

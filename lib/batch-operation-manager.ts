@@ -20,7 +20,7 @@ export class BatchOperationManager {
     };
   }
 
-  async startBatchOperation<T, R>(
+  async startBatchOperation<R>(
     operationType: BatchOperationType,
     items: BatchItem[],
     processor: (item: BatchItem) => Promise<R>,

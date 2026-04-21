@@ -65,6 +65,7 @@ export default function LiveTranslatePage() {
   // Engine state
   const [stats, setStats] = useState<LiveTranslationStats>(liveTranslationEngine.getStats());
   const [logs, setLogs] = useState<LogEntry[]>([]);
+  const { t } = useTranslation();
   const logsEndRef = useRef<HTMLDivElement>(null);
 
   const addLog = useCallback((message: string, type: LogEntry['type'] = 'info') => {
@@ -214,7 +215,7 @@ export default function LiveTranslatePage() {
 
               {/* Target language */}
               <div>
-                <label className="text-xs text-muted-foreground mb-1 block">Lingua target</label>
+                <label className="text-xs text-muted-foreground mb-1 block">{t('common.linguaTarget')}</label>
                 <Select value={targetLang} onValueChange={setTargetLang} disabled={isRunning}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -227,7 +228,7 @@ export default function LiveTranslatePage() {
 
               {/* Provider */}
               <div>
-                <label className="text-xs text-muted-foreground mb-1 block">Provider AI</label>
+                <label className="text-xs text-muted-foreground mb-1 block">{t('common.providerAi')}</label>
                 <Select value={provider} onValueChange={setProvider} disabled={isRunning}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -266,7 +267,7 @@ export default function LiveTranslatePage() {
 
               {/* Capture mode */}
               <div>
-                <label className="text-xs text-muted-foreground mb-1 block">Modalita cattura</label>
+                <label className="text-xs text-muted-foreground mb-1 block">{t('common.modalitaCattura')}</label>
                 <Select defaultValue="fullscreen" disabled={isRunning}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>

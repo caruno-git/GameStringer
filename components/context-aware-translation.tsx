@@ -29,6 +29,7 @@ import {
 // Tabs imports removed — not currently used
 import { toast } from 'sonner';
 import { clientLogger } from '@/lib/client-logger';
+import { useTranslation } from '@/lib/i18n';
 
 interface GameContext {
   gameTitle: string;
@@ -90,6 +91,7 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
   onTranslationComplete,
   className
 }) => {
+  const { t } = useTranslation();
   const [inputText, setInputText] = useState('');
   const [translatedText, setTranslatedText] = useState('');
   const [isTranslating, setIsTranslating] = useState(false);
@@ -338,7 +340,7 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
                 onValueChange={(value) => setTranslationContext(prev => ({ ...prev, emotionalTone: value }))}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select tone" />
+                  <SelectValue placeholder={t('common.selectTone')} />
                 </SelectTrigger>
                 <SelectContent>
                   {emotionalTones.map(tone => (
@@ -360,7 +362,7 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
                 <SelectContent>
                   <SelectItem value="formal">Formale</SelectItem>
                   <SelectItem value="neutral">Neutrale</SelectItem>
-                  <SelectItem value="informal">Informale</SelectItem>
+                  <SelectItem value="informal">{t('common.informale')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -378,7 +380,7 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Testo da Tradurre</Label>
+            <Label>{t('common.testoDaTradurre')}</Label>
             <Textarea
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
@@ -422,7 +424,7 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
 
           {translatedText && (
             <div className="space-y-2">
-              <Label>Traduzione Contestuale</Label>
+              <Label>{t('common.traduzioneContestuale')}</Label>
               <div className="relative">
                 <Textarea
                   value={translatedText}
@@ -540,7 +542,7 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
                     <p className="text-sm bg-muted p-2 rounded">{translation.originalText}</p>
                   </div>
                   <div>
-                    <Label className="text-xs">Traduzione</Label>
+                    <Label className="text-xs">{t('common.traduzione')}</Label>
                     <p className="text-sm bg-primary/10 p-2 rounded font-medium">{translation.translatedText}</p>
                   </div>
                 </div>

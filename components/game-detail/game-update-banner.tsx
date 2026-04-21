@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { AlertTriangle, Download, Cpu, Loader2 } from 'lucide-react';
 import { invoke } from '@/lib/tauri-api';
 import { toast } from 'sonner';
+import { useTranslation } from '@/lib/i18n';
 
 interface UpdateStatus {
   current_build_id: string;
@@ -38,6 +39,7 @@ export function GameUpdateBanner({
   onUntrack,
   onUpgradeUEWithAI,
 }: GameUpdateBannerProps) {
+  const { t } = useTranslation();
   if (!updateStatus.update_detected && (updateStatus.patch_intact || updateStatus.patch_type === 'none')) {
     return null;
   }
@@ -79,7 +81,7 @@ export function GameUpdateBanner({
                   const exeList = await invoke<string[]>('find_executables_in_folder', { folderPath: installPath }).catch(() => [] as string[]);
                   if (exeList?.length) exeName = exeList[0];
                   await invoke('install_unity_autotranslator', { gamePath: installPath, gameExeName: exeName, targetLang: targetLang || 'it', translationMode: 'google' });
-                  toast.success('Patch BepInEx riapplicata!');
+                  toast.success(t('common.patchBepinexRiapplicata'));
                 } catch (e: unknown) { toast.error(String(e)); }
               }}
             >

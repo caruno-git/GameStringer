@@ -125,6 +125,7 @@ pub fn auto_decode(data: &[u8]) -> (String, EncodingResult) {
 /// Encode a String back to bytes in the specified encoding.
 ///
 /// Useful for patching: decode → translate → re-encode in original encoding.
+#[allow(dead_code)]
 pub fn encode_string(text: &str, encoding: &str) -> Vec<u8> {
     match encoding {
         "utf-8" | "utf-8-bom" => {
@@ -161,6 +162,7 @@ pub fn encode_string(text: &str, encoding: &str) -> Vec<u8> {
 }
 
 /// Strip BOM from data, returning the data without BOM and the BOM type found.
+#[allow(dead_code)]
 pub fn strip_bom(data: &[u8]) -> (&[u8], Option<&str>) {
     if data.len() >= 3 && data[0] == 0xEF && data[1] == 0xBB && data[2] == 0xBF {
         (&data[3..], Some("utf-8-bom"))
@@ -174,6 +176,7 @@ pub fn strip_bom(data: &[u8]) -> (&[u8], Option<&str>) {
 }
 
 /// Check if data looks like UTF-16 (lots of null bytes alternating with content).
+#[allow(dead_code)]
 pub fn is_utf16(data: &[u8]) -> Option<&str> {
     if data.len() < 4 { return None; }
 

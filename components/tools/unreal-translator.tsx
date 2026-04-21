@@ -209,7 +209,7 @@ export function UnrealTranslator() {
 
   const handleStartTranslator = async () => {
     if (!gamePath || !exeName) {
-      toast.error('Select a game first');
+      toast.error(t('common.selectAGameFirst'));
       return;
     }
     
@@ -553,7 +553,7 @@ export function UnrealTranslator() {
               size="sm"
               className="w-full"
               onClick={handleExportPO}
-              aria-label="Esporta file PO"
+              aria-label={t('common.esportaFilePo')}
             >
               <Download className="h-4 w-4 mr-2" />
               Esporta PO

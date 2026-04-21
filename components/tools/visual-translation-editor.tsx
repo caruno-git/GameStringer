@@ -267,7 +267,7 @@ export function VisualTranslationEditor() {
       setSelectedOverlay(newOverlay.id);
       setIsAddingOverlay(false);
       setNewOverlayText({ original: '', translated: '' });
-      toast.success('Overlay added');
+      toast.success(t('common.overlayAdded'));
       return;
     }
 
@@ -332,7 +332,7 @@ export function VisualTranslationEditor() {
     if (!selectedOverlay) return;
     setOverlays(overlays.filter(o => o.id !== selectedOverlay));
     setSelectedOverlay(null);
-    toast.success('Overlay deleted');
+    toast.success(t('common.overlayDeleted'));
   };
 
   const duplicateSelectedOverlay = () => {
@@ -348,7 +348,7 @@ export function VisualTranslationEditor() {
     };
     setOverlays([...overlays, newOverlay]);
     setSelectedOverlay(newOverlay.id);
-    toast.success('Overlay duplicated');
+    toast.success(t('common.overlayDuplicated'));
   };
 
   const exportImage = () => {
@@ -378,7 +378,7 @@ export function VisualTranslationEditor() {
     link.download = `${projectName.replace(/\s+/g, '_')}.gsvte`;
     link.href = URL.createObjectURL(blob);
     link.click();
-    toast.success('Project exported');
+    toast.success(t('common.projectExported'));
   };
 
   const importProject = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -402,9 +402,9 @@ export function VisualTranslationEditor() {
           img.src = project.imageData;
         }
 
-        toast.success('Project imported');
+        toast.success(t('common.projectImported'));
       } catch {
-        toast.error('Invalid project file');
+        toast.error(t('common.invalidProjectFile'));
       }
     };
     reader.readAsText(file);
@@ -455,7 +455,7 @@ export function VisualTranslationEditor() {
                     value={projectName}
                     onChange={(e) => setProjectName(e.target.value)}
                     className="w-48 h-8"
-                    placeholder="Nome progetto"
+                    placeholder={t('common.nomeProgetto')}
                   />
                   <Input
                     value={gameName}

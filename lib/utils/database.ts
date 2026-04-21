@@ -2,7 +2,7 @@
 import { PrismaClient } from '@prisma/client';
 import { logger } from '@/lib/logger';
 import type { UserTutorialProgress } from '@/lib/types/tutorial';
-import type { TranslationMemoryEntry, GlossaryEntry, TranslationProject } from '@/lib/types/translation-memory';
+import type { TranslationMemoryEntry, GlossaryEntry } from '@/lib/types/translation-memory';
 import type { BatchResult } from '@/lib/types/batch';
 
 // Singleton Prisma client
@@ -14,8 +14,9 @@ export const prisma = globalForPrisma.prisma ?? new PrismaClient();
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 
-// Type-safe Prisma client with new models
-const db = prisma as unknown;
+// Prisma client — all models (TutorialProgress, TranslationMemoryEntry, GlossaryEntry,
+// BatchOperation, TranslationProject) are defined in prisma/schema.prisma
+const db = prisma;
 
 // Tutorial Progress Database Operations
 export class TutorialDatabase {
@@ -28,10 +29,10 @@ export class TutorialDatabase {
       if (progress.length === 0) return null;
 
       const completedTutorials = progress
-        .filter((p: unknown) => p.completed)
-        .map((p: unknown) => p.tutorialId);
+        .filter((p) => p.completed)
+        .map((p) => p.tutorialId);
 
-      const currentTutorial = progress.find((p: unknown) => !p.completed && !p.skipped);
+      const currentTutorial = progress.find((p) => !p.completed && !p.skipped);
 
       return {
         userId,
@@ -188,7 +189,7 @@ export class TranslationMemoryDatabase {
         take: limit
       });
 
-      return entries.map((entry: unknown) => ({
+      return entries.map((entry) => ({
         id: entry.id,
         sourceText: entry.sourceText,
         targetText: entry.targetText,
@@ -275,7 +276,7 @@ export class GlossaryDatabase {
         ]
       });
 
-      return terms.map((term: unknown) => ({
+      return terms.map((term) => ({
         id: term.id,
         term: term.term,
         translation: term.translation,

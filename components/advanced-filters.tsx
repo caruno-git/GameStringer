@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/collapsible';
 // Select imports removed — not currently used
 import { Checkbox } from '@/components/ui/checkbox';
+import { useTranslation } from '@/lib/i18n';
 
 interface Game {
   id: string;
@@ -62,6 +63,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
   onFiltersChange,
   className
 }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [filters, setFilters] = useState<FilterState>({
     search: '',
@@ -378,7 +380,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
 
           {/* Filtri Booleani */}
           <div className="space-y-3">
-            <Label>Stato e Caratteristiche</Label>
+            <Label>{t('common.statoECaratteristiche')}</Label>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex items-center space-x-2">
                 <Checkbox

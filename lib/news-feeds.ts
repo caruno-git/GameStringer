@@ -108,7 +108,7 @@ export const DEFAULT_FEED_SOURCES: NewsFeedSource[] = [
 
   // ── Traduzioni Fan / Localizzazione / Modding ──────
   { id: 'nexusmods', name: 'NexusMods', url: 'https://www.nexusmods.com', rssUrl: 'https://www.nexusmods.com/news/rss/', category: 'translations', icon: '🔷', enabled: false, language: 'en', description: 'La più grande piattaforma di mod per videogiochi (RSS bloccato da bot protection)' },
-  { id: 'gamestranslator', name: 'GamesTranslator.it', url: 'https://www.gamestranslator.it', rssUrl: 'https://www.gamestranslator.it/index.php?/discover/&type=core_File&changeType=new&format=rss', category: 'translations', icon: '🇮🇹', enabled: true, language: 'it', description: 'La più grande community italiana di fan translation per videogiochi' },
+  { id: 'gamestranslator', name: 'GamesTranslator.it', url: 'https://www.gamestranslator.it', rssUrl: 'https://www.gamestranslator.it/index.php?/discover/&type=core_File&changeType=new&format=rss', category: 'translations', icon: '🇮🇹', enabled: false, language: 'it', description: 'La più grande community italiana di fan translation per videogiochi (RSS bloccato da CORS)' },
   { id: 'romhacking_translations', name: 'RomHacking Translations', url: 'https://www.romhacking.net/translations/', rssUrl: 'https://www.romhacking.net/rss/translations/', category: 'translations', icon: '🌍', enabled: false, language: 'en', description: 'Database globale di traduzioni fan per ROM retro (RSS non disponibile)' },
   { id: 'romhackplaza', name: 'RomHack Plaza', url: 'https://romhackplaza.org', rssUrl: 'https://romhackplaza.org/feed/', category: 'translations', icon: '🌍', enabled: true, language: 'en', description: 'Hacks, fan translations and homebrew games' },
 ];

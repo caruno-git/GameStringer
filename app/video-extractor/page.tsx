@@ -121,6 +121,7 @@ interface LibraryGame {
 
 export default function VideoExtractorPage() {
   const { t: _t } = useTranslation();
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
 
   // State
@@ -409,7 +410,7 @@ export default function VideoExtractorPage() {
             </div>
             <div>
               <h1 className="text-lg font-bold">Video Extractor</h1>
-              <p className="text-white/80 text-xs">Estrai e converti video FMV da giochi retro e moderni</p>
+              <p className="text-white/80 text-xs">{t('common.estraiEConvertiVideoFmvDaGiochiRetroEModerni')}</p>
             </div>
           </div>
 
@@ -438,7 +439,7 @@ export default function VideoExtractorPage() {
         <div className="flex items-start gap-3 p-4 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300">
           <AlertTriangle className="w-5 h-5 mt-0.5 shrink-0" />
           <div className="text-sm">
-            <p className="font-semibold">FFmpeg non trovato nel PATH di sistema</p>
+            <p className="font-semibold">{t('common.ffmpegNonTrovatoNelPathDiSistema')}</p>
             <p className="text-amber-300/70 mt-1">
               Per convertire i video dei giochi, installa FFmpeg e assicurati che sia nel PATH.
               La scansione e l&apos;analisi dei file funzionano comunque senza FFmpeg.
@@ -452,7 +453,7 @@ export default function VideoExtractorPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <FolderOpen className="w-5 h-5 text-purple-400" />
-            <h2 className="font-semibold text-white">Scansiona Cartella Gioco</h2>
+            <h2 className="font-semibold text-white">{t('common.scansionaCartellaGioco')}</h2>
             {gameName && (
               <Badge className="bg-purple-500/20 text-purple-300 border-purple-500/30">
                 {gameName}
@@ -511,7 +512,7 @@ export default function VideoExtractorPage() {
                       ))
                     }
                     {libraryGames.filter(g => !gamePickerSearch || g.title.toLowerCase().includes(gamePickerSearch.toLowerCase())).length === 0 && (
-                      <div className="p-4 text-center text-xs text-zinc-500">Nessun gioco installato trovato</div>
+                      <div className="p-4 text-center text-xs text-zinc-500">{t('common.nessunGiocoInstallatoTrovato')}</div>
                     )}
                   </div>
                 </div>
@@ -545,11 +546,11 @@ export default function VideoExtractorPage() {
           {/* Summary */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="bg-zinc-900/50 rounded-lg border border-zinc-800 p-3">
-              <div className="text-xs text-zinc-500 mb-1">File Video</div>
+              <div className="text-xs text-zinc-500 mb-1">{t('common.fileVideo')}</div>
               <div className="text-xl font-bold text-white">{scanResult.total_files}</div>
             </div>
             <div className="bg-zinc-900/50 rounded-lg border border-zinc-800 p-3">
-              <div className="text-xs text-zinc-500 mb-1">Dimensione Totale</div>
+              <div className="text-xs text-zinc-500 mb-1">{t('common.dimensioneTotale')}</div>
               <div className="text-xl font-bold text-white">{formatSize(scanResult.total_size_bytes)}</div>
             </div>
             <div className="bg-zinc-900/50 rounded-lg border border-zinc-800 p-3">
@@ -557,7 +558,7 @@ export default function VideoExtractorPage() {
               <div className="text-xl font-bold text-white">{scanResult.format_summary.length}</div>
             </div>
             <div className="bg-zinc-900/50 rounded-lg border border-zinc-800 p-3">
-              <div className="text-xs text-zinc-500 mb-1">Selezionati</div>
+              <div className="text-xs text-zinc-500 mb-1">{t('common.selezionati')}</div>
               <div className="text-xl font-bold text-purple-400">{selectedFiles.size}</div>
             </div>
           </div>
@@ -731,7 +732,7 @@ export default function VideoExtractorPage() {
             <div className="bg-zinc-900/50 rounded-lg border border-purple-500/30 p-4 space-y-4">
               <div className="flex items-center gap-3">
                 <Settings2 className="w-5 h-5 text-purple-400" />
-                <h2 className="font-semibold text-white">Opzioni Conversione</h2>
+                <h2 className="font-semibold text-white">{t('common.opzioniConversione')}</h2>
                 <Badge className="bg-purple-500/20 text-purple-400">
                   {selectedFiles.size} file selezionati
                 </Badge>
@@ -759,7 +760,7 @@ export default function VideoExtractorPage() {
                   <Input
                     value={outputDir}
                     onChange={(e) => setOutputDir(e.target.value)}
-                    placeholder="Lascia vuoto per salvare accanto ai file originali"
+                    placeholder={t('common.lasciaVuotoPerSalvareAccantoAiFileOriginali')}
                     className="bg-zinc-800/50 border-zinc-700"
                   />
                 </div>
@@ -781,7 +782,7 @@ export default function VideoExtractorPage() {
                 </Button>
 
                 {ffmpegAvailable !== true && (
-                  <span className="text-xs text-amber-400">FFmpeg richiesto per la conversione</span>
+                  <span className="text-xs text-amber-400">{t('common.ffmpegRichiestoPerLaConversione')}</span>
                 )}
               </div>
 
@@ -848,7 +849,7 @@ export default function VideoExtractorPage() {
                 <Maximize2 className="w-5 h-5 text-fuchsia-400" />
                 <h2 className="font-semibold text-white">AI Upscaling (Real-ESRGAN)</h2>
                 {realesrganAvailable === true ? (
-                  <Badge className="bg-emerald-500/20 text-emerald-400">Disponibile</Badge>
+                  <Badge className="bg-emerald-500/20 text-emerald-400">{t('common.disponibile')}</Badge>
                 ) : realesrganAvailable === false ? (
                   <Badge className="bg-amber-500/20 text-amber-400">Non installato</Badge>
                 ) : null}
@@ -865,7 +866,7 @@ export default function VideoExtractorPage() {
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <label className="text-xs text-zinc-500 mb-1 block">Modello</label>
+                      <label className="text-xs text-zinc-500 mb-1 block">{t('common.modello')}</label>
                       <Select value={upscaleModel} onValueChange={setUpscaleModel}>
                         <SelectTrigger className="bg-zinc-800/50 border-zinc-700">
                           <SelectValue />
@@ -894,7 +895,7 @@ export default function VideoExtractorPage() {
                       <Input
                         value={outputDir}
                         onChange={(e) => setOutputDir(e.target.value)}
-                        placeholder="Stessa cartella"
+                        placeholder={t('common.stessaCartella')}
                         className="bg-zinc-800/50 border-zinc-700"
                       />
                     </div>

@@ -55,6 +55,7 @@ export default function DubbingPage() {
   // Pipeline state
   const [progress, setProgress] = useState<DubbingProgress | null>(null);
   const [_result, setResult] = useState<DubbingResult | null>(null);
+  const { t } = useTranslation();
   const pipelineRef = useRef<DubbingPipeline | null>(null);
 
   const isRunning = progress?.isRunning || false;
@@ -75,7 +76,7 @@ export default function DubbingPage() {
 
   const handleStart = useCallback(async () => {
     if (!gamePath) {
-      toast.error('Seleziona la cartella del gioco');
+      toast.error(t('common.selezionaLaCartellaDelGioco'));
       return;
     }
 
@@ -97,7 +98,7 @@ export default function DubbingPage() {
     const pipeline = new DubbingPipeline(config);
     pipelineRef.current = pipeline;
 
-    toast.info('AI Dubbing avviato...');
+    toast.info(t('common.aiDubbingAvviato'));
     const dubbingResult = await pipeline.run(setProgress);
     setResult(dubbingResult);
     pipelineRef.current = null;
@@ -111,7 +112,7 @@ export default function DubbingPage() {
 
   const handlePause = () => pipelineRef.current?.pause();
   const handleResume = () => pipelineRef.current?.resume();
-  const handleAbort = () => { pipelineRef.current?.abort(); toast.warning('Dubbing annullato'); };
+  const handleAbort = () => { pipelineRef.current?.abort(); toast.warning(t('common.dubbingAnnullato')); };
 
   const currentStep = progress?.steps.find(s => s.status === 'running');
   const overallProgress = progress ? Math.round(
@@ -124,7 +125,7 @@ export default function DubbingPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Mic className="h-6 w-6 text-purple-400" />
-          <h1 className="text-2xl font-bold">AI Dubbing Pipeline</h1>
+          <h1 className="text-2xl font-bold">{t('common.aiDubbingPipeline')}</h1>
           <Badge variant="outline" className="text-purple-400 border-purple-400/50">Beta</Badge>
         </div>
         <div className="flex gap-2">
@@ -174,7 +175,7 @@ export default function DubbingPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               <div>
-                <label className="text-xs text-muted-foreground mb-1 block">Lingua sorgente</label>
+                <label className="text-xs text-muted-foreground mb-1 block">{t('common.linguaSorgente')}</label>
                 <Select value={sourceLang} onValueChange={setSourceLang} disabled={isRunning}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -183,7 +184,7 @@ export default function DubbingPage() {
                 </Select>
               </div>
               <div>
-                <label className="text-xs text-muted-foreground mb-1 block">Lingua target</label>
+                <label className="text-xs text-muted-foreground mb-1 block">{t('common.linguaTarget')}</label>
                 <Select value={targetLang} onValueChange={setTargetLang} disabled={isRunning}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -316,13 +317,13 @@ export default function DubbingPage() {
               <Card className="bg-zinc-900/50">
                 <CardContent className="p-3 text-center">
                   <div className="text-2xl font-bold text-blue-400">{progress.stats.totalAudioFiles}</div>
-                  <div className="text-xs text-muted-foreground flex items-center justify-center gap-1"><FileAudio className="h-3 w-3" /> Audio files</div>
+                  <div className="text-xs text-muted-foreground flex items-center justify-center gap-1"><FileAudio className="h-3 w-3" />{t('common.audioFiles')}</div>
                 </CardContent>
               </Card>
               <Card className="bg-zinc-900/50">
                 <CardContent className="p-3 text-center">
                   <div className="text-2xl font-bold text-green-400">{progress.stats.patched}</div>
-                  <div className="text-xs text-muted-foreground flex items-center justify-center gap-1"><CheckCircle className="h-3 w-3" /> Patchati</div>
+                  <div className="text-xs text-muted-foreground flex items-center justify-center gap-1"><CheckCircle className="h-3 w-3" />{t('common.patchati')}</div>
                 </CardContent>
               </Card>
               <Card className="bg-zinc-900/50">
@@ -373,7 +374,7 @@ export default function DubbingPage() {
             <Card className="bg-zinc-900/30 border-dashed border-zinc-700">
               <CardContent className="p-12 text-center">
                 <Mic className="h-12 w-12 text-purple-400/50 mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">AI Dubbing Pipeline</h3>
+                <h3 className="text-lg font-medium mb-2">{t('common.aiDubbingPipeline')}</h3>
                 <p className="text-sm text-muted-foreground max-w-md mx-auto">
                   Seleziona una cartella gioco per avviare il dubbing automatico.
                   Il pipeline eseguira: scansione audio → trascrizione Whisper →

@@ -3,6 +3,7 @@
 import { Cpu, Loader2, Zap } from 'lucide-react';
 import { invoke } from '@/lib/tauri-api';
 import { toast } from 'sonner';
+import { useTranslation } from '@/lib/i18n';
 
 interface UeLocStatus {
   has_locres: boolean;
@@ -34,6 +35,7 @@ export function UnrealLocalizationPanel({
   onLoadStatus,
   onUpgradeUEWithAI,
 }: UnrealLocalizationPanelProps) {
+  const { t } = useTranslation();
   return (
     <div className="rounded-xl bg-[#1b2838]/60 border border-[#2a475e]/40 p-3.5">
       <div className="flex items-center justify-between mb-2">
@@ -62,10 +64,10 @@ export function UnrealLocalizationPanel({
                   try {
                     await invoke('remove_unreal_translation', { gamePath: installPath });
                     await onLoadStatus();
-                    toast.success('Patch rimossa');
+                    toast.success(t('common.patchRimossa'));
                   } catch (e: unknown) { toast.error(String(e)); }
                 }}
-              >Rimuovi</button>
+              >{t('common.rimuovi')}</button>
             )}
           </div>
           {ueLocStatus?.has_locres && !ueLocStatus?.has_gs_pak && (

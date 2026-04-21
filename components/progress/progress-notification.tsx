@@ -5,6 +5,7 @@ import { X, CheckCircle, AlertCircle, XCircle, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ProgressBar } from './progress-bar';
 import type { ProgressNotification } from '@/lib/types/progress';
+import { useTranslation } from '@/lib/i18n';
 
 interface ProgressNotificationProps {
   notification: ProgressNotification;
@@ -19,6 +20,7 @@ export function ProgressNotificationComponent({
   onAction,
   className
 }: ProgressNotificationProps) {
+  const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(true);
 
   // Auto-hide se specificato
@@ -130,7 +132,7 @@ export function ProgressNotificationComponent({
             setTimeout(() => onClose?.(), 300);
           }}
           className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
-          title="Close notification"
+          title={t('common.closeNotification')}
         >
           <X className="w-4 h-4" />
         </button>
@@ -200,6 +202,8 @@ export function ProgressNotificationContainer({
 
 // Hook per gestire notifiche di progresso
 export function useProgressNotifications() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { t } = useTranslation();
   const [notifications, setNotifications] = useState<ProgressNotification[]>([]);
 
   const addNotification = (notification: Omit<ProgressNotification, 'id'>) => {

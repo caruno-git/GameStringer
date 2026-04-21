@@ -199,7 +199,7 @@ export function GlobalProgressWidget({ projects, className }: GlobalProgressWidg
           <div className="grid grid-cols-2 gap-3">
             <StatCard
               icon={<Languages className="h-4 w-4" />}
-              label="Lingue"
+              label={t('common.lingue')}
               value={stats.languages.toString()}
               color="text-blue-500"
             />
@@ -211,7 +211,7 @@ export function GlobalProgressWidget({ projects, className }: GlobalProgressWidg
             />
             <StatCard
               icon={<Award className="h-4 w-4" />}
-              label="Qualità Media"
+              label={t('common.qualitàMedia')}
               value={`${stats.avgQuality}%`}
               color={getQualityColor(stats.avgQuality)}
             />
@@ -287,7 +287,7 @@ export function GlobalProgressWidget({ projects, className }: GlobalProgressWidg
               <InsightCard
                 icon={<AlertTriangle className="h-4 w-4" />}
                 type="warning"
-                title="Progresso lento"
+                title={t('common.progressoLento')}
                 description="Considera la traduzione batch con AI per velocizzare"
               />
             )}
@@ -295,7 +295,7 @@ export function GlobalProgressWidget({ projects, className }: GlobalProgressWidg
               <InsightCard
                 icon={<AlertTriangle className="h-4 w-4" />}
                 type="warning"
-                title="Qualità sotto la media"
+                title={t('common.qualitàSottoLaMedia')}
                 description="Rivedi le traduzioni per migliorare il punteggio"
               />
             )}

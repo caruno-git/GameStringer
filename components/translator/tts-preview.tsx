@@ -129,7 +129,7 @@ export function TTSPreview({
 
   const handlePlay = async () => {
     if (!text) {
-      toast.error('Nessun testo da riprodurre');
+      toast.error(t('common.nessunTestoDaRiprodurre'));
       return;
     }
 
@@ -171,7 +171,7 @@ export function TTSPreview({
     utterance.onerror = (e) => {
       clientLogger.error('TTS Error:', e);
       setIsPlaying(false);
-      toast.error('Errore nella riproduzione vocale');
+      toast.error(t('common.erroreNellaRiproduzioneVocale'));
     };
 
     utteranceRef.current = utterance;
@@ -235,7 +235,7 @@ export function TTSPreview({
       
       audio.onerror = () => {
         setIsPlaying(false);
-        toast.error('Errore riproduzione audio');
+        toast.error(t('common.erroreRiproduzioneAudio'));
       };
       
       audioRef.current = audio;
@@ -243,7 +243,7 @@ export function TTSPreview({
       
     } catch (error: unknown) {
       clientLogger.error('OpenAI TTS Error:', error);
-      toast.error('Errore TTS OpenAI. Prova con la voce del browser.');
+      toast.error(t('common.erroreTtsOpenaiProvaConLaVoceDelBrowser'));
     } finally {
       setIsLoading(false);
     }

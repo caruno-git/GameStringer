@@ -93,10 +93,10 @@ interface Game {
 }
 
 export default function GameDetailPage() {
+  const { t, language } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { t, language } = useTranslation();
   
   // Read gameId from path params (dev) or query params (Tauri static export)
   const [gameId, setGameId] = useState<string>(() => {
@@ -115,6 +115,7 @@ export default function GameDetailPage() {
       setGameId(newId);
       setGame(null);
       setIsLoading(true);
+      setImageError(false);
       gameDataLoadedRef.current = null; // allow re-fetch
     }
   }, [searchParams, params.id]);
@@ -127,7 +128,7 @@ export default function GameDetailPage() {
   const [dlcGames, setDlcGames] = useState<Record<string, unknown>[]>([]);
   const [showTranslation, setShowTranslation] = useState(false);
   const [_steamDetails, setSteamDetails] = useState<unknown>(null);
-  const [_imageError, setImageError] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const [isInstallingPatch, setIsInstallingPatch] = useState(false);
   const [patchStatus, setPatchStatus] = useState<{success: boolean, message: string} | null>(null);
@@ -165,6 +166,9 @@ export default function GameDetailPage() {
   // SteamGridDB fallback image
   const [fallbackImage, setFallbackImage] = useState<string | null>(null);
   const [isCoverPickerOpen, setIsCoverPickerOpen] = useState(false);
+
+  // FMV detection (rileva automaticamente se il gioco contiene file video FMV)
+  const [fmvInfo, setFmvInfo] = useState<{ isFmvGame: boolean; totalFiles: number; totalSizeMB: number; formats: string[] } | null>(null);
 
   // ═══ TARGET LANGUAGE (lingua traduzione, indipendente dalla lingua UI) ═══
   const TARGET_LANGUAGES = [
@@ -271,6 +275,14 @@ export default function GameDetailPage() {
   } | null>(null);
   const [isDismissingUpdate, setIsDismissingUpdate] = useState(false);
   const [isUntrackingGame, setIsUntrackingGame] = useState(false);
+  
+  // P.T. confirmation dialog
+  const [ptConfirmDialog, setPtConfirmDialog] = useState<{
+    open: boolean;
+    expired: boolean;
+    ageHours: number;
+    ptUrl: string;
+  }>({ open: false, expired: false, ageHours: 0, ptUrl: '' });
   
   // Ref guards per StrictMode — traccia quale gameId è stato caricato
   const gameDataLoadedRef = useRef<string | null>(null);
@@ -730,10 +742,10 @@ export default function GameDetailPage() {
     try {
       await invoke<boolean>('remove_tracked_game', { appId: String(game.appid) });
       setUpdateStatus(null);
-      toast.success('Monitoraggio disattivato per questo gioco');
+      toast.success(t('common.monitoraggioDisattivatoPerQuestoGioco'));
     } catch (e: unknown) {
       clientLogger.warn('[UpdateTracker] untrack:', String(e));
-      toast.error('Impossibile disattivare il monitoraggio');
+      toast.error(t('common.impossibileDisattivareIlMonitoraggio'));
     } finally {
       setIsUntrackingGame(false);
     }
@@ -774,7 +786,7 @@ export default function GameDetailPage() {
       const _gameName = game.title || game.name || 'Game';
 
       // 1. Estrai stringhe di localizzazione dal gioco
-      toast.info('Estrazione stringhe di localizzazione Unreal...');
+      toast.info(t('common.estrazioneStringheDiLocalizzazioneUnreal'));
       interface UeEntry { namespace: string; key: string; source_hash: string; value: string; }
       const extracted = await invoke<{entries?: UeEntry[]}>('extract_unreal_localization', { gamePath: game.installPath });
 
@@ -1124,7 +1136,9 @@ export default function GameDetailPage() {
             appid: appId || 0,
             name: urlName || steamApiData?.name || decodeURIComponent(gameId),
             install_dir: urlInstallDir || undefined,
-            is_installed: urlInstalled || false
+            // Se il path reale è stato risolto, il gioco è di fatto installato
+            is_installed: urlInstalled || !!realInstallPath,
+            isInstalled: urlInstalled || !!realInstallPath,
           };
 
           // Engine detection (non-bloccante, con timeout breve)
@@ -1269,8 +1283,16 @@ export default function GameDetailPage() {
       if (!game.shortDescription && !game.description && (game.platform === 'GOG' || game.source === 'GOG' || game.storeId?.toString().startsWith('gog_') || gameId.startsWith('gog_'))) {
         fetchDescriptionFromGog();
       }
-      // Cerca immagine su SteamGridDB se non c'è header
-      if (!game.headerUrl && !fallbackImage) {
+      // Rileva automaticamente se è un gioco FMV (contiene video VMD/BIK/SMK/USM/ROQ)
+      // Nota: il backend popola is_installed (snake_case), ma alcune parti del codice usano isInstalled
+      if ((game.isInstalled || game.is_installed) && game.installPath && !fmvInfo) {
+        detectFmvGame();
+      }
+      // Cerca immagine su SteamGridDB solo se non c'è proprio nessuna headerUrl.
+      // Per giochi Steam con library_600x900.jpg inesistente (es. The Beast Within),
+      // il fallback scatta automaticamente via img.onError senza richieste cross-origin
+      // che verrebbero bloccate da CORS.
+      if (!fallbackImage && !game.headerUrl) {
         fetchFallbackImage();
       }
     }
@@ -1320,6 +1342,44 @@ export default function GameDetailPage() {
       }
     } catch (e: unknown) {
       clientLogger.warn('[GameDetail] GOG description fetch failed:', String(e));
+    }
+  };
+
+  // Rileva automaticamente se il gioco è un FMV (contiene video proprietari)
+  const detectFmvGame = async () => {
+    if (!game?.installPath) return;
+    try {
+      interface VideoScanResult {
+        total_files: number;
+        total_size_bytes: number;
+        format_summary: { format: string; count: number; total_bytes: number }[];
+      }
+      const result = await invoke<VideoScanResult>('scan_game_video_files', {
+        gamePath: game.installPath,
+      });
+      if (result && result.total_files > 0) {
+        // Formati FMV "proprietari" (non standard come mp4/webm)
+        const fmvFormats = ['VMD', 'Bink', 'Smacker', 'CRI', 'ROQ', 'THP', 'RBT', 'DUK'];
+        const foundFmvFormats = result.format_summary
+          .filter(fs => fmvFormats.some(fmt => fs.format.includes(fmt)))
+          .map(fs => fs.format);
+        // È un gioco FMV se ha formati proprietari o se i video totali > 100 MB
+        const totalMB = result.total_size_bytes / (1024 * 1024);
+        const isFmv = foundFmvFormats.length > 0 || totalMB > 100;
+        setFmvInfo({
+          isFmvGame: isFmv,
+          totalFiles: result.total_files,
+          totalSizeMB: totalMB,
+          formats: result.format_summary.map(fs => fs.format),
+        });
+        if (isFmv) {
+          clientLogger.debug(`[GameDetail] 🎬 FMV game detected: ${result.total_files} video files (${totalMB.toFixed(0)} MB), formats: ${foundFmvFormats.join(', ')}`);
+        }
+      } else {
+        setFmvInfo({ isFmvGame: false, totalFiles: 0, totalSizeMB: 0, formats: [] });
+      }
+    } catch (e: unknown) {
+      clientLogger.debug('[GameDetail] FMV detection skipped:', String(e));
     }
   };
 
@@ -1409,7 +1469,7 @@ export default function GameDetailPage() {
 
   const scanGameFiles = async () => {
     if (!game?.installPath) {
-      toast.error('Percorso di installazione non disponibile');
+      toast.error(t('common.percorsoDiInstallazioneNonDisponibile'));
       return;
     }
     setIsScanning(true);
@@ -1429,7 +1489,7 @@ export default function GameDetailPage() {
         setGame({ ...game, detectedFiles: files });
         toast.success(`Trovati ${files.length} file traducibili`);
       } else {
-        toast.info('Nessun file traducibile trovato');
+        toast.info(t('common.nessunFileTraducibileTrovato'));
       }
     } catch (error: unknown) {
       clearInterval(progressInterval);
@@ -1448,7 +1508,7 @@ export default function GameDetailPage() {
   // chiediamo all'utente se vuole eseguire prima l'analisi. Altrimenti parte diretto.
   const handleStringIt = async () => {
     if (!game?.installPath) {
-      toast.error('Percorso di installazione non disponibile');
+      toast.error(t('common.percorsoDiInstallazioneNonDisponibile'));
       return;
     }
     if (autoTranslateRunningRef.current || autoTranslateActive) return;
@@ -1465,21 +1525,13 @@ export default function GameDetailPage() {
         return;
       }
 
-      // Nessuna cache valida → chiedi conferma
+      // Nessuna cache valida → mostra dialog conferma
       const ptUrl = `/prediction-tool?name=${encodeURIComponent(game.title || game.name || '')}&installDir=${encodeURIComponent(game.installPath)}&engine=${encodeURIComponent(engineInfo?.engine || '')}&headerImage=${encodeURIComponent(game.headerImage || game.coverImage || '')}`;
-      toast('Gioco non ancora analizzato con P.T.', {
-        description: info.expired
-          ? `Analisi precedente scaduta (${Math.floor(info.age_minutes / 60)}h fa). Rianalizzare migliora tempi e qualità stimate.`
-          : 'Eseguire prima P.T. permette di scegliere la chain LLM migliore e stimare tempi/costi.',
-        duration: 12000,
-        action: {
-          label: 'Esegui P.T. prima',
-          onClick: () => router.push(ptUrl),
-        },
-        cancel: {
-          label: 'String it! comunque',
-          onClick: () => startAutoTranslate(),
-        },
+      setPtConfirmDialog({
+        open: true,
+        expired: info.expired,
+        ageHours: Math.floor(info.age_minutes / 60),
+        ptUrl,
       });
     } catch (e: unknown) {
       clientLogger.warn('[StringIt] cache check failed:', String(e));
@@ -1492,7 +1544,7 @@ export default function GameDetailPage() {
   const autoTranslateRunningRef = useRef(false);
   const startAutoTranslate = async () => {
     if (!game?.installPath) {
-      toast.error('Percorso di installazione non disponibile');
+      toast.error(t('common.percorsoDiInstallazioneNonDisponibile'));
       return;
     }
     if (autoTranslateRunningRef.current) return;
@@ -1649,7 +1701,7 @@ export default function GameDetailPage() {
     } catch (error: unknown) {
       clientLogger.error('[AutoTranslate] Workflow execution failed:', String(error));
       setAutoTranslateError(String(error) || 'Errore durante l\'esecuzione del workflow');
-      toast.error('❌ Errore durante la traduzione automatica');
+      toast.error(t('common.erroreDuranteLaTraduzioneAutomatica'));
       // Cleanup workflow listener on error too
       if (unlistenWorkflow) unlistenWorkflow();
     } finally {
@@ -1806,7 +1858,7 @@ export default function GameDetailPage() {
           <div className="w-20 h-20 mx-auto rounded-2xl bg-slate-900/60 border border-slate-800/50 flex items-center justify-center">
             <Gamepad2 className="h-8 w-8 text-slate-600" />
           </div>
-          <h1 className="text-xl font-bold text-slate-300">Gioco non trovato</h1>
+          <h1 className="text-xl font-bold text-slate-300">{t('common.giocoNonTrovato')}</h1>
           <p className="text-sm text-slate-500 max-w-sm">Il gioco richiesto non esiste nella tua libreria.</p>
           <Link href="/library">
             <Button variant="outline" className="mt-2 h-10 px-5 bg-slate-900/50 border-slate-700/50 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl">
@@ -1917,7 +1969,29 @@ export default function GameDetailPage() {
         {/* BG image */}
         {heroImg && (
           <div className="absolute inset-0">
-            <img src={heroImg} alt="" className="w-full h-full object-cover" />
+            <img
+              src={heroImg}
+              alt=""
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                const img = e.currentTarget;
+                // Fallback chain: library_hero -> page_bg_generated -> capsule_616x353 -> SteamGridDB
+                if (game.appid && game.appid > 0) {
+                  if (img.src.includes('library_hero')) {
+                    img.src = `https://cdn.akamai.steamstatic.com/steam/apps/${game.appid}/page_bg_generated_v6b.jpg`;
+                    return;
+                  }
+                  if (img.src.includes('page_bg_generated')) {
+                    img.src = `https://cdn.akamai.steamstatic.com/steam/apps/${game.appid}/capsule_616x353.jpg`;
+                    return;
+                  }
+                }
+                if (!fallbackImage) {
+                  fetchFallbackImage();
+                  img.style.display = 'none';
+                }
+              }}
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e14] via-[#0a0e14]/70 to-[#0a0e14]/30" />
             <div className="absolute inset-0 bg-gradient-to-r from-[#0a0e14]/90 via-transparent to-[#0a0e14]/60" />
           </div>
@@ -1960,11 +2034,27 @@ export default function GameDetailPage() {
             className="shrink-0 hidden lg:block"
           >
             <div className="relative w-[180px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl shadow-black/60 ring-1 ring-white/10 group">
-              {game.coverUrl || heroImg ? (
-                <img src={game.coverUrl || heroImg} alt="Cover" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onError={() => setImageError(true)} />
-              ) : (
-                <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center"><Gamepad2 className="h-10 w-10 text-slate-700" /></div>
-              )}
+              {(() => {
+                // Priorità: fallbackImage (SteamGridDB) > coverUrl (library_600x900) > heroImg
+                const coverSrc = fallbackImage || game.coverUrl || heroImg;
+                return coverSrc && !imageError ? (
+                  <img
+                    src={coverSrc}
+                    alt="Cover"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    onError={() => {
+                      // Se library_600x900 fallisce, triggera fetch SteamGridDB; altrimenti mostra placeholder
+                      if (!fallbackImage) {
+                        fetchFallbackImage();
+                      } else {
+                        setImageError(true);
+                      }
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center"><Gamepad2 className="h-10 w-10 text-slate-600" /></div>
+                );
+              })()}
               <button className="absolute bottom-2 right-2 px-2 py-1 rounded-md bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/10 text-white/70 hover:text-white opacity-0 group-hover:opacity-100 transition-all text-2xs font-bold uppercase tracking-wider flex items-center gap-1" onClick={() => setIsCoverPickerOpen(true)}>
                 <ImageIcon className="h-2.5 w-2.5" /> Cover
               </button>
@@ -2046,7 +2136,7 @@ export default function GameDetailPage() {
                 <button className="h-12 flex-1 flex items-center justify-center gap-2 rounded-l-xl bg-gradient-to-r from-indigo-600 to-violet-500 hover:from-indigo-500 hover:to-violet-400 text-white font-extrabold text-xs uppercase tracking-widest shadow-xl shadow-indigo-500/40 hover:shadow-indigo-500/60 transition-all border border-indigo-400/30 border-r-0 relative overflow-hidden group"
                   onClick={handleStringIt}
                   disabled={autoTranslateActive}
-                  title="Avvia la traduzione completa del gioco"
+                  title={t('common.avviaLaTraduzioneCompletaDelGioco')}
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-[200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
                   {autoTranslateActive ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" fill="currentColor" />} {autoTranslateActive ? t('gameDetails.translating') || 'Translating...' : 'String it!'}
@@ -2180,6 +2270,43 @@ export default function GameDetailPage() {
                   <Languages className="h-3 w-3" /> Traduci in {language.toUpperCase()}
                 </button>
               )}
+            </motion.div>
+          )}
+
+          {/* ═══ FMV GAME BANNER — rilevato automaticamente ═══ */}
+          {fmvInfo?.isFmvGame && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="relative overflow-hidden rounded-xl border border-fuchsia-500/30 bg-gradient-to-r from-fuchsia-950/60 via-purple-950/40 to-violet-950/60 p-4"
+            >
+              <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full blur-3xl bg-fuchsia-500/20 pointer-events-none" />
+              <div className="relative flex items-center gap-4">
+                <div className="shrink-0 h-12 w-12 rounded-xl bg-fuchsia-500/20 border border-fuchsia-500/30 flex items-center justify-center">
+                  <Film className="h-6 w-6 text-fuchsia-300" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <h3 className="text-sm font-bold text-fuchsia-200">🎬 {t('gameDetails.fmvGameDetected') || 'Gioco FMV rilevato'}</h3>
+                    <span className="text-2xs px-1.5 py-0.5 rounded bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/30 font-semibold uppercase tracking-wider">
+                      {fmvInfo.totalFiles} {t('common.fileVideo') || 'file video'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-fuchsia-300/70">
+                    {fmvInfo.totalSizeMB.toFixed(0)} MB · {fmvInfo.formats.slice(0, 3).join(', ')}
+                    {fmvInfo.formats.length > 3 ? ` +${fmvInfo.formats.length - 3}` : ''}
+                    {' — '}{t('gameDetails.fmvExtractHint') || 'estrai, converti e traduci i video del gioco'}
+                  </p>
+                </div>
+                <Link
+                  href={`/video-extractor?gamePath=${encodeURIComponent(game.installPath || '')}&gameName=${encodeURIComponent(game.title || game.name || '')}&gameId=${encodeURIComponent(game.appid?.toString() || game.id || '')}`}
+                  className="shrink-0 h-9 px-4 flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-fuchsia-500 to-purple-500 hover:from-fuchsia-400 hover:to-purple-400 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-fuchsia-500/30 transition-all no-underline"
+                >
+                  <Play className="h-3.5 w-3.5" />
+                  {t('gameDetails.extractVideos') || 'Estrai Video'}
+                </Link>
+              </div>
             </motion.div>
           )}
 
@@ -2351,13 +2478,74 @@ export default function GameDetailPage() {
                   setFallbackImage(url);
                   setIsCoverPickerOpen(false);
                   import('sonner').then(({ toast }) => {
-                    toast.success('Copertina aggiornata con successo');
+                    toast.success(t('common.copertinaAggiornataConSuccesso'));
                   });
                 })
                 .catch(err => clientLogger.error('Errore salvataggio cover:', err));
             });
           }}
         />
+      )}
+      
+      {/* P.T. Confirmation Dialog */}
+      {ptConfirmDialog.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-slate-900 border border-slate-700/50 rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden"
+          >
+            {/* Header */}
+            <div className="bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-b border-amber-500/20 p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
+                  <Brain className="w-5 h-5 text-amber-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">Analisi Predittiva</h3>
+                  <p className="text-xs text-amber-200/70">Prediction Tool (P.T.)</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Content */}
+            <div className="p-5">
+              <p className="text-sm text-slate-300 mb-4">
+                {ptConfirmDialog.expired
+                  ? `L'analisi precedente è scaduta (${ptConfirmDialog.ageHours}h fa). Rianalizzare migliora le stime di tempo e qualità.`
+                  : 'Eseguire prima P.T. permette di scegliere la chain LLM migliore e stimare tempi/costi con precisione.'}
+              </p>
+              
+              <div className="bg-slate-800/50 rounded-xl p-3 mb-4 border border-slate-700/30">
+                <p className="text-xs text-slate-400">
+                  <span className="text-amber-400 font-semibold">Consigliato:</span> P.T. analizza la struttura del gioco e suggerisce la configurazione ottimale per la traduzione.
+                </p>
+              </div>
+            </div>
+            
+            {/* Actions */}
+            <div className="flex gap-3 p-4 pt-0">
+              <button
+                onClick={() => {
+                  setPtConfirmDialog({ ...ptConfirmDialog, open: false });
+                  startAutoTranslate();
+                }}
+                className="flex-1 h-10 rounded-xl text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600/50 transition-all"
+              >
+                Traduci comunque
+              </button>
+              <button
+                onClick={() => {
+                  setPtConfirmDialog({ ...ptConfirmDialog, open: false });
+                  router.push(ptConfirmDialog.ptUrl);
+                }}
+                className="flex-1 h-10 rounded-xl text-sm font-bold bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white shadow-lg shadow-amber-500/25 transition-all"
+              >
+                Esegui P.T. prima
+              </button>
+            </div>
+          </motion.div>
+        </div>
       )}
     </div>
   );

@@ -134,7 +134,7 @@ export function AdvancedFilters({
       {/* Search */}
       <div className="relative flex-1 max-w-md">
         <Input
-          aria-label="Cerca" placeholder="Cerca giochi..."
+          aria-label={t('common.cerca')} placeholder="Cerca giochi..."
           value={filter.search}
           onChange={(e) => updateFilter({ search: e.target.value })}
           className="pl-9"
@@ -148,7 +148,7 @@ export function AdvancedFilters({
         onValueChange={(value) => updateFilter({ sortBy: value as GameFilter['sortBy'] })}
       >
         <SelectTrigger className="w-40">
-          <SelectValue placeholder="Ordina per" />
+          <SelectValue placeholder={t('common.ordinaPer')} />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="name">{t('advancedFiltersComp.nome')}</SelectItem>

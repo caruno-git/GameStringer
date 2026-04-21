@@ -98,7 +98,7 @@ export function GameToolsPanel({
             {isUeAiUpgrading ? (
               <><Loader2 className="h-3.5 w-3.5 animate-spin" />{ueAiProgress ? `${ueAiProgress.current}/${ueAiProgress.total}` : '...'}</>
             ) : (
-              <><Cpu className="h-3.5 w-3.5" />Migliora con AI UE</>
+              <><Cpu className="h-3.5 w-3.5" />{t('common.miglioraConAiUe')}</>
             )}
           </button>
         )}
@@ -138,7 +138,7 @@ export function GameToolsPanel({
         )}
         {game.installPath && (
           <button className="h-8 flex items-center gap-1 px-2.5 rounded-lg text-2xs font-semibold text-[#8f98a0] hover:text-amber-300 hover:bg-amber-500/10 transition-all"
-            onClick={async () => { try { await invoke('open_folder_in_explorer', { folderPath: game.installPath }); } catch { toast.error('Impossibile aprire la cartella'); } }}
+            onClick={async () => { try { await invoke('open_folder_in_explorer', { folderPath: game.installPath }); } catch { toast.error(t('common.impossibileAprireLaCartella')); } }}
           >
             <FolderOpen className="h-3 w-3" /> Cartella
           </button>
@@ -212,7 +212,7 @@ export function GameToolsPanel({
             <div className="space-y-1.5 pt-1 border-t border-[#2a475e]/30">
               {game.developers?.[0] && (
                 <div className="flex items-center justify-between text-2xs">
-                  <span className="text-[#8f98a0]/60">Sviluppatore</span>
+                  <span className="text-[#8f98a0]/60">{t('common.sviluppatore')}</span>
                   <span className="text-[#c6d4df] font-medium">{game.developers.join(', ')}</span>
                 </div>
               )}

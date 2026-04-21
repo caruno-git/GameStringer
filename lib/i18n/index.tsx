@@ -29,9 +29,11 @@ const getCurrentProfileId = (): string | null => {
 
 export function I18nProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>('en');
+  const [mounted, setMounted] = useState(false);
 
   // Load language from localStorage on mount (per profile)
   useEffect(() => {
+    setMounted(true);
     const loadLanguage = () => {
       try {
         const profileId = getCurrentProfileId();
@@ -100,6 +102,8 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
 
   // Translation function with dot notation support
   const t = useCallback((key: string): string => {
+    // During SSR/hydration, return the key itself to avoid mismatch
+    if (!mounted) return key;
     const keys = key.split('.');
     let value: unknown = translations[language];
     
@@ -121,7 +125,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     }
     
     return typeof value === 'string' ? value : key;
-  }, [language]);
+  }, [language, mounted]);
 
   return (
     <I18nContext.Provider value={{ language, setLanguage, t }}>

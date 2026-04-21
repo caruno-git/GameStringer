@@ -308,7 +308,7 @@ export default function ActivityHistoryPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        aria-label="Elimina"
+                        aria-label={t('common.elimina')}
                         className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive"
                         onClick={() => handleDelete(activity.id)}
                       >

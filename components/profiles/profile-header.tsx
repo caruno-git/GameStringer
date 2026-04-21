@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useProfileAuth } from '@/lib/profile-auth';
 import { useProfiles } from '@/hooks/use-profiles';
 import { useProfileSettings } from '@/hooks/use-profile-settings';
@@ -51,6 +52,7 @@ import { enUS, it } from 'date-fns/locale';
 import { useTranslation } from '@/lib/i18n';
 
 export function ProfileHeader() {
+  const router = useRouter();
   const { t, language } = useTranslation();
   const { 
     isAuthenticated, 
@@ -372,7 +374,10 @@ export function ProfileHeader() {
           <DropdownMenuSeparator />
           
           {/* Settings */}
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => {
+            setIsDropdownOpen(false);
+            router.push('/settings');
+          }}>
             <Settings className="mr-2 h-4 w-4" />
             <span>{t('nav.settings')}</span>
           </DropdownMenuItem>

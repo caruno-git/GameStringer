@@ -373,18 +373,6 @@ export default function StoresPage() {
     setLoadingProvider(providerId);
     const _userId = session?.user?.id;
 
-    // Handle OAuth providers
-    if (providerId === 'epic') {
-      try {
-        await signIn('epicgames', { callbackUrl: '/stores' });
-      } catch (error: unknown) {
-        clientLogger.error(`Epic Games auth error: ${String(error)}`);
-        toast.error('error durante la connection con Epic Games. Verifica le Credentials OAuth.');
-        setLoadingProvider(null);
-      }
-      return;
-    }
-
     // Handle credential-based providers with modals
     if (providerId === 'ubisoft') {
       setIsUbisoftModalOpen(true);
@@ -398,7 +386,7 @@ export default function StoresPage() {
       return;
     }
 
-    if (['gog', 'origin', 'battlenet', 'rockstar', 'amazon'].includes(providerId)) {
+    if (['epic', 'gog', 'origin', 'battlenet', 'rockstar', 'amazon'].includes(providerId)) {
       setGenericModalProvider(providerId);
       setLoadingProvider(null);
       return;
@@ -426,8 +414,28 @@ export default function StoresPage() {
         clientLogger.debug('[UBISOFT] Credentials cancellate dal backend');
       }
 
+      // Cancella credenziali Epic dal backend
+      if (providerId === 'epic') {
+        try {
+          await invoke('clear_epic_credentials');
+          clientLogger.debug('[EPIC] Credentials cancellate dal backend');
+        } catch (e: unknown) {
+          clientLogger.warn(`[STORES] Impossibile cancellare epic da Tauri: ${String(e)}`);
+        }
+      }
+
+      // Cancella credenziali Steam dal backend
+      if (providerId === 'steam') {
+        try {
+          await invoke('save_store_credentials', { store: 'steam', username: '', password: '' });
+          clientLogger.debug('[STEAM] Credentials cancellate dal profilo Tauri');
+        } catch (e: unknown) {
+          clientLogger.warn(`[STORES] Impossibile cancellare steam da Tauri: ${String(e)}`);
+        }
+      }
+
       // Cancella credenziali dal profilo Tauri per store generici
-      const tauriStores = ['origin', 'battlenet', 'rockstar', 'amazon', 'itchio', 'gog'];
+      const tauriStores = ['epic', 'origin', 'battlenet', 'rockstar', 'amazon', 'itchio', 'gog'];
       if (tauriStores.includes(providerId)) {
         try {
           await invoke('save_store_credentials', { store: providerId, username: '', password: '' });
@@ -467,7 +475,7 @@ export default function StoresPage() {
 
   const handleUbisoftLogin = async (email: string, password: string, twoFactorCode?: string) => {
     if (!email || !password) {
-      toast.error('Per favore, inserisci sia email che password.');
+      toast.error(t('common.perFavoreInserisciSiaEmailChePassword'));
       return;
     }
     setLoadingProvider('ubisoft');
@@ -503,7 +511,7 @@ export default function StoresPage() {
 
   const handleGenericLogin = async (email: string, password: string, twoFactorCode?: string) => {
     if (!email || !password) {
-      toast.error('Per favore, inserisci sia email che password.');
+      toast.error(t('common.perFavoreInserisciSiaEmailChePassword'));
       return;
     }
     if (!genericModalProvider) return;
@@ -535,7 +543,7 @@ export default function StoresPage() {
       if (result?.error) {
         // Se GOG richiede 2FA, l'error dovrebbe indicarlo
         if (genericModalProvider === 'gog' && result.error.includes('2FA')) {
-          toast.error('Per favore inserisci il codice 2FA');
+          toast.error(t('common.perFavoreInserisciIlCodice2fa'));
           // La modale gestirà la richiesta del codice 2FA
         } else {
           toast.error(result.error || `error durante la connection con ${genericModalProvider}.`);
@@ -565,7 +573,7 @@ export default function StoresPage() {
       toast.error(result.error || 'error durante la connection con Steam.');
       throw new Error(result.error);
     } else {
-      toast.success('Account Steam collegato con successo!');
+      toast.success(t('common.accountSteamCollegatoConSuccesso'));
       setIsSteamModalOpen(false);
       await update();
     }
@@ -596,7 +604,7 @@ export default function StoresPage() {
       if (result?.error) {
         throw new Error(result.error);
       } else if (result?.ok) {
-        toast.success('Account itch.io collegato con successo!');
+        toast.success(t('common.accountItchioCollegatoConSuccesso'));
         await update();
       }
     } catch (error: unknown) {
@@ -625,7 +633,7 @@ export default function StoresPage() {
         clearTimeout(timeout);
         // mode: no-cors returns opaque response (status 0) but means site is reachable
         setTestResults(prev => ({ ...prev, [utilityId]: { connected: true } }));
-        toast.success('HowLongToBeat raggiungibile!');
+        toast.success(t('common.howlongtobeatRaggiungibile'));
       } else if (utilityId === 'steamgriddb') {
         // Test SteamGridDB API via Tauri command (no CORS)
         const apiKey = utilityPreferences[utilityId]?.apiKey;
@@ -659,24 +667,55 @@ export default function StoresPage() {
   const testConnection = async (providerId: string) => {
     setTestingProvider(providerId);
     try {
-      const backendProviderId = getBackendProviderId(providerId);
-      const response = await fetch('/api/stores/test-connection', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-GS-Client': 'gamestringer' },
-        body: JSON.stringify({ provider: backendProviderId }),
-      });
-      
-      const result = await response.json() as { connected?: boolean; error?: string; message?: string };
-      setTestResults(prev => ({ ...prev, [providerId]: result }));
-
-      if (result.connected) {
-        toast.success(`connection ${providerId} verificata!`);
+      // Mappa providerId al comando Tauri di test
+      const testCommandMap: Record<string, string> = {
+        steam: 'test_steam_connection',
+        epic: 'test_epic_connection',
+        ubisoft: 'test_ubisoft_connection',
+        gog: 'test_gog_connection',
+        origin: 'test_origin_connection',
+        battlenet: 'test_battlenet_connection',
+        itchio: 'test_itchio_connection',
+        rockstar: 'test_rockstar_connection',
+        amazon: 'test_amazon_connection',
+        xbox: 'test_xbox_connection',
+      };
+      const command = testCommandMap[providerId];
+      if (!command) {
+        // Fallback all'API route per provider non supportati via Tauri
+        const backendProviderId = getBackendProviderId(providerId);
+        const response = await fetch('/api/stores/test-connection', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-GS-Client': 'gamestringer' },
+          body: JSON.stringify({ provider: backendProviderId }),
+        });
+        const result = await response.json() as { connected?: boolean; error?: string; message?: string };
+        setTestResults(prev => ({ ...prev, [providerId]: result }));
+        if (result.connected) {
+          toast.success(`Connessione ${providerId} verificata!`);
+        } else {
+          toast.error(`Problema con ${providerId}: ${result.error || 'connessione non riuscita'}`);
+        }
       } else {
-        toast.error(`Problema con ${providerId}: ${result.error || 'connection non riuscita'}`);
+        // Usa il comando Tauri per un test reale
+        const result = await invoke<{ connected?: boolean; success?: boolean; error?: string; message?: string; games_count?: number }>(command);
+        const connected = result?.connected ?? result?.success ?? false;
+        const testResult = {
+          connected,
+          message: result?.message || (connected ? 'Connesso' : 'Non connesso'),
+          error: result?.error,
+        };
+        setTestResults(prev => ({ ...prev, [providerId]: testResult }));
+        if (connected) {
+          toast.success(`Connessione ${providerId} verificata!${result?.games_count ? ` (${result.games_count} giochi)` : ''}`);
+        } else {
+          toast.error(`Problema con ${providerId}: ${result?.error || 'connessione non riuscita'}`);
+        }
       }
-    } catch {
-      toast.error(`error nel test di ${providerId}`);
-      setTestResults(prev => ({ ...prev, [providerId]: { error: 'Test fallito' } }));
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : 'Test fallito';
+      toast.error(`Errore nel test di ${providerId}: ${errMsg}`);
+      setTestResults(prev => ({ ...prev, [providerId]: { error: errMsg } }));
     }
     setTestingProvider(null);
   };
@@ -860,7 +899,7 @@ export default function StoresPage() {
                           size="sm"
                           className="h-7 px-2 text-2xs border-violet-500/50 text-violet-400 hover:bg-violet-500/10"
                           onClick={() => shellOpen('https://www.gog.com/galaxy').catch(() => window.open('https://www.gog.com/galaxy', '_blank'))}
-                          title="Scarica GOG Galaxy"
+                          title={t('common.scaricaGogGalaxy')}
                         >
                           <ExternalLink className="h-3 w-3" />
                         </Button>
@@ -1101,11 +1140,11 @@ export default function StoresPage() {
                   const newPrefs = { ...utilityPreferences, steamgriddb: { enabled: true, apiKey: steamGridDBApiKey.trim() } };
                   localStorage.setItem('gamestringer_utility_prefs', JSON.stringify(newPrefs));
                   setUtilityPreferences(newPrefs);
-                  toast.success('SteamGridDB collegato con successo!');
+                  toast.success(t('common.steamgriddbCollegatoConSuccesso'));
                   setIsSteamGridDBModalOpen(false);
                   setSteamGridDBApiKey('');
                 } else {
-                  toast.error('Inserisci una API Key valida');
+                  toast.error(t('common.inserisciUnaApiKeyValida'));
                 }
               }}
               className="bg-orange-500 hover:bg-orange-600 text-white"

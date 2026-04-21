@@ -110,12 +110,12 @@ export function SteamFamilySharing() {
         await loadFamilySharingGames();
       } else {
         setError("Nessun utente Steam trovato. Assicurati di essere loggato su Steam.");
-        toast.warning('Nessun utente Steam trovato.');
+        toast.warning(t('common.nessunUtenteSteamTrovato'));
       }
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : String(err);
       setError(errorMessage);
-      toast.error('Rilevamento automatico fallito', {
+      toast.error(t('common.rilevamentoAutomaticoFallito'), {
         description: errorMessage,
       });
     } finally {
@@ -137,7 +137,7 @@ export function SteamFamilySharing() {
       }
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : String(err);
-      toast.error('Errore nel caricamento dei giochi condivisi', {
+      toast.error(t('common.erroreNelCaricamentoDeiGiochiCondivisi'), {
         description: errorMessage,
       });
     } finally {
@@ -147,7 +147,7 @@ export function SteamFamilySharing() {
 
   const handleFileUpload = async () => {
     if (!selectedFile) {
-      toast.error('Seleziona un file prima di procedere');
+      toast.error(t('common.selezionaUnFilePrimaDiProcedere'));
       return;
     }
 
@@ -167,13 +167,13 @@ export function SteamFamilySharing() {
       if (config.total_shared_games > 0) {
         toast.success(`✅ File caricato! Trovati ${config.total_shared_games} giochi condivisi`);
       } else {
-        toast.warning('File caricato ma nessun gioco condiviso trovato');
+        toast.warning(t('common.fileCaricatoMaNessunGiocoCondivisoTrovato'));
       }
 
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : String(err);
       setError(errorMessage);
-      toast.error('Errore nell\'analisi del file', {
+      toast.error(t('common.erroreNellAnalisiDelFile'), {
         description: errorMessage,
       });
     } finally {
@@ -190,12 +190,12 @@ export function SteamFamilySharing() {
 
   const copyPath = () => {
     navigator.clipboard.writeText('C:\\Program Files (x86)\\Steam\\userdata\\[YOUR_ID]\\7\\remote\\sharedconfig.vdf');
-    toast.success('Percorso copiato negli appunti!');
+    toast.success(t('common.percorsoCopiatoNegliAppunti'));
   };
 
   const handleAddManualAccount = async () => {
     if (!manualSteamId.trim()) {
-      toast.error('Inserisci uno Steam ID valido');
+      toast.error(t('common.inserisciUnoSteamIdValido'));
       return;
     }
     // Valida formato Steam ID (17 cifre)
@@ -204,7 +204,7 @@ export function SteamFamilySharing() {
       return;
     }
     if (manualAccounts.includes(manualSteamId.trim())) {
-      toast.warning('Questo Steam ID è già stato aggiunto');
+      toast.warning(t('common.questoSteamIdÈGiàStatoAggiunto'));
       return;
     }
     const newAccounts = [...manualAccounts, manualSteamId.trim()];
@@ -215,7 +215,7 @@ export function SteamFamilySharing() {
     // Salva in modo persistente
     try {
       await invoke('save_family_sharing_ids', { ids: newAccounts });
-      toast.success('Steam ID aggiunto e salvato!');
+      toast.success(t('common.steamIdAggiuntoESalvato'));
     } catch {
       toast.success('Steam ID aggiunto!');
     }

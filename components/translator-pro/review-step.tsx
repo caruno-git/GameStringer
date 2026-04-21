@@ -159,10 +159,10 @@ export function ReviewStep({
               <Button variant="ghost" size="sm" onClick={() => onOpenInEditor(filename)} title="Apri nell'Editor" className="hover:bg-blue-500/20 hover:text-blue-400">
                 <FileText className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="sm" onClick={() => onSaveFile(filename)} title="Salva con backup" className="hover:bg-green-500/20 hover:text-green-400">
+              <Button variant="ghost" size="sm" onClick={() => onSaveFile(filename)} title={t('common.salvaConBackup')} className="hover:bg-green-500/20 hover:text-green-400">
                 <CheckCircle className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="sm" onClick={() => onDownloadFile(filename)} title="Scarica" className="hover:bg-purple-500/20 hover:text-purple-400">
+              <Button variant="ghost" size="sm" onClick={() => onDownloadFile(filename)} title={t('common.scarica')} className="hover:bg-purple-500/20 hover:text-purple-400">
                 <Download className="h-4 w-4" />
               </Button>
             </div>

@@ -738,7 +738,7 @@ export function VoiceTranslator() {
                   <Timer className="h-4 w-4 text-amber-400" />
                   <div>
                     <Label htmlFor="duration-match" className="text-sm text-slate-300">Duration Matching</Label>
-                    <p className="text-[10px] text-slate-500">Adatta la velocità per mantenere la durata originale</p>
+                    <p className="text-[10px] text-slate-500">{t('common.adattaLaVelocitàPerMantenereLaDurataOriginale')}</p>
                   </div>
                 </div>
                 <Switch

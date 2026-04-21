@@ -561,7 +561,7 @@ function LibraryListView() {
       
       if (!credentials) {
         clientLogger.warn('[LIBRARY] ⚠️ Credenziali Steam non configurate - mostro solo giochi installati');
-        toast.warning('Credenziali Steam non configurate', {
+        toast.warning(t('common.credenzialiSteamNonConfigurate'), {
           description: 'Vai in Impostazioni → Stores per vedere tutti i tuoi giochi',
           duration: 8000,
         });
@@ -1022,7 +1022,7 @@ function LibraryListView() {
                   parts.push(`⚠️ ${brokenPatches.length} patch ${brokenPatches.length === 1 ? 'danneggiata' : 'danneggiate'}: ${brokenPatches.slice(0, 3).join(', ')}${brokenPatches.length > 3 ? ` (+${brokenPatches.length - 3})` : ''}`);
                 }
 
-                toast.warning('Aggiornamenti rilevati', {
+                toast.warning(t('common.aggiornamentiRilevati'), {
                   description: parts.join('\n'),
                   duration: 12000,
                 });
@@ -1273,7 +1273,7 @@ function LibraryListView() {
               <button
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.location.href = `/batch?game=${encodeURIComponent(game.title)}&appId=${game.app_id}`; }}
                 className="bg-sky-600/90 hover:bg-sky-500 p-2 rounded-lg text-white transition-all shadow-lg hover:shadow-sky-500/50 hover:scale-110 border border-sky-400/30"
-                title="Batch"
+                title={t('common.batch')}
               >
                 <FolderOpen className="h-4 w-4" />
               </button>
@@ -1494,7 +1494,7 @@ function LibraryListView() {
                       <button
                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); sessionStorage.setItem('wizardAutoGame', JSON.stringify({ id: game.app_id || game.id, title: game.title, install_path: game.install_dir, steam_app_id: game.app_id, header_image: game.header_image })); window.location.href = '/translation-wizard'; }}
                         className="flex items-center gap-1 bg-indigo-600/90 hover:bg-indigo-500 px-3 py-1.5 rounded-lg text-2xs font-bold text-white transition-all shadow-md hover:shadow-indigo-500/30"
-                        title="Translation Wizard"
+                        title={t('common.translationWizard')}
                       >
                         <Sparkles className="h-3 w-3" />
                         String it!
@@ -1502,7 +1502,7 @@ function LibraryListView() {
                       <button
                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.location.href = `/batch?game=${encodeURIComponent(game.title)}&appId=${game.app_id}`; }}
                         className="flex items-center gap-1 bg-sky-600/90 hover:bg-sky-500 px-2.5 py-1.5 rounded-lg text-2xs font-bold text-white transition-all shadow-md hover:shadow-sky-500/30"
-                        title="Batch translate"
+                        title={t('common.batchTranslate')}
                       >
                         <FolderOpen className="h-3 w-3" />
                       </button>
@@ -1647,7 +1647,7 @@ function LibraryListView() {
                 }
               }} 
               className="group flex items-center gap-2 px-3 py-2 bg-slate-900/80 text-slate-300 hover:text-white hover:bg-indigo-600/20 rounded-xl transition-all border border-slate-700/50 hover:border-indigo-500/40"
-              title="Scarica nomi corretti dei giochi dal Database remoto"
+              title={t('common.scaricaNomiCorrettiDeiGiochiDalDatabaseRemoto')}
             >
               <Download className="h-4 w-4 text-slate-400 group-hover:text-indigo-300 transition-colors" />
               <span className="text-[11px] font-semibold tracking-wide">Nomi DB</span>

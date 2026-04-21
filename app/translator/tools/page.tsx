@@ -67,7 +67,7 @@ export default function TranslatorToolsPage() {
 
         <Card className="bg-card/50 border-border/50">
           <CardHeader className="p-3 pb-2">
-            <CardTitle className="text-sm">Testo Tradotto</CardTitle>
+            <CardTitle className="text-sm">{t('common.testoTradotto')}</CardTitle>
           </CardHeader>
           <CardContent className="p-3 pt-0">
             <Textarea

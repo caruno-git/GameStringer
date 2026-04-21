@@ -48,25 +48,35 @@ export function OllamaSetupWizard({ onComplete }: { onComplete?: () => void }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Check Ollama status
+  // Check Ollama status — HTTP diretto (funziona sia in browser che in Tauri)
   const checkStatus = async () => {
     setLoading(true);
     setError(null);
     try {
-      const result = await invoke('check_ollama_status') as OllamaStatus;
-      setStatus(result);
-      
-      if (!result.installed) {
-        setStep('install');
-      } else if (!result.running) {
-        setStep('start');
-      } else if (result.models.length === 0) {
-        setStep('model');
+      const resp = await fetch('http://localhost:11434/api/tags', { signal: AbortSignal.timeout(3000) });
+      if (resp.ok) {
+        const data = await resp.json();
+        const modelNames: string[] = (data.models || []).map((m: { name: string }) => m.name);
+        const result: OllamaStatus = {
+          installed: true,
+          running: true,
+          version: '',
+          models: modelNames,
+          install_path: '',
+        };
+        setStatus(result);
+        if (modelNames.length === 0) {
+          setStep('model');
+        } else {
+          setStep('done');
+        }
       } else {
-        setStep('done');
+        setStatus({ installed: false, running: false, version: '', models: [], install_path: '' });
+        setStep('install');
       }
     } catch {
-      setError('Impossibile verificare lo stato di Ollama');
+      setStatus({ installed: false, running: false, version: '', models: [], install_path: '' });
+      setStep('install');
     } finally {
       setLoading(false);
     }

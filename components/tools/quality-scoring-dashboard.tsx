@@ -15,6 +15,8 @@ import {
   getQualityColor,
   getQualityBgColor,
   getTagInfo,
+  markAsValidated,
+  markAsHuman,
   type TranslationProject,
   type QualityStats,
   type QualityTag,
@@ -198,7 +200,6 @@ function ProjectDetail({
   const handleValidate = (key: string) => {
     const entry = project.entries[key];
     if (entry) {
-      const { markAsValidated } = require('@/lib/quality-scoring');
       const updated = markAsValidated(entry);
       qualityScoringService.updateEntries(project.id, { [key]: updated });
       onRefresh();
@@ -208,7 +209,6 @@ function ProjectDetail({
   const handleEdit = (key: string, newText: string) => {
     const entry = project.entries[key];
     if (entry) {
-      const { markAsHuman } = require('@/lib/quality-scoring');
       const updated = markAsHuman(entry, newText);
       qualityScoringService.updateEntries(project.id, { [key]: updated });
       onRefresh();
@@ -263,7 +263,7 @@ function ProjectDetail({
       {/* Legend */}
       <div className="flex items-center gap-3 text-2xs">
         <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-500" /> Human</span>
-        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500" /> Validated</span>
+        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500" />{t('common.validated')}</span>
         <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-500" /> AI</span>
       </div>
 
@@ -272,7 +272,7 @@ function ProjectDetail({
         <div className="relative flex-1">
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-zinc-500" />
           <Input
-            aria-label="Cerca" placeholder="Cerca stringhe..."
+            aria-label={t('common.cerca')} placeholder="Cerca stringhe..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="h-8 pl-7 text-xs"

@@ -108,7 +108,7 @@ export function TelltalePatcher() {
       }
     } catch (error: unknown) {
       clientLogger.error('Folder selection error:', error);
-      toast.error('Error selecting folder');
+      toast.error(t('common.errorSelectingFolder'));
     }
   };
 
@@ -190,7 +190,7 @@ export function TelltalePatcher() {
 
   const applyTranslation = async () => {
     if (!gamePath || !selectedGame) {
-      toast.error('Select game folder first');
+      toast.error(t('common.selectGameFolderFirst'));
       return;
     }
 
@@ -253,7 +253,7 @@ export function TelltalePatcher() {
       setStatus('error');
       setErrorMessage(error instanceof Error ? error.message : 'Unknown error');
       addLog(`❌ Error: ${error instanceof Error ? error.message : String(error)}`);
-      toast.error('Error during process');
+      toast.error(t('common.errorDuringProcess'));
     } finally {
       setIsPatching(false);
     }
@@ -285,10 +285,10 @@ export function TelltalePatcher() {
       setHasBackup(true);
       setBackupPath(backupDir);
       addLog(`✅ Backup created: ${backupDir}`);
-      toast.success('Backup created successfully');
+      toast.success(t('common.backupCreatedSuccessfully'));
     } catch (error: unknown) {
       addLog(`❌ Backup error: ${error instanceof Error ? error.message : String(error)}`);
-      toast.error('Error creating backup');
+      toast.error(t('common.errorCreatingBackup'));
     }
   };
 
@@ -304,7 +304,7 @@ export function TelltalePatcher() {
       });
       
       addLog('✅ Backup restored successfully');
-      toast.success('Original files restored');
+      toast.success(t('common.originalFilesRestored'));
       setHasExistingPatch(true);
     } catch (error: unknown) {
       addLog(`❌ Restore error: ${error instanceof Error ? error.message : String(error)}`);
@@ -504,7 +504,7 @@ export function TelltalePatcher() {
                   <Button onClick={verifyInstallation} variant="outline" size="sm" disabled={!gamePath} className="h-7 text-2xs flex-1">
                     ✅ {t('telltale.verify')}
                   </Button>
-                  <Button onClick={handleExportPO} variant="outline" size="sm" className="h-7 text-2xs flex-1" aria-label="Esporta file PO">
+                  <Button onClick={handleExportPO} variant="outline" size="sm" className="h-7 text-2xs flex-1" aria-label={t('common.esportaFilePo')}>
                     <Download className="w-3 h-3 mr-1" /> PO
                   </Button>
                 </div>

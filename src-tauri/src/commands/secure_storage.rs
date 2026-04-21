@@ -10,6 +10,7 @@ use std::fs;
 use std::path::PathBuf;
 use std::sync::Mutex;
 use once_cell::sync::Lazy;
+use super::process_util::no_window_command;
 
 // ============================================================================
 // SECURE KEY STORAGE — AES-256-GCM encrypted API key storage
@@ -45,7 +46,8 @@ fn derive_encryption_key() -> [u8; 32] {
     #[cfg(windows)]
     {
         // Use machine GUID from registry (unique per Windows installation)
-        if let Ok(output) = std::process::Command::new("reg")
+        // no_window_command evita il flash della console
+        if let Ok(output) = no_window_command("reg")
             .args(["query", r"HKLM\SOFTWARE\Microsoft\Cryptography", "/v", "MachineGuid"])
             .output()
         {

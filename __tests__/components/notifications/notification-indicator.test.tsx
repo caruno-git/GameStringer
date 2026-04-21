@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import '@testing-library/jest-dom';
 import { NotificationIndicator } from '@/components/notifications/notification-indicator';
+import { useNotifications } from '@/hooks/use-notifications';
 
 // Mock delle dipendenze
 vi.mock('@/hooks/use-notifications', () => ({
@@ -23,7 +24,7 @@ describe('NotificationIndicator', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (require('@/hooks/use-notifications').useNotifications as unknown).mockReturnValue(mockUseNotifications);
+    vi.mocked(useNotifications).mockReturnValue(mockUseNotifications);
   });
 
   describe('Rendering', () => {
@@ -43,7 +44,7 @@ describe('NotificationIndicator', () => {
     });
 
     it('should show bell ring icon when has notifications', () => {
-      (require('@/hooks/use-notifications').useNotifications as unknown).mockReturnValue({
+      vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
         unreadCount: 3
       });
@@ -55,7 +56,7 @@ describe('NotificationIndicator', () => {
     });
 
     it('should show loading state', () => {
-      (require('@/hooks/use-notifications').useNotifications as unknown).mockReturnValue({
+      vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
         isLoading: true
       });
@@ -70,7 +71,7 @@ describe('NotificationIndicator', () => {
 
   describe('Badge Display', () => {
     it('should show badge with count when has notifications', () => {
-      (require('@/hooks/use-notifications').useNotifications as unknown).mockReturnValue({
+      vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
         unreadCount: 5
       });
@@ -81,7 +82,7 @@ describe('NotificationIndicator', () => {
     });
 
     it('should show 99+ when count exceeds maxCount', () => {
-      (require('@/hooks/use-notifications').useNotifications as unknown).mockReturnValue({
+      vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
         unreadCount: 150
       });
@@ -92,7 +93,7 @@ describe('NotificationIndicator', () => {
     });
 
     it('should not show badge when showBadge is false', () => {
-      (require('@/hooks/use-notifications').useNotifications as unknown).mockReturnValue({
+      vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
         unreadCount: 5
       });
@@ -130,7 +131,7 @@ describe('NotificationIndicator', () => {
       const mockOnClick = vi.fn();
       const user = userEvent.setup();
 
-      (require('@/hooks/use-notifications').useNotifications as unknown).mockReturnValue({
+      vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
         isLoading: true
       });
@@ -170,7 +171,7 @@ describe('NotificationIndicator', () => {
       const { rerender } = render(<NotificationIndicator animate={true} />);
       
       // Update with new notifications
-      (require('@/hooks/use-notifications').useNotifications as unknown).mockReturnValue({
+      vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
         unreadCount: 2
       });
@@ -189,7 +190,7 @@ describe('NotificationIndicator', () => {
       const { rerender } = render(<NotificationIndicator animate={false} />);
       
       // Update with new notifications
-      (require('@/hooks/use-notifications').useNotifications as unknown).mockReturnValue({
+      vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
         unreadCount: 2
       });
@@ -204,7 +205,7 @@ describe('NotificationIndicator', () => {
       const { rerender } = render(<NotificationIndicator animate={true} />);
       
       // Update with new notifications
-      (require('@/hooks/use-notifications').useNotifications as unknown).mockReturnValue({
+      vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
         unreadCount: 1
       });
@@ -226,7 +227,7 @@ describe('NotificationIndicator', () => {
     });
 
     it('should have proper ARIA attributes with notifications', () => {
-      (require('@/hooks/use-notifications').useNotifications as unknown).mockReturnValue({
+      vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
         unreadCount: 3
       });
@@ -238,7 +239,7 @@ describe('NotificationIndicator', () => {
     });
 
     it('should have hidden description for screen readers', () => {
-      (require('@/hooks/use-notifications').useNotifications as unknown).mockReturnValue({
+      vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
         unreadCount: 1
       });
@@ -249,7 +250,7 @@ describe('NotificationIndicator', () => {
     });
 
     it('should have plural description for multiple notifications', () => {
-      (require('@/hooks/use-notifications').useNotifications as unknown).mockReturnValue({
+      vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
         unreadCount: 5
       });
@@ -264,7 +265,7 @@ describe('NotificationIndicator', () => {
       const { rerender } = render(<NotificationIndicator />);
       
       // Update with new notifications
-      (require('@/hooks/use-notifications').useNotifications as unknown).mockReturnValue({
+      vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
         unreadCount: 2
       });
@@ -301,7 +302,7 @@ describe('NotificationIndicator', () => {
 
   describe('Badge Variants', () => {
     it('should show destructive badge by default', () => {
-      (require('@/hooks/use-notifications').useNotifications as unknown).mockReturnValue({
+      vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
         unreadCount: 1
       });
@@ -338,7 +339,7 @@ describe('NotificationIndicator', () => {
 
   describe('Edge Cases', () => {
     it('should handle negative unread count', () => {
-      (require('@/hooks/use-notifications').useNotifications as unknown).mockReturnValue({
+      vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
         unreadCount: -1
       });
@@ -351,7 +352,7 @@ describe('NotificationIndicator', () => {
     });
 
     it('should handle very large unread count', () => {
-      (require('@/hooks/use-notifications').useNotifications as unknown).mockReturnValue({
+      vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
         unreadCount: 999999
       });
@@ -362,7 +363,7 @@ describe('NotificationIndicator', () => {
     });
 
     it('should handle undefined unread count', () => {
-      (require('@/hooks/use-notifications').useNotifications as unknown).mockReturnValue({
+      vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
         unreadCount: undefined
       });

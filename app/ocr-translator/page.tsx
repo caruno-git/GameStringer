@@ -319,7 +319,7 @@ export default function OcrTranslatorPage() {
       const ocrResult = await recognizeText(imageDataUrl, ocrLang);
       
       if (!ocrResult.lines || ocrResult.lines.length === 0) {
-        toast.error('Nessun testo rilevato nello screenshot');
+        toast.error(t('common.nessunTestoRilevatoNelloScreenshot'));
         setScreenshotProcessing(false);
         return;
       }
@@ -379,16 +379,16 @@ export default function OcrTranslatorPage() {
           return;
         }
       }
-      toast.error('Nessuna immagine negli appunti');
+      toast.error(t('common.nessunaImmagineNegliAppunti'));
     } catch {
-      toast.error('Impossibile leggere gli appunti — usa il pulsante Upload');
+      toast.error(t('common.impossibileLeggereGliAppuntiUsaIlPulsanteUpload'));
     }
   }, [processScreenshot]);
 
   const copyAllTranslations = useCallback(() => {
     const text = screenshotTexts.map(t => t.translated).join('\n');
     navigator.clipboard.writeText(text);
-    toast.success('Traduzioni copiate!');
+    toast.success(t('common.traduzioniCopiate'));
   }, [screenshotTexts]);
 
   const _srcLang = SOURCE_LANGUAGES.find(l => l.code === config.language);
@@ -511,16 +511,16 @@ export default function OcrTranslatorPage() {
                 </div>
                 <ScrollArea className="max-h-[400px]">
                   <div className="space-y-1.5">
-                    {screenshotTexts.map((t, i) => (
+                    {screenshotTexts.map((text, i) => (
                       <div key={i} className="flex gap-3 p-2.5 rounded-lg bg-slate-800/40 border border-slate-700/30 hover:bg-slate-800/60 transition-colors">
                         <div className="flex-1 min-w-0">
                           <p className="text-2xs text-slate-500 mb-0.5">Originale</p>
-                          <p className="text-xs text-slate-300">{t.original}</p>
+                          <p className="text-xs text-slate-300">{text.original}</p>
                         </div>
                         <ArrowRight className="h-3 w-3 text-blue-400 mt-4 shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <p className="text-2xs text-emerald-500 mb-0.5">Traduzione</p>
-                          <p className="text-xs text-emerald-300">{t.translated}</p>
+                          <p className="text-2xs text-emerald-500 mb-0.5">{t('common.traduzione')}</p>
+                          <p className="text-xs text-emerald-300">{text.translated}</p>
                         </div>
                       </div>
                     ))}

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
-use std::process::Command;
 use tauri::command;
+use super::process_util::no_window_command;
 
 /// Mouth shape cue from Rhubarb output
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -44,7 +44,7 @@ struct RhubarbCue {
 /// Check if Rhubarb Lip Sync is available in the system PATH
 #[command]
 pub async fn check_rhubarb_available() -> Result<bool, String> {
-    let output = Command::new("rhubarb").arg("--version").output();
+    let output = no_window_command("rhubarb").arg("--version").output();
 
     match output {
         Ok(o) => Ok(o.status.success()),
@@ -64,7 +64,7 @@ pub async fn generate_lip_sync(
         return Err(format!("File audio non trovato: {}", audio_path));
     }
 
-    let mut cmd = Command::new("rhubarb");
+    let mut cmd = no_window_command("rhubarb");
     cmd.arg(&audio_path);
     cmd.arg("-f").arg("json"); // JSON output
 
@@ -128,7 +128,7 @@ pub async fn export_lip_sync_file(
 
     let fmt = format.unwrap_or_else(|| "json".to_string());
 
-    let mut cmd = Command::new("rhubarb");
+    let mut cmd = no_window_command("rhubarb");
     cmd.arg(&audio_path);
     cmd.arg("-f").arg(&fmt);
     cmd.arg("-o").arg(&output_path);

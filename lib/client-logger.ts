@@ -216,11 +216,36 @@ class ClientLogger {
       return [message, second, third as Record<string, unknown> | undefined];
     }
     // second is an error or unknown object — wrap as metadata
-    const meta: Record<string, unknown> = second instanceof Error
-      ? { error: { name: second.name, message: second.message, stack: second.stack } }
-      : typeof second === 'object' && second !== null
-        ? second as Record<string, unknown>
-        : { detail: String(second) };
+    let meta: Record<string, unknown>;
+    if (second instanceof Error) {
+      meta = { error: { name: second.name, message: second.message, stack: second.stack } };
+    } else if (typeof second === 'object' && second !== null) {
+      // Extract known error properties (Supabase PostgrestError has non-enumerable props)
+      const errObj = second as Record<string, unknown>;
+      const extracted: Record<string, unknown> = {};
+      const knownKeys = ['message', 'code', 'details', 'hint', 'name', 'status', 'statusText', 'error', 'error_description'];
+      for (const k of knownKeys) {
+        const v = errObj[k];
+        if (v !== undefined) extracted[k] = v;
+      }
+      // Also spread enumerable properties
+      const spread = { ...errObj };
+      meta = Object.keys(extracted).length > 0 || Object.keys(spread).length > 0
+        ? { ...spread, ...extracted }
+        : { detail: String(second), raw: String(second) };
+      // If still empty, try JSON-safe stringification via own property names
+      if (Object.keys(meta).length === 0) {
+        const allProps: Record<string, unknown> = {};
+        try {
+          for (const p of Object.getOwnPropertyNames(errObj)) {
+            allProps[p] = errObj[p];
+          }
+        } catch {}
+        meta = Object.keys(allProps).length > 0 ? allProps : { detail: String(second) };
+      }
+    } else {
+      meta = { detail: String(second) };
+    }
     return [message, undefined, meta];
   }
 

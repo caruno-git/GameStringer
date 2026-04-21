@@ -303,7 +303,7 @@ export default function OfflineTranslator() {
           <button
             onClick={() => { setSourceLang(targetLang); setTargetLang(sourceLang); }}
             className="p-2 rounded-lg bg-black/30 hover:bg-purple-600/30 text-slate-400 hover:text-purple-400 transition-colors"
-            title="Inverti lingue"
+            title={t('common.invertiLingue')}
           >
             <ArrowRightLeft className="h-4 w-4" />
           </button>
@@ -436,7 +436,7 @@ export default function OfflineTranslator() {
                   <button
                     onClick={() => copyResult(r.translated)}
                     className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-white transition-all"
-                    title="Copia traduzione"
+                    title={t('common.copiaTraduzione')}
                   >
                     <Copy className="h-3.5 w-3.5" />
                   </button>

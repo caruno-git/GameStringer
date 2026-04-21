@@ -69,6 +69,7 @@ async function getSupabase(): Promise<SupabaseClient> {
 
 export function isChatEnabled(): boolean {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { isBackendEnabled } = require('./community-hub-backend');
     return isBackendEnabled();
   } catch {
@@ -272,13 +273,20 @@ export async function autoSyncGSToSupabase(): Promise<string | null> {
 export async function fetchRooms(): Promise<ChatRoom[]> {
   const supabase = await getSupabase();
   const { data, error } = await supabase
-    .from('chat_rooms')
+    .from('community_rooms')
     .select('*')
     .eq('is_archived', false)
     .order('is_pinned', { ascending: false })
     .order('last_message_at', { ascending: false });
 
-  if (error) throw new Error(`Errore caricamento stanze: ${error.message}`);
+  if (error) {
+    // Tabelle non ancora create: ritorna array vuoto invece di throw
+    if (error.code === '42P01' || error.message?.includes('does not exist')) {
+      clientLogger.warn('[CommunityChat] Tabelle community_* non trovate. Applica supabase/community-chat-schema.sql');
+      return [];
+    }
+    throw new Error(`Errore caricamento stanze: ${error.message}`);
+  }
   // Deduplicate rooms by name (keep the one with most recent activity)
   const mapped = (data || []).map(mapRoom);
   const seen = new Map<string, ChatRoom>();
@@ -293,7 +301,7 @@ export async function fetchRooms(): Promise<ChatRoom[]> {
 export async function createRoom(name: string, description: string, type: ChatRoom['type'], gameId?: string, gameName?: string): Promise<ChatRoom> {
   const supabase = await getSupabase();
   const userId = await getCurrentUserId();
-  const { data, error } = await supabase.from('chat_rooms').insert({
+  const { data, error } = await supabase.from('community_rooms').insert({
     name,
     description,
     type,
@@ -311,8 +319,8 @@ export async function createRoom(name: string, description: string, type: ChatRo
 export async function fetchMessages(roomId: string, limit = 50, before?: string): Promise<ChatMessage[]> {
   const supabase = await getSupabase();
   let query = supabase
-    .from('chat_messages')
-    .select('*, author:user_profiles!author_id(username, avatar_url)')
+    .from('community_messages')
+    .select('*')
     .eq('room_id', roomId)
     .eq('deleted', false)
     .order('created_at', { ascending: false })
@@ -323,9 +331,60 @@ export async function fetchMessages(roomId: string, limit = 50, before?: string)
   }
 
   const { data, error } = await query;
-  if (error) throw new Error(`Errore caricamento messaggi: ${error.message}`);
+  if (error) {
+    // Tabelle non ancora create: ritorna array vuoto invece di throw
+    if (error.code === '42P01' || error.message?.includes('does not exist')) {
+      clientLogger.warn('[CommunityChat] Tabella community_messages non trovata. Applica supabase/community-chat-schema.sql');
+      return [];
+    }
+    throw new Error(`Errore caricamento messaggi: ${error.message || error.code || JSON.stringify(error)}`);
+  }
+  if (!data || data.length === 0) return [];
 
-  return (data || []).map(mapMessage).reverse();
+  // Fetch profili separatamente per evitare errori FK 400
+  const authorIds = [...new Set(data.map(m => m.author_id).filter(Boolean))];
+  const profilesMap = await fetchProfilesMap(authorIds);
+
+  return data.map(row => mapMessageWithProfile(row, profilesMap)).reverse();
+}
+
+async function fetchProfilesMap(userIds: string[]): Promise<Map<string, { username: string; avatar_url: string | null }>> {
+  const map = new Map<string, { username: string; avatar_url: string | null }>();
+  if (userIds.length === 0) return map;
+  try {
+    const supabase = await getSupabase();
+    const { data } = await supabase
+      .from('user_profiles')
+      .select('user_id, username, avatar_url')
+      .in('user_id', userIds);
+    if (data) {
+      data.forEach(p => {
+        if (p.user_id) map.set(p.user_id as string, { username: p.username as string, avatar_url: p.avatar_url as string | null });
+      });
+    }
+  } catch {
+    // Silenziosamente fallisce se la tabella non esiste
+  }
+  return map;
+}
+
+function mapMessageWithProfile(row: Record<string, unknown>, profiles: Map<string, { username: string; avatar_url: string | null }>): ChatMessage {
+  const profile = profiles.get(row.author_id as string);
+  return {
+    id: row.id as string,
+    roomId: row.room_id as string,
+    authorId: row.author_id as string,
+    authorName: profile?.username || 'Utente',
+    authorAvatar: profile?.avatar_url || undefined,
+    content: row.content as string,
+    type: (row.type as ChatMessage['type']) || 'text',
+    replyTo: row.reply_to as string | undefined,
+    metadata: (row.metadata as Record<string, unknown>) || {},
+    edited: (row.edited as boolean) || false,
+    deleted: (row.deleted as boolean) || false,
+    createdAt: row.created_at as string,
+    updatedAt: row.updated_at as string,
+  };
 }
 
 export async function sendMessage(
@@ -339,22 +398,25 @@ export async function sendMessage(
   const userId = await getCurrentUserId();
   if (!userId) throw new Error('Devi essere autenticato per inviare messaggi');
 
-  const { data, error } = await supabase.from('chat_messages').insert({
+  const { data, error } = await supabase.from('community_messages').insert({
     room_id: roomId,
     author_id: userId,
     content,
     type,
     reply_to: replyTo || null,
     metadata: metadata || {},
-  }).select('*, author:user_profiles!author_id(username, avatar_url)').single();
+  }).select('*').single();
 
-  if (error) throw new Error(`Errore invio messaggio: ${error.message}`);
-  return mapMessage(data);
+  if (error) throw new Error(`Errore invio messaggio: ${error.message || error.code || JSON.stringify(error)}`);
+  
+  // Fetch profilo autore separatamente
+  const profilesMap = await fetchProfilesMap([userId]);
+  return mapMessageWithProfile(data, profilesMap);
 }
 
 export async function editMessage(messageId: string, newContent: string): Promise<void> {
   const supabase = await getSupabase();
-  const { error } = await supabase.from('chat_messages').update({
+  const { error } = await supabase.from('community_messages').update({
     content: newContent,
     edited: true,
     updated_at: new Date().toISOString(),
@@ -364,7 +426,7 @@ export async function editMessage(messageId: string, newContent: string): Promis
 
 export async function deleteMessage(messageId: string): Promise<void> {
   const supabase = await getSupabase();
-  const { error } = await supabase.from('chat_messages').update({
+  const { error } = await supabase.from('community_messages').update({
     deleted: true,
     content: '[messaggio eliminato]',
   }).eq('id', messageId);
@@ -389,27 +451,24 @@ export async function subscribeToRoom(roomId: string, onMessage: MessageCallback
   }
 
   const channel = supabase
-    .channel(`room-${roomId}`)
+    .channel(`community-room-${roomId}`)
     .on(
       'postgres_changes',
       {
         event: 'INSERT',
         schema: 'public',
-        table: 'chat_messages',
+        table: 'community_messages',
         filter: `room_id=eq.${roomId}`,
       },
       async (payload: { new: Record<string, unknown> }) => {
-        // Fetch full message with author info
+        // Fetch profilo separatamente per evitare errori FK 400
         try {
-          const { data } = await supabase
-            .from('chat_messages')
-            .select('*, author:user_profiles!author_id(username, avatar_url)')
-            .eq('id', payload.new.id as string)
-            .single();
-          if (data) onMessage(mapMessage(data as Record<string, unknown>));
+          const authorId = payload.new.author_id as string;
+          const profilesMap = await fetchProfilesMap(authorId ? [authorId] : []);
+          onMessage(mapMessageWithProfile(payload.new, profilesMap));
         } catch {
-          // Fallback: use payload directly
-          onMessage(mapMessage(payload.new));
+          // Fallback: usa payload senza profilo
+          onMessage(mapMessageWithProfile(payload.new, new Map()));
         }
       }
     )
@@ -498,7 +557,7 @@ export async function updatePresence(status: 'online' | 'away' | 'offline'): Pro
     const supabase = await getSupabase();
     const userId = await getCurrentUserId();
     if (!userId) return;
-    await supabase.from('user_presence').upsert(
+    await supabase.from('community_presence').upsert(
       { user_id: userId, status, last_seen: new Date().toISOString() },
       { onConflict: 'user_id' }
     );
@@ -510,17 +569,23 @@ export async function updatePresence(status: 'online' | 'away' | 'offline'): Pro
 export async function getOnlineUsers(): Promise<UserPresence[]> {
   const supabase = await getSupabase();
   const { data } = await supabase
-    .from('user_presence')
-    .select('*, profile:user_profiles!user_id(username, avatar_url)')
+    .from('community_presence')
+    .select('*')
     .eq('status', 'online')
     .order('last_seen', { ascending: false });
 
-  return (data || []).map((row: Record<string, unknown>) => {
-    const profile = row.profile as Record<string, unknown> | null;
+  if (!data || data.length === 0) return [];
+
+  // Fetch profili separatamente
+  const userIds = [...new Set((data as Record<string, unknown>[]).map(r => r.user_id as string).filter(Boolean))];
+  const profilesMap = await fetchProfilesMap(userIds);
+
+  return (data as Record<string, unknown>[]).map((row) => {
+    const profile = profilesMap.get(row.user_id as string);
     return {
       userId: row.user_id as string,
-      username: (profile?.username as string) || 'Utente',
-      avatar: profile?.avatar_url as string | undefined,
+      username: profile?.username || 'Utente',
+      avatar: profile?.avatar_url || undefined,
       status: row.status as UserPresence['status'],
       lastSeen: row.last_seen as string,
     };
@@ -534,7 +599,7 @@ export async function joinRoom(roomId: string): Promise<void> {
   const userId = await getCurrentUserId();
   if (!userId) return;
   try {
-    await supabase.from('chat_room_members').upsert(
+    await supabase.from('community_room_members').upsert(
       { room_id: roomId, user_id: userId, last_read_at: new Date().toISOString() },
       { onConflict: 'room_id,user_id' }
     );
@@ -548,7 +613,7 @@ export async function markRoomRead(roomId: string): Promise<void> {
   const userId = await getCurrentUserId();
   if (!userId) return;
   try {
-    await supabase.from('chat_room_members').upsert(
+    await supabase.from('community_room_members').upsert(
       { room_id: roomId, user_id: userId, last_read_at: new Date().toISOString() },
       { onConflict: 'room_id,user_id' }
     );
@@ -576,21 +641,3 @@ function mapRoom(row: Record<string, unknown>): ChatRoom {
   };
 }
 
-function mapMessage(row: Record<string, unknown>): ChatMessage {
-  const author = row.author as Record<string, unknown> | null;
-  return {
-    id: row.id as string,
-    roomId: row.room_id as string,
-    authorId: row.author_id as string,
-    authorName: (author?.username as string) || 'Utente',
-    authorAvatar: author?.avatar_url as string | undefined,
-    content: row.content as string,
-    type: (row.type as ChatMessage['type']) || 'text',
-    replyTo: row.reply_to as string | undefined,
-    metadata: (row.metadata as Record<string, unknown>) || {},
-    edited: (row.edited as boolean) || false,
-    deleted: (row.deleted as boolean) || false,
-    createdAt: row.created_at as string,
-    updatedAt: row.updated_at as string,
-  };
-}

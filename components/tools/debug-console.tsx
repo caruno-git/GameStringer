@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { useTranslation } from '@/lib/i18n';
 import {
   Terminal,
   Trash2,
@@ -127,6 +128,7 @@ export function DebugConsole({ defaultExpanded = false }: { defaultExpanded?: bo
   const [paused, setPaused] = useState(false);
   const [filterLevel, setFilterLevel] = useState<LogLevel | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const { t } = useTranslation();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -209,13 +211,13 @@ export function DebugConsole({ defaultExpanded = false }: { defaultExpanded?: bo
             <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setPaused(!paused)} title={paused ? 'Riprendi' : 'Pausa'}>
               {paused ? <Play className="h-3 w-3 text-emerald-400" /> : <Pause className="h-3 w-3" />}
             </Button>
-            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={exportLogs} title="Esporta log">
+            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={exportLogs} title={t('common.esportaLog')}>
               <Download className="h-3 w-3" />
             </Button>
             <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => debugLog.clear()} title="Pulisci">
               <Trash2 className="h-3 w-3" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setExpanded(false)} title="Chiudi">
+            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setExpanded(false)} title={t('common.chiudi')}>
               <X className="h-3 w-3" />
             </Button>
           </div>
@@ -228,7 +230,7 @@ export function DebugConsole({ defaultExpanded = false }: { defaultExpanded?: bo
             <Input
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              aria-label="Cerca" placeholder="Cerca nei log..."
+              aria-label={t('common.cerca')} placeholder="Cerca nei log..."
               className="h-6 text-2xs pl-7 bg-slate-900/50 border-slate-700/30"
             />
           </div>
@@ -261,7 +263,7 @@ export function DebugConsole({ defaultExpanded = false }: { defaultExpanded?: bo
                 <button
                   onClick={() => copyLog(entry)}
                   className="opacity-0 group-hover:opacity-100 transition-opacity"
-                  title="Copia"
+                  title={t('common.copia')}
                 >
                   <Copy className="h-3 w-3 text-slate-600 hover:text-slate-300" />
                 </button>
