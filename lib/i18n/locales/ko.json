@@ -527,7 +527,7 @@
     "contestoVisivo": "Contesto visivo",
     "disambiguazione": "Disambiguazione",
     "confronto": "CONFRONTO",
-    "originale": "Originale",
+    "originale": "원본",
     "vision": "Vision",
     "liaVedeIlTuoGioco": "L'IA vede il tuo gioco",
     "disambigua": "Disambigua",
@@ -542,7 +542,7 @@
     "fileDiTraduzioneCreatoConSucce": "File di traduzione creato con successo",
     "tradotte": "Tradotte",
     "durata": "Durata",
-    "costo": "Costo",
+    "costo": "비용",
     "velocità": "Velocità",
     "nessunProblemaRilevato": "Nessun problema rilevato",
     "cosaVuoiFareOra": "Cosa vuoi fare ora?",
@@ -576,23 +576,23 @@
     "generatedKey": "Generated Key"
   },
   "smartContextPanelComp": {
-    "selezionaUnGiocoPerAttivareSma": "Seleziona un gioco per attivare Smart Context",
+    "selezionaUnGiocoPerAttivareSma": "스마트 컨텍스트를 활성화하려면 게임을 선택하세요",
     "smartContext": "Smart Context",
-    "nome": "Nome",
-    "nomeTradottoOpzionale": "Nome tradotto (opzionale)",
-    "stileDiDialogo": "Stile di dialogo",
-    "formaleLei": "Formale (Lei)",
-    "informaleTu": "Informale (Tu)",
-    "arcaicoVoi": "Arcaico (Voi)",
-    "moderno": "Moderno",
-    "slang": "Slang",
-    "neutro": "Neutro",
-    "personalità": "Personalità",
-    "aliasSoprannomi": "Alias / Soprannomi",
-    "note": "Note",
-    "originale": "Originale",
-    "traduzione": "Traduzione",
-    "contestoOpzionale": "Contesto (opzionale)"
+    "nome": "이름",
+    "nomeTradottoOpzionale": "번역된 이름 (선택 사항)",
+    "stileDiDialogo": "대화 스타일",
+    "formaleLei": "정식 (당신)",
+    "informaleTu": "비정식 (너)",
+    "arcaicoVoi": "고대 (당신들)",
+    "moderno": "현대",
+    "slang": "슬랭",
+    "neutro": "중립",
+    "personalità": "성격",
+    "aliasSoprannomi": "별명 / 별칭",
+    "note": "메모",
+    "originale": "원본",
+    "traduzione": "번역",
+    "contestoOpzionale": "컨텍스트 (선택 사항)"
   },
   "retroOcrPanelComp": {
     "retrogameOcr": "Retro-Game OCR",
@@ -609,16 +609,16 @@
   "translationHistoryPanelComp": {
     "cronologia": "Cronologia",
     "parole": "Parole",
-    "costo": "Costo",
-    "tempo": "Tempo",
+    "costo": "비용",
+    "tempo": "시간",
     "recent": "Recent",
     "statistics": "Statistics",
     "translations": "Translations",
     "words": "Words",
     "cost": "Cost",
     "time": "Time",
-    "perTool": "Per Tool",
-    "perProvider": "Per Provider",
+    "perTool": "도구별",
+    "perProvider": "공급자별",
     "perLingua": "언어별",
     "cacheHitRate": "Cache Hit Rate"
   },
@@ -628,7 +628,7 @@
     "stringhe": "Stringhe",
     "parole": "Parole",
     "progress": "Progress",
-    "oggi": "Oggi",
+    "oggi": "오늘",
     "settimana": "Settimana",
     "mese": "Mese",
     "completati": "Completati",
@@ -684,11 +684,11 @@
     "loginAutomatico": "Login automatico"
   },
   "visualTranslationEditorComp": {
-    "originale": "Originale",
+    "originale": "원본",
     "uploadAScreenshot": "Upload a screenshot",
     "supportsPngJpgWebp": "Supports PNG, JPG, WebP",
-    "testoOriginale": "Testo Originale",
-    "traduzione": "Traduzione",
+    "testoOriginale": "원본 텍스트",
+    "traduzione": "번역",
     "fontSize": "Font Size",
     "font": "Font",
     "coloreTesto": "Colore Testo",
@@ -739,8 +739,8 @@
   "glossaryManagerComp": {
     "addTerm": "Add Term",
     "caseSensitive": "Case sensitive",
-    "contesto": "Contesto",
-    "note": "Note",
+    "contesto": "컨텍스트",
+    "note": "메모",
     "editTerm": "Edit Term",
     "original": "Original",
     "translation": "Translation"
@@ -783,9 +783,9 @@
     "mancante": "Mancante",
     "punteggioMedio": "Punteggio Medio",
     "problemiFrequenti": "Problemi Frequenti",
-    "dettaglioTraduzione": "Dettaglio Traduzione",
-    "originale": "Originale",
-    "traduzione": "Traduzione",
+    "dettaglioTraduzione": "번역 세부사항",
+    "originale": "원본",
+    "traduzione": "번역",
     "problemiRilevati": "Problemi Rilevati",
     "suggerimenti": "Suggerimenti",
     "tutti": "Tutti"
@@ -860,13 +860,13 @@
   },
   "injektRealtimeStatsComp": {
     "timeline": "Timeline",
-    "lingue": "Lingue",
+    "lingue": "언어",
     "performance": "Performance",
-    "recenti": "Recenti",
-    "traduzioniNelTempo": "Traduzioni nel Tempo",
-    "distribuzioneLingue": "Distribuzione Lingue",
-    "ultimeTraduzioni": "Ultime Traduzioni",
-    "piùRecente": "Più recente"
+    "recenti": "최근",
+    "traduzioniNelTempo": "시간에 따른 번역",
+    "distribuzioneLingue": "언어 분포",
+    "ultimeTraduzioni": "최근 번역",
+    "piùRecente": "최신"
   },
   "itchioModalComp": {
     "connectItchioAccount": "Connect itch.io Account",
@@ -922,19 +922,19 @@
     "offlineFeatures": "Offline Features"
   },
   "statsDashboardComp": {
-    "statisticheTraduzione": "Statistiche Traduzione",
-    "linguePiùUsate": "Lingue più usate",
-    "linguaSorgente": "Lingua sorgente:",
-    "linguaTarget": "Lingua target:",
-    "ultimaTraduzione": "Ultima traduzione",
+    "statisticheTraduzione": "번역 통계",
+    "linguePiùUsate": "가장 많이 사용되는 언어",
+    "linguaSorgente": "소스 언어:",
+    "linguaTarget": "대상 언어:",
+    "ultimaTraduzione": "마지막 번역",
     "activityLast7Days": "Activity last 7 days"
   },
   "advancedFiltersComp": {
-    "nome": "Nome",
-    "tempoDiGioco": "Tempo di gioco",
-    "ultimaSessione": "Ultima sessione",
-    "dataAggiunta": "Data aggiunta",
-    "progressoTrad": "Progresso trad."
+    "nome": "이름",
+    "tempoDiGioco": "게임 시간",
+    "ultimaSessione": "마지막 세션",
+    "dataAggiunta": "추가 날짜",
+    "progressoTrad": "번역 진행률"
   },
   "epicModalComp": {
     "legendary": "Legendary",
@@ -1016,8 +1016,8 @@
     "detectedFileFormat": "Detected file format:"
   },
   "globalProgressWidgetComp": {
-    "progressoGlobale": "Progresso Globale",
-    "completamentoStimato": "Completamento stimato"
+    "progressoGlobale": "전체 진행률",
+    "completamentoStimato": "예상 완료 시간"
   },
   "genericCredentialsModalComp": {
     "email": "Email",
@@ -1026,7 +1026,7 @@
   "updateBellComp": {
     "novità": "새로운 기능",
     "installazioneInCorso": "설치 중...",
-    "tuttoAggiornato": "모두 업데이트됨！"
+    "tuttoAggiornato": "모두 업데이트됨!"
   },
   "ollamaManagerComp": {
     "verificaOllama": "Ollama 확인...",
@@ -1054,7 +1054,7 @@
   "translationStatsComp": {
     "progressoGenerale": "전체 진행률",
     "perLingua": "언어별",
-    "perGame": "Per game"
+    "perGame": "게임별"
   },
   "protectedRouteComp": {
     "gamestringer": "GameStringer",
@@ -1077,8 +1077,8 @@
     "inizializzazioneSistemaDiAuthe": "Inizializzazione sistema di authentication..."
   },
   "streamingTextComp": {
-    "originale": "Originale",
-    "traduzione": "Traduzione"
+    "originale": "원본",
+    "traduzione": "번역"
   },
   "nav": {
     "dashboard": "대시보드",
@@ -1631,7 +1631,7 @@
     "tutteLeLingue": "Tutte le lingue",
     "lingueSupportate": "Languages Supportate",
     "tassoApprovazione": "Tasso Approvazione",
-    "contesto": "Contesto",
+    "contesto": "문맥",
     "recensisciTraduzione": "Recensisci Translation",
     "valutazione": "Valutazione",
     "commento": "Comment",

@@ -527,7 +527,7 @@
     "contestoVisivo": "Contesto visivo",
     "disambiguazione": "Disambiguazione",
     "confronto": "CONFRONTO",
-    "originale": "Originale",
+    "originale": "Original",
     "vision": "Vision",
     "liaVedeIlTuoGioco": "L'IA vede il tuo gioco",
     "disambigua": "Disambigua",
@@ -542,7 +542,7 @@
     "fileDiTraduzioneCreatoConSucce": "File di traduzione creato con successo",
     "tradotte": "Tradotte",
     "durata": "Durata",
-    "costo": "Costo",
+    "costo": "Coste",
     "velocità": "Velocità",
     "nessunProblemaRilevato": "Nessun problema rilevato",
     "cosaVuoiFareOra": "Cosa vuoi fare ora?",
@@ -576,22 +576,22 @@
     "generatedKey": "Generated Key"
   },
   "smartContextPanelComp": {
-    "selezionaUnGiocoPerAttivareSma": "Seleziona un gioco per attivare Smart Context",
+    "selezionaUnGiocoPerAttivareSma": "Selecciona un juego para activar Smart Context",
     "smartContext": "Smart Context",
-    "nome": "Nome",
-    "nomeTradottoOpzionale": "Nome tradotto (opzionale)",
-    "stileDiDialogo": "Stile di dialogo",
-    "formaleLei": "Formale (Lei)",
-    "informaleTu": "Informale (Tu)",
-    "arcaicoVoi": "Arcaico (Voi)",
+    "nome": "Nombre",
+    "nomeTradottoOpzionale": "Nombre traducido (opcional)",
+    "stileDiDialogo": "Estilo de diálogo",
+    "formaleLei": "Formal (Usted)",
+    "informaleTu": "Informal (Tú)",
+    "arcaicoVoi": "Arcaico (Vosotros)",
     "moderno": "Moderno",
-    "slang": "Slang",
+    "slang": "Jerga",
     "neutro": "Neutro",
-    "personalità": "Personalità",
-    "aliasSoprannomi": "Alias / Soprannomi",
-    "note": "Note",
-    "originale": "Originale",
-    "traduzione": "Traduzione",
+    "personalità": "Personalidad",
+    "aliasSoprannomi": "Alias / Apodos",
+    "note": "Notas",
+    "originale": "Original",
+    "traduzione": "Traducción",
     "contestoOpzionale": "Contesto (opzionale)"
   },
   "retroOcrPanelComp": {
@@ -609,16 +609,16 @@
   "translationHistoryPanelComp": {
     "cronologia": "Cronologia",
     "parole": "Parole",
-    "costo": "Costo",
-    "tempo": "Tempo",
+    "costo": "Coste",
+    "tempo": "Tiempo",
     "recent": "Recent",
     "statistics": "Statistics",
     "translations": "Translations",
     "words": "Words",
     "cost": "Cost",
     "time": "Time",
-    "perTool": "Per Tool",
-    "perProvider": "Per Provider",
+    "perTool": "Por herramienta",
+    "perProvider": "Por proveedor",
     "perLingua": "Por idioma",
     "cacheHitRate": "Cache Hit Rate"
   },
@@ -628,7 +628,7 @@
     "stringhe": "Stringhe",
     "parole": "Parole",
     "progress": "Progress",
-    "oggi": "Oggi",
+    "oggi": "Hoy",
     "settimana": "Settimana",
     "mese": "Mese",
     "completati": "Completati",
@@ -684,11 +684,11 @@
     "loginAutomatico": "Login automatico"
   },
   "visualTranslationEditorComp": {
-    "originale": "Originale",
+    "originale": "Original",
     "uploadAScreenshot": "Upload a screenshot",
     "supportsPngJpgWebp": "Supports PNG, JPG, WebP",
-    "testoOriginale": "Testo Originale",
-    "traduzione": "Traduzione",
+    "testoOriginale": "Texto original",
+    "traduzione": "Traducción",
     "fontSize": "Font Size",
     "font": "Font",
     "coloreTesto": "Colore Testo",
@@ -739,8 +739,8 @@
   "glossaryManagerComp": {
     "addTerm": "Add Term",
     "caseSensitive": "Case sensitive",
-    "contesto": "Contesto",
-    "note": "Note",
+    "contesto": "Contexto",
+    "note": "Notas",
     "editTerm": "Edit Term",
     "original": "Original",
     "translation": "Translation"
@@ -783,9 +783,9 @@
     "mancante": "Mancante",
     "punteggioMedio": "Punteggio Medio",
     "problemiFrequenti": "Problemi Frequenti",
-    "dettaglioTraduzione": "Dettaglio Traduzione",
-    "originale": "Originale",
-    "traduzione": "Traduzione",
+    "dettaglioTraduzione": "Detalles de la traducción",
+    "originale": "Original",
+    "traduzione": "Traducción",
     "problemiRilevati": "Problemi Rilevati",
     "suggerimenti": "Suggerimenti",
     "tutti": "Tutti"
@@ -860,13 +860,13 @@
   },
   "injektRealtimeStatsComp": {
     "timeline": "Timeline",
-    "lingue": "Lingue",
+    "lingue": "Idiomas",
     "performance": "Performance",
     "recenti": "Recenti",
-    "traduzioniNelTempo": "Traduzioni nel Tempo",
-    "distribuzioneLingue": "Distribuzione Lingue",
-    "ultimeTraduzioni": "Ultime Traduzioni",
-    "piùRecente": "Più recente"
+    "traduzioniNelTempo": "Traducciones en el tiempo",
+    "distribuzioneLingue": "Distribución de idiomas",
+    "ultimeTraduzioni": "Últimas traducciones",
+    "piùRecente": "Más reciente"
   },
   "itchioModalComp": {
     "connectItchioAccount": "Connect itch.io Account",
@@ -922,19 +922,19 @@
     "offlineFeatures": "Offline Features"
   },
   "statsDashboardComp": {
-    "statisticheTraduzione": "Statistiche Traduzione",
-    "linguePiùUsate": "Lingue più usate",
-    "linguaSorgente": "Lingua sorgente:",
-    "linguaTarget": "Lingua target:",
-    "ultimaTraduzione": "Ultima traduzione",
+    "statisticheTraduzione": "Estadísticas de traducción",
+    "linguePiùUsate": "Idiomas más usados",
+    "linguaSorgente": "Idioma origen:",
+    "linguaTarget": "Idioma objetivo:",
+    "ultimaTraduzione": "Última traducción",
     "activityLast7Days": "Activity last 7 days"
   },
   "advancedFiltersComp": {
-    "nome": "Nome",
-    "tempoDiGioco": "Tempo di gioco",
-    "ultimaSessione": "Ultima sessione",
-    "dataAggiunta": "Data aggiunta",
-    "progressoTrad": "Progresso trad."
+    "nome": "Nombre",
+    "tempoDiGioco": "Tiempo de juego",
+    "ultimaSessione": "Última sesión",
+    "dataAggiunta": "Fecha de adición",
+    "progressoTrad": "Progreso trad."
   },
   "epicModalComp": {
     "legendary": "Legendary",
@@ -1016,8 +1016,8 @@
     "detectedFileFormat": "Detected file format:"
   },
   "globalProgressWidgetComp": {
-    "progressoGlobale": "Progresso Globale",
-    "completamentoStimato": "Completamento stimato"
+    "progressoGlobale": "Progreso global",
+    "completamentoStimato": "Tiempo estimado de finalización"
   },
   "genericCredentialsModalComp": {
     "email": "Email",
@@ -1026,7 +1026,7 @@
   "updateBellComp": {
     "novità": "Novedades",
     "installazioneInCorso": "Instalación en curso...",
-    "tuttoAggiornato": "¡Todo actualizado！"
+    "tuttoAggiornato": "¡Todo actualizado!"
   },
   "ollamaManagerComp": {
     "verificaOllama": "Verificar Ollama...",
@@ -1054,7 +1054,7 @@
   "translationStatsComp": {
     "progressoGenerale": "Progreso general",
     "perLingua": "Por idioma",
-    "perGame": "Per game"
+    "perGame": "Por juego"
   },
   "protectedRouteComp": {
     "gamestringer": "GameStringer",
@@ -1077,8 +1077,8 @@
     "inizializzazioneSistemaDiAuthe": "Inizializzazione sistema di authentication..."
   },
   "streamingTextComp": {
-    "originale": "Originale",
-    "traduzione": "Traduzione"
+    "originale": "Original",
+    "traduzione": "Traducción"
   },
   "nav": {
     "dashboard": "Panel",
@@ -1631,7 +1631,7 @@
     "tutteLeLingue": "Tutte le lingue",
     "lingueSupportate": "Languages Supportate",
     "tassoApprovazione": "Tasso Approvazione",
-    "contesto": "Contesto",
+    "contesto": "Contexto",
     "recensisciTraduzione": "Recensisci Translation",
     "valutazione": "Valutazione",
     "commento": "Comment",

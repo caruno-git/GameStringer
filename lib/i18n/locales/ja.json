@@ -527,7 +527,7 @@
     "contestoVisivo": "Contesto visivo",
     "disambiguazione": "Disambiguazione",
     "confronto": "CONFRONTO",
-    "originale": "Originale",
+    "originale": "原文",
     "vision": "Vision",
     "liaVedeIlTuoGioco": "L'IA vede il tuo gioco",
     "disambigua": "Disambigua",
@@ -542,7 +542,7 @@
     "fileDiTraduzioneCreatoConSucce": "File di traduzione creato con successo",
     "tradotte": "Tradotte",
     "durata": "Durata",
-    "costo": "Costo",
+    "costo": "コスト",
     "velocità": "Velocità",
     "nessunProblemaRilevato": "Nessun problema rilevato",
     "cosaVuoiFareOra": "Cosa vuoi fare ora?",
@@ -576,23 +576,23 @@
     "generatedKey": "Generated Key"
   },
   "smartContextPanelComp": {
-    "selezionaUnGiocoPerAttivareSma": "Seleziona un gioco per attivare Smart Context",
+    "selezionaUnGiocoPerAttivareSma": "スマートコンテキストを有効にするにはゲームを選択してください",
     "smartContext": "Smart Context",
-    "nome": "Nome",
-    "nomeTradottoOpzionale": "Nome tradotto (opzionale)",
-    "stileDiDialogo": "Stile di dialogo",
-    "formaleLei": "Formale (Lei)",
-    "informaleTu": "Informale (Tu)",
-    "arcaicoVoi": "Arcaico (Voi)",
-    "moderno": "Moderno",
-    "slang": "Slang",
-    "neutro": "Neutro",
-    "personalità": "Personalità",
-    "aliasSoprannomi": "Alias / Soprannomi",
-    "note": "Note",
-    "originale": "Originale",
-    "traduzione": "Traduzione",
-    "contestoOpzionale": "Contesto (opzionale)"
+    "nome": "名前",
+    "nomeTradottoOpzionale": "翻訳された名前（オプション）",
+    "stileDiDialogo": "会話スタイル",
+    "formaleLei": "フォーマル（あなた）",
+    "informaleTu": "インフォーマル（君）",
+    "arcaicoVoi": "古風（あなたたち）",
+    "moderno": "現代",
+    "slang": "スラング",
+    "neutro": "中立",
+    "personalità": "性格",
+    "aliasSoprannomi": "エイリアス / 愛称",
+    "note": "メモ",
+    "originale": "原文",
+    "traduzione": "翻訳",
+    "contestoOpzionale": "コンテキスト（オプション）"
   },
   "retroOcrPanelComp": {
     "retrogameOcr": "Retro-Game OCR",
@@ -609,16 +609,16 @@
   "translationHistoryPanelComp": {
     "cronologia": "Cronologia",
     "parole": "Parole",
-    "costo": "Costo",
-    "tempo": "Tempo",
+    "costo": "コスト",
+    "tempo": "時間",
     "recent": "Recent",
     "statistics": "Statistics",
     "translations": "Translations",
     "words": "Words",
     "cost": "Cost",
     "time": "Time",
-    "perTool": "Per Tool",
-    "perProvider": "Per Provider",
+    "perTool": "ツール別",
+    "perProvider": "プロバイダー別",
     "perLingua": "言語別",
     "cacheHitRate": "Cache Hit Rate"
   },
@@ -628,7 +628,7 @@
     "stringhe": "Stringhe",
     "parole": "Parole",
     "progress": "Progress",
-    "oggi": "Oggi",
+    "oggi": "今日",
     "settimana": "Settimana",
     "mese": "Mese",
     "completati": "Completati",
@@ -684,11 +684,11 @@
     "loginAutomatico": "Login automatico"
   },
   "visualTranslationEditorComp": {
-    "originale": "Originale",
+    "originale": "原文",
     "uploadAScreenshot": "Upload a screenshot",
     "supportsPngJpgWebp": "Supports PNG, JPG, WebP",
-    "testoOriginale": "Testo Originale",
-    "traduzione": "Traduzione",
+    "testoOriginale": "原文テキスト",
+    "traduzione": "翻訳",
     "fontSize": "Font Size",
     "font": "Font",
     "coloreTesto": "Colore Testo",
@@ -739,8 +739,8 @@
   "glossaryManagerComp": {
     "addTerm": "Add Term",
     "caseSensitive": "Case sensitive",
-    "contesto": "Contesto",
-    "note": "Note",
+    "contesto": "コンテキスト",
+    "note": "メモ",
     "editTerm": "Edit Term",
     "original": "Original",
     "translation": "Translation"
@@ -783,9 +783,9 @@
     "mancante": "Mancante",
     "punteggioMedio": "Punteggio Medio",
     "problemiFrequenti": "Problemi Frequenti",
-    "dettaglioTraduzione": "Dettaglio Traduzione",
-    "originale": "Originale",
-    "traduzione": "Traduzione",
+    "dettaglioTraduzione": "翻訳の詳細",
+    "originale": "原文",
+    "traduzione": "翻訳",
     "problemiRilevati": "Problemi Rilevati",
     "suggerimenti": "Suggerimenti",
     "tutti": "Tutti"
@@ -860,13 +860,13 @@
   },
   "injektRealtimeStatsComp": {
     "timeline": "Timeline",
-    "lingue": "Lingue",
+    "lingue": "言語",
     "performance": "Performance",
-    "recenti": "Recenti",
-    "traduzioniNelTempo": "Traduzioni nel Tempo",
-    "distribuzioneLingue": "Distribuzione Lingue",
-    "ultimeTraduzioni": "Ultime Traduzioni",
-    "piùRecente": "Più recente"
+    "recenti": "最近",
+    "traduzioniNelTempo": "時間経過に伴う翻訳",
+    "distribuzioneLingue": "言語の分布",
+    "ultimeTraduzioni": "最近の翻訳",
+    "piùRecente": "最新"
   },
   "itchioModalComp": {
     "connectItchioAccount": "Connect itch.io Account",
@@ -922,19 +922,19 @@
     "offlineFeatures": "Offline Features"
   },
   "statsDashboardComp": {
-    "statisticheTraduzione": "Statistiche Traduzione",
-    "linguePiùUsate": "Lingue più usate",
-    "linguaSorgente": "Lingua sorgente:",
-    "linguaTarget": "Lingua target:",
-    "ultimaTraduzione": "Ultima traduzione",
+    "statisticheTraduzione": "翻訳統計",
+    "linguePiùUsate": "最も使用されている言語",
+    "linguaSorgente": "ソース言語:",
+    "linguaTarget": "ターゲット言語:",
+    "ultimaTraduzione": "最後の翻訳",
     "activityLast7Days": "Activity last 7 days"
   },
   "advancedFiltersComp": {
-    "nome": "Nome",
-    "tempoDiGioco": "Tempo di gioco",
-    "ultimaSessione": "Ultima sessione",
-    "dataAggiunta": "Data aggiunta",
-    "progressoTrad": "Progresso trad."
+    "nome": "名前",
+    "tempoDiGioco": "プレイ時間",
+    "ultimaSessione": "最後のセッション",
+    "dataAggiunta": "追加日",
+    "progressoTrad": "翻訳の進捗"
   },
   "epicModalComp": {
     "legendary": "Legendary",
@@ -1016,8 +1016,8 @@
     "detectedFileFormat": "Detected file format:"
   },
   "globalProgressWidgetComp": {
-    "progressoGlobale": "Progresso Globale",
-    "completamentoStimato": "Completamento stimato"
+    "progressoGlobale": "全体の進行状況",
+    "completamentoStimato": "推定完了時間"
   },
   "genericCredentialsModalComp": {
     "email": "Email",
@@ -1026,7 +1026,7 @@
   "updateBellComp": {
     "novità": "新機能",
     "installazioneInCorso": "インストール中...",
-    "tuttoAggiornato": "すべて更新済み！"
+    "tuttoAggiornato": "すべて更新済み!"
   },
   "ollamaManagerComp": {
     "verificaOllama": "Ollama を確認...",
@@ -1054,7 +1054,7 @@
   "translationStatsComp": {
     "progressoGenerale": "全体的な進捗",
     "perLingua": "言語別",
-    "perGame": "Per game"
+    "perGame": "ゲーム別"
   },
   "protectedRouteComp": {
     "gamestringer": "GameStringer",
@@ -1077,8 +1077,8 @@
     "inizializzazioneSistemaDiAuthe": "Inizializzazione sistema di authentication..."
   },
   "streamingTextComp": {
-    "originale": "Originale",
-    "traduzione": "Traduzione"
+    "originale": "原文",
+    "traduzione": "翻訳"
   },
   "nav": {
     "dashboard": "ダッシュボード",
@@ -1631,7 +1631,7 @@
     "tutteLeLingue": "Tutte le lingue",
     "lingueSupportate": "Languages Supportate",
     "tassoApprovazione": "Tasso Approvazione",
-    "contesto": "Contesto",
+    "contesto": "コンテキスト",
     "recensisciTraduzione": "Recensisci Translation",
     "valutazione": "Valutazione",
     "commento": "Comment",

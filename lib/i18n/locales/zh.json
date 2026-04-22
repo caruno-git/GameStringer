@@ -527,7 +527,7 @@
     "contestoVisivo": "Contesto visivo",
     "disambiguazione": "Disambiguazione",
     "confronto": "CONFRONTO",
-    "originale": "Originale",
+    "originale": "原文",
     "vision": "Vision",
     "liaVedeIlTuoGioco": "L'IA vede il tuo gioco",
     "disambigua": "Disambigua",
@@ -542,7 +542,7 @@
     "fileDiTraduzioneCreatoConSucce": "File di traduzione creato con successo",
     "tradotte": "Tradotte",
     "durata": "Durata",
-    "costo": "Costo",
+    "costo": "成本",
     "velocità": "Velocità",
     "nessunProblemaRilevato": "Nessun problema rilevato",
     "cosaVuoiFareOra": "Cosa vuoi fare ora?",
@@ -576,23 +576,23 @@
     "generatedKey": "Generated Key"
   },
   "smartContextPanelComp": {
-    "selezionaUnGiocoPerAttivareSma": "Seleziona un gioco per attivare Smart Context",
+    "selezionaUnGiocoPerAttivareSma": "选择一个游戏以启用智能上下文",
     "smartContext": "Smart Context",
-    "nome": "Nome",
-    "nomeTradottoOpzionale": "Nome tradotto (opzionale)",
-    "stileDiDialogo": "Stile di dialogo",
-    "formaleLei": "Formale (Lei)",
-    "informaleTu": "Informale (Tu)",
-    "arcaicoVoi": "Arcaico (Voi)",
-    "moderno": "Moderno",
-    "slang": "Slang",
-    "neutro": "Neutro",
-    "personalità": "Personalità",
-    "aliasSoprannomi": "Alias / Soprannomi",
-    "note": "Note",
-    "originale": "Originale",
-    "traduzione": "Traduzione",
-    "contestoOpzionale": "Contesto (opzionale)"
+    "nome": "名称",
+    "nomeTradottoOpzionale": "翻译名称（可选）",
+    "stileDiDialogo": "对话风格",
+    "formaleLei": "正式（您）",
+    "informaleTu": "非正式（你）",
+    "arcaicoVoi": "古语（您们）",
+    "moderno": "现代",
+    "slang": "俚语",
+    "neutro": "中性",
+    "personalità": "个性",
+    "aliasSoprannomi": "别名 / 昵称",
+    "note": "备注",
+    "originale": "原文",
+    "traduzione": "翻译",
+    "contestoOpzionale": "上下文（可选）"
   },
   "retroOcrPanelComp": {
     "retrogameOcr": "Retro-Game OCR",
@@ -609,16 +609,16 @@
   "translationHistoryPanelComp": {
     "cronologia": "Cronologia",
     "parole": "Parole",
-    "costo": "Costo",
-    "tempo": "Tempo",
+    "costo": "成本",
+    "tempo": "时间",
     "recent": "Recent",
     "statistics": "Statistics",
     "translations": "Translations",
     "words": "Words",
     "cost": "Cost",
     "time": "Time",
-    "perTool": "Per Tool",
-    "perProvider": "Per Provider",
+    "perTool": "按工具",
+    "perProvider": "按提供商",
     "perLingua": "按语言",
     "cacheHitRate": "Cache Hit Rate"
   },
@@ -628,7 +628,7 @@
     "stringhe": "Stringhe",
     "parole": "Parole",
     "progress": "Progress",
-    "oggi": "Oggi",
+    "oggi": "今天",
     "settimana": "Settimana",
     "mese": "Mese",
     "completati": "Completati",
@@ -684,11 +684,11 @@
     "loginAutomatico": "Login automatico"
   },
   "visualTranslationEditorComp": {
-    "originale": "Originale",
+    "originale": "原文",
     "uploadAScreenshot": "Upload a screenshot",
     "supportsPngJpgWebp": "Supports PNG, JPG, WebP",
-    "testoOriginale": "Testo Originale",
-    "traduzione": "Traduzione",
+    "testoOriginale": "原文文本",
+    "traduzione": "翻译",
     "fontSize": "Font Size",
     "font": "Font",
     "coloreTesto": "Colore Testo",
@@ -739,8 +739,8 @@
   "glossaryManagerComp": {
     "addTerm": "Add Term",
     "caseSensitive": "Case sensitive",
-    "contesto": "Contesto",
-    "note": "Note",
+    "contesto": "上下文",
+    "note": "备注",
     "editTerm": "Edit Term",
     "original": "Original",
     "translation": "Translation"
@@ -783,9 +783,9 @@
     "mancante": "Mancante",
     "punteggioMedio": "Punteggio Medio",
     "problemiFrequenti": "Problemi Frequenti",
-    "dettaglioTraduzione": "Dettaglio Traduzione",
-    "originale": "Originale",
-    "traduzione": "Traduzione",
+    "dettaglioTraduzione": "翻译详情",
+    "originale": "原文",
+    "traduzione": "翻译",
     "problemiRilevati": "Problemi Rilevati",
     "suggerimenti": "Suggerimenti",
     "tutti": "Tutti"
@@ -860,13 +860,13 @@
   },
   "injektRealtimeStatsComp": {
     "timeline": "Timeline",
-    "lingue": "Lingue",
+    "lingue": "语言",
     "performance": "Performance",
-    "recenti": "Recenti",
-    "traduzioniNelTempo": "Traduzioni nel Tempo",
-    "distribuzioneLingue": "Distribuzione Lingue",
-    "ultimeTraduzioni": "Ultime Traduzioni",
-    "piùRecente": "Più recente"
+    "recenti": "最近",
+    "traduzioniNelTempo": "翻译随时间变化",
+    "distribuzioneLingue": "语言分布",
+    "ultimeTraduzioni": "最近翻译",
+    "piùRecente": "最新"
   },
   "itchioModalComp": {
     "connectItchioAccount": "Connect itch.io Account",
@@ -922,19 +922,19 @@
     "offlineFeatures": "Offline Features"
   },
   "statsDashboardComp": {
-    "statisticheTraduzione": "Statistiche Traduzione",
-    "linguePiùUsate": "Lingue più usate",
-    "linguaSorgente": "Lingua sorgente:",
-    "linguaTarget": "Lingua target:",
-    "ultimaTraduzione": "Ultima traduzione",
+    "statisticheTraduzione": "翻译统计",
+    "linguePiùUsate": "最常用语言",
+    "linguaSorgente": "源语言:",
+    "linguaTarget": "目标语言:",
+    "ultimaTraduzione": "最后翻译",
     "activityLast7Days": "Activity last 7 days"
   },
   "advancedFiltersComp": {
-    "nome": "Nome",
-    "tempoDiGioco": "Tempo di gioco",
-    "ultimaSessione": "Ultima sessione",
-    "dataAggiunta": "Data aggiunta",
-    "progressoTrad": "Progresso trad."
+    "nome": "名称",
+    "tempoDiGioco": "游戏时间",
+    "ultimaSessione": "最后会话",
+    "dataAggiunta": "添加日期",
+    "progressoTrad": "翻译进度"
   },
   "epicModalComp": {
     "legendary": "Legendary",
@@ -1026,7 +1026,7 @@
   "updateBellComp": {
     "novità": "新功能",
     "installazioneInCorso": "安装中...",
-    "tuttoAggiornato": "全部更新！"
+    "tuttoAggiornato": "全部更新!"
   },
   "ollamaManagerComp": {
     "verificaOllama": "验证 Ollama...",
@@ -1054,7 +1054,7 @@
   "translationStatsComp": {
     "progressoGenerale": "总体进度",
     "perLingua": "按语言",
-    "perGame": "Per game"
+    "perGame": "每游戏"
   },
   "protectedRouteComp": {
     "gamestringer": "GameStringer",
@@ -1077,8 +1077,8 @@
     "inizializzazioneSistemaDiAuthe": "Inizializzazione sistema di authentication..."
   },
   "streamingTextComp": {
-    "originale": "Originale",
-    "traduzione": "Traduzione"
+    "originale": "原文",
+    "traduzione": "翻译"
   },
   "nav": {
     "dashboard": "仪表板",
@@ -1631,7 +1631,7 @@
     "tutteLeLingue": "Tutte le lingue",
     "lingueSupportate": "Languages Supportate",
     "tassoApprovazione": "Tasso Approvazione",
-    "contesto": "Contesto",
+    "contesto": "语境",
     "recensisciTraduzione": "Recensisci Translation",
     "valutazione": "Valutazione",
     "commento": "Comment",

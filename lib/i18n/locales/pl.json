@@ -527,7 +527,7 @@
     "contestoVisivo": "Contesto visivo",
     "disambiguazione": "Disambiguazione",
     "confronto": "CONFRONTO",
-    "originale": "Originale",
+    "originale": "Oryginał",
     "vision": "Vision",
     "liaVedeIlTuoGioco": "L'IA vede il tuo gioco",
     "disambigua": "Disambigua",
@@ -542,7 +542,7 @@
     "fileDiTraduzioneCreatoConSucce": "File di traduzione creato con successo",
     "tradotte": "Tradotte",
     "durata": "Durata",
-    "costo": "Costo",
+    "costo": "Koszt",
     "velocità": "Velocità",
     "nessunProblemaRilevato": "Nessun problema rilevato",
     "cosaVuoiFareOra": "Cosa vuoi fare ora?",
@@ -576,23 +576,23 @@
     "generatedKey": "Generated Key"
   },
   "smartContextPanelComp": {
-    "selezionaUnGiocoPerAttivareSma": "Seleziona un gioco per attivare Smart Context",
+    "selezionaUnGiocoPerAttivareSma": "Wybierz grę, aby aktywować Smart Context",
     "smartContext": "Smart Context",
-    "nome": "Nome",
-    "nomeTradottoOpzionale": "Nome tradotto (opzionale)",
-    "stileDiDialogo": "Stile di dialogo",
-    "formaleLei": "Formale (Lei)",
-    "informaleTu": "Informale (Tu)",
-    "arcaicoVoi": "Arcaico (Voi)",
-    "moderno": "Moderno",
+    "nome": "Nazwa",
+    "nomeTradottoOpzionale": "Przetłumaczona nazwa (opcjonalnie)",
+    "stileDiDialogo": "Styl dialogu",
+    "formaleLei": "Formalny (Wy)",
+    "informaleTu": "Nieformalny (Ty)",
+    "arcaicoVoi": "Archaiczny (Wy)",
+    "moderno": "Nowoczesny",
     "slang": "Slang",
-    "neutro": "Neutro",
-    "personalità": "Personalità",
-    "aliasSoprannomi": "Alias / Soprannomi",
-    "note": "Note",
-    "originale": "Originale",
-    "traduzione": "Traduzione",
-    "contestoOpzionale": "Contesto (opzionale)"
+    "neutro": "Neutralny",
+    "personalità": "Osobowość",
+    "aliasSoprannomi": "Pseudonimy / Przydomki",
+    "note": "Notatki",
+    "originale": "Oryginał",
+    "traduzione": "Tłumaczenie",
+    "contestoOpzionale": "Kontekst (opcjonalnie)"
   },
   "retroOcrPanelComp": {
     "retrogameOcr": "Retro-Game OCR",
@@ -609,16 +609,16 @@
   "translationHistoryPanelComp": {
     "cronologia": "Cronologia",
     "parole": "Parole",
-    "costo": "Costo",
-    "tempo": "Tempo",
+    "costo": "Koszt",
+    "tempo": "Czas",
     "recent": "Recent",
     "statistics": "Statistics",
     "translations": "Translations",
     "words": "Words",
     "cost": "Cost",
     "time": "Time",
-    "perTool": "Per Tool",
-    "perProvider": "Per Provider",
+    "perTool": "Według narzędzia",
+    "perProvider": "Według dostawcy",
     "perLingua": "Według języka",
     "cacheHitRate": "Cache Hit Rate"
   },
@@ -628,7 +628,7 @@
     "stringhe": "Stringhe",
     "parole": "Parole",
     "progress": "Progress",
-    "oggi": "Oggi",
+    "oggi": "Dzisiaj",
     "settimana": "Settimana",
     "mese": "Mese",
     "completati": "Completati",
@@ -684,11 +684,11 @@
     "loginAutomatico": "Login automatico"
   },
   "visualTranslationEditorComp": {
-    "originale": "Originale",
+    "originale": "Oryginał",
     "uploadAScreenshot": "Upload a screenshot",
     "supportsPngJpgWebp": "Supports PNG, JPG, WebP",
-    "testoOriginale": "Testo Originale",
-    "traduzione": "Traduzione",
+    "testoOriginale": "Tekst Oryginalny",
+    "traduzione": "Tłumaczenie",
     "fontSize": "Font Size",
     "font": "Font",
     "coloreTesto": "Colore Testo",
@@ -739,8 +739,8 @@
   "glossaryManagerComp": {
     "addTerm": "Add Term",
     "caseSensitive": "Case sensitive",
-    "contesto": "Contesto",
-    "note": "Note",
+    "contesto": "Kontekst",
+    "note": "Notatki",
     "editTerm": "Edit Term",
     "original": "Original",
     "translation": "Translation"
@@ -783,9 +783,9 @@
     "mancante": "Mancante",
     "punteggioMedio": "Punteggio Medio",
     "problemiFrequenti": "Problemi Frequenti",
-    "dettaglioTraduzione": "Dettaglio Traduzione",
-    "originale": "Originale",
-    "traduzione": "Traduzione",
+    "dettaglioTraduzione": "Szczegóły tłumaczenia",
+    "originale": "Oryginał",
+    "traduzione": "Tłumaczenie",
     "problemiRilevati": "Problemi Rilevati",
     "suggerimenti": "Suggerimenti",
     "tutti": "Tutti"
@@ -860,13 +860,13 @@
   },
   "injektRealtimeStatsComp": {
     "timeline": "Timeline",
-    "lingue": "Lingue",
+    "lingue": "Języki",
     "performance": "Performance",
-    "recenti": "Recenti",
-    "traduzioniNelTempo": "Traduzioni nel Tempo",
-    "distribuzioneLingue": "Distribuzione Lingue",
-    "ultimeTraduzioni": "Ultime Traduzioni",
-    "piùRecente": "Più recente"
+    "recenti": "Ostatnie",
+    "traduzioniNelTempo": "Tłumaczenia w czasie",
+    "distribuzioneLingue": "Rozkład języków",
+    "ultimeTraduzioni": "Ostatnie tłumaczenia",
+    "piùRecente": "Najnowsze"
   },
   "itchioModalComp": {
     "connectItchioAccount": "Connect itch.io Account",
@@ -922,19 +922,19 @@
     "offlineFeatures": "Offline Features"
   },
   "statsDashboardComp": {
-    "statisticheTraduzione": "Statistiche Traduzione",
-    "linguePiùUsate": "Lingue più usate",
-    "linguaSorgente": "Lingua sorgente:",
-    "linguaTarget": "Lingua target:",
-    "ultimaTraduzione": "Ultima traduzione",
+    "statisticheTraduzione": "Statystyki tłumaczeń",
+    "linguePiùUsate": "Najczęściej używane języki",
+    "linguaSorgente": "Język źródłowy:",
+    "linguaTarget": "Język docelowy:",
+    "ultimaTraduzione": "Ostatnie tłumaczenie",
     "activityLast7Days": "Activity last 7 days"
   },
   "advancedFiltersComp": {
-    "nome": "Nome",
-    "tempoDiGioco": "Tempo di gioco",
-    "ultimaSessione": "Ultima sessione",
-    "dataAggiunta": "Data aggiunta",
-    "progressoTrad": "Progresso trad."
+    "nome": "Nazwa",
+    "tempoDiGioco": "Czas gry",
+    "ultimaSessione": "Ostatnia sesja",
+    "dataAggiunta": "Data dodania",
+    "progressoTrad": "Postęp tłumaczenia"
   },
   "epicModalComp": {
     "legendary": "Legendary",
@@ -1026,7 +1026,7 @@
   "updateBellComp": {
     "novità": "Nowości",
     "installazioneInCorso": "Instalacja w trakcie...",
-    "tuttoAggiornato": "Wszystko zaktualizowane！"
+    "tuttoAggiornato": "Wszystko zaktualizowane!"
   },
   "ollamaManagerComp": {
     "verificaOllama": "Sprawdź Ollama...",
@@ -1054,7 +1054,7 @@
   "translationStatsComp": {
     "progressoGenerale": "Postęp ogólny",
     "perLingua": "Według języka",
-    "perGame": "Per game"
+    "perGame": "Na grę"
   },
   "protectedRouteComp": {
     "gamestringer": "GameStringer",
@@ -1077,8 +1077,8 @@
     "inizializzazioneSistemaDiAuthe": "Inizializzazione sistema di authentication..."
   },
   "streamingTextComp": {
-    "originale": "Originale",
-    "traduzione": "Traduzione"
+    "originale": "Oryginał",
+    "traduzione": "Tłumaczenie"
   },
   "nav": {
     "dashboard": "Panel",
@@ -1631,7 +1631,7 @@
     "tutteLeLingue": "Tutte le lingue",
     "lingueSupportate": "Languages Supportate",
     "tassoApprovazione": "Tasso Approvazione",
-    "contesto": "Contesto",
+    "contesto": "Kontekst",
     "recensisciTraduzione": "Recensisci Translation",
     "valutazione": "Valutazione",
     "commento": "Comment",
