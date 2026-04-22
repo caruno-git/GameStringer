@@ -291,9 +291,7 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
     try {
       // 1. MobyGames - ottima fonte per giochi classici
       try {
-        const mobyRes = await fetch(`https://api.mobygames.com/v1/games?title=${encodeURIComponent(searchName)}&format=normal`, {
-          headers: { 'Accept': 'application/json' }
-        });
+        const mobyRes = await fetch(`/api/covers/proxy?url=${encodeURIComponent(`https://api.mobygames.com/v1/games?title=${encodeURIComponent(searchName)}&format=normal`)}`);
         if (mobyRes.ok) {
           const mobyData = await mobyRes.json();
           if (mobyData.games && mobyData.games.length > 0) {
@@ -319,28 +317,11 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
         }
       } catch {}
       
-      // 2. LaunchBox Games Database (via scraping URL noto)
-      // LaunchBox ha cover verticali eccellenti
-      const launchboxUrl = `https://gamesdb.launchbox-app.com/games/images/${encodeURIComponent(searchName.replace(/\s+/g, '-').toLowerCase())}`;
-      covers.push({
-        id: coverId++,
-        url: launchboxUrl,
-        thumb: launchboxUrl,
-        width: 600,
-        height: 900,
-        style: 'alternate',
-        author: 'LaunchBox (cerca manualmente)',
-        type: 'grid',
-        score: 85,
-        upvotes: 0,
-        downvotes: 0,
-        nsfw: false,
-        humor: false,
-      });
+      // 2. LaunchBox rimosso — causa redirect loop e non ha API pubblica
       
       // 3. TheGamesDB
       try {
-        const tgdbRes = await fetch(`https://api.thegamesdb.net/v1/Games/ByGameName?apikey=1&name=${encodeURIComponent(searchName)}`);
+        const tgdbRes = await fetch(`/api/covers/proxy?url=${encodeURIComponent(`https://api.thegamesdb.net/v1/Games/ByGameName?apikey=1&name=${encodeURIComponent(searchName)}`)}`);
         if (tgdbRes.ok) {
           const tgdbData = await tgdbRes.json();
           if (tgdbData.data?.games && tgdbData.data.games.length > 0) {
