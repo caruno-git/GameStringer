@@ -619,7 +619,7 @@
     "time": "Time",
     "perTool": "Per Tool",
     "perProvider": "Per Provider",
-    "perLingua": "Per Lingua",
+    "perLingua": "Nach Sprache",
     "cacheHitRate": "Cache Hit Rate"
   },
   "translationStatsWidgetComp": {
@@ -1024,36 +1024,36 @@
     "password": "Password"
   },
   "updateBellComp": {
-    "novità": "Novità",
-    "installazioneInCorso": "Installazione in corso...",
-    "tuttoAggiornato": "Tutto aggiornato!"
+    "novità": "Neuigkeiten",
+    "installazioneInCorso": "Installation läuft...",
+    "tuttoAggiornato": "Alles aktualisiert！"
   },
   "ollamaManagerComp": {
-    "verificaOllama": "Verifica Ollama...",
-    "ollamaAiLocale": "Ollama — AI Locale",
-    "avviaOllamaPerInstallareIModel": "Avvia Ollama per installare i modelli"
+    "verificaOllama": "Ollama überprüfen...",
+    "ollamaAiLocale": "Ollama — Lokale KI",
+    "avviaOllamaPerInstallareIModel": "Ollama starten um Modelle zu installieren"
   },
   "autoHookScannerComp": {
     "autohookScanner": "Auto-Hook Scanner",
     "processIdPid": "Process ID (PID)",
-    "testoDaCercare": "Testo da cercare"
+    "testoDaCercare": "Zu suchender Text"
   },
   "emotionBadgeComp": {
     "markers": "Markers:",
     "emotionAnalysis": "Emotion Analysis",
-    "lineeGuidaTraduzione": "Linee guida traduzione:"
+    "lineeGuidaTraduzione": "Übersetzungsrichtlinien："
   },
   "dragDropZoneComp": {
     "browseFiles": "Browse Files",
     "dropToUpload": "Drop to upload"
   },
   "donationDialogComp": {
-    "grazieThankYou": "Grazie! / Thank you!",
-    "completaLaDonazione": "Completa la donazione..."
+    "grazieThankYou": "Danke! / Thank you!",
+    "completaLaDonazione": "Spende abschließen..."
   },
   "translationStatsComp": {
-    "progressoGenerale": "Progresso Generale",
-    "perLingua": "Per Lingua",
+    "progressoGenerale": "Gesamtfortschritt",
+    "perLingua": "Nach Sprache",
     "perGame": "Per game"
   },
   "protectedRouteComp": {

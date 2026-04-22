@@ -619,7 +619,7 @@
     "time": "Time",
     "perTool": "Per Tool",
     "perProvider": "Per Provider",
-    "perLingua": "Per Lingua",
+    "perLingua": "Według języka",
     "cacheHitRate": "Cache Hit Rate"
   },
   "translationStatsWidgetComp": {
@@ -1016,44 +1016,44 @@
     "detectedFileFormat": "Detected file format:"
   },
   "globalProgressWidgetComp": {
-    "progressoGlobale": "Progresso Globale",
-    "completamentoStimato": "Completamento stimato"
+    "progressoGlobale": "Postęp globalny",
+    "completamentoStimato": "Szacowane ukończenie"
   },
   "genericCredentialsModalComp": {
     "email": "Email",
     "password": "Password"
   },
   "updateBellComp": {
-    "novità": "Novità",
-    "installazioneInCorso": "Installazione in corso...",
-    "tuttoAggiornato": "Tutto aggiornato!"
+    "novità": "Nowości",
+    "installazioneInCorso": "Instalacja w trakcie...",
+    "tuttoAggiornato": "Wszystko zaktualizowane！"
   },
   "ollamaManagerComp": {
-    "verificaOllama": "Verifica Ollama...",
-    "ollamaAiLocale": "Ollama — AI Locale",
-    "avviaOllamaPerInstallareIModel": "Avvia Ollama per installare i modelli"
+    "verificaOllama": "Sprawdź Ollama...",
+    "ollamaAiLocale": "Ollama — Lokalne AI",
+    "avviaOllamaPerInstallareIModel": "Uruchom Ollama aby zainstalować modele"
   },
   "autoHookScannerComp": {
     "autohookScanner": "Auto-Hook Scanner",
     "processIdPid": "Process ID (PID)",
-    "testoDaCercare": "Testo da cercare"
+    "testoDaCercare": "Tekst do wyszukania"
   },
   "emotionBadgeComp": {
     "markers": "Markers:",
     "emotionAnalysis": "Emotion Analysis",
-    "lineeGuidaTraduzione": "Linee guida traduzione:"
+    "lineeGuidaTraduzione": "Wskazówki dotyczące tłumaczenia："
   },
   "dragDropZoneComp": {
     "browseFiles": "Browse Files",
     "dropToUpload": "Drop to upload"
   },
   "donationDialogComp": {
-    "grazieThankYou": "Grazie! / Thank you!",
-    "completaLaDonazione": "Completa la donazione..."
+    "grazieThankYou": "Dziękuję! / Thank you!",
+    "completaLaDonazione": "Ukończ darowiznę..."
   },
   "translationStatsComp": {
-    "progressoGenerale": "Progresso Generale",
-    "perLingua": "Per Lingua",
+    "progressoGenerale": "Postęp ogólny",
+    "perLingua": "Według języka",
     "perGame": "Per game"
   },
   "protectedRouteComp": {

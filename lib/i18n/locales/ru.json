@@ -619,7 +619,7 @@
     "time": "Time",
     "perTool": "Per Tool",
     "perProvider": "Per Provider",
-    "perLingua": "Per Lingua",
+    "perLingua": "По языку",
     "cacheHitRate": "Cache Hit Rate"
   },
   "translationStatsWidgetComp": {
@@ -1016,44 +1016,44 @@
     "detectedFileFormat": "Detected file format:"
   },
   "globalProgressWidgetComp": {
-    "progressoGlobale": "Progresso Globale",
-    "completamentoStimato": "Completamento stimato"
+    "progressoGlobale": "Общий прогресс",
+    "completamentoStimato": "Оценочное завершение"
   },
   "genericCredentialsModalComp": {
     "email": "Email",
     "password": "Password"
   },
   "updateBellComp": {
-    "novità": "Novità",
-    "installazioneInCorso": "Installazione in corso...",
-    "tuttoAggiornato": "Tutto aggiornato!"
+    "novità": "Новинки",
+    "installazioneInCorso": "Установка...",
+    "tuttoAggiornato": "Всё обновлено！"
   },
   "ollamaManagerComp": {
-    "verificaOllama": "Verifica Ollama...",
-    "ollamaAiLocale": "Ollama — AI Locale",
-    "avviaOllamaPerInstallareIModel": "Avvia Ollama per installare i modelli"
+    "verificaOllama": "Проверить Ollama...",
+    "ollamaAiLocale": "Ollama — Локальный AI",
+    "avviaOllamaPerInstallareIModel": "Запустить Ollama для установки моделей"
   },
   "autoHookScannerComp": {
     "autohookScanner": "Auto-Hook Scanner",
     "processIdPid": "Process ID (PID)",
-    "testoDaCercare": "Testo da cercare"
+    "testoDaCercare": "Текст для поиска"
   },
   "emotionBadgeComp": {
     "markers": "Markers:",
     "emotionAnalysis": "Emotion Analysis",
-    "lineeGuidaTraduzione": "Linee guida traduzione:"
+    "lineeGuidaTraduzione": "Руководство по переводу："
   },
   "dragDropZoneComp": {
     "browseFiles": "Browse Files",
     "dropToUpload": "Drop to upload"
   },
   "donationDialogComp": {
-    "grazieThankYou": "Grazie! / Thank you!",
-    "completaLaDonazione": "Completa la donazione..."
+    "grazieThankYou": "Спасибо! / Thank you!",
+    "completaLaDonazione": "Завершить пожертвование..."
   },
   "translationStatsComp": {
-    "progressoGenerale": "Progresso Generale",
-    "perLingua": "Per Lingua",
+    "progressoGenerale": "Общий прогресс",
+    "perLingua": "По языку",
     "perGame": "Per game"
   },
   "protectedRouteComp": {

@@ -619,7 +619,7 @@
     "time": "Time",
     "perTool": "Per Tool",
     "perProvider": "Per Provider",
-    "perLingua": "Per Lingua",
+    "perLingua": "언어별",
     "cacheHitRate": "Cache Hit Rate"
   },
   "translationStatsWidgetComp": {
@@ -1024,36 +1024,36 @@
     "password": "Password"
   },
   "updateBellComp": {
-    "novità": "Novità",
-    "installazioneInCorso": "Installazione in corso...",
-    "tuttoAggiornato": "Tutto aggiornato!"
+    "novità": "새로운 기능",
+    "installazioneInCorso": "설치 중...",
+    "tuttoAggiornato": "모두 업데이트됨！"
   },
   "ollamaManagerComp": {
-    "verificaOllama": "Verifica Ollama...",
-    "ollamaAiLocale": "Ollama — AI Locale",
-    "avviaOllamaPerInstallareIModel": "Avvia Ollama per installare i modelli"
+    "verificaOllama": "Ollama 확인...",
+    "ollamaAiLocale": "Ollama — 로컬 AI",
+    "avviaOllamaPerInstallareIModel": "모델을 설치하려면 Ollama 시작"
   },
   "autoHookScannerComp": {
     "autohookScanner": "Auto-Hook Scanner",
     "processIdPid": "Process ID (PID)",
-    "testoDaCercare": "Testo da cercare"
+    "testoDaCercare": "검색할 텍스트"
   },
   "emotionBadgeComp": {
     "markers": "Markers:",
     "emotionAnalysis": "Emotion Analysis",
-    "lineeGuidaTraduzione": "Linee guida traduzione:"
+    "lineeGuidaTraduzione": "번역 가이드라인："
   },
   "dragDropZoneComp": {
     "browseFiles": "Browse Files",
     "dropToUpload": "Drop to upload"
   },
   "donationDialogComp": {
-    "grazieThankYou": "Grazie! / Thank you!",
-    "completaLaDonazione": "Completa la donazione..."
+    "grazieThankYou": "감사합니다! / Thank you!",
+    "completaLaDonazione": "기부 완료..."
   },
   "translationStatsComp": {
-    "progressoGenerale": "Progresso Generale",
-    "perLingua": "Per Lingua",
+    "progressoGenerale": "전체 진행률",
+    "perLingua": "언어별",
     "perGame": "Per game"
   },
   "protectedRouteComp": {

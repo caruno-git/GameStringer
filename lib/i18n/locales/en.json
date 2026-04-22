@@ -349,13 +349,13 @@
     "autoDetect": "Auto-Detect",
     "compatible": "Compatible",
     "notCompatible": "Not Compatible",
-    "richieste": "Richieste",
+    "richieste": "Requests",
     "cacheHit": "Cache Hit",
     "uptime": "Uptime",
-    "testoDaCercare": "Testo da cercare",
+    "testoDaCercare": "Text to search",
     "targetLanguage": "Target language",
-    "lingueAttive": "Lingue attive:",
-    "tempoMedioRisposta": "Tempo medio risposta",
+    "lingueAttive": "Active languages:",
+    "tempoMedioRisposta": "Average response time",
     "cacheHits": "Cache Hits",
     "cacheMisses": "Cache Misses",
     "errori": "Errori"
@@ -696,7 +696,7 @@
     "time": "Time",
     "perTool": "Per Tool",
     "perProvider": "Per Provider",
-    "perLingua": "Per Lingua",
+    "perLingua": "Per language",
     "cacheHitRate": "Cache Hit Rate"
   },
   "translationStatsWidgetComp": {
@@ -1101,14 +1101,14 @@
     "password": "Password"
   },
   "updateBellComp": {
-    "novità": "Novità",
-    "installazioneInCorso": "Installazione in corso...",
-    "tuttoAggiornato": "Tutto aggiornato!"
+    "novità": "New",
+    "installazioneInCorso": "Installation in progress...",
+    "tuttoAggiornato": "All updated！"
   },
   "ollamaManagerComp": {
-    "verificaOllama": "Verifica Ollama...",
-    "ollamaAiLocale": "Ollama — AI Locale",
-    "avviaOllamaPerInstallareIModel": "Avvia Ollama per installare i modelli"
+    "verificaOllama": "Verify Ollama...",
+    "ollamaAiLocale": "Ollama — Local AI",
+    "avviaOllamaPerInstallareIModel": "Start Ollama to install models"
   },
   "autoHookScannerComp": {
     "autohookScanner": "Auto-Hook Scanner",
@@ -1118,19 +1118,19 @@
   "emotionBadgeComp": {
     "markers": "Markers:",
     "emotionAnalysis": "Emotion Analysis",
-    "lineeGuidaTraduzione": "Linee guida traduzione:"
+    "lineeGuidaTraduzione": "Translation guidelines："
   },
   "dragDropZoneComp": {
     "browseFiles": "Browse Files",
     "dropToUpload": "Drop to upload"
   },
   "donationDialogComp": {
-    "grazieThankYou": "Grazie! / Thank you!",
-    "completaLaDonazione": "Completa la donazione..."
+    "grazieThankYou": "Thank you!",
+    "completaLaDonazione": "Complete donation..."
   },
   "translationStatsComp": {
-    "progressoGenerale": "Progresso Generale",
-    "perLingua": "Per Lingua",
+    "progressoGenerale": "Overall progress",
+    "perLingua": "Per language",
     "perGame": "Per game"
   },
   "protectedRouteComp": {
