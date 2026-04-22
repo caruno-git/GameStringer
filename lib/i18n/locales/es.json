@@ -4201,6 +4201,14 @@
       "5": "Fix Presence: añadido guard de sesión en updatePresence para prevenir 400 Bad Request en update_user_presence",
       "6": "i18n: Store → Stores en traducciones italianas"
     },
+    "v1_8_1": {
+      "0": "Fix CSP: añadido 'unsafe-eval' para compatibilidad Next.js dev mode",
+      "1": "Fix CSP: CSP permisiva en desarrollo, restrictiva en producción",
+      "2": "Fix CSP: añadido http://ipc.localhost para Tauri IPC",
+      "3": "Fix i18n: corregidas claves offlineTranslator.* en el widget Ollama del dashboard",
+      "4": "Fix Rust warnings: eliminados unused_mut y dead_code en 9 archivos del backend",
+      "5": "Middleware: CSP dinámica basada en NODE_ENV"
+    },
     "v1_8_0": {
       "0": "Overlay de Traducción en Vivo: traducción en tiempo real mediante overlay OCR transparente sobre cualquier juego — captura de pantalla → OCR multi-motor → traducción IA (Groq/Cerebras) → overlay estilo gaming. Atajo Ctrl+Alt+O",
       "1": "Hub Marketplace: marketplace para compartir paquetes de traducción comunitarios — instalación con 1 clic, puntuaciones, reseñas, moderación, perfiles de usuario con reputación. Backend Supabase con 10 tablas + RLS",
@@ -4211,6 +4219,379 @@
       "6": "Arquitectura: pipeline CI con tsc+eslint+vitest+npm audit, 71 nuevos tests, 18 módulos extraídos de archivos monolíticos, 1197/1203 console.* migrados a logger estructurado, 893 cláusulas catch tipadas",
       "7": "Refactorización: ai-translate-direct.ts (-429 líneas, 5 módulos), game-detail-client.tsx (-636 líneas, 8 componentes), translator/pro/page.tsx (-776 líneas, 5 componentes)",
       "8": "Dependencias: eliminados react-hot-toast y vdf duplicados, -42 paquetes"
+    },
+    "v1_7_0": {
+      "0": "Auto-Select Engine (🧠): nuevo preset 'Auto' que selecciona dinámicamente los mejores proveedores IA por idioma objetivo y género de juego — basado en benchmarks reales (DeepL para europeos, Claude para CJK, boost género RPG/Adventure)",
+      "1": "Quality History: seguimiento por sesión de calidad del proveedor por idioma, reordenación automática de cadena basada en éxitos/fallos",
+      "2": "Gridly CSV Export/Import: formato multi-idioma compatible con Gridly/Lokalise/Crowdin (ID | source | target por idioma), auto-detect delimitador y columnas de idioma",
+      "3": "Duration Matching: síntesis de voz con adaptación automática de velocidad para mantener la duración del audio original — TTS two-pass con medición Web Audio API",
+      "4": "Rhubarb Lip Sync: generación de datos lip-sync (visemas A-X) desde audio con timeline visual interactivo, export para Unity (blend shapes) y Unreal (FaceFX)",
+      "5": "Video Extractor: enlace directo desde la ficha del juego + selector de juegos desde la biblioteca + auto-scan",
+      "6": "Lip Sync Page: nueva página /lip-sync con panel completo (recognizer, timeline, stats, export multi-motor)",
+      "7": "Sidebar: añadida entrada Lip Sync en la sección Herramientas"
+    },
+    "v1_6_1": {
+      "0": "CI/CD: merge job para unificar latest.json de todas las plataformas (Windows/Linux/macOS)",
+      "1": "CI/CD: guard step que falla la build si el signing no produce firmas minisign válidas",
+      "2": "CI/CD: step 'Locate latest.json' para detectar inmediatamente si tauri-action no genera el manifiesto updater",
+      "3": "Auto-update: rotada la clave minisign de signing (pubkey B61C7704C9F3B554) — la vieja nunca firmó nada en CI",
+      "4": "Docs: añadido RELEASE_PROCESS.md con procedimiento completo (signer, secrets, verificación, rollback)",
+      "5": "Eliminado latest.json huérfano de la raíz del repo (placeholder con firmas vacías)"
+    },
+    "v1_6_0": {
+      "0": "Bethesda Engine Patcher: Skyrim LE/SE/AE, Fallout 3/NV/4, Oblivion, Starfield con parser BSA v103-105 + BA2 GNRL/DX10 + ESP/ESM (FULL/DESC/NAM1)",
+      "1": "CRI Middleware Patcher: parser CPK + CRILAYLA + MSG/BMD/FTD (Persona 5 Royal, Yakuza, Tales of, Dragon Ball) con detección Shift-JIS/UTF-8/UTF-16",
+      "2": "Pipeline Unity Localization Package: StringTable, SharedTableData, Addressables catalog, Smart Strings tokenizer + validator",
+      "3": "Export PO universal (gettext .po) para todos los patchers con metadata project/language/source/engine",
+      "4": "Wizard Stepper compartido para flujos multi-step en los patchers",
+      "5": "a11y: aria-label en icon buttons, CardTitle semantic headings, focus-visible en primitives, skip-to-content link, landmark main, sr-only italiano",
+      "6": "a11y: prefers-reduced-motion y forced-colors (Windows High Contrast) respetados",
+      "7": "Design system: variantes Card via cva (default/muted/highlight/success/error/warning), Button size xs + icon-sm",
+      "8": "OCR Image Processor: conexión al backend Tauri Tesseract (reemplaza stub simulateOCR)",
+      "9": "Text utilities: text-micro (9px) + text-2xs (10px) para eliminar clases Tailwind arbitrarias",
+      "10": "Fix: prevenir loop de flash de consola en spawn de procesos Windows cuando la app está en tray (helper process_util::no_window_command)"
+    },
+    "v1_5_0": {
+      "0": "Community Chat Realtime: chat en tiempo real integrado en el Community Hub con Supabase Realtime",
+      "1": "4 salas predefinidas: General, Traducciones, Feedback y Bugs, Anuncios",
+      "2": "Auto-bridge: login automático Supabase mediante perfil GameStringer (sin login adicional)",
+      "3": "Presencia online: indicador de usuarios conectados en tiempo real con Supabase Presence",
+      "4": "Creación de salas personalizadas para juegos o proyectos específicos",
+      "5": "Respuestas, edición y eliminación de mensajes",
+      "6": "Widget de chat en la esquina inferior derecha con drawer expandible",
+      "7": "Backend Supabase: PostgreSQL, políticas RLS, trigger auto-perfil, funciones RPC",
+      "8": "i18n: traducciones de chat en los 11 idiomas soportados (IT, EN, ES, FR, DE, JA, ZH, KO, PT, RU, PL)",
+      "9": "Tutorial interactivo Community Chat añadido",
+      "10": "Guías de usuario actualizadas en 11 idiomas con sección Chat Community",
+      "11": "Cliente Supabase unificado (eliminados warnings Multiple GoTrueClient)"
+    },
+    "v1_4_2": {
+      "0": "Vision LLM Translator: traducción context-aware con captura de pantalla del juego (Ollama, Gemini, OpenAI)",
+      "1": "Lore Assistant: chat RAG para lore y diálogos del juego",
+      "2": "Auto-Hook Scanner: escaneo de memoria de proceso con WinAPI",
+      "3": "System Monitor: monitorización VRAM/RAM en tiempo real (backend Rust)",
+      "4": "Ollama Setup Wizard: instalación guiada de IA local paso a paso",
+      "5": "Debug Console: consola de debug con intercept de consola integrado",
+      "6": "Plugin System: documento de diseño PLUGIN_SYSTEM.md",
+      "7": "GitHub Discussions: 12 discusiones creadas (Announcements, General, Ideas, Q&A, Show and tell, Polls)",
+      "8": "Community Hub: fix fetch discussions con REST API pública (sin token requerido)",
+      "9": "Sidebar: Vision LLM añadido, Workshop renombrado a Steam Workshop",
+      "10": "Fix: Rendered more hooks — dynamic imports con ssr:false en las nuevas páginas",
+      "11": "CI/CD: Tauri Signing Key para releases firmadas",
+      "12": "Fix: Ollama provider cooldown en lugar de bloqueo permanente por errores de red",
+      "13": "Fix: Lingva 404 para textos largos (truncamiento automático de URL)",
+      "14": "Fix: Tutorial querySelector SyntaxError con selectores :contains()",
+      "15": "Fix: Update Bell mostraba versión incorrecta (fallback hardcoded eliminado)",
+      "16": "Auto-Translate Review: botón 'Traducir todas las no traducidas' con barra de progreso"
+    },
+    "v1_4_1": {
+      "0": "i18n: UI completa en 11 idiomas (IT, EN, ES, FR, DE, JA, ZH, KO, PT, RU, PL)",
+      "1": "Añadidas traducciones KO (coreano), PT (portugués), RU (ruso), PL (polaco) a translations.ts",
+      "2": "Actualizado tipo Locale y SUPPORTED_LOCALES con ru y pl",
+      "3": "Creados locales/ru/common.json y locales/pl/common.json",
+      "4": "Guías de usuario actualizadas en los 11 idiomas con secciones v1.1-v1.4",
+      "5": "Nuevas guías de usuario: USER_GUIDE_KO.md, USER_GUIDE_PT.md, USER_GUIDE_RU.md, USER_GUIDE_PL.md",
+      "6": "README.md y README_IT.md actualizados con 11 idiomas y nuevas guías",
+      "7": "CHANGELOG.md y changelog de main-layout actualizados",
+      "8": "site-i18n.js actualizado con ru y pl",
+      "9": "CI: workflow Linux + Windows corregido y funcionando"
+    },
+    "v1_4_0": {
+      "0": "Radix UI Unificado: migrados 37 archivos de @radix-ui/react-* a radix-ui, eliminados 27 paquetes",
+      "1": "Quality Badge en Traductor Pro: puntuación de calidad por línea con ContentTypeBadge y QualityScoreBadge",
+      "2": "Live Quality Preview: vista previa de calidad en tiempo real durante traducción batch",
+      "3": "Detalle Traducciones: tabla de resultados con tipo de contenido (UI/Diálogo/Narrativa) y puntuación 0-100",
+      "4": "Soporte RTL: detección automática de dirección de texto y aplicación de atributo dir",
+      "5": "Ollama Genérico: translateWithOllamaGeneric con PROVIDER_MAP y presets de cadena fallback",
+      "6": "Optimización Bundle: optimizePackageImports actualizado con radix-ui, framer-motion, recharts, cmdk",
+      "7": "Limpieza TypeScript: 0 errores TS en fuentes, fixes en 8 archivos (translation-quality, validator, notifications, tutorial)",
+      "8": "Fix: type casting de regex match en translation-quality.ts y translation-validator.ts",
+      "9": "Fix: NotificationToastProps con props opcionales faltantes",
+      "10": "Fix: TutorialProviderProps con userId opcional",
+      "11": "Fix: CreateNotificationRequest con profileId opcional"
+    },
+    "v1_3_0": {
+      "0": "Danganronpa WAD Patcher v15: base All-Ice + override GameStringer (35.865 cadenas)",
+      "1": "WAD Text Extractor CLI: extracción completa de textos de WAD para traducción",
+      "2": "WAD Extractor UI: nueva pestaña en Danganronpa Patcher con editor y traducción batch IA",
+      "3": "Export Patch Distribuible: crea .zip con WAD, install.bat, LÉAME.txt, translations.json",
+      "4": "Export Patch UI: botón export en pestaña Aplicar Parche con diálogo de guardado nativo",
+      "5": "Export Patch Backend Rust: comando export_danganronpa_patch con zip streaming",
+      "6": "Dashboard Stats Reales: conectados a Translation Memory Rust e historial de actividad",
+      "7": "UI Danganronpa Patcher compactada: todas las pestañas optimizadas para densidad informativa"
+    },
+    "v1_2_0": {
+      "0": "Fallback Provider: traducción automática Gemini → DeepSeek → OpenAI en todos los componentes",
+      "1": "Auditoría /api/* completada: 0 fetch('/api/') activos, todo compatible con Tauri",
+      "2": "Danganronpa Filtro Smart: reduce 18K→3K cadenas con filtro local + IA opcional",
+      "3": "Tests E2E Playwright: 38 tests reales (navegación, traducción, danganronpa)",
+      "4": "Fix: UI de inyección usa Tauri invoke en lugar de API routes",
+      "5": "Fix: secrets dashboard, logging, import traducciones ahora locales",
+      "6": "Fix: bug de precedencia de operadores en notification-indicator",
+      "7": "Translation Memory y Offline Cache usan proveedores fallback"
+    },
+    "v1_1_0": {
+      "0": "Website Multilingüe: 9 idiomas (EN, IT, ES, DE, FR, JA, ZH, KO, PT)",
+      "1": "Selector de idioma en nav con banderas y auto-detección del navegador",
+      "2": "Danganronpa Auto-Translator: traducción automática con extracción PAK nativa",
+      "3": "Tests E2E con Playwright: 9 tests para navegación, traducción, danganronpa",
+      "4": "Verificación API Key: comprobación de claves antes de iniciar traducción",
+      "5": "Estimación de Coste: cálculo automático de tokens y coste por proveedor",
+      "6": "Rate Limit Handler: reintento automático con delay para cuota API",
+      "7": "Redirección automática a Settings si API no configurada"
+    },
+    "v1_0_9": {
+      "0": "Headers UI Animados: Efecto 'respiración' con gradiente que se expande/contrae",
+      "1": "Sombras de Header: shadow-xl con tinte azul para profundidad",
+      "2": "Menú Sidebar: Sub-items con hover verde oscuro (emerald-600)",
+      "3": "Gradiente uniforme: Sky → Blue → Cyan en todos los headers de Traducción",
+      "4": "16 páginas actualizadas con nuevo estilo de header animado"
+    },
+    "v1_0_8": {
+      "0": "Fix: Botón 'Descargar' actualización ahora abre el navegador correctamente",
+      "1": "Fix: Usado Tauri shell API en lugar de window.open para enlaces externos",
+      "2": "Añadido feedback toast para debug de descarga"
+    },
+    "v1_0_7": {
+      "0": "GitHub Discussions: Foro integrado en el Community Hub",
+      "1": "Pestaña Discussions con gráficos GameStringer personalizados",
+      "2": "Fetch automático de discusiones desde GitHub con API route",
+      "3": "Enlaces externos abiertos con Tauri shell API",
+      "4": "Community Hub: eliminados datos mock, ahora solo datos reales",
+      "5": "Eliminado modal de advertencia 'En Desarrollo' del Community Hub",
+      "6": "Licencia actualizada a v1.1 Source Available",
+      "7": "Licencia: aclarado uso no-comercial (YouTuber/streamer OK)",
+      "8": "Licencia: forks no-comerciales permitidos explícitamente",
+      "9": "i18n: traducciones Discussions en 7 idiomas"
+    },
+    "v1_0_6": {
+      "0": "Qwen 3: Proveedor dedicado para idiomas asiáticos (CN/JP/KR) vía Ollama",
+      "1": "NLLB-200: Soporte 200 idiomas vía HuggingFace Inference API",
+      "2": "Ollama Genérico: Usar cualquier modelo instalado",
+      "3": "Bug fix: Catches vacíos reemplazados con logging apropiado",
+      "4": "Bug fix: Imports no utilizados eliminados de archivos principales",
+      "5": "Bug fix: Config Vitest provider v8 faltante",
+      "6": "Bug fix: Firmas de funciones batch operations incompatibles",
+      "7": "i18n: Traducciones faltantes añadidas para ES, FR, DE, JA, ZH"
+    },
+    "v1_0_5": {
+      "0": "Voice Clone Studio: Clonación de voz IA con ElevenLabs y OpenAI TTS",
+      "1": "VR Text Overlay: Subtítulos espaciales para juegos VR con detección de headset",
+      "2": "Quality Gates: Sistema automático de control de calidad de traducción",
+      "3": "Player Feedback: Recopilación y gestión de feedback de traducción de jugadores",
+      "4": "Guide Page: Documentación para las 4 nuevas herramientas",
+      "5": "i18n: Traducciones para todas las nuevas funciones en 7 idiomas (IT, EN, ES, DE, JA, ZH)",
+      "6": "UI: Headers hero verdes para páginas de sección Herramientas"
+    },
+    "v1_0_4": {
+      "0": "Subtitle Translator: parser SRT/VTT/ASS con vista previa y QA",
+      "1": "Batch Folder Translator: escaneo recursivo de carpetas con walkdir",
+      "2": "Community Hub: página completa con navegador de paquetes TM",
+      "3": "Retro ROM Tools: soporte NES/SNES/GB/GBA/Genesis/PSX con table files",
+      "4": "API Pública v1: endpoints REST para CI/CD (/api/v1/translate, batch, languages, health)",
+      "5": "Landing Page: página de marketing lista para deploy",
+      "6": "Screen Adaptation: adaptación automática de resolución de pantalla",
+      "7": "Tutorial unificado: resuelto conflicto entre OnboardingWizard e InteractiveTutorial",
+      "8": "Headers hero compactos para Retro y Batch"
+    },
+    "v1_0_3": {
+      "0": "Recovery Key: sistema de recuperación de contraseña con 12 palabras mnemotécnicas",
+      "1": "Recovery Key: copia/descarga de clave al crear perfil",
+      "2": "Recovery Key: verificación de clave para reset de contraseña",
+      "3": "Traducciones i18n completas para ES, FR, DE (9 secciones añadidas)",
+      "4": "Nuevas secciones: gameDetails, notifications, stores, projects, heatmap, activity, ocrTranslator, workshop"
+    },
+    "v1_0_2": {
+      "0": "Soporte multilingüe completo: ES, FR, DE, JA, ZH",
+      "1": "Selector de idioma habilitado para todos los idiomas",
+      "2": "Traducciones Translation Fixer para todos los idiomas",
+      "3": "Traducciones AI Context Crawler para todos los idiomas",
+      "4": "Categorías de glosario traducidas (personaje, lugar, objeto, etc.)"
+    },
+    "v1_0_1": {
+      "0": "Nuevo layout 3:1 para página de detalle de juego",
+      "1": "Galería de screenshots expandida (12 screenshots)",
+      "2": "Recomendación de traducción full-width",
+      "3": "Traducciones EN completas para gameDetails",
+      "4": "Trama completa en header hero"
+    },
+    "v1_0_0": {
+      "0": "Release pública oficial",
+      "1": "Sistema i18n completo (Italiano/English)",
+      "2": "Hero Image Fusion para todas las páginas",
+      "3": "Screenshot Gallery en página de detalle",
+      "4": "GitHub Sponsors integrado"
+    },
+    "v0_9_9_beta": {
+      "0": "Última versión beta antes del release oficial 1.0.0",
+      "1": "Sistema i18n completo (Italiano/English)",
+      "2": "Integración Ko-fi y GitHub Sponsors",
+      "3": "Optimizaciones finales y bug fixes"
+    },
+    "v0_9_8_beta": {
+      "0": "Export/Import Perfil: backup y restore de perfiles como JSON",
+      "1": "OCR Service: Tesseract.js integrado para reconocimiento de texto",
+      "2": "Screen Capture: captura de pantalla con fallback browser getDisplayMedia",
+      "3": "Headers hero todos compactos con text shadow uniforme",
+      "4": "Community Hub rediseñado con estilo compacto",
+      "5": "Header de biblioteca minimalista con icono gradiente",
+      "6": "Eliminado mini logo GS de sidebar colapsada"
+    },
+    "v0_9_7_beta": {
+      "0": "Headers hero compactos para todas las herramientas (Overlay, Fixer, Crawler, Voice, Injector, Patcher)",
+      "1": "Dashboard rediseñado con gradiente púrpura y tarjetas animadas",
+      "2": "Menú de perfil glassmorphism con efecto cristal",
+      "3": "Game Patcher header unificado con enlaces rápidos",
+      "4": "Actividades recientes expandidas a 9 elementos",
+      "5": "Eliminados indicadores Neural/Steam/Cache del header",
+      "6": "Text shadows mejorados para legibilidad en gradientes claros"
+    },
+    "v0_9_6_beta": {
+      "0": "Command Palette (Ctrl+K): búsqueda global estilo VS Code",
+      "1": "Skeleton Loaders: estados de carga elegantes para todas las páginas",
+      "2": "Empty States: ilustraciones y CTAs para estados vacíos",
+      "3": "Drag & Drop Zone: arrastrar archivos para traducir",
+      "4": "Info Tooltips: explicaciones hover para funciones complejas",
+      "5": "Sidebar animada: efectos hover, glow, transiciones fluidas",
+      "6": "Toasts mejorados: gradientes coloreados, barra de progreso, animaciones",
+      "7": "Keyboard Shortcuts: Ctrl+L biblioteca, Ctrl+T traducir, etc."
+    },
+    "v0_9_5_beta": {
+      "0": "Steam Workshop Browser: buscar y descargar traducciones de la comunidad",
+      "1": "Filtros por idioma, ordenación (popularidad, recientes, puntuación)",
+      "2": "Vista de detalles: suscriptores, favoritos, vistas, puntuación",
+      "3": "Descarga simulada con estado de instalación",
+      "4": "Enlace directo a Steam Workshop para cada item"
+    },
+    "v0_9_4_beta": {
+      "0": "Dashboard completamente rediseñado con header hero púrpura/fucsia",
+      "1": "Tarjetas de Acciones Rápidas con iconos grandes y gradientes coloreados",
+      "2": "Enlaces rápidos a Batch, Proyectos, Estadísticas, Configuración",
+      "3": "Actividades recientes en tarjeta dedicada con diseño cyan",
+      "4": "Barra de progreso de traducciones con tarjeta emerald"
+    },
+    "v0_9_3_beta": {
+      "0": "Estadísticas de Traducción: dashboard detallado con gráficos",
+      "1": "Gráfico de actividad semanal con barras",
+      "2": "Stats: traducciones totales, cadenas, palabras, progreso medio",
+      "3": "Conteo de proyectos completados y en curso",
+      "4": "Idiomas objetivo más usados con porcentajes",
+      "5": "Tiempo estimado restante para proyectos activos"
+    },
+    "v0_9_2_beta": {
+      "0": "Project Manager: guardar/cargar proyectos de traducción (.gsproj)",
+      "1": "Exportar traducciones en JSON, CSV, PO (Gettext)",
+      "2": "Glosario de proyecto para consistencia terminológica",
+      "3": "Estadísticas de proyecto: archivos, cadenas, progreso",
+      "4": "Pestañas Panorama, Archivos, Glosario, Configuración"
+    },
+    "v0_9_1_beta": {
+      "0": "Batch Translation: cola de traducción para múltiples archivos simultáneos",
+      "1": "Soporte drag & drop de archivos y carpetas en la cola",
+      "2": "Seguimiento de progreso por trabajo con tiempo estimado",
+      "3": "Pausar/reanudar/detener procesamiento de cola",
+      "4": "Gradiente dinámico en página de juego basado en género (Horror=rojo, RPG=púrpura, etc.)"
+    },
+    "v0_9_0_beta": {
+      "0": "Página Detalle de Juego: nuevo header hero con gradiente indigo/púrpura/fucsia",
+      "1": "Stats dinámicas: plataforma, estado de instalación, fecha de salida, géneros, traducciones",
+      "2": "Imagen de fondo del juego integrada en el header",
+      "3": "Puntuación Metacritic con colores dinámicos (verde/amarillo/rojo)"
+    },
+    "v0_8_9_beta": {
+      "0": "Sidebar reorganizada: de 17 a 6 elementos para navegación limpia",
+      "1": "Headers hero coloridos para páginas Traducir, Patcher, Community, Configuración",
+      "2": "Diálogo Configuración de Perfil con diseño púrpura/rosa y tarjetas coloreadas",
+      "3": "Diálogo Seguridad de Perfil con diseño cyan/emerald",
+      "4": "Enlaces rápidos a herramientas secundarias en páginas principales",
+      "5": "Fix accesibilidad DialogTitle con VisuallyHidden"
+    },
+    "v0_8_8_beta": {
+      "0": "Wizard Onboarding para primer inicio con configuración guiada",
+      "1": "Indicador de estado offline en el header con funciones disponibles",
+      "2": "Sistema de caché offline para traducciones, juegos y packs",
+      "3": "Tooltips contextuales para ayuda in-app",
+      "4": "Servicio offline-support para funciones sin internet"
+    },
+    "v0_8_7_beta": {
+      "0": "Visual Translation Editor para vista previa de cadenas en screenshots",
+      "1": "Editor overlay con drag & drop, fuentes, colores, opacidad",
+      "2": "Exportación de imágenes PNG y proyectos .gsvte",
+      "3": "Nexus Mods Integration para buscar parches italianos",
+      "4": "Búsqueda automática de traducciones por juego",
+      "5": "Descarga directa desde Nexus Mods (requiere API key)"
+    },
+    "v0_8_6_beta": {
+      "0": "Community Translation Hub para compartir traducciones",
+      "1": "Sistema de Translation Packs con descarga/subida",
+      "2": "Puntuación y reseñas para packs de traducción",
+      "3": "Estadísticas de comunidad en tiempo real",
+      "4": "Filtros avanzados para búsqueda de packs",
+      "5": "Soporte 10 idiomas para traducciones"
+    },
+    "v0_8_5_beta": {
+      "0": "AI Translation Assistant con soporte LLM local (Ollama, LM Studio)",
+      "1": "Traducciones context-aware por género de juego (RPG, Horror, etc.)",
+      "2": "Glosario personalizable para consistencia terminológica",
+      "3": "Soporte de voces de personajes con estilo y formalidad",
+      "4": "Generación alternativa de traducción",
+      "5": "Historial de traducciones con reutilización rápida"
+    },
+    "v0_8_4_beta": {
+      "0": "Diálogo Configuración de Perfil (notificaciones, biblioteca, sesión)",
+      "1": "Diálogo Seguridad de Perfil (cambio de contraseña, eliminación)",
+      "2": "Menú de perfil completamente funcional",
+      "3": "Integración ThemeSelector en configuración de perfil"
+    },
+    "v0_8_3_beta": {
+      "0": "Parser Godot Engine (.tres, .tscn, .cfg, .translation)",
+      "1": "Parser Ren'Py (.rpy) para novelas visuales",
+      "2": "Telltale Patcher: backup automático y restauración",
+      "3": "Telltale Patcher: verificación de instalación",
+      "4": "Toggle de tema (claro/oscuro/auto) en el header",
+      "5": "Script version-manager sincroniza todos los archivos de versión"
+    },
+    "v0_8_2_beta": {
+      "0": "Telltale Patcher para Wolf Among Us, Walking Dead, Batman",
+      "1": "Parser Telltale (.langdb, .landb, .dlog)",
+      "2": "Fix imágenes de juegos en página de detalle",
+      "3": "Steam API 403 rate limiting gestionado gracefully",
+      "4": "Tauri CLI actualizado a v2.5.0"
+    },
+    "v0_8_1_beta": {
+      "0": "Filas de diccionario compactas",
+      "1": "Extensiones de layout unificado con Parser",
+      "2": "Campana de notificaciones amarilla fosforescente",
+      "3": "Placeholders coloreados para portadas faltantes"
+    },
+    "v0_8_0_beta": {
+      "0": "Integración Epic Games Store vía Legendary CLI",
+      "1": "Filtro de assets/plugins Unreal Engine (41 juegos)",
+      "2": "Badge de plataforma Epic Games en ficha de juego",
+      "3": "Versión clickeable para ver changelog"
+    },
+    "v3_2_2": {
+      "0": "Sistema de versionado automático completo implementado",
+      "1": "Integración UI dinámica",
+      "2": "Git hooks configurados"
+    },
+    "v3_2_1": {
+      "0": "Sistema de versionado automático implementado",
+      "1": "System Status movido a la sidebar",
+      "2": "Layout del dashboard mejorado",
+      "3": "Quick Actions compactadas"
+    },
+    "v3_2_0": {
+      "0": "Página de configuración completamente rediseñada",
+      "1": "Debug tools integrados en la configuración",
+      "2": "Sidebar colapsable con animaciones",
+      "3": "Steam API debugging mejorado"
+    },
+    "v3_1_0": {
+      "0": "Force refresh implementado para Steam games",
+      "1": "Sistema de adición manual de juegos",
+      "2": "Sistema de badges para juegos VR",
+      "3": "Diseño de dashboard futurista"
     }
   }
 }

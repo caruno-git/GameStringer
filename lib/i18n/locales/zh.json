@@ -4201,6 +4201,14 @@
       "5": "Fix Presence: 在updatePresence中添加会话守卫以防止update_user_presence上的400 Bad Request",
       "6": "i18n: 意大利语翻译中Store → Stores"
     },
+    "v1_8_1": {
+      "0": "Fix CSP: 添加'unsafe-eval'以兼容Next.js开发模式",
+      "1": "Fix CSP: 开发环境宽松CSP，生产环境严格CSP",
+      "2": "Fix CSP: 为Tauri IPC添加http://ipc.localhost",
+      "3": "Fix i18n: 修正仪表板Ollama小部件中的offlineTranslator.*键",
+      "4": "Fix Rust警告: 从9个后端文件中移除unused_mut和dead_code",
+      "5": "中间件: 基于NODE_ENV的动态CSP"
+    },
     "v1_8_0": {
       "0": "实时翻译覆盖层：通过透明OCR覆盖层在任何游戏上进行实时翻译 — 屏幕捕获 → 多引擎OCR → AI翻译（Groq/Cerebras） → 游戏风格覆盖层。快捷键 Ctrl+Alt+O",
       "1": "Hub 市场：社区翻译包共享市场 — 一键安装、评分、评论、审核、带声誉的用户档案。Supabase后端，10张表 + RLS",
@@ -4211,6 +4219,379 @@
       "6": "架构：tsc+eslint+vitest+npm audit CI管道，71个新测试，从单体文件中提取18个模块，1197/1203个console.*迁移到结构化日志器，893个catch子句已类型化",
       "7": "重构：ai-translate-direct.ts（-429行，5个模块）、game-detail-client.tsx（-636行，8个组件）、translator/pro/page.tsx（-776行，5个组件）",
       "8": "依赖项：移除重复的react-hot-toast和vdf，减少42个包"
+    },
+    "v1_7_0": {
+      "0": "自动选择引擎 (🧠)：新的'Auto'预设，根据目标语言和游戏类型动态选择最佳AI提供商 — 基于真实基准（欧洲语言用DeepL，CJK用Claude，RPG/冒险类型加成）",
+      "1": "质量历史：按语言跟踪提供商质量的会话，基于成功/失败自动重排链",
+      "2": "Gridly CSV导出/导入：兼容Gridly/Lokalise/Crowdin的多语言格式（ID | source | target每种语言），自动检测分隔符和语言列",
+      "3": "时长匹配：语音合成自动调速以保持原始音频时长 — Web Audio API测量的两遍TTS",
+      "4": "Rhubarb口型同步：从音频生成口型同步数据（视素A-X），带交互式可视时间线，导出Unity（混合形状）和Unreal（FaceFX）",
+      "5": "视频提取器：从游戏卡片直接链接 + 从库中选择游戏 + 自动扫描",
+      "6": "口型同步页面：新的/lip-sync页面（识别器、时间线、统计、多引擎导出完整面板）",
+      "7": "侧边栏：在工具部分添加口型同步条目"
+    },
+    "v1_6_1": {
+      "0": "CI/CD: 合并作业统一所有平台（Windows/Linux/macOS）的latest.json",
+      "1": "CI/CD: 守卫步骤，如果签名未生成有效的minisign签名则使构建失败",
+      "2": "CI/CD: 'Locate latest.json'步骤，立即检测tauri-action是否未生成更新器清单",
+      "3": "自动更新: 轮换minisign签名密钥（公钥 B61C7704C9F3B554）— 旧密钥在CI中从未签名过任何内容",
+      "4": "文档: 添加RELEASE_PROCESS.md，包含完整流程（签名者、密钥、验证、回滚）",
+      "5": "从仓库根目录删除孤立的latest.json（带空签名的占位符）"
+    },
+    "v1_6_0": {
+      "0": "Bethesda引擎补丁器：Skyrim LE/SE/AE、Fallout 3/NV/4、Oblivion、Starfield，带BSA v103-105 + BA2 GNRL/DX10 + ESP/ESM（FULL/DESC/NAM1）解析器",
+      "1": "CRI中间件补丁器：CPK + CRILAYLA + MSG/BMD/FTD解析器（女神异闻录5皇家版、如龙、传说系列、龙珠），带Shift-JIS/UTF-8/UTF-16检测",
+      "2": "Unity本地化包管道：StringTable、SharedTableData、Addressables目录、Smart Strings分词器 + 验证器",
+      "3": "通用PO导出（gettext .po），适用于所有补丁器，带project/language/source/engine元数据",
+      "4": "补丁器多步流程的共享向导步进器",
+      "5": "a11y: 图标按钮上的aria-label、CardTitle语义标题、原语上的focus-visible、skip-to-content链接、landmark main、sr-only意大利语",
+      "6": "a11y: 尊重prefers-reduced-motion和forced-colors（Windows高对比度）",
+      "7": "设计系统: 通过cva的Card变体（default/muted/highlight/success/error/warning），Button尺寸xs + icon-sm",
+      "8": "OCR图像处理器: 连接到Tauri Tesseract后端（替换存根simulateOCR）",
+      "9": "文本工具: text-micro（9px）+ text-2xs（10px）消除任意Tailwind类",
+      "10": "Fix: 防止应用在托盘中时Windows进程启动的控制台闪烁循环（辅助函数 process_util::no_window_command）"
+    },
+    "v1_5_0": {
+      "0": "社区聊天实时：通过Supabase Realtime集成到社区Hub的实时聊天",
+      "1": "4个预定义房间：一般、翻译、反馈与Bug、公告",
+      "2": "自动桥接：通过GameStringer档案自动Supabase登录（无需额外登录）",
+      "3": "在线状态：通过Supabase Presence的实时连接用户指示器",
+      "4": "为特定游戏或项目创建自定义房间",
+      "5": "消息回复、编辑和删除",
+      "6": "右下角聊天小部件，带可展开抽屉",
+      "7": "Supabase后端：PostgreSQL、RLS策略、自动档案触发器、RPC函数",
+      "8": "i18n: 11种支持语言的聊天翻译（IT, EN, ES, FR, DE, JA, ZH, KO, PT, RU, PL）",
+      "9": "添加交互式社区聊天教程",
+      "10": "更新11种语言用户指南中的社区聊天部分",
+      "11": "统一Supabase客户端（消除Multiple GoTrueClient警告）"
+    },
+    "v1_4_2": {
+      "0": "Vision LLM翻译器：带游戏截图的上下文感知翻译（Ollama、Gemini、OpenAI）",
+      "1": "Lore助手：游戏背景和对话的RAG聊天",
+      "2": "自动钩子扫描器：使用WinAPI的进程内存扫描",
+      "3": "系统监视器：实时VRAM/RAM监控（Rust后端）",
+      "4": "Ollama设置向导：分步本地AI安装指南",
+      "5": "调试控制台：带集成控制台拦截的调试控制台",
+      "6": "插件系统：设计文档PLUGIN_SYSTEM.md",
+      "7": "GitHub Discussions：创建12个讨论（公告、一般、想法、问答、展示、投票）",
+      "8": "社区Hub：使用公共REST API修复讨论获取（无需令牌）",
+      "9": "侧边栏：添加Vision LLM，Workshop更名为Steam Workshop",
+      "10": "Fix: 新页面上ssr:false的动态导入导致的Rendered more hooks",
+      "11": "CI/CD: 签名版本的Tauri Signing Key",
+      "12": "Fix: Ollama提供商在网络错误时使用冷却而非永久阻止",
+      "13": "Fix: 长文本的Lingva 404（自动URL截断）",
+      "14": "Fix: :contains()选择器的Tutorial querySelector SyntaxError",
+      "15": "Fix: Update Bell显示错误版本（移除硬编码回退）",
+      "16": "自动翻译审核：带进度条的'翻译所有未翻译'按钮"
+    },
+    "v1_4_1": {
+      "0": "i18n: 11种语言的完整UI（IT, EN, ES, FR, DE, JA, ZH, KO, PT, RU, PL）",
+      "1": "将KO（韩语）、PT（葡萄牙语）、RU（俄语）、PL（波兰语）翻译添加到translations.ts",
+      "2": "用ru和pl更新Locale类型和SUPPORTED_LOCALES",
+      "3": "创建locales/ru/common.json和locales/pl/common.json",
+      "4": "更新11种语言用户指南中的v1.1-v1.4部分",
+      "5": "新用户指南：USER_GUIDE_KO.md、USER_GUIDE_PT.md、USER_GUIDE_RU.md、USER_GUIDE_PL.md",
+      "6": "更新README.md和README_IT.md，包含11种语言和新指南",
+      "7": "更新CHANGELOG.md和主布局更新日志",
+      "8": "用ru和pl更新site-i18n.js",
+      "9": "CI: 修复Linux + Windows工作流并正常运行"
+    },
+    "v1_4_0": {
+      "0": "统一Radix UI：将37个文件从@radix-ui/react-*迁移到radix-ui，删除27个包",
+      "1": "专业翻译器质量徽章：带ContentTypeBadge和QualityScoreBadge的逐行质量评分",
+      "2": "实时质量预览：批量翻译期间的实时质量预览",
+      "3": "翻译详情：带内容类型（UI/对话/叙事）和0-100评分的结果表",
+      "4": "RTL支持：自动文本方向检测和dir属性应用",
+      "5": "通用Ollama：带PROVIDER_MAP和回退链预设的translateWithOllamaGeneric",
+      "6": "包优化：用radix-ui、framer-motion、recharts、cmdk更新optimizePackageImports",
+      "7": "TypeScript清理：源代码中0个TS错误，8个文件修复（translation-quality、validator、notifications、tutorial）",
+      "8": "Fix: translation-quality.ts和translation-validator.ts中的regex match类型转换",
+      "9": "Fix: 缺少可选props的NotificationToastProps",
+      "10": "Fix: 带可选userId的TutorialProviderProps",
+      "11": "Fix: 带可选profileId的CreateNotificationRequest"
+    },
+    "v1_3_0": {
+      "0": "弹丸论破WAD补丁器v15：All-Ice基础 + GameStringer覆盖（35,865个字符串）",
+      "1": "WAD文本提取器CLI：从WAD完整提取文本用于翻译",
+      "2": "WAD提取器UI：弹丸论破补丁器中的新标签页，带编辑器和批量AI翻译",
+      "3": "可分发补丁导出：创建包含WAD、install.bat、README.txt、translations.json的.zip",
+      "4": "补丁导出UI：应用补丁标签页中的导出按钮，带原生保存对话框",
+      "5": "补丁导出Rust后端：带流式zip的export_danganronpa_patch命令",
+      "6": "真实仪表板统计：连接到Translation Memory Rust和活动历史",
+      "7": "弹丸论破补丁器UI紧凑化：所有标签页针对信息密度优化"
+    },
+    "v1_2_0": {
+      "0": "回退提供商：所有组件中自动翻译 Gemini → DeepSeek → OpenAI",
+      "1": "完整/api/*审计：0个活跃的fetch('/api/')，全部Tauri兼容",
+      "2": "弹丸论破智能过滤器：用本地过滤器 + 可选AI将18K→3K字符串缩减",
+      "3": "Playwright E2E测试：38个真实测试（导航、翻译、弹丸论破）",
+      "4": "Fix: 注入UI使用Tauri invoke而非API路由",
+      "5": "Fix: 密钥仪表板、日志、导入翻译现在本地化",
+      "6": "Fix: notification-indicator中的运算符优先级bug",
+      "7": "翻译记忆和离线缓存使用回退提供商"
+    },
+    "v1_1_0": {
+      "0": "多语言网站：9种语言（EN, IT, ES, DE, FR, JA, ZH, KO, PT）",
+      "1": "导航中的语言选择器，带旗帜和浏览器自动检测",
+      "2": "弹丸论破自动翻译器：带原生PAK提取的自动翻译",
+      "3": "Playwright E2E测试：9个导航、翻译、弹丸论破测试",
+      "4": "API密钥验证：翻译开始前的密钥检查",
+      "5": "成本估算：按提供商自动计算令牌和成本",
+      "6": "速率限制处理器：API配额的自动延迟重试",
+      "7": "API未配置时自动重定向到设置"
+    },
+    "v1_0_9": {
+      "0": "动画UI头部：带扩展/收缩渐变的'呼吸'效果",
+      "1": "头部阴影：带蓝色调的shadow-xl增加深度",
+      "2": "侧边栏菜单：深绿色悬停（emerald-600）的子元素",
+      "3": "统一渐变：所有翻译头部 Sky → Blue → Cyan",
+      "4": "16个页面更新为新动画头部样式"
+    },
+    "v1_0_8": {
+      "0": "Fix: 更新'下载'按钮现在正确打开浏览器",
+      "1": "Fix: 使用Tauri shell API代替window.open打开外部链接",
+      "2": "添加下载调试的toast反馈"
+    },
+    "v1_0_7": {
+      "0": "GitHub Discussions：集成到社区Hub的论坛",
+      "1": "带自定义GameStringer图形的Discussions标签页",
+      "2": "通过API路由自动从GitHub获取讨论",
+      "3": "使用Tauri shell API打开外部链接",
+      "4": "社区Hub：移除模拟数据，现在仅真实数据",
+      "5": "从社区Hub移除'开发中'警告模态框",
+      "6": "许可证更新至v1.1 Source Available",
+      "7": "许可证：澄清非商业用途（YouTuber/主播OK）",
+      "8": "许可证：明确允许非商业分支",
+      "9": "i18n: 7种语言的Discussions翻译"
+    },
+    "v1_0_6": {
+      "0": "Qwen 3：通过Ollama的亚洲语言（CN/JP/KR）专用提供商",
+      "1": "NLLB-200：通过HuggingFace推理API支持200种语言",
+      "2": "通用Ollama：使用任何已安装的模型",
+      "3": "Bug修复：将空catch替换为适当的日志记录",
+      "4": "Bug修复：从主文件中移除未使用的导入",
+      "5": "Bug修复：缺少Vitest v8提供商配置",
+      "6": "Bug修复：不兼容的批量操作函数签名",
+      "7": "i18n: 添加ES、FR、DE、JA、ZH缺失的翻译"
+    },
+    "v1_0_5": {
+      "0": "语音克隆工作室：使用ElevenLabs和OpenAI TTS的AI语音克隆",
+      "1": "VR文本覆盖层：带头戴设备检测的VR游戏空间字幕",
+      "2": "质量门：自动翻译质量控制系统",
+      "3": "玩家反馈：收集和管理玩家翻译反馈",
+      "4": "指南页面：4个新工具的文档",
+      "5": "i18n: 7种语言所有新功能的翻译（IT, EN, ES, DE, JA, ZH）",
+      "6": "UI: 工具部分页面的绿色英雄头部"
+    },
+    "v1_0_4": {
+      "0": "字幕翻译器：带预览和QA的SRT/VTT/ASS解析器",
+      "1": "批量文件夹翻译器：使用walkdir的递归文件夹扫描",
+      "2": "社区Hub：带TM包浏览器的完整页面",
+      "3": "复古ROM工具：带表文件的NES/SNES/GB/GBA/Genesis/PSX支持",
+      "4": "公共API v1：CI/CD的REST端点（/api/v1/translate、batch、languages、health）",
+      "5": "着陆页：准备部署的营销页面",
+      "6": "屏幕适配：自动屏幕分辨率适配",
+      "7": "统一教程：解决OnboardingWizard和InteractiveTutorial之间的冲突",
+      "8": "复古和批量的紧凑英雄头部"
+    },
+    "v1_0_3": {
+      "0": "恢复密钥：12个助记词的密码恢复系统",
+      "1": "恢复密钥：创建档案时复制/下载密钥",
+      "2": "恢复密钥：密码重置的密钥验证",
+      "3": "ES、FR、DE的完整i18n翻译（添加9个部分）",
+      "4": "新部分：gameDetails、notifications、stores、projects、heatmap、activity、ocrTranslator、workshop"
+    },
+    "v1_0_2": {
+      "0": "完整多语言支持：ES、FR、DE、JA、ZH",
+      "1": "所有语言启用语言选择器",
+      "2": "所有语言的Translation Fixer翻译",
+      "3": "所有语言的AI Context Crawler翻译",
+      "4": "翻译的术语类别（角色、地点、物品等）"
+    },
+    "v1_0_1": {
+      "0": "游戏详情页新3:1布局",
+      "1": "扩展截图画廊（12张截图）",
+      "2": "全宽翻译推荐",
+      "3": "gameDetails的完整EN翻译",
+      "4": "英雄头部中的完整简介"
+    },
+    "v1_0_0": {
+      "0": "正式公开发布",
+      "1": "完整i18n系统（意大利语/英语）",
+      "2": "所有页面的Hero Image Fusion",
+      "3": "详情页的截图画廊",
+      "4": "GitHub Sponsors集成"
+    },
+    "v0_9_9_beta": {
+      "0": "正式1.0.0发布前的最后一个测试版",
+      "1": "完整i18n系统（意大利语/英语）",
+      "2": "Ko-fi和GitHub Sponsors集成",
+      "3": "最终优化和bug修复"
+    },
+    "v0_9_8_beta": {
+      "0": "档案导出/导入：以JSON备份和恢复档案",
+      "1": "OCR服务：集成Tesseract.js用于文本识别",
+      "2": "屏幕捕获：带浏览器回退getDisplayMedia的屏幕捕获",
+      "3": "所有英雄头部紧凑化，带统一文本阴影",
+      "4": "以紧凑风格重新设计社区Hub",
+      "5": "带渐变图标的极简库头部",
+      "6": "从折叠侧边栏移除迷你GS标志"
+    },
+    "v0_9_7_beta": {
+      "0": "所有工具的紧凑英雄头部（覆盖层、修复器、爬虫、语音、注入器、补丁器）",
+      "1": "以紫色渐变和动画卡片重新设计仪表板",
+      "2": "玻璃拟态档案菜单，带玻璃效果",
+      "3": "带快速链接的统一游戏补丁器头部",
+      "4": "最近活动扩展到9个元素",
+      "5": "从头部移除Neural/Steam/Cache指示器",
+      "6": "改善明亮渐变上可读性的文本阴影"
+    },
+    "v0_9_6_beta": {
+      "0": "命令面板（Ctrl+K）：VS Code风格的全局搜索",
+      "1": "骨架加载器：所有页面的优雅加载状态",
+      "2": "空状态：空状态的插图和CTA",
+      "3": "拖放区：拖动文件进行翻译",
+      "4": "信息工具提示：复杂功能的悬停说明",
+      "5": "动画侧边栏：悬停效果、发光、流畅过渡",
+      "6": "改进的toast：彩色渐变、进度条、动画",
+      "7": "键盘快捷键：Ctrl+L库、Ctrl+T翻译等"
+    },
+    "v0_9_5_beta": {
+      "0": "Steam创意工坊浏览器：搜索和下载社区翻译",
+      "1": "按语言过滤、排序（受欢迎、最新、评分）",
+      "2": "详细视图：订阅者、收藏、浏览量、评分",
+      "3": "带安装状态的模拟下载",
+      "4": "每个项目的Steam创意工坊直接链接"
+    },
+    "v0_9_4_beta": {
+      "0": "以紫色/紫红色英雄头部完全重新设计仪表板",
+      "1": "带大图标和彩色渐变的快速操作卡",
+      "2": "批量、项目、统计、设置的快速链接",
+      "3": "专用青色设计卡片中的最近活动",
+      "4": "带翡翠色卡片的翻译进度条"
+    },
+    "v0_9_3_beta": {
+      "0": "翻译统计：带图表的详细仪表板",
+      "1": "带条形的每周活动图",
+      "2": "统计：总翻译、字符串、单词、平均进度",
+      "3": "已完成和进行中项目的计数",
+      "4": "最常用目标语言及百分比",
+      "5": "活跃项目的预计剩余时间"
+    },
+    "v0_9_2_beta": {
+      "0": "项目管理器：保存/加载翻译项目（.gsproj）",
+      "1": "以JSON、CSV、PO（Gettext）导出翻译",
+      "2": "术语一致性的项目术语表",
+      "3": "项目统计：文件、字符串、进度",
+      "4": "标签页：概览、文件、术语表、设置"
+    },
+    "v0_9_1_beta": {
+      "0": "批量翻译：多文件同时翻译队列",
+      "1": "队列中文件和文件夹的拖放支持",
+      "2": "带预计时间的每个作业进度跟踪",
+      "3": "暂停/恢复/停止队列处理",
+      "4": "基于类型的游戏页面动态渐变（恐怖=红色，RPG=紫色等）"
+    },
+    "v0_9_0_beta": {
+      "0": "游戏详情页：带靛蓝/紫色/紫红色渐变的新英雄头部",
+      "1": "动态统计：平台、安装状态、发行日期、类型、翻译",
+      "2": "头部中集成的游戏背景图像",
+      "3": "带动态颜色的Metacritic评分（绿/黄/红）"
+    },
+    "v0_8_9_beta": {
+      "0": "侧边栏重组：从17个减少到6个元素，实现清晰导航",
+      "1": "翻译、补丁器、社区、设置页面的彩色英雄头部",
+      "2": "紫/粉色设计和彩色卡片的档案设置对话框",
+      "3": "青/翡翠色设计的档案安全对话框",
+      "4": "主页上次要工具的快速链接",
+      "5": "Fix: 使用VisuallyHidden的DialogTitle可访问性"
+    },
+    "v0_8_8_beta": {
+      "0": "首次启动的引导向导，带引导配置",
+      "1": "头部中的离线状态指示器，带可用功能",
+      "2": "翻译、游戏和包的离线缓存系统",
+      "3": "应用内帮助的上下文工具提示",
+      "4": "无互联网功能的离线支持服务"
+    },
+    "v0_8_7_beta": {
+      "0": "截图上字符串预览的可视翻译编辑器",
+      "1": "带拖放、字体、颜色、不透明度的覆盖层编辑器",
+      "2": "PNG图像和.gsvte项目导出",
+      "3": "搜索意大利语补丁的Nexus Mods集成",
+      "4": "按游戏自动翻译搜索",
+      "5": "从Nexus Mods直接下载（需要API密钥）"
+    },
+    "v0_8_6_beta": {
+      "0": "共享翻译的社区翻译Hub",
+      "1": "带下载/上传的翻译包系统",
+      "2": "翻译包的评分和评论",
+      "3": "实时社区统计",
+      "4": "包搜索的高级过滤器",
+      "5": "10种语言翻译支持"
+    },
+    "v0_8_5_beta": {
+      "0": "带本地LLM支持（Ollama、LM Studio）的AI翻译助手",
+      "1": "按游戏类型的上下文感知翻译（RPG、恐怖等）",
+      "2": "术语一致性的可自定义术语表",
+      "3": "带风格和正式性的角色语音支持",
+      "4": "替代翻译生成",
+      "5": "快速重用的翻译历史"
+    },
+    "v0_8_4_beta": {
+      "0": "档案设置对话框（通知、库、会话）",
+      "1": "档案安全对话框（密码更改、删除）",
+      "2": "完全功能的档案菜单",
+      "3": "档案设置中的ThemeSelector集成"
+    },
+    "v0_8_3_beta": {
+      "0": "Godot引擎解析器（.tres、.tscn、.cfg、.translation）",
+      "1": "视觉小说的Ren'Py解析器（.rpy）",
+      "2": "Telltale补丁器：自动备份和恢复",
+      "3": "Telltale补丁器：安装验证",
+      "4": "头部中的主题切换（亮/暗/自动）",
+      "5": "版本管理器脚本同步所有版本文件"
+    },
+    "v0_8_2_beta": {
+      "0": "狼中之狼、行尸走肉、蝙蝠侠的Telltale补丁器",
+      "1": "Telltale解析器（.langdb、.landb、.dlog）",
+      "2": "Fix: 详情页的游戏图像",
+      "3": "优雅处理Steam API 403速率限制",
+      "4": "Tauri CLI更新至v2.5.0"
+    },
+    "v0_8_1_beta": {
+      "0": "紧凑词典行",
+      "1": "带解析器的统一布局扩展",
+      "2": "磷光黄色通知铃",
+      "3": "缺失封面的彩色占位符"
+    },
+    "v0_8_0_beta": {
+      "0": "通过Legendary CLI的Epic Games Store集成",
+      "1": "虚幻引擎资产/插件过滤器（41款游戏）",
+      "2": "游戏卡片上的Epic Games平台徽章",
+      "3": "可点击版本查看更新日志"
+    },
+    "v3_2_2": {
+      "0": "实现完整的自动版本系统",
+      "1": "动态UI集成",
+      "2": "配置Git钩子"
+    },
+    "v3_2_1": {
+      "0": "实现自动版本系统",
+      "1": "系统状态移至侧边栏",
+      "2": "改进仪表板布局",
+      "3": "压缩快速操作"
+    },
+    "v3_2_0": {
+      "0": "完全重新设计设置页面",
+      "1": "在设置中集成调试工具",
+      "2": "带动画的可折叠侧边栏",
+      "3": "改进Steam API调试"
+    },
+    "v3_1_0": {
+      "0": "为Steam游戏实现强制刷新",
+      "1": "手动添加游戏系统",
+      "2": "VR游戏徽章系统",
+      "3": "未来主义仪表板设计"
     }
   }
 }
