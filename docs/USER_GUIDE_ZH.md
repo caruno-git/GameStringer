@@ -485,4 +485,40 @@ Unity游戏（Mono和IL2CPP）的**最佳方法**。
 
 ---
 
-GameStringer v1.8.1 - 指南更新于 2026/04/09
+## v1.8.2 新功能
+
+### Community Hub UI 改进
+- **重新设计的 Community Hub**: 更干净、一致的设计，没有过度的渐变和装饰性 blob
+- **紧凑的 KPI 卡片**: 更小、更微妙的统计卡片，颜色最小化
+- **极简 Category Cards**: 没有重渐变和阴影的干净设计
+- **统一的 Trending 卡片**: 所有卡片类型的一致风格
+
+### 紧凑的朋友侧边栏
+- **宽度减小**: 从 72 减到 56 (w-56) 以获得更多屏幕空间
+- **紧凑的朋友卡片**: 更小的头像 (7x7)，更紧凑的间距
+- **更小的部分**: 在线/离线标题文本减小
+- **超细滚动条**: 4px，默认不可见，悬停时显示
+
+### 持久聊天改进
+- **离散聊天按钮**: 右下角优雅的小按钮
+- **在所有页面上可见**: 在整个应用程序中可访问聊天
+- **更干净的设计**: 移除了过度的动画和装饰
+
+### Supabase 社交功能
+- **兼容模式**: 与前端期望对齐的 Supabase 社交模式 (tools/supabase_social_compatible.sql)
+- **RLS 临时禁用**: 为了更容易调试社交功能
+- **修复聊天参与者**: 为 UUID 验证修正列名
+
+### 错误修复
+- **修复聊天循环**: 添加 chatAttempted 状态以防止 startDirectChat 中的无限循环
+- **删除 Mock 数据**: 删除导致 400 错误的无效 UUID 模拟数据 (user-123 等)
+- **修复 Ollama IPC**: 所有 check_ollama_status IPC 调用替换为直接 HTTP 到 localhost:11434
+- **商店链接**: 在侧边栏资源部分添加商店链接
+- **Epic 连接**: 从损坏的 OAuth 更改为凭据模态
+- **连接测试**: testConnection 现在使用真实的 Tauri 命令而不是模拟 API
+- **修复断开连接**: 在 Tauri 后端添加 Epic/Steam 凭据删除
+- **修复 Presence**: 在 updatePresence 中添加会话守卫以避免 400 Bad Request
+
+---
+
+GameStringer v1.8.2 - 指南更新于 2026/04/23

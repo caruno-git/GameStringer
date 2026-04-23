@@ -485,4 +485,40 @@ Real-time community chat integrated into the Community Hub, powered by Supabase 
 
 ---
 
-GameStringer v1.8.1 - Guide updated 09/04/2026
+## What's New v1.8.2
+
+### Community Hub UI Improvements
+- **Redesigned Community Hub**: cleaner, more consistent design without excessive gradients and decorative blobs
+- **Compact KPI Cards**: smaller, more subtle stat cards with minimal colors
+- **Minimalist Category Cards**: clean design without heavy gradients and shadows
+- **Unified Trending Cards**: consistent styling across all card types
+
+### Friends Sidebar Compact Design
+- **Reduced width**: from 72 to 56 (w-56) for more screen space
+- **Compact Friend Cards**: smaller avatars (7x7), tighter spacing
+- **Smaller sections**: Online/Offline headers with reduced text size
+- **Ultra-thin scrollbar**: 4px, invisible by default, appears on hover
+
+### Persistent Chat Improvements
+- **Discrete chat button**: elegant, small button in bottom-right corner
+- **Visible on all pages**: chat accessible throughout the entire app
+- **Cleaner design**: removed excessive animations and decorations
+
+### Supabase Social Features
+- **Compatible schema**: Supabase social schema aligned with frontend expectations (tools/supabase_social_compatible.sql)
+- **RLS disabled temporarily**: for easier debugging of social features
+- **Chat participants fix**: column names corrected for UUID validation
+
+### Bug Fixes
+- **Chat Loop Fix**: added chatAttempted state to prevent infinite loop in startDirectChat
+- **Mock Data Removal**: removed invalid UUID mock data (user-123, etc.) that caused 400 errors
+- **Ollama IPC Fix**: replaced all check_ollama_status IPC calls with direct HTTP to localhost:11434
+- **Stores Link**: added Stores link in sidebar Resources section
+- **Epic Connect**: changed from broken OAuth to credentials modal
+- **Connection Test**: testConnection now uses real Tauri commands instead of simulated API
+- **Disconnect Fix**: added Epic/Steam credential deletion in Tauri backend
+- **Presence Fix**: added session guard in updatePresence to avoid 400 Bad Request
+
+---
+
+GameStringer v1.8.2 - Guide updated 23/04/2026

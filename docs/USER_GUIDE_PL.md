@@ -485,4 +485,40 @@ Czat w czasie rzeczywistym zintegrowany z Community Hub, oparty na Supabase Real
 
 ---
 
-GameStringer v1.8.1 - Przewodnik zaktualizowany 09.04.2026
+## Nowości v1.8.2
+
+### Ulepszenia UI Community Hub
+- **Przeprojektowany Community Hub**: czystszy i bardziej spójny projekt bez nadmiernych gradientów i dekoracyjnych blobów
+- **Kompaktowe KPI Cards**: mniejsze i bardziej stonowane karty statystyczne z minimalnymi kolorami
+- **Minimalistyczne Category Cards**: czysty projekt bez ciężkich gradientów i cieni
+- **Ujednolicone Trending Cards**: spójny styl we wszystkich typach kart
+
+### Kompaktowy pasek boczny przyjaciół
+- **Zmniejszona szerokość**: z 72 na 56 (w-56) dla więcej miejsca na ekranie
+- **Kompaktowe Friend Cards**: mniejsze avatary (7x7), ciaśniejsze rozmieszczenie
+- **Mniejsze sekcje**: nagłówki Online/Offline ze zmniejszonym tekstem
+- **Ultra-cienki pasek przewijania**: 4px, niewidoczny domyślnie, pojawia się przy najechaniu
+
+### Ulepszenia stałego czatu
+- **Dyskretny przycisk czatu**: elegancki, mały przycisk w prawym dolnym rogu
+- **Widoczny na wszystkich stronach**: czat dostępny w całej aplikacji
+- **Czystszy projekt**: usunięto nadmierne animacje i dekoracje
+
+### Funkcje społecznościowe Supabase
+- **Zgodny schemat**: schemat społeczności Supabase zgodny z oczekiwaniami frontendu (tools/supabase_social_compatible.sql)
+- **RLS tymczasowo wyłączony**: dla łatwiejszego debugowania funkcji społecznościowych
+- **Naprawa chat participants**: nazwy kolumn poprawione do walidacji UUID
+
+### Poprawki błędów
+- **Naprawa pętli czatu**: dodano stan chatAttempted dla zapobiegania nieskończonej pętli w startDirectChat
+- **Usunięcie Mock Data**: usunięto nieprawidłowe dane mock UUID (user-123 itp.), powodujące błędy 400
+- **Naprawa Ollama IPC**: wszystkie wywołania check_ollama_status IPC zastąpiono bezpośrednim HTTP do localhost:11434
+- **Link Stores**: dodano link Stores w sekcji Zasoby paska bocznego
+- **Epic Connect**: zmieniony z zepsutego OAuth na modal poświadczeń
+- **Test połączenia**: testConnection teraz używa rzeczywistych poleceń Tauri zamiast symulowanego API
+- **Naprawa rozłączenia**: dodano usuwanie poświadczeń Epic/Steam w backendzie Tauri
+- **Naprawa Presence**: dodano guard sesji w updatePresence dla uniknięcia 400 Bad Request
+
+---
+
+GameStringer v1.8.2 - Przewodnik zaktualizowany 23.04.2026

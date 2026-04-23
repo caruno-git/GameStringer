@@ -34,60 +34,27 @@ interface KpiCardProps {
   accent: 'violet' | 'indigo' | 'emerald' | 'amber' | 'rose';
 }
 
-const ACCENT_CLASSES: Record<KpiCardProps['accent'], { bg: string; border: string; icon: string; value: string }> = {
-  violet: {
-    bg: 'bg-gradient-to-br from-violet-600/15 via-violet-600/5 to-transparent',
-    border: 'border-violet-500/30',
-    icon: 'text-violet-300 bg-violet-500/20',
-    value: 'text-violet-100',
-  },
-  indigo: {
-    bg: 'bg-gradient-to-br from-indigo-600/15 via-indigo-600/5 to-transparent',
-    border: 'border-indigo-500/30',
-    icon: 'text-indigo-300 bg-indigo-500/20',
-    value: 'text-indigo-100',
-  },
-  emerald: {
-    bg: 'bg-gradient-to-br from-emerald-600/15 via-emerald-600/5 to-transparent',
-    border: 'border-emerald-500/30',
-    icon: 'text-emerald-300 bg-emerald-500/20',
-    value: 'text-emerald-100',
-  },
-  amber: {
-    bg: 'bg-gradient-to-br from-amber-600/15 via-amber-600/5 to-transparent',
-    border: 'border-amber-500/30',
-    icon: 'text-amber-300 bg-amber-500/20',
-    value: 'text-amber-100',
-  },
-  rose: {
-    bg: 'bg-gradient-to-br from-rose-600/15 via-rose-600/5 to-transparent',
-    border: 'border-rose-500/30',
-    icon: 'text-rose-300 bg-rose-500/20',
-    value: 'text-rose-100',
-  },
+const ACCENT_CLASSES: Record<KpiCardProps['accent'], { icon: string; iconBg: string }> = {
+  violet: { icon: 'text-violet-400', iconBg: 'bg-violet-500/10' },
+  indigo: { icon: 'text-indigo-400', iconBg: 'bg-indigo-500/10' },
+  emerald: { icon: 'text-emerald-400', iconBg: 'bg-emerald-500/10' },
+  amber: { icon: 'text-amber-400', iconBg: 'bg-amber-500/10' },
+  rose: { icon: 'text-rose-400', iconBg: 'bg-rose-500/10' },
 };
 
 function KpiCard({ icon: Icon, label, value, accent }: KpiCardProps) {
   const cls = ACCENT_CLASSES[accent];
   return (
-    <div
-      className={cn(
-        'relative overflow-hidden rounded-xl border backdrop-blur-sm px-4 py-3 transition-all hover:scale-[1.02]',
-        cls.bg,
-        cls.border
-      )}
-    >
-      <div className="flex items-center gap-3">
-        <div className={cn('flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center', cls.icon)}>
-          <Icon className="h-5 w-5" />
+    <div className="flex items-center gap-3 rounded-lg border border-slate-800/60 bg-slate-900/40 px-3 py-2.5">
+      <div className={cn('flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center', cls.iconBg)}>
+        <Icon className={cn('h-4 w-4', cls.icon)} />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="text-lg font-semibold text-slate-200 leading-none">
+          {typeof value === 'number' ? value.toLocaleString() : value}
         </div>
-        <div className="flex-1 min-w-0">
-          <div className={cn('text-2xl font-bold leading-none', cls.value)}>
-            {typeof value === 'number' ? value.toLocaleString() : value}
-          </div>
-          <div className="text-[11px] text-slate-400 uppercase tracking-wider mt-1 truncate">
-            {label}
-          </div>
+        <div className="text-[10px] text-slate-500 uppercase tracking-wider mt-0.5 truncate">
+          {label}
         </div>
       </div>
     </div>
@@ -165,34 +132,22 @@ export default function CommunityHubPage() {
           {/* HERO — visible only in home view                                 */}
           {/* ═══════════════════════════════════════════════════════════════ */}
           {view === 'home' && (
-            <div className="relative px-6 pt-6 pb-4">
-              {/* Decorative blobs */}
-              <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-0 left-1/4 w-72 h-72 bg-violet-600/10 rounded-full blur-3xl" />
-                <div className="absolute top-10 right-1/4 w-80 h-80 bg-indigo-600/10 rounded-full blur-3xl" />
-                <div className="absolute -top-10 right-0 w-64 h-64 bg-fuchsia-600/5 rounded-full blur-3xl" />
-              </div>
-
-              <div className="relative">
-                {/* Title row */}
-                <div className="flex items-start justify-between gap-4 mb-5">
-                  <div className="flex items-center gap-4">
-                    <div className="relative">
-                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/40">
-                        <Users className="h-7 w-7 text-white" />
-                      </div>
-                      <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-emerald-400 border-2 border-slate-950 animate-pulse" />
-                    </div>
-                    <div>
-                      <h1 className="text-2xl font-bold bg-gradient-to-r from-white via-violet-100 to-indigo-200 bg-clip-text text-transparent">
-                        {t('communityHub.title')}
-                      </h1>
-                      <p className="text-slate-400 text-sm mt-0.5 flex items-center gap-2">
-                        <Sparkles className="h-3.5 w-3.5 text-violet-400" />
-                        {t('communityHub.subtitle')}
-                      </p>
-                    </div>
+            <div className="px-6 pt-5 pb-4">
+              {/* Title row */}
+              <div className="flex items-start justify-between gap-4 mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-violet-500/10 flex items-center justify-center">
+                    <Users className="h-5 w-5 text-violet-400" />
                   </div>
+                  <div>
+                    <h1 className="text-xl font-semibold text-slate-200">
+                      {t('communityHub.title')}
+                    </h1>
+                    <p className="text-slate-500 text-xs mt-0.5">
+                      {t('communityHub.subtitle')}
+                    </p>
+                  </div>
+                </div>
 
                   {/* Actions toolbar */}
                   <div className="flex items-center gap-2">
@@ -252,7 +207,6 @@ export default function CommunityHubPage() {
                     accent="rose"
                   />
                 </div>
-              </div>
             </div>
           )}
 

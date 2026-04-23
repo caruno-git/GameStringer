@@ -62,56 +62,48 @@ const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>
   'off-topic': Coffee,
 };
 
-const CATEGORY_THEMES: Record<string, { gradient: string; glow: string; accent: string; icon: string }> = {
+const CATEGORY_THEMES: Record<string, { accent: string; icon: string; iconBg: string }> = {
   'announcements': {
-    gradient: 'from-rose-500/20 via-red-500/10 to-transparent',
-    glow: 'shadow-rose-500/20',
-    accent: 'text-rose-300',
-    icon: 'bg-gradient-to-br from-rose-500 to-red-600 text-white shadow-lg shadow-rose-500/40',
+    accent: 'text-rose-400',
+    icon: 'text-rose-400',
+    iconBg: 'bg-rose-500/10',
   },
   'translation-packs': {
-    gradient: 'from-amber-500/20 via-orange-500/10 to-transparent',
-    glow: 'shadow-amber-500/20',
-    accent: 'text-amber-300',
-    icon: 'bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/40',
+    accent: 'text-amber-400',
+    icon: 'text-amber-400',
+    iconBg: 'bg-amber-500/10',
   },
   'help': {
-    gradient: 'from-cyan-500/20 via-sky-500/10 to-transparent',
-    glow: 'shadow-cyan-500/20',
-    accent: 'text-cyan-300',
-    icon: 'bg-gradient-to-br from-cyan-500 to-sky-600 text-white shadow-lg shadow-cyan-500/40',
+    accent: 'text-cyan-400',
+    icon: 'text-cyan-400',
+    iconBg: 'bg-cyan-500/10',
   },
   'tutorials': {
-    gradient: 'from-violet-500/20 via-purple-500/10 to-transparent',
-    glow: 'shadow-violet-500/20',
-    accent: 'text-violet-300',
-    icon: 'bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-lg shadow-violet-500/40',
+    accent: 'text-violet-400',
+    icon: 'text-violet-400',
+    iconBg: 'bg-violet-500/10',
   },
   'requests': {
-    gradient: 'from-emerald-500/20 via-teal-500/10 to-transparent',
-    glow: 'shadow-emerald-500/20',
-    accent: 'text-emerald-300',
-    icon: 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/40',
+    accent: 'text-emerald-400',
+    icon: 'text-emerald-400',
+    iconBg: 'bg-emerald-500/10',
   },
   'showcase': {
-    gradient: 'from-yellow-500/20 via-amber-500/10 to-transparent',
-    glow: 'shadow-yellow-500/20',
-    accent: 'text-yellow-300',
-    icon: 'bg-gradient-to-br from-yellow-500 to-amber-600 text-white shadow-lg shadow-yellow-500/40',
+    accent: 'text-yellow-400',
+    icon: 'text-yellow-400',
+    iconBg: 'bg-yellow-500/10',
   },
   'off-topic': {
-    gradient: 'from-slate-500/20 via-slate-400/10 to-transparent',
-    glow: 'shadow-slate-500/20',
-    accent: 'text-slate-300',
-    icon: 'bg-gradient-to-br from-slate-500 to-slate-600 text-white shadow-lg shadow-slate-500/40',
+    accent: 'text-slate-400',
+    icon: 'text-slate-400',
+    iconBg: 'bg-slate-500/10',
   },
 };
 
 const DEFAULT_THEME = {
-  gradient: 'from-indigo-500/20 via-blue-500/10 to-transparent',
-  glow: 'shadow-indigo-500/20',
-  accent: 'text-indigo-300',
-  icon: 'bg-gradient-to-br from-indigo-500 to-blue-600 text-white shadow-lg shadow-indigo-500/40',
+  accent: 'text-indigo-400',
+  icon: 'text-indigo-400',
+  iconBg: 'bg-indigo-500/10',
 };
 
 // ─── FORUM HOME ─────────────────────────────────────────────────────────────
@@ -450,67 +442,45 @@ function CategoryCard({ category, onClick, onNewThread }: CategoryCardProps) {
   return (
     <button
       onClick={onClick}
-      className={cn(
-        'group relative overflow-hidden rounded-xl border border-slate-800 bg-slate-900/50 backdrop-blur-sm p-4 text-left transition-all duration-300',
-        'hover:border-slate-700 hover:bg-slate-900/80 hover:-translate-y-0.5',
-        'hover:shadow-xl',
-        theme.glow
-      )}
+      className="group relative rounded-lg border border-slate-800/60 bg-slate-900/40 p-3 text-left transition-all hover:border-slate-700 hover:bg-slate-800/50"
     >
-      {/* Gradient overlay */}
-      <div className={cn('absolute inset-0 bg-gradient-to-br opacity-40 group-hover:opacity-60 transition-opacity', theme.gradient)} />
-
-      {/* Decorative blob */}
-      <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white/5 blur-2xl group-hover:bg-white/10 transition-all" />
-
-      <div className="relative">
-        {/* Icon + title */}
-        <div className="flex items-start gap-3 mb-3">
-          <div className={cn('flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center', theme.icon)}>
-            <Icon className="h-5 w-5" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <h3 className="font-bold text-white text-sm leading-tight truncate">
-                {t(`forum.categoryNames.${category.slug}`) || category.name}
-              </h3>
-              {category.is_locked && <Lock className="h-3 w-3 text-slate-500 flex-shrink-0" />}
-            </div>
-            <p className="text-xs text-slate-400 mt-0.5 line-clamp-2">
-              {t(`forum.categoryDescriptions.${category.slug}`) || category.description || ''}
-            </p>
-          </div>
+      <div className="flex items-start gap-3">
+        <div className={cn('flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center', theme.iconBg)}>
+          <Icon className={cn('h-4 w-4', theme.icon)} />
         </div>
-
-        {/* Footer: count + actions */}
-        <div className="flex items-center justify-between pt-3 border-t border-slate-800">
-          <div className="flex items-center gap-1.5 text-xs">
-            <MessageSquare className={cn('h-3.5 w-3.5', threadCount > 0 ? theme.accent : 'text-slate-600')} />
-            <span className={cn('font-semibold', threadCount > 0 ? theme.accent : 'text-slate-500')}>
-              {threadCount}
-            </span>
-            <span className="text-slate-500">
-              {threadCount === 1 ? t('forum.discussion') : (t('forum.discussions') || t('forum.discussion'))}
-            </span>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <h3 className="font-semibold text-slate-200 text-sm leading-tight truncate">
+              {t(`forum.categoryNames.${category.slug}`) || category.name}
+            </h3>
+            {category.is_locked && <Lock className="h-3 w-3 text-slate-500 flex-shrink-0" />}
           </div>
-
-          <div className="flex items-center gap-1">
-            {!category.is_locked && (
-              <span
-                role="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onNewThread();
-                }}
-                className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-white"
-                title={t('forum.newThread')}
-              >
-                <Plus className="h-3.5 w-3.5" />
-              </span>
-            )}
-            <ChevronRight className="h-4 w-4 text-slate-500 group-hover:text-slate-300 group-hover:translate-x-0.5 transition-all" />
-          </div>
+          <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
+            {t(`forum.categoryDescriptions.${category.slug}`) || category.description || ''}
+          </p>
         </div>
+        <ChevronRight className="h-4 w-4 text-slate-600 group-hover:text-slate-400 transition-colors flex-shrink-0 mt-0.5" />
+      </div>
+
+      {/* Footer */}
+      <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-800/40">
+        <div className="flex items-center gap-1.5 text-xs text-slate-500">
+          <MessageSquare className="h-3 w-3" />
+          <span>{threadCount} {threadCount === 1 ? t('forum.discussion') : (t('forum.discussions') || 'discussioni')}</span>
+        </div>
+        {!category.is_locked && (
+          <span
+            role="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onNewThread();
+            }}
+            className="opacity-0 group-hover:opacity-100 transition-opacity text-xs text-slate-400 hover:text-white"
+            title={t('forum.newThread')}
+          >
+            <Plus className="h-3.5 w-3.5" />
+          </span>
+        )}
       </div>
     </button>
   );
@@ -532,65 +502,57 @@ function TrendingCard({ thread, locale, onClick }: TrendingCardProps) {
   return (
     <button
       onClick={onClick}
-      className={cn(
-        'group relative overflow-hidden rounded-xl border border-slate-800 bg-slate-900/50 backdrop-blur-sm p-3 text-left transition-all',
-        'hover:border-slate-700 hover:-translate-y-0.5 hover:shadow-lg',
-        theme.glow
-      )}
+      className="group rounded-lg border border-slate-800/60 bg-slate-900/40 p-3 text-left transition-all hover:border-slate-700 hover:bg-slate-800/50"
     >
-      <div className={cn('absolute inset-0 bg-gradient-to-br opacity-30 group-hover:opacity-50 transition-opacity', theme.gradient)} />
+      <div className="flex items-center gap-2 mb-2">
+        {thread.is_pinned && <Pin className="h-3 w-3 text-amber-400" />}
+        {thread.is_translation_pack && (
+          <Badge className="text-2xs h-4 px-1 bg-amber-600/20 text-amber-400 leading-tight">
+            <Package className="h-2.5 w-2.5 mr-0.5" /> PACK
+          </Badge>
+        )}
+        {category && (
+          <Badge variant="outline" className={cn('text-2xs h-4 px-1 border-slate-700/50', theme.accent)}>
+            {t(`forum.categoryNames.${category.slug}`) || category.name}
+          </Badge>
+        )}
+      </div>
 
-      <div className="relative">
-        <div className="flex items-center gap-2 mb-2">
-          {thread.is_pinned && <Pin className="h-3 w-3 text-amber-400" />}
-          {thread.is_translation_pack && (
-            <Badge className="text-2xs h-4 px-1 bg-amber-600/80 leading-tight">
-              <Package className="h-2.5 w-2.5 mr-0.5" /> PACK
-            </Badge>
-          )}
-          {category && (
-            <Badge variant="outline" className={cn('text-2xs h-4 px-1 border-slate-700', theme.accent)}>
-              {t(`forum.categoryNames.${category.slug}`) || category.name}
-            </Badge>
-          )}
+      <h4 className="text-sm font-medium text-slate-200 group-hover:text-white transition-colors line-clamp-2 mb-2">
+        {thread.title}
+      </h4>
+
+      <div className="flex items-center justify-between text-2xs">
+        <div className="flex items-center gap-2 text-slate-500 min-w-0">
+          <Avatar className="h-4 w-4 flex-shrink-0">
+            <AvatarImage src={thread.author_avatar || undefined} />
+            <AvatarFallback className="bg-slate-700 text-[9px]">
+              {thread.author_name.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <span className="truncate">{thread.author_name}</span>
         </div>
-
-        <h4 className="text-sm font-semibold text-white group-hover:text-violet-200 transition-colors line-clamp-2 mb-2 min-h-[2.5rem]">
-          {thread.title}
-        </h4>
-
-        <div className="flex items-center justify-between text-2xs">
-          <div className="flex items-center gap-2 text-slate-400 min-w-0">
-            <Avatar className="h-5 w-5 flex-shrink-0">
-              <AvatarImage src={thread.author_avatar || undefined} />
-              <AvatarFallback className="bg-slate-700 text-[10px]">
-                {thread.author_name.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <span className="truncate">{thread.author_name}</span>
-          </div>
-          <div className="flex items-center gap-2 text-slate-400 flex-shrink-0">
-            <span className="flex items-center gap-0.5">
-              <Eye className="h-3 w-3" />
-              {thread.view_count}
+        <div className="flex items-center gap-2 text-slate-500 flex-shrink-0">
+          <span className="flex items-center gap-0.5">
+            <Eye className="h-3 w-3" />
+            {thread.view_count}
+          </span>
+          {thread.is_translation_pack ? (
+            <span className="flex items-center gap-0.5 text-amber-400">
+              <Download className="h-3 w-3" />
+              {thread.download_count}
             </span>
-            {thread.is_translation_pack ? (
-              <span className="flex items-center gap-0.5 text-amber-300">
-                <Download className="h-3 w-3" />
-                {thread.download_count}
-              </span>
-            ) : (
-              <span className="flex items-center gap-0.5">
-                <MessageSquare className="h-3 w-3" />
-                {thread.reply_count}
-              </span>
-            )}
-          </div>
+          ) : (
+            <span className="flex items-center gap-0.5">
+              <MessageSquare className="h-3 w-3" />
+              {thread.reply_count}
+            </span>
+          )}
         </div>
+      </div>
 
-        <div className="text-2xs text-slate-500 mt-1">
-          {formatDistanceToNow(new Date(thread.created_at), { addSuffix: true, locale })}
-        </div>
+      <div className="text-2xs text-slate-600 mt-1">
+        {formatDistanceToNow(new Date(thread.created_at), { addSuffix: true, locale })}
       </div>
     </button>
   );

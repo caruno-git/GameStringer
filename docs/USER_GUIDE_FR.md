@@ -485,4 +485,40 @@ Chat en temps réel intégré au Community Hub, propulsé par Supabase Realtime.
 
 ---
 
-GameStringer v1.8.1 - Guide mise à jour le 09/04/2026
+## Nouveautés v1.8.2
+
+### Améliorations UI du Community Hub
+- **Community Hub redessiné**: design plus propre et cohérent sans dégradés excessifs et blobs décoratifs
+- **KPI Cards compactes**: cartes statistiques plus petites et discrètes avec des couleurs minimales
+- **Category Cards minimalistes**: design propre sans dégradés lourds et ombres
+- **Trending Cards unifiées**: style cohérent sur tous les types de cartes
+
+### Sidebar Amis Compacte
+- **Largeur réduite**: de 72 à 56 (w-56) pour plus d'espace d'écran
+- **Friend Cards compactes**: avatars plus petits (7x7), espacement plus serré
+- **Sections plus petites**: en-têtes Online/Offline avec texte réduit
+- **Scrollbar ultra-fine**: 4px, invisible par défaut, apparaît au survol
+
+### Améliorations du Chat Persistant
+- **Bouton de chat discret**: élégant, petit en bas à droite
+- **Visible sur toutes les pages**: chat accessible dans toute l'application
+- **Design plus propre**: animations et décorations excessives supprimées
+
+### Fonctionnalités Sociales Supabase
+- **Schéma compatible**: schéma social Supabase aligné avec les attentes du frontend (tools/supabase_social_compatible.sql)
+- **RLS désactivé temporairement**: pour débogage plus facile des fonctionnalités sociales
+- **Fix chat participants**: noms de colonnes corrigés pour validation UUID
+
+### Corrections de Bugs
+- **Fix Loop Chat**: ajouté état chatAttempted pour éviter boucle infinie dans startDirectChat
+- **Suppression Mock Data**: supprimé données mock UUID invalides (user-123, etc.) causant erreurs 400
+- **Fix Ollama IPC**: remplacé tous les appels check_ollama_status IPC par HTTP direct vers localhost:11434
+- **Lien Stores**: ajouté lien Stores dans section Ressources de la sidebar
+- **Epic Connect**: changé d'OAuth défaillant à modal d'identifiants
+- **Test de Connexion**: testConnection utilise désormais de vraies commandes Tauri au lieu d'API simulée
+- **Fix Disconnect**: ajouté suppression identifiants Epic/Steam dans backend Tauri
+- **Fix Presence**: ajouté garde de session dans updatePresence pour éviter 400 Bad Request
+
+---
+
+GameStringer v1.8.2 - Guide mise à jour le 23/04/2026

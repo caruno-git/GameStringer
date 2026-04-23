@@ -269,102 +269,60 @@ function FriendCard({
   };
 
   return (
-    <TooltipProvider delayDuration={200}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div
-            ref={setNodeRef}
-            style={style}
-            {...attributes}
-            {...listeners}
-            className={cn(
-              'group flex items-center gap-3 p-2.5 rounded-xl cursor-pointer',
-              'bg-slate-800/40 hover:bg-slate-700/60 transition-all duration-200',
-              'border border-transparent hover:border-slate-600/50',
-              isDragging && 'opacity-50 scale-95',
-              'active:scale-[0.98]'
-            )}
-            onClick={() => onStartChat(friend)}
-          >
-            {/* Avatar with Status */}
-            <div className="relative shrink-0">
-              <Avatar className={cn(
-                'h-10 w-10 ring-2 ring-offset-2 ring-offset-slate-900 transition-all duration-300',
-                status !== 'offline' && statusGlow[status as keyof typeof statusGlow],
-                'group-hover:ring-slate-600'
-              )}>
-                <AvatarImage src={friend.profile.avatar_url || undefined} />
-                <AvatarFallback className="bg-gradient-to-br from-slate-600 to-slate-700 text-white text-sm">
-                  {friend.profile.username?.slice(0, 2).toUpperCase() || '??'}
-                </AvatarFallback>
-              </Avatar>
-              <div className={cn(
-                'absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-900',
-                statusColors[status as keyof typeof statusColors],
-                status === 'online' && 'animate-pulse'
-              )} />
-            </div>
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className={cn(
+        'group flex items-center gap-2 px-2 py-1.5 rounded-md cursor-pointer',
+        'hover:bg-slate-800/60 transition-colors',
+        isDragging && 'opacity-50'
+      )}
+      onClick={() => onStartChat(friend)}
+    >
+      {/* Avatar with Status */}
+      <div className="relative shrink-0">
+        <Avatar className="h-7 w-7">
+          <AvatarImage src={friend.profile.avatar_url || undefined} />
+          <AvatarFallback className="bg-slate-700 text-slate-300 text-[10px]">
+            {friend.profile.username?.slice(0, 2).toUpperCase() || '??'}
+          </AvatarFallback>
+        </Avatar>
+        <div className={cn(
+          'absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-slate-900',
+          statusColors[status as keyof typeof statusColors]
+        )} />
+      </div>
 
-            {/* Info */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="font-semibold text-sm text-slate-200 truncate group-hover:text-white transition-colors">
-                  {friend.profile.username || 'Utente'}
-                </span>
-                {isQuickAccess && (
-                  <Pin className="h-3 w-3 text-violet-400 fill-violet-400" />
-                )}
-              </div>
-              <p className={cn(
-                'text-xs truncate transition-colors',
-                status === 'online' && 'text-emerald-400',
-                status === 'away' && 'text-amber-400',
-                status === 'busy' && 'text-rose-400',
-                status === 'offline' && 'text-slate-500',
-                !activity && status === 'online' && 'text-emerald-400/70'
-              )}>
-                {activity || (status === 'online' ? 'Online' : status === 'away' ? 'Assente' : status === 'busy' ? 'Occupato' : 'Offline')}
-              </p>
-            </div>
+      {/* Info */}
+      <div className="flex-1 min-w-0">
+        <span className="text-xs text-slate-300 truncate block">
+          {friend.profile.username || 'Utente'}
+        </span>
+        <span className={cn(
+          'text-[10px] truncate block',
+          status === 'online' && 'text-emerald-400',
+          status === 'away' && 'text-amber-400',
+          status === 'busy' && 'text-rose-400',
+          status === 'offline' && 'text-slate-500'
+        )}>
+          {activity || (status === 'online' ? 'Online' : status === 'away' ? 'Assente' : status === 'busy' ? 'Occupato' : 'Offline')}
+        </span>
+      </div>
 
-            {/* Quick Actions - Visible on Hover */}
-            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              {!isQuickAccess && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onAddToQuickAccess();
-                  }}
-                  className="p-1.5 rounded-lg hover:bg-violet-500/20 text-slate-400 hover:text-violet-400 transition-colors"
-                  title="Aggiungi ad Accesso Rapido"
-                >
-                  <Pin className="h-4 w-4" />
-                </button>
-              )}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onStartChat(friend);
-                }}
-                className="p-1.5 rounded-lg hover:bg-blue-500/20 text-slate-400 hover:text-blue-400 transition-colors"
-                title="Avvia chat"
-              >
-                <MessageCircle className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-        </TooltipTrigger>
-        <TooltipContent side="left" className="max-w-[200px]">
-          <div className="space-y-1">
-            <p className="font-semibold">{friend.profile.username}</p>
-            <p className="text-xs text-slate-400">{activity || status}</p>
-            {!isQuickAccess && (
-              <p className="text-[10px] text-violet-400">Trascina in Accesso Rapido</p>
-            )}
-          </div>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+      {/* Chat button on hover */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onStartChat(friend);
+        }}
+        className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-slate-700 text-slate-500 hover:text-cyan-400 transition-all"
+        title="Chat"
+      >
+        <MessageCircle className="h-3.5 w-3.5" />
+      </button>
+    </div>
   );
 }
 
@@ -542,61 +500,57 @@ export function FriendsSidebar({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="w-72 bg-slate-900/95 border-l border-slate-800 flex flex-col h-full">
+      <div className="w-56 bg-slate-900/95 border-l border-slate-800/60 flex flex-col h-full">
         {/* Header */}
-        <div className="p-3 border-b border-slate-800 bg-gradient-to-r from-slate-900 to-slate-800/50">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600">
-                <Users className="h-4 w-4 text-white" />
-              </div>
-              <span className="font-bold text-slate-200">Amici</span>
-              <Badge variant="secondary" className="bg-slate-800 text-slate-400 text-[10px]">
-                {onlineFriends.length}/{friends.length}
-              </Badge>
+        <div className="px-3 py-2 border-b border-slate-800/60">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-1.5">
+              <Users className="h-4 w-4 text-slate-400" />
+              <span className="text-xs font-medium text-slate-300">Amici</span>
+              <span className="text-[10px] text-slate-500">{onlineFriends.length}/{friends.length}</span>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center">
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 text-slate-400 hover:text-white"
+                className="h-6 w-6 text-slate-500 hover:text-white"
               >
-                <UserPlus className="h-4 w-4" />
+                <UserPlus className="h-3.5 w-3.5" />
               </Button>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={onToggle}
-                className="h-7 w-7 text-slate-400 hover:text-white"
+                className="h-6 w-6 text-slate-500 hover:text-white"
               >
-                <ChevronDown className="h-4 w-4 rotate-90" />
+                <ChevronDown className="h-3.5 w-3.5 rotate-90" />
               </Button>
             </div>
           </div>
 
           {/* Search */}
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
+            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-slate-500" />
             <Input
-              placeholder="Cerca amici..."
+              placeholder="Cerca..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-8 pl-8 text-xs bg-slate-800/50 border-slate-700 text-slate-200 placeholder:text-slate-500"
+              className="h-7 pl-7 text-xs bg-slate-800/40 border-slate-700/50 text-slate-300 placeholder:text-slate-500"
             />
           </div>
         </div>
 
-        <ScrollArea className="flex-1 [&_[data-radix-scroll-area-viewport]]:!overflow-y-auto [&_[data-radix-scroll-area-scrollbar]]:w-1.5 [&_[data-radix-scroll-area-thumb]]:bg-slate-600">
-          <div className="p-3 space-y-4">
+        <ScrollArea className="flex-1 [&_[data-radix-scroll-area-viewport]]:!overflow-y-auto [&_[data-radix-scroll-area-scrollbar]]:w-1 [&_[data-radix-scroll-area-thumb]]:bg-slate-700">
+          <div className="p-2 space-y-3">
             {/* Quick Access Section */}
             {quickAccessItems.length > 0 ? (
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-violet-400 flex items-center gap-1.5">
-                    <Zap className="h-3 w-3" />
-                    Accesso Rapido
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between px-1">
+                  <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                    <Zap className="h-2.5 w-2.5" />
+                    Rapido
                   </span>
-                  <span className="text-[10px] text-slate-500">{quickAccessItems.length}</span>
+                  <span className="text-[10px] text-slate-600">{quickAccessItems.length}</span>
                 </div>
                 <SortableContext
                   items={quickAccessItems.map(i => i.id)}
@@ -686,26 +640,26 @@ export function FriendsSidebar({
 
             {/* Online Friends */}
             {onlineFriends.length > 0 && (
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <button
                   onClick={() => toggleSection('online')}
-                  className="w-full flex items-center justify-between group"
+                  className="w-full flex items-center justify-between px-1"
                 >
-                  <span className="text-xs font-semibold text-emerald-400 flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-[10px] font-medium text-emerald-400 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                     Online
                   </span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] text-slate-500">{onlineFriends.length}</span>
+                  <div className="flex items-center gap-1">
+                    <span className="text-[10px] text-slate-600">{onlineFriends.length}</span>
                     {expandedSections.online ? (
-                      <ChevronUp className="h-3 w-3 text-slate-500" />
+                      <ChevronUp className="h-2.5 w-2.5 text-slate-600" />
                     ) : (
-                      <ChevronDown className="h-3 w-3 text-slate-500" />
+                      <ChevronDown className="h-2.5 w-2.5 text-slate-600" />
                     )}
                   </div>
                 </button>
                 {expandedSections.online && (
-                  <div className="space-y-1">
+                  <div className="space-y-0.5">
                     {onlineFriends.map((friend) => (
                       <FriendCard
                         key={friend.friend_id}
@@ -723,21 +677,21 @@ export function FriendsSidebar({
 
             {/* Offline Friends */}
             {offlineFriends.length > 0 && (
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <button
                   onClick={() => toggleSection('offline')}
-                  className="w-full flex items-center justify-between group"
+                  className="w-full flex items-center justify-between px-1"
                 >
-                  <span className="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-slate-500" />
+                  <span className="text-[10px] font-medium text-slate-500 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-600" />
                     Offline
                   </span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] text-slate-500">{offlineFriends.length}</span>
+                  <div className="flex items-center gap-1">
+                    <span className="text-[10px] text-slate-600">{offlineFriends.length}</span>
                     {expandedSections.offline ? (
-                      <ChevronUp className="h-3 w-3 text-slate-500" />
+                      <ChevronUp className="h-2.5 w-2.5 text-slate-600" />
                     ) : (
-                      <ChevronDown className="h-3 w-3 text-slate-500" />
+                      <ChevronDown className="h-2.5 w-2.5 text-slate-600" />
                     )}
                   </div>
                 </button>
