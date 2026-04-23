@@ -724,6 +724,174 @@ pub async fn test_launcher_functionality(launcher: String) -> Result<LaunchResul
 }
 
 // ================================================================================================
+// GAME INSTALLATION SYSTEM
+// ================================================================================================
+
+/// Installa un gioco Steam usando il protocollo steam://install/appid
+#[tauri::command]
+pub async fn install_steam_game(app_id: String) -> Result<LaunchResult, String> {
+    info!("⬇️ Tentativo di installazione gioco Steam: {}", app_id);
+    
+    // Validazione App ID
+    if !is_valid_steam_app_id(&app_id) {
+        let error_msg = format!("App ID Steam non valido: {}", app_id);
+        error!("{}", error_msg);
+        return Ok(LaunchResult {
+            success: false,
+            message: error_msg,
+            method: "steam_install_protocol".to_string(),
+            game_id: app_id,
+            store: "Steam".to_string(),
+        });
+    }
+
+    // Protocollo Steam per installazione
+    let steam_url = format!("steam://install/{}", app_id);
+    match launch_with_steam_protocol(&steam_url, &app_id).await {
+        Ok(result) => {
+            info!("✅ Installazione gioco Steam {} avviata con successo", app_id);
+            Ok(LaunchResult {
+                success: true,
+                message: format!("Installazione avviata per Steam app {}. Steam si aprirà per completare l'installazione.", app_id),
+                method: "steam_install_protocol".to_string(),
+                game_id: app_id,
+                store: "Steam".to_string(),
+            })
+        }
+        Err(e) => {
+            let error_msg = format!("Impossibile avviare installazione Steam {}: {}", app_id, e);
+            error!("{}", error_msg);
+            Ok(LaunchResult {
+                success: false,
+                message: error_msg,
+                method: "failed".to_string(),
+                game_id: app_id,
+                store: "Steam".to_string(),
+            })
+        }
+    }
+}
+
+/// Installa un gioco Epic Games (apre la pagina del gioco nel launcher)
+#[tauri::command]
+pub async fn install_epic_game(app_name: String, game_title: String) -> Result<LaunchResult, String> {
+    info!("⬇️ Tentativo di installazione gioco Epic Games: {}", app_name);
+    
+    // Validazione App Name
+    if app_name.trim().is_empty() {
+        let error_msg = "App Name Epic Games non può essere vuoto".to_string();
+        error!("{}", error_msg);
+        return Ok(LaunchResult {
+            success: false,
+            message: error_msg,
+            method: "epic_install_protocol".to_string(),
+            game_id: app_name,
+            store: "Epic Games".to_string(),
+        });
+    }
+
+    // Protocollo Epic Games per aprire la pagina del gioco
+    let epic_url = format!("com.epicgames.launcher://apps/{}?action=view", app_name);
+    match launch_with_epic_protocol(&epic_url, &app_name).await {
+        Ok(result) => {
+            info!("✅ Pagina installazione Epic Games {} aperta con successo", app_name);
+            Ok(LaunchResult {
+                success: true,
+                message: format!("Epic Games Launcher aperto per '{}'. Clicca su 'Installa' nel launcher.", game_title),
+                method: "epic_install_protocol".to_string(),
+                game_id: app_name,
+                store: "Epic Games".to_string(),
+            })
+        }
+        Err(e) => {
+            let error_msg = format!("Impossibile aprire pagina Epic Games {}: {}", app_name, e);
+            error!("{}", error_msg);
+            Ok(LaunchResult {
+                success: false,
+                message: error_msg,
+                method: "failed".to_string(),
+                game_id: app_name,
+                store: "Epic Games".to_string(),
+            })
+        }
+    }
+}
+
+/// Installa un gioco GOG (apre la pagina del gioco in Galaxy)
+#[tauri::command]
+pub async fn install_gog_game(game_id: String, game_title: String) -> Result<LaunchResult, String> {
+    info!("⬇️ Tentativo di installazione gioco GOG: {}", game_id);
+    
+    // Validazione Game ID
+    if game_id.trim().is_empty() {
+        let error_msg = "Game ID GOG non può essere vuoto".to_string();
+        error!("{}", error_msg);
+        return Ok(LaunchResult {
+            success: false,
+            message: error_msg,
+            method: "gog_install_protocol".to_string(),
+            game_id,
+            store: "GOG".to_string(),
+        });
+    }
+
+    // Protocollo GOG per aprire la pagina del gioco
+    let gog_url = format!("goggalaxy://openGameView/{}", game_id);
+    match launch_with_gog_protocol(&gog_url, &game_id).await {
+        Ok(result) => {
+            info!("✅ Pagina installazione GOG {} aperta con successo", game_id);
+            Ok(LaunchResult {
+                success: true,
+                message: format!("GOG Galaxy aperto per '{}'. Clicca su 'Installa' in Galaxy.", game_title),
+                method: "gog_install_protocol".to_string(),
+                game_id,
+                store: "GOG".to_string(),
+            })
+        }
+        Err(e) => {
+            let error_msg = format!("Impossibile aprire pagina GOG {}: {}", game_id, e);
+            error!("{}", error_msg);
+            Ok(LaunchResult {
+                success: false,
+                message: error_msg,
+                method: "failed".to_string(),
+                game_id,
+                store: "GOG".to_string(),
+            })
+        }
+    }
+}
+
+/// Sistema di installazione universale
+#[tauri::command]
+pub async fn install_game_universal(request: LaunchRequest) -> Result<LaunchResult, String> {
+    info!("⬇️ Installazione universale gioco: {} (Store: {})", request.game_name, request.store);
+    
+    match request.store.to_lowercase().as_str() {
+        "steam" => {
+            install_steam_game(request.game_id).await
+        }
+        "epic games" | "epic" => {
+            install_epic_game(request.game_id, request.game_name).await
+        }
+        "gog" => {
+            install_gog_game(request.game_id, request.game_name).await
+        }
+        _ => {
+            let error_msg = format!("Store non supportato per l'installazione: {}", request.store);
+            error!("{}", error_msg);
+            Ok(LaunchResult {
+                success: false,
+                message: error_msg,
+                method: "unsupported_store".to_string(),
+                game_id: request.game_id,
+                store: request.store,
+            })
+        }
+    }
+}
+
+// ================================================================================================
 // OPEN PATH IN EXPLORER
 // ================================================================================================
 

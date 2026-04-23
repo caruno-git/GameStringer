@@ -2969,8 +2969,26 @@
     "searchThreads": "スレッド、ゲーム、作者を検索...",
     "threadsLabel": "ディスカッション",
     "trendingNow": "トレンド",
-    "categories": "カテゴリ",
-    "discussions": "ディスカッション",
+    "categories": "カテゴリー",
+    "categoryNames": {
+      "announcements": "お知らせ",
+      "translation-packs": "翻訳パック",
+      "help": "サポート",
+      "tutorials": "ガイドとチュートリアル",
+      "requests": "リクエスト",
+      "showcase": "ショーケース",
+      "off-topic": "オフトピック"
+    },
+    "categoryDescriptions": {
+      "announcements": "GameStringerの最新情報と公式アップデート",
+      "translation-packs": "ゲームの完全な翻訳を共有してダウンロード",
+      "help": "技術的な問題や使用方法の質問について助けを求める",
+      "tutorials": "翻訳のチュートリアル、ガイド、ベストプラクティス",
+      "requests": "特定のゲームの翻訳をリクエスト",
+      "showcase": "完了した翻訳プロジェクトを披露する",
+      "off-topic": "翻訳に関係ない一般的な議論"
+    },
+    "discussions": "件の議論",
     "allThreads": "すべてのスレッド",
     "beTheFirst": "最初の一人になろう！",
     "emptyDescription": "まだディスカッションがありません。最初のスレッドを開いてコミュニティと会話を始めましょう！"

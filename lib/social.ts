@@ -628,10 +628,16 @@ export async function getOrCreateDirectConversation(
     if (convError || !conv) return null;
 
     // Aggiungi partecipanti
-    await supabase.from('chat_participants').insert([
+    console.log('[Social] Inserting participants:', { conv_id: conv.id, userId1, userId2 });
+    const { data: partData, error: partError, status, statusText } = await supabase.from('chat_participants').insert([
       { conversation_id: conv.id, user_id: userId1, role: 'admin' },
       { conversation_id: conv.id, user_id: userId2, role: 'member' }
-    ]);
+    ]).select();
+
+    console.log('[Social] Insert result:', { partData, partError, status, statusText });
+    if (partError) {
+      console.error('[Social] chat_participants insert error:', JSON.stringify(partError, null, 2));
+    }
 
     return conv;
   } catch {

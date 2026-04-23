@@ -14,6 +14,7 @@ import { useSearchParams } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n';
 import { ForumHome, ThreadView, NewThread } from '@/components/forum';
 import { FriendsSidebar, NotificationsPanel, OnlineIndicator, ChatPanel } from '@/components/social';
+import { SocialOnboarding } from '@/components/social/social-onboarding';
 import { useProfiles } from '@/hooks/use-profiles';
 import { updatePresence } from '@/lib/social';
 import { getForumStats, type ForumStats } from '@/lib/forum';
@@ -157,9 +158,9 @@ export default function CommunityHubPage() {
 
   return (
     <TooltipProvider>
-      <div className="h-full flex relative">
+      <div className="h-full flex relative overflow-hidden">
         {/* Main Content */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar">
+        <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
           {/* ═══════════════════════════════════════════════════════════════ */}
           {/* HERO — visible only in home view                                 */}
           {/* ═══════════════════════════════════════════════════════════════ */}
@@ -294,7 +295,7 @@ export default function CommunityHubPage() {
         {/* Chat Panel (slide-in) */}
         {userId && showChat && (
           <div className="w-80 border-l border-slate-800 bg-slate-950/50 backdrop-blur-sm">
-            <ChatPanel userId={userId} />
+            <ChatPanel userId={userId} initialUserId={_chatUserId || undefined} />
           </div>
         )}
 
@@ -308,9 +309,16 @@ export default function CommunityHubPage() {
               setChatUserId(friendUserId);
               setShowChat(true);
             }}
+            onStartChat={(friendUserId) => {
+              setChatUserId(friendUserId);
+              setShowChat(true);
+            }}
           />
         )}
       </div>
+      
+      {/* Onboarding Tutorial */}
+      <SocialOnboarding />
     </TooltipProvider>
   );
 }

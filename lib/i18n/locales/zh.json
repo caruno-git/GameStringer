@@ -2970,6 +2970,24 @@
     "threadsLabel": "讨论",
     "trendingNow": "热门",
     "categories": "分类",
+    "categoryNames": {
+      "announcements": "公告",
+      "translation-packs": "翻译包",
+      "help": "支持",
+      "tutorials": "指南与教程",
+      "requests": "请求",
+      "showcase": "展示",
+      "off-topic": "闲聊"
+    },
+    "categoryDescriptions": {
+      "announcements": "GameStringer的新闻和官方更新",
+      "translation-packs": "分享和下载游戏的完整翻译",
+      "help": "寻求技术问题或使用问题的帮助",
+      "tutorials": "翻译的教程、指南和最佳实践",
+      "requests": "请求特定游戏的翻译",
+      "showcase": "展示您已完成的翻译项目",
+      "off-topic": "与翻译无关的一般讨论"
+    },
     "discussions": "讨论",
     "allThreads": "所有主题",
     "beTheFirst": "成为第一个！",

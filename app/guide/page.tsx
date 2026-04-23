@@ -659,6 +659,225 @@ export default function GuidePage() {
                 </CardHeader>
               </Card>
 
+              {/* ── CARD 5: Live Translation Overlay (v1.8.0) ─────────── */}
+              <Card className="border-cyan-500/30 bg-gradient-to-br from-cyan-950/20 to-slate-900/30">
+                <CardHeader className="py-2 px-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Scan className="w-4 h-4 text-cyan-400" />
+                    {g.overlayTitle}
+                    <Badge variant="outline" className="ml-auto text-2xs border-cyan-500/40 text-cyan-300">v1.8.0</Badge>
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    {g.overlayDesc}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-0">
+                  <Step number={1} title={g.overlayStep1Title}>
+                    <p>{g.overlayStep1Line1} <kbd className="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-600 text-2xs font-mono">Ctrl+Alt+O</kbd>.</p>
+                  </Step>
+                  <Step number={2} title={g.overlayStep2Title}>
+                    <p>{g.overlayStep2Line1}</p>
+                  </Step>
+                  <Step number={3} title={g.overlayStep3Title}>
+                    <p>{g.overlayStep3Line1}</p>
+                  </Step>
+                  <Tip variant="info">{g.overlayTip}</Tip>
+                </CardContent>
+              </Card>
+
+              {/* ── CARD 6: Hub Marketplace (v1.8.0) ──────────────────── */}
+              <Card className="border-fuchsia-500/30 bg-gradient-to-br from-fuchsia-950/20 to-slate-900/30">
+                <CardHeader className="py-2 px-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Database className="w-4 h-4 text-fuchsia-400" />
+                    {g.marketplaceTitle}
+                    <Badge variant="outline" className="ml-auto text-2xs border-fuchsia-500/40 text-fuchsia-300">v1.8.0</Badge>
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    {g.marketplaceDesc}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-0">
+                  <Step number={1} title={g.marketplaceStep1Title}>
+                    <p>{g.marketplaceStep1Line1}</p>
+                  </Step>
+                  <Step number={2} title={g.marketplaceStep2Title}>
+                    <p>{g.marketplaceStep2Line1}</p>
+                  </Step>
+                  <Step number={3} title={g.marketplaceStep3Title}>
+                    <p>{g.marketplaceStep3Line1}</p>
+                  </Step>
+                  <Tip variant="info">{g.marketplaceTip}</Tip>
+                </CardContent>
+              </Card>
+
+              {/* ── CARD 7: Translation Memory Network (v1.8.0) ─────────── */}
+              <Card className="border-slate-500/30 bg-gradient-to-br from-slate-800/30 to-slate-900/30">
+                <CardHeader className="py-2 px-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Layers className="w-4 h-4 text-slate-400" />
+                    {g.tmTitle}
+                    <Badge variant="outline" className="ml-auto text-2xs border-slate-500/40 text-slate-300">v1.8.0</Badge>
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    {g.tmDesc}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-0">
+                  <Step number={1} title={g.tmStep1Title}>
+                    <p>{g.tmStep1Line1}</p>
+                  </Step>
+                  <Step number={2} title={g.tmStep2Title}>
+                    <p>{g.tmStep2Line1}</p>
+                  </Step>
+                  <Tip variant="info">{g.tmTip}</Tip>
+                </CardContent>
+              </Card>
+
+              {/* ── CARD 8: AI Dubbing Pipeline (v1.8.0) ──────────────── */}
+              <Card className="border-violet-500/30 bg-gradient-to-br from-violet-950/20 to-slate-900/30">
+                <CardHeader className="py-2 px-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Mic className="w-4 h-4 text-violet-400" />
+                    {g.dubbingTitle}
+                    <Badge variant="outline" className="ml-auto text-2xs border-violet-500/40 text-violet-300">v1.8.0</Badge>
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    {g.dubbingDesc}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-0">
+                  <Step number={1} title={g.dubbingStep1Title}>
+                    <p>{g.dubbingStep1Line1}</p>
+                  </Step>
+                  <Step number={2} title={g.dubbingStep2Title}>
+                    <p>{g.dubbingStep2Line1}</p>
+                  </Step>
+                  <Step number={3} title={g.dubbingStep3Title}>
+                    <p>{g.dubbingStep3Line1}</p>
+                  </Step>
+                  <Tip variant="info">{g.dubbingTip}</Tip>
+                </CardContent>
+              </Card>
+
+              {/* ── CARD 9: Auto-Select Engine (v1.7.0) ───────────────── */}
+              <Card className="border-blue-500/30 bg-gradient-to-br from-blue-950/20 to-slate-900/30">
+                <CardHeader className="py-2 px-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Brain className="w-4 h-4 text-blue-400" />
+                    {g.autoSelectTitle}
+                    <Badge variant="outline" className="ml-auto text-2xs border-blue-500/40 text-blue-300">v1.7.0</Badge>
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    {g.autoSelectDesc}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-0">
+                  <Step number={1} title={g.autoSelectStep1Title}>
+                    <p>{g.autoSelectStep1Line1}</p>
+                  </Step>
+                  <Step number={2} title={g.autoSelectStep2Title}>
+                    <p>{g.autoSelectStep2Line1}</p>
+                  </Step>
+                  <Tip variant="info">{g.autoSelectTip}</Tip>
+                </CardContent>
+              </Card>
+
+              {/* ── CARD 10: Gridly CSV (v1.7.0) ──────────────────────── */}
+              <Card className="border-emerald-500/30 bg-gradient-to-br from-emerald-950/20 to-slate-900/30">
+                <CardHeader className="py-2 px-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-emerald-400" />
+                    {g.gridlyTitle}
+                    <Badge variant="outline" className="ml-auto text-2xs border-emerald-500/40 text-emerald-300">v1.7.0</Badge>
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    {g.gridlyDesc}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-0">
+                  <Step number={1} title={g.gridlyStep1Title}>
+                    <p>{g.gridlyStep1Line1}</p>
+                  </Step>
+                  <Step number={2} title={g.gridlyStep2Title}>
+                    <p>{g.gridlyStep2Line1}</p>
+                  </Step>
+                  <Tip variant="info">{g.gridlyTip}</Tip>
+                </CardContent>
+              </Card>
+
+              {/* ── CARD 11: Plugin System (v1.8.0) ─────────────────────── */}
+              <Card className="border-rose-500/30 bg-gradient-to-br from-rose-950/20 to-slate-900/30">
+                <CardHeader className="py-2 px-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Wrench className="w-4 h-4 text-rose-400" />
+                    {g.pluginTitle}
+                    <Badge variant="outline" className="ml-auto text-2xs border-rose-500/40 text-rose-300">v1.8.0</Badge>
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    {g.pluginDesc}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-0">
+                  <Step number={1} title={g.pluginStep1Title}>
+                    <p>{g.pluginStep1Line1}</p>
+                  </Step>
+                  <Step number={2} title={g.pluginStep2Title}>
+                    <p>{g.pluginStep2Line1}</p>
+                  </Step>
+                  <Step number={3} title={g.pluginStep3Title}>
+                    <p>{g.pluginStep3Line1}</p>
+                  </Step>
+                  <Tip variant="info">{g.pluginTip}</Tip>
+                </CardContent>
+              </Card>
+
+              {/* ── CARD 12: Ollama HTTP Direct (v1.8.2) ────────────────── */}
+              <Card className="border-teal-500/30 bg-gradient-to-br from-teal-950/20 to-slate-900/30">
+                <CardHeader className="py-2 px-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Cpu className="w-4 h-4 text-teal-400" />
+                    {g.ollamaHttpTitle}
+                    <Badge variant="outline" className="ml-auto text-2xs border-teal-500/40 text-teal-300">v1.8.2</Badge>
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    {g.ollamaHttpDesc}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-0">
+                  <Step number={1} title={g.ollamaHttpStep1Title}>
+                    <p>{g.ollamaHttpStep1Line1}</p>
+                  </Step>
+                  <Step number={2} title={g.ollamaHttpStep2Title}>
+                    <p>{g.ollamaHttpStep2Line1}</p>
+                  </Step>
+                  <Tip variant="info">{g.ollamaHttpTip}</Tip>
+                </CardContent>
+              </Card>
+
+              {/* ── CARD 13: Epic Credentials (v1.8.2) ──────────────────── */}
+              <Card className="border-yellow-500/30 bg-gradient-to-br from-yellow-950/20 to-slate-900/30">
+                <CardHeader className="py-2 px-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Gamepad2 className="w-4 h-4 text-yellow-400" />
+                    {g.epicCredsTitle}
+                    <Badge variant="outline" className="ml-auto text-2xs border-yellow-500/40 text-yellow-300">v1.8.2</Badge>
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    {g.epicCredsDesc}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-0">
+                  <Step number={1} title={g.epicCredsStep1Title}>
+                    <p>{g.epicCredsStep1Line1}</p>
+                  </Step>
+                  <Step number={2} title={g.epicCredsStep2Title}>
+                    <p>{g.epicCredsStep2Line1}</p>
+                  </Step>
+                  <Tip variant="info">{g.epicCredsTip}</Tip>
+                </CardContent>
+              </Card>
+
             </div>
           </ScrollArea>
         </TabsContent>

@@ -294,14 +294,16 @@ function ChatView({ conversation, currentUserId, onBack }: ChatViewProps) {
 
 interface ChatPanelProps {
   userId: string;
+  initialUserId?: string;
   onStartChat?: (userId: string) => void;
 }
 
-export function ChatPanel({ userId }: ChatPanelProps) {
+export function ChatPanel({ userId, initialUserId }: ChatPanelProps) {
   const { t } = useTranslation();
   const [conversations, setConversations] = useState<ChatConversationWithDetails[]>([]);
   const [activeConversation, setActiveConversation] = useState<ChatConversationWithDetails | null>(null);
   const [loading, setLoading] = useState(true);
+  const [chatAttempted, setChatAttempted] = useState<string | null>(null);
 
   const loadConversations = useCallback(async () => {
     const convs = await getConversations(userId);
@@ -314,6 +316,23 @@ export function ChatPanel({ userId }: ChatPanelProps) {
     const interval = setInterval(loadConversations, 30000);
     return () => clearInterval(interval);
   }, [loadConversations]);
+
+  // Auto-open chat with initialUserId when provided
+  useEffect(() => {
+    if (initialUserId && !loading && chatAttempted !== initialUserId) {
+      const existingConv = conversations.find(c => 
+        c.participants.some(p => p.user_id === initialUserId)
+      );
+      if (existingConv) {
+        setActiveConversation(existingConv);
+        setChatAttempted(initialUserId);
+      } else {
+        // Create new conversation (only once)
+        setChatAttempted(initialUserId);
+        startDirectChat(initialUserId);
+      }
+    }
+  }, [initialUserId, loading, conversations]);
 
   // Start a direct chat with a specific user
   const startDirectChat = async (otherUserId: string) => {
@@ -335,6 +354,11 @@ export function ChatPanel({ userId }: ChatPanelProps) {
 
   // Expose startDirectChat
   (ChatPanel as any).startDirectChat = startDirectChat;
+
+  // Handle back - return to conversation list
+  const handleBack = () => {
+    setActiveConversation(null);
+  };
 
   if (activeConversation) {
     return (
@@ -379,12 +403,9 @@ export function ChatPanel({ userId }: ChatPanelProps) {
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-12 text-center">
+          <div className="flex flex-col items-center justify-center h-full px-4 text-center">
             <MessageCircle className="h-12 w-12 text-slate-600 mb-3" />
-            <p className="text-sm text-slate-400">{t('chat.noConversations')}</p>
-            <p className="text-xs text-slate-500 mt-1">
-              {t('chat.clickFriendToChat')}
-            </p>
+            <p className="text-sm text-slate-400">Clicca un amico per chattare</p>
           </div>
         )}
       </ScrollArea>

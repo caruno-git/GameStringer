@@ -36,7 +36,6 @@ import {
   CheckCircle,
   Download,
   Upload,
-  Info,
   Camera,
   Palette
 } from 'lucide-react';
@@ -240,52 +239,52 @@ export function ProfileHeader() {
           </Button>
         </DropdownMenuTrigger>
         
-        <DropdownMenuContent className="w-72 z-[70] border-slate-800 bg-slate-950/95 backdrop-blur-xl" align="end" forceMount>
-          <DropdownMenuLabel className="font-normal">
-            <div className="flex flex-col space-y-2">
-              {/* Profile Header */}
-              <div className="flex items-center space-x-2.5">
-                <button onClick={() => setShowAvatarUpload(true)} className="relative group">
-                  <Avatar className="h-10 w-10 ring-2 ring-indigo-500/30 group-hover:ring-indigo-500/60 transition-all">
+        <DropdownMenuContent className="w-64 z-[70] border-slate-800 bg-slate-950/95 backdrop-blur-xl" align="end" forceMount>
+          <DropdownMenuLabel className="font-normal p-3">
+            <div className="flex flex-col space-y-1.5">
+              {/* Profile Header - Compatto */}
+              <div className="flex items-center space-x-2">
+                <button onClick={() => setShowAvatarUpload(true)} className="relative group shrink-0">
+                  <Avatar className="h-8 w-8 ring-2 ring-indigo-500/30 group-hover:ring-indigo-500/60 transition-all">
                     <AvatarImage src={avatarUrl || undefined} alt={currentProfile.name} />
-                    <AvatarFallback className="bg-gradient-to-br from-indigo-600 to-blue-700 text-white font-semibold">
+                    <AvatarFallback className="bg-gradient-to-br from-indigo-600 to-blue-700 text-white text-xs font-semibold">
                       {getInitials(currentProfile.name)}
                     </AvatarFallback>
                   </Avatar>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Camera className="h-3 w-3 text-white" />
+                    <Camera className="h-2.5 w-2.5 text-white" />
                   </div>
                 </button>
-                <div className="flex flex-col flex-1">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium leading-none text-slate-100">
+                <div className="flex flex-col flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-sm font-medium leading-none text-slate-100 truncate">
                       {currentProfile.name}
                     </p>
-                    <Badge className="text-2xs bg-emerald-500/20 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/30">
+                    <Badge className="text-[10px] px-1.5 py-0 bg-emerald-500/20 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/30 shrink-0">
                       {t('profile.active')}
                     </Badge>
                   </div>
-                  <p className="text-[11px] leading-none text-slate-500 mt-1 font-mono">
-                    ID: {currentProfile.id.slice(0, 8)}...
+                  <p className="text-[10px] leading-none text-slate-500 font-mono mt-0.5">
+                    ID: {currentProfile.id.slice(0, 6)}...
                   </p>
-                  <p className="text-[11px] leading-none text-slate-400 mt-1">
-                    {t('profile.lastAccess')} {getLastAccessedText(currentProfile.last_accessed)}
+                  <p className="text-[10px] leading-none text-slate-400 mt-0.5 truncate">
+                    {getLastAccessedText(currentProfile.last_accessed)}
                   </p>
                 </div>
               </div>
               
-              {/* Session Status */}
+              {/* Session Status - Compatto */}
               <div className={cn(
-                "flex items-center justify-between p-1.5 rounded-md border text-xs",
+                "flex items-center justify-between px-2 py-1 rounded border text-xs",
                 sessionStatus.bgColor,
                 sessionStatus.borderColor
               )}>
-                <div className="flex items-center space-x-1.5">
-                  <SessionIcon className={cn("w-3.5 h-3.5", sessionStatus.color)} />
-                  <span className="text-xs font-medium">{t('profile.session')}</span>
+                <div className="flex items-center space-x-1">
+                  <SessionIcon className={cn("w-3 h-3", sessionStatus.color)} />
+                  <span className="text-[11px] font-medium">{t('profile.session')}</span>
                 </div>
-                <div className="flex items-center space-x-1.5">
-                  <span className={cn("text-xs font-medium", sessionStatus.color)}>
+                <div className="flex items-center space-x-1">
+                  <span className={cn("text-[11px] font-medium", sessionStatus.color)}>
                     {sessionStatus.text}
                   </span>
                   {(isSessionExpired || (sessionTimeRemaining && sessionTimeRemaining < 10 * 60 * 1000)) && (
@@ -294,35 +293,31 @@ export function ProfileHeader() {
                       variant="ghost"
                       onClick={handleRenewSession}
                       disabled={isRenewing}
-                      className="h-6 px-2"
+                      className="h-5 px-1.5 py-0"
                     >
-                      <RefreshCw className={cn("w-3 h-3", isRenewing && "animate-spin")} />
+                      <RefreshCw className={cn("w-2.5 h-2.5", isRenewing && "animate-spin")} />
                     </Button>
                   )}
                 </div>
               </div>
               
-              {/* Profile Stats */}
-              <div className="grid grid-cols-2 gap-1.5 text-xs">
+              {/* Profile Stats - Compatto in riga */}
+              <div className="flex items-center justify-between text-xs px-1">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <div className="flex flex-col items-center p-1.5 bg-slate-800/50 border border-slate-700/30 rounded-md cursor-help">
-                        <div className="flex items-center gap-1">
-                          <span className="font-medium text-slate-200 text-xs">{profiles.length}</span>
-                          <Info className="w-2.5 h-2.5 text-slate-500" />
-                        </div>
-                        <span className="text-slate-400 text-micro uppercase tracking-wider">{t('profile.profilesCreated')}</span>
+                      <div className="flex items-center gap-1 cursor-help text-slate-400">
+                        <span className="font-medium text-slate-200 text-xs">{profiles.length}</span>
+                        <span className="text-[10px]">{t('profile.profilesCreated')}</span>
                       </div>
                     </TooltipTrigger>
                     <TooltipContent>
                       <p className="text-xs">{t('profile.tooltipProfiles')}</p>
-                      <p className="text-xs">{t('profile.tooltipOnlyOne')}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
                 <div 
-                  className="flex flex-col items-center p-1.5 bg-slate-800/50 border border-slate-700/30 rounded-md cursor-pointer hover:border-indigo-500/30 hover:bg-slate-800/80 transition-colors group"
+                  className="flex items-center gap-1 cursor-pointer hover:text-indigo-400 transition-colors text-slate-400 text-[10px]"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -330,11 +325,8 @@ export function ProfileHeader() {
                     setTimeout(() => setShowThemeCustomizer(true), 100);
                   }}
                 >
-                  <span className="font-medium flex items-center gap-1 text-slate-200 text-xs">
-                    <Palette className="h-2.5 w-2.5 opacity-0 group-hover:opacity-100 transition-opacity text-indigo-400" />
-                    {settings?.theme || 'Auto'}
-                  </span>
-                  <span className="text-slate-400 text-micro uppercase tracking-wider">{t('profile.theme')}</span>
+                  <Palette className="h-2.5 w-2.5" />
+                  {settings?.theme || 'Auto'}
                 </div>
               </div>
             </div>

@@ -472,12 +472,12 @@ function CategoryCard({ category, onClick, onNewThread }: CategoryCardProps) {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <h3 className="font-bold text-white text-sm leading-tight truncate">
-                {category.name}
+                {t(`forum.categoryNames.${category.slug}`) || category.name}
               </h3>
               {category.is_locked && <Lock className="h-3 w-3 text-slate-500 flex-shrink-0" />}
             </div>
             <p className="text-xs text-slate-400 mt-0.5 line-clamp-2">
-              {category.description || ''}
+              {t(`forum.categoryDescriptions.${category.slug}`) || category.description || ''}
             </p>
           </div>
         </div>
@@ -525,6 +525,7 @@ interface TrendingCardProps {
 }
 
 function TrendingCard({ thread, locale, onClick }: TrendingCardProps) {
+  const { t } = useTranslation();
   const category = thread.category as ForumCategory | undefined;
   const theme = category ? (CATEGORY_THEMES[category.slug] || DEFAULT_THEME) : DEFAULT_THEME;
 
@@ -549,7 +550,7 @@ function TrendingCard({ thread, locale, onClick }: TrendingCardProps) {
           )}
           {category && (
             <Badge variant="outline" className={cn('text-2xs h-4 px-1 border-slate-700', theme.accent)}>
-              {category.name}
+              {t(`forum.categoryNames.${category.slug}`) || category.name}
             </Badge>
           )}
         </div>
@@ -657,7 +658,7 @@ function ThreadRow({ thread, locale, onClick }: ThreadRowProps) {
           {category && (
             <>
               <span className="text-slate-600">•</span>
-              <span className={cn('font-medium', theme.accent)}>{category.name}</span>
+              <span className={cn('font-medium', theme.accent)}>{t(`forum.categoryNames.${category.slug}`) || category.name}</span>
             </>
           )}
           <span className="text-slate-600">•</span>

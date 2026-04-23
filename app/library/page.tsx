@@ -1263,6 +1263,33 @@ function LibraryListView() {
 
             {/* Quick Actions Overlay su hover */}
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 flex items-end justify-center pb-3 gap-1.5 flex-wrap backdrop-blur-[2px]">
+              {!game.is_installed && game.platform && (game.platform === 'Steam' || game.platform === 'Epic Games' || game.platform === 'GOG') && (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const store = game.platform?.toLowerCase() || '';
+                    const gameId = game.app_id || game.id;
+                    if (store.includes('steam')) {
+                      invoke('install_steam_game', { appId: gameId })
+                        .then(() => toast.success('Installazione avviata', { description: `Steam si aprirà per installare ${game.title}` }))
+                        .catch((err: string) => toast.error('Errore', { description: err }));
+                    } else if (store.includes('epic')) {
+                      invoke('install_epic_game', { appName: gameId, gameTitle: game.title })
+                        .then(() => toast.success('Epic Games Launcher aperto', { description: `Clicca su "Installa" per ${game.title}` }))
+                        .catch((err: string) => toast.error('Errore', { description: err }));
+                    } else if (store.includes('gog')) {
+                      invoke('install_gog_game', { gameId: gameId, gameTitle: game.title })
+                        .then(() => toast.success('GOG Galaxy aperto', { description: `Clicca su "Installa" per ${game.title}` }))
+                        .catch((err: string) => toast.error('Errore', { description: err }));
+                    }
+                  }}
+                  className="bg-emerald-600/90 hover:bg-emerald-500 p-2 rounded-lg text-white transition-all shadow-lg hover:shadow-emerald-500/50 hover:scale-110 border border-emerald-400/30"
+                  title="Installa gioco"
+                >
+                  <Download className="h-4 w-4" />
+                </button>
+              )}
               <button
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); sessionStorage.setItem('wizardAutoGame', JSON.stringify({ id: game.app_id || game.id, title: game.title, install_path: game.install_dir, steam_app_id: game.app_id, header_image: game.header_image })); window.location.href = '/translation-wizard'; }}
                 className="bg-indigo-600/90 hover:bg-indigo-500 p-2 rounded-lg text-white transition-all shadow-lg hover:shadow-indigo-500/50 hover:scale-110 border border-indigo-400/30"

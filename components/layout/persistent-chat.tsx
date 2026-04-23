@@ -387,32 +387,34 @@ export function PersistentChat() {
   // Don't render if chat backend not configured
   if (!enabled) return null;
 
-  // Hide on community-hub page (has its own inline chat)
-  if (pathname?.includes('community')) return null;
-
-  const chatWidth = expanded ? 'w-[480px]' : 'w-[360px]';
-  const chatHeight = expanded ? 'h-[600px]' : 'h-[420px]';
+  const chatWidth = expanded ? 'w-[520px]' : 'w-[380px]';
+  const chatHeight = expanded ? 'h-[650px]' : 'h-[480px]';
 
   // ─── FLOATING TOGGLE BUTTON ─────────────────────────────────
   if (!open) {
     return (
-      <div className="fixed bottom-4 right-4 z-[60] flex items-center gap-0 rounded-full bg-slate-900/95 shadow-xl backdrop-blur-md border border-slate-700/60 overflow-hidden">
-        <button
-          onClick={() => setOpen(true)}
-          className="relative flex items-center gap-1.5 px-3 py-2 hover:bg-slate-800/80 transition-colors"
-        >
-          <MessageSquare className="h-3.5 w-3.5 text-cyan-400" />
-          <span className="text-2xs font-bold text-cyan-400">Chat</span>
-          {onlineUsers.length > 0 && (
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-          )}
-          {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-0.5 flex items-center justify-center h-4 min-w-[16px] px-1 rounded-full bg-red-500 text-micro font-bold">
-              {unreadCount > 99 ? '99+' : unreadCount}
-            </span>
-          )}
-        </button>
-      </div>
+      <button
+        onClick={() => setOpen(true)}
+        className="fixed bottom-4 right-4 z-[60] group flex items-center gap-2 px-3 py-2 rounded-full bg-slate-800/90 hover:bg-slate-700/90 border border-slate-600/50 shadow-lg backdrop-blur-sm transition-all duration-200 hover:scale-[1.02]"
+      >
+        <MessageSquare className="h-4 w-4 text-cyan-400" />
+        <span className="text-xs font-medium text-slate-200">Chat</span>
+        
+        {/* Online indicator */}
+        {onlineUsers.length > 0 && (
+          <span className="flex items-center gap-1 text-xs text-emerald-400">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            {onlineUsers.length}
+          </span>
+        )}
+        
+        {/* Unread badge */}
+        {unreadCount > 0 && (
+          <span className="flex items-center justify-center h-5 min-w-[20px] px-1.5 rounded-full bg-red-500 text-white text-xs font-bold">
+            {unreadCount > 99 ? '99+' : unreadCount}
+          </span>
+        )}
+      </button>
     );
   }
 
@@ -420,25 +422,32 @@ export function PersistentChat() {
 
   return (
     <>
-      <div className={`fixed bottom-14 right-4 z-50 ${chatWidth} ${chatHeight} flex flex-col rounded-xl border border-slate-700/60 bg-slate-900/95 backdrop-blur-xl shadow-2xl shadow-black/50 transition-all duration-200`}>
+      <div className={`fixed bottom-6 right-6 z-50 ${chatWidth} ${chatHeight} flex flex-col rounded-2xl border border-slate-600/40 bg-gradient-to-b from-slate-900/98 to-slate-950/98 backdrop-blur-2xl shadow-2xl shadow-black/60 transition-all duration-300 ring-1 ring-white/5`}>
         {/* ── Header ── */}
-        <div className="flex items-center justify-between px-3 py-2 border-b border-slate-700/40 bg-slate-800/50 rounded-t-xl">
-          <div className="flex items-center gap-2">
-            <MessageSquare className="h-4 w-4 text-cyan-400" />
-            <span className="text-sm font-semibold text-slate-200">Community Chat</span>
-            {onlineUsers.length > 0 && (
-              <Badge variant="outline" className="text-2xs h-5 px-1.5 border-emerald-500/30 text-emerald-400">
-                <Circle className="h-1.5 w-1.5 fill-emerald-400 mr-1" />
-                {onlineUsers.length}
-              </Badge>
-            )}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700/30 bg-gradient-to-r from-cyan-500/10 via-blue-500/5 to-purple-500/10 rounded-t-2xl">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/20">
+              <MessageSquare className="h-4 w-4 text-white" />
+            </div>
+            <div>
+              <span className="text-sm font-bold text-white">Community Chat</span>
+              {onlineUsers.length > 0 && (
+                <div className="flex items-center gap-1 mt-0.5">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                  </span>
+                  <span className="text-xs text-emerald-400 font-medium">{onlineUsers.length} online</span>
+                </div>
+              )}
+            </div>
           </div>
-          <div className="flex items-center gap-0.5">
-            <Button variant="ghost" size="xs" className="w-6 p-0" onClick={() => setExpanded(!expanded)}>
-              {expanded ? <Minimize2 className="h-3.5 w-3.5 text-slate-400" /> : <Maximize2 className="h-3.5 w-3.5 text-slate-400" />}
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="sm" className="w-8 h-8 p-0 rounded-lg hover:bg-white/10" onClick={() => setExpanded(!expanded)}>
+              {expanded ? <Minimize2 className="h-4 w-4 text-slate-300" /> : <Maximize2 className="h-4 w-4 text-slate-300" />}
             </Button>
-            <Button variant="ghost" size="xs" className="w-6 p-0" onClick={() => setOpen(false)}>
-              <X className="h-3.5 w-3.5 text-slate-400" />
+            <Button variant="ghost" size="sm" className="w-8 h-8 p-0 rounded-lg hover:bg-red-500/20 hover:text-red-400" onClick={() => setOpen(false)}>
+              <X className="h-4 w-4 text-slate-300" />
             </Button>
           </div>
         </div>
@@ -627,8 +636,8 @@ export function PersistentChat() {
             )}
 
             {/* Input */}
-            <div className="p-2 border-t border-slate-700/30">
-              <div className="flex items-center gap-1.5">
+            <div className="p-3 border-t border-slate-700/30 bg-slate-800/30">
+              <div className="flex items-center gap-2">
                 <Input
                   ref={inputRef}
                   value={messageInput}
@@ -639,17 +648,17 @@ export function PersistentChat() {
                       handleSend();
                     }
                   }}
-                  placeholder={activeRoom ? `#${activeRoom.name}...` : 'Seleziona stanza...'}
-                  className="h-8 text-xs bg-slate-800/50 border-slate-700/50"
+                  placeholder={activeRoom ? `Scrivi in #${activeRoom.name}...` : 'Seleziona stanza...'}
+                  className="h-10 text-sm bg-slate-800/60 border-slate-600/40 rounded-xl focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500/50 placeholder:text-slate-500"
                   disabled={!activeRoom || isSending}
                 />
                 <Button
                   size="sm"
-                  className="h-8 w-8 p-0 bg-cyan-600 hover:bg-cyan-700"
+                  className="h-10 w-10 p-0 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 shadow-lg shadow-cyan-500/20 transition-all hover:scale-105"
                   onClick={handleSend}
                   disabled={!messageInput.trim() || !activeRoom || isSending}
                 >
-                  {isSending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
+                  {isSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                 </Button>
               </div>
             </div>

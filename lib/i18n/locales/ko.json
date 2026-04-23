@@ -3342,6 +3342,24 @@
     "threadsLabel": "토론",
     "trendingNow": "인기",
     "categories": "카테고리",
+    "categoryNames": {
+      "announcements": "공지사항",
+      "translation-packs": "번역 팩",
+      "help": "지원",
+      "tutorials": "가이드 및 튜토리얼",
+      "requests": "요청",
+      "showcase": "쇼케이스",
+      "off-topic": "오프토픽"
+    },
+    "categoryDescriptions": {
+      "announcements": "GameStringer의 새로운 소식과 공식 업데이트",
+      "translation-packs": "게임의 완전한 번역을 공유하고 다운로드",
+      "help": "기술적 문제나 사용 방법에 대한 질문에 도움 요청",
+      "tutorials": "번역을 위한 튜토리얼, 가이드 및 모범 사례",
+      "requests": "특정 게임의 번역 요청",
+      "showcase": "완료된 번역 프로젝트를展示",
+      "off-topic": "번역과 관련 없는 일반적인 토론"
+    },
     "discussions": "토론",
     "allThreads": "모든 스레드",
     "beTheFirst": "첫 번째가 되세요!",

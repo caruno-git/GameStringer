@@ -277,6 +277,11 @@ fn main() {
             commands::launcher::get_installed_launchers,
             commands::launcher::test_launcher_functionality,
             commands::launcher::open_path,
+            // Game Installation System
+            commands::launcher::install_steam_game,
+            commands::launcher::install_epic_game,
+            commands::launcher::install_gog_game,
+            commands::launcher::install_game_universal,
             commands::library::get_library_games,
             commands::library::get_game_path,
             commands::library::read_game_file,

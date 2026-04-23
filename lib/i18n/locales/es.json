@@ -3261,6 +3261,24 @@
     "threadsLabel": "Discusiones",
     "trendingNow": "Tendencia",
     "categories": "Categorías",
+    "categoryNames": {
+      "announcements": "Anuncios",
+      "translation-packs": "Packs de Traducción",
+      "help": "Ayuda",
+      "tutorials": "Tutoriales",
+      "requests": "Peticiones",
+      "showcase": "Escaparate",
+      "off-topic": "Off-Topic"
+    },
+    "categoryDescriptions": {
+      "announcements": "Novedades y actualizaciones oficiales de GameStringer",
+      "translation-packs": "Comparte y descarga traducciones completas para tus juegos",
+      "help": "Pide ayuda para problemas técnicos o dudas de uso",
+      "tutorials": "Tutoriales, guías y mejores prácticas para la traducción",
+      "requests": "Solicita traducciones para juegos específicos",
+      "showcase": "Muestra tus proyectos de traducción completados",
+      "off-topic": "Discusiones generales no relacionadas con la traducción"
+    },
     "discussions": "discusiones",
     "allThreads": "Todos los hilos",
     "beTheFirst": "¡Sé el primero!",

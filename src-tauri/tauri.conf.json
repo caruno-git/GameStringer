@@ -3,7 +3,7 @@
   "version": "1.8.2",
   "identifier": "com.gamestringer.app",
   "build": {
-    "beforeDevCommand": "",
+    "beforeDevCommand": "npx next dev -p 3222",
     "beforeBuildCommand": "node scripts/build-tauri-cross.js",
     "devUrl": "http://127.0.0.1:3222",
     "frontendDist": "../out"

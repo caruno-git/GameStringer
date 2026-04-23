@@ -405,20 +405,18 @@
   background: transparent;
   border-radius: 0px;
 }
-
-::-webkit-scrollbar-thumb:hover {
-  background: transparent;
-}
-
-/* Custom scrollbar - Steam style (thin, subtle) */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(103, 193, 245, 0.2) transparent;
+  scrollbar-color: transparent transparent;
+}
+
+.custom-scrollbar:hover {
+  scrollbar-color: rgba(100, 116, 139, 0.4) transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -426,12 +424,36 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(103, 193, 245, 0.15);
-  border-radius: 3px;
+  background: transparent;
+  border-radius: 2px;
+  transition: background 0.2s;
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.4);
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(103, 193, 245, 0.35);
+  background: rgba(100, 116, 139, 0.6);
+}
+
+/* Scrollbar thin utility */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(71, 85, 105, 0.5) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(71, 85, 105, 0.5);
+  border-radius: 2px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 /* Utility to hide scrollbar cross-browser */

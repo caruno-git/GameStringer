@@ -2570,6 +2570,24 @@
     "searchThreads": "Search threads, games, authors...",
     "trendingNow": "Trending Now",
     "categories": "Categories",
+    "categoryNames": {
+      "announcements": "Announcements",
+      "translation-packs": "Translation Packs",
+      "help": "Help",
+      "tutorials": "Tutorials",
+      "requests": "Requests",
+      "showcase": "Showcase",
+      "off-topic": "Off Topic"
+    },
+    "categoryDescriptions": {
+      "announcements": "News and official updates from GameStringer",
+      "translation-packs": "Share and download complete translations for your games",
+      "help": "Ask for help with technical issues or usage questions",
+      "tutorials": "Tutorials, guides and best practices for translation",
+      "requests": "Request translations for specific games",
+      "showcase": "Show off your completed translation projects",
+      "off-topic": "General discussions not related to translation"
+    },
     "discussions": "discussions",
     "allThreads": "All threads",
     "threadsLabel": "Discussions",
