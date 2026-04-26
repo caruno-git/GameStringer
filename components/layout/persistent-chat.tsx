@@ -155,35 +155,18 @@ export function PersistentChat() {
     let authSubscription: { data: { subscription: { unsubscribe: () => void } } } | null = null;
     let initRetryTimeout: ReturnType<typeof setTimeout> | null = null;
     let maxTimeout: ReturnType<typeof setTimeout> | null = null;
+    let mainLayoutAuthTimeout: ReturnType<typeof setTimeout> | null = null;
     let retryCount = 0;
+    let authHandled = false;
     const MAX_RETRIES = 3;
     const MAX_LOAD_TIME = 15000; // 15s max loading time
+    const MAIN_LAYOUT_WAIT_MS = 3000; // Wait 3s for main-layout auth
 
-    const init = async () => {
-      const timeout = <T,>(promise: Promise<T>, ms: number): Promise<T> =>
-        Promise.race([promise, new Promise<never>((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))]);
+    const timeout = <T,>(promise: Promise<T>, ms: number): Promise<T | null> =>
+      Promise.race([promise, new Promise<null>((_, rej) => setTimeout(() => rej(new Error('timeout')), ms)).catch(() => null)]);
 
+    const doInit = async (uid: string | null) => {
       try {
-        clientLogger.debug('[PersistentChat] Starting init, retry:', retryCount);
-        setLoadError(null);
-        let uid = await timeout(getCurrentUserId(), 8000).catch((err) => {
-          clientLogger.debug('[PersistentChat] getCurrentUserId failed:', err);
-          return null;
-        });
-        
-        if (!uid) {
-          clientLogger.debug('[PersistentChat] No uid from getCurrentUserId, trying autoSync...');
-          uid = await timeout(autoSyncGSToSupabase(), 8000).catch((err) => {
-            clientLogger.warn('[PersistentChat] autoSyncGSToSupabase failed:', err);
-            return null;
-          });
-          if (uid) {
-            clientLogger.debug('[PersistentChat] autoSync succeeded, uid:', uid);
-          }
-        } else {
-          clientLogger.debug('[PersistentChat] Got uid from getCurrentUserId:', uid);
-        }
-        
         setUserId(uid);
         
         if (uid) {
@@ -205,7 +188,7 @@ export function PersistentChat() {
           // Retry after delay if no uid yet
           retryCount++;
           clientLogger.debug(`[PersistentChat] No uid, scheduling retry ${retryCount}/${MAX_RETRIES} in 3s...`);
-          initRetryTimeout = setTimeout(init, 3000);
+          initRetryTimeout = setTimeout(() => fallbackInit(), 3000);
         } else {
           clientLogger.warn('[PersistentChat] Max retries reached, no uid available');
           setLoadError('Impossibile connettersi. Verifica la connessione e riprova.');
@@ -222,6 +205,57 @@ export function PersistentChat() {
       }
     };
 
+    const fallbackInit = async () => {
+      if (authHandled) return;
+      authHandled = true;
+      
+      try {
+        clientLogger.debug('[PersistentChat] Starting fallback init, retry:', retryCount);
+        setLoadError(null);
+        let uid = await timeout(getCurrentUserId(), 8000).catch((err) => {
+          clientLogger.debug('[PersistentChat] getCurrentUserId failed:', err);
+          return null;
+        });
+        
+        if (!uid) {
+          clientLogger.debug('[PersistentChat] No uid from getCurrentUserId, trying autoSync...');
+          uid = await timeout(autoSyncGSToSupabase(), 8000).catch((err) => {
+            clientLogger.warn('[PersistentChat] autoSyncGSToSupabase failed:', err);
+            return null;
+          });
+          if (uid) {
+            clientLogger.debug('[PersistentChat] autoSync succeeded, uid:', uid);
+          }
+        } else {
+          clientLogger.debug('[PersistentChat] Got uid from getCurrentUserId:', uid);
+        }
+        
+        await doInit(uid);
+      } catch (e: unknown) {
+        clientLogger.error('[PersistentChat] Fallback init error:', e);
+        setLoadError('Errore di connessione. Riprova.');
+        setIsLoading(false);
+      }
+    };
+
+    // Listen for auth events from main-layout (which runs autoSync first)
+    const handleAuthed = (e: CustomEvent<{ userId: string }>) => {
+      if (authHandled) return;
+      authHandled = true;
+      clientLogger.debug('[PersistentChat] Received gs-chat-authed event, uid:', e.detail.userId);
+      if (mainLayoutAuthTimeout) clearTimeout(mainLayoutAuthTimeout);
+      doInit(e.detail.userId);
+    };
+
+    const handleAuthFailed = () => {
+      if (authHandled) return;
+      clientLogger.debug('[PersistentChat] Received gs-chat-auth-failed event, trying fallback');
+      fallbackInit();
+    };
+
+    window.addEventListener('gs-chat-authed', handleAuthed as EventListener);
+    window.addEventListener('gs-chat-auth-failed', handleAuthFailed);
+
     // Set max loading timeout
     maxTimeout = setTimeout(() => {
       if (isLoading) {
@@ -230,8 +264,14 @@ export function PersistentChat() {
         setLoadError('Tempo di caricamento troppo lungo. Riprova.');
       }
     }, MAX_LOAD_TIME);
-    
-    init();
+
+    // Wait for main-layout to auth, then fallback if needed
+    mainLayoutAuthTimeout = setTimeout(() => {
+      if (!authHandled) {
+        clientLogger.debug('[PersistentChat] No auth event from main-layout, trying fallback init');
+        fallbackInit();
+      }
+    }, MAIN_LAYOUT_WAIT_MS);
 
     // ─── Subscribe to Supabase auth state changes ─────────────────
     const setupAuthListener = async () => {
@@ -242,7 +282,7 @@ export function PersistentChat() {
           if (event === 'SIGNED_IN' && session?.user?.id) {
             setUserId(session.user.id);
             // Re-init rooms and presence
-            init();
+            fallbackInit();
           } else if (event === 'SIGNED_OUT') {
             setUserId(null);
           }
@@ -258,6 +298,9 @@ export function PersistentChat() {
       unsubPresenceRef.current?.();
       if (initRetryTimeout) clearTimeout(initRetryTimeout);
       if (maxTimeout) clearTimeout(maxTimeout);
+      if (mainLayoutAuthTimeout) clearTimeout(mainLayoutAuthTimeout);
+      window.removeEventListener('gs-chat-authed', handleAuthed as EventListener);
+      window.removeEventListener('gs-chat-auth-failed', handleAuthFailed);
       authSubscription?.data?.subscription?.unsubscribe();
       updatePresence('offline').catch(() => {});
     };

@@ -327,8 +327,16 @@ export function MainLayout({ children }: MainLayoutProps) {
           initPresence(uid).then(() => {
             clientLogger.debug('[MainLayout] Presence inizializzato');
           }).catch(() => {});
+          // Broadcast auth success to other components (e.g., PersistentChat)
+          window.dispatchEvent(new CustomEvent('gs-chat-authed', { detail: { userId: uid } }));
+        } else {
+          // Broadcast auth failure so PersistentChat can try its own init
+          window.dispatchEvent(new CustomEvent('gs-chat-auth-failed'));
         }
-      }).catch(() => {});
+      }).catch((err) => {
+        clientLogger.warn('[MainLayout] autoSyncGSToSupabase failed:', err);
+        window.dispatchEvent(new CustomEvent('gs-chat-auth-failed'));
+      });
     }
 
     // ── Tray Notifications: ascolta eventi chat per notifiche OS ──
