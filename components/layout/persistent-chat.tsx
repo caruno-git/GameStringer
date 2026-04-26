@@ -22,6 +22,8 @@ import {
   Maximize2,
   ChevronDown,
   Languages,
+  RefreshCw,
+  AlertCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -113,6 +115,7 @@ export function PersistentChat() {
   const [onlineUsers, setOnlineUsers] = useState<UserPresence[]>([]);
   const [messageInput, setMessageInput] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [replyTo, setReplyTo] = useState<ChatMessage | null>(null);
   const [editingMsg, setEditingMsg] = useState<ChatMessage | null>(null);
@@ -151,8 +154,10 @@ export function PersistentChat() {
 
     let authSubscription: { data: { subscription: { unsubscribe: () => void } } } | null = null;
     let initRetryTimeout: ReturnType<typeof setTimeout> | null = null;
+    let maxTimeout: ReturnType<typeof setTimeout> | null = null;
     let retryCount = 0;
     const MAX_RETRIES = 3;
+    const MAX_LOAD_TIME = 15000; // 15s max loading time
 
     const init = async () => {
       const timeout = <T,>(promise: Promise<T>, ms: number): Promise<T> =>
@@ -160,6 +165,7 @@ export function PersistentChat() {
 
       try {
         clientLogger.debug('[PersistentChat] Starting init, retry:', retryCount);
+        setLoadError(null);
         let uid = await timeout(getCurrentUserId(), 8000).catch((err) => {
           clientLogger.debug('[PersistentChat] getCurrentUserId failed:', err);
           return null;
@@ -181,8 +187,9 @@ export function PersistentChat() {
         setUserId(uid);
         
         if (uid) {
-          const chatRooms = await timeout(fetchRooms(), 5000).catch((err) => {
+          const chatRooms = await timeout(fetchRooms(), 8000).catch((err) => {
             clientLogger.warn('[PersistentChat] fetchRooms failed:', err);
+            setLoadError('Impossibile caricare le stanze. Riprova più tardi.');
             return [] as ChatRoom[];
           });
           setRooms(chatRooms);
@@ -201,6 +208,7 @@ export function PersistentChat() {
           initRetryTimeout = setTimeout(init, 3000);
         } else {
           clientLogger.warn('[PersistentChat] Max retries reached, no uid available');
+          setLoadError('Impossibile connettersi. Verifica la connessione e riprova.');
         }
       } catch (e: unknown) {
         const errObj = e as { message?: string; code?: string; details?: string };
@@ -208,10 +216,20 @@ export function PersistentChat() {
           ? e.message 
           : errObj?.message || errObj?.code || errObj?.details || JSON.stringify(e) || 'Unknown error';
         clientLogger.error(`[PersistentChat] Init error: ${errMsg}`, { raw: String(e) });
+        setLoadError('Errore di connessione. Riprova.');
       } finally {
         setIsLoading(false);
       }
     };
+
+    // Set max loading timeout
+    maxTimeout = setTimeout(() => {
+      if (isLoading) {
+        clientLogger.warn('[PersistentChat] Max loading time exceeded');
+        setIsLoading(false);
+        setLoadError('Tempo di caricamento troppo lungo. Riprova.');
+      }
+    }, MAX_LOAD_TIME);
     
     init();
 
@@ -239,6 +257,7 @@ export function PersistentChat() {
       unsubMessageRef.current?.();
       unsubPresenceRef.current?.();
       if (initRetryTimeout) clearTimeout(initRetryTimeout);
+      if (maxTimeout) clearTimeout(maxTimeout);
       authSubscription?.data?.subscription?.unsubscribe();
       updatePresence('offline').catch(() => {});
     };
@@ -513,9 +532,29 @@ export function PersistentChat() {
         </div>
 
         {/* ── Loading ── */}
-        {isLoading && (
+        {isLoading && !loadError && (
           <div className="flex-1 flex items-center justify-center">
             <Loader2 className="h-6 w-6 animate-spin text-slate-500" />
+          </div>
+        )}
+
+        {/* ── Error ── */}
+        {!isLoading && loadError && (
+          <div className="flex-1 flex flex-col items-center justify-center text-center gap-3 px-4">
+            <AlertCircle className="h-8 w-8 text-amber-500" />
+            <p className="text-xs text-slate-400">{loadError}</p>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs h-7"
+              onClick={() => {
+                setIsLoading(true);
+                setLoadError(null);
+                window.location.reload();
+              }}
+            >
+              <RefreshCw className="h-3 w-3 mr-1" /> Ricarica
+            </Button>
           </div>
         )}
 
