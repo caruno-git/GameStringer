@@ -66,6 +66,11 @@ async fn send_native_notification(
         .title(&title)
         .body(&body);
     
+    // Icon support (if provided as file path)
+    if let Some(icon_path) = icon {
+        let _ = builder.icon(&icon_path);
+    }
+    
     // Mostra la notifica
     builder.show()
         .map_err(|e| format!("Errore notifica: {}", e))
@@ -1095,7 +1100,7 @@ fn main() {
 
             // ── Stato Sistema ────────────────────────────────
             let ollama_status = MenuItem::with_id(app, "ollama_status", "🟢 Ollama: Verifica...", false, None::<&str>)?;
-            let version_info = MenuItem::with_id(app, "version_info", "ℹ️ v1.5.0 (build 122)", false, None::<&str>)?;
+            let version_info = MenuItem::with_id(app, "version_info", "ℹ️ v1.6.0 (build 130)", false, None::<&str>)?;
 
             let sep4 = PredefinedMenuItem::separator(app)?;
 
@@ -1156,7 +1161,7 @@ fn main() {
                 .icon(app.default_window_icon().cloned().unwrap())
                 .menu(&menu)
                 .show_menu_on_left_click(false)
-                .tooltip("GameStringer v1.5.0 — AI Game Translation")
+                .tooltip("GameStringer v1.6.0 — AI Game Translation")
                 .on_menu_event(|app, event| {
                     match event.id.as_ref() {
                         // ── Finestra ──

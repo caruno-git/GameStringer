@@ -288,6 +288,11 @@ async function fetchProfilesMap(userIds: string[]): Promise<Map<string, { userna
 
   try {
     const supabase = await getSupabase();
+
+    // Skip query if no valid session (avoids 400/401 errors)
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user) return map;
+
     // Try user_profiles with user_id column
     const { data } = await supabase
       .from('user_profiles')

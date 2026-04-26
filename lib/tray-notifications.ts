@@ -119,7 +119,10 @@ export function saveNotificationPrefs(prefs: Partial<NotificationPreferences>): 
 
 function isTypeEnabled(type: TrayNotificationType): boolean {
   if (!_prefs.enabled) return false;
-  if (isQuietHours()) return false;
+  
+  // Critical notifications bypass quiet hours
+  const isCritical = type === 'system_error' || type === 'app_update' || type === 'translation_failed';
+  if (isQuietHours() && !isCritical) return false;
   
   switch (type) {
     case 'chat_message': return _prefs.chatMessages;

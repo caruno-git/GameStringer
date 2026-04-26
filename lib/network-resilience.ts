@@ -94,8 +94,12 @@ function updateStatus(partial: Partial<NetworkStatus>): void {
  * Inizializza il monitor di rete.
  * Da chiamare una volta all'avvio dell'app.
  */
+let _monitorInitialized = false;
+
 export function initNetworkMonitor(supabaseUrl?: string): void {
   if (typeof window === 'undefined') return;
+  if (_monitorInitialized) return;
+  _monitorInitialized = true;
 
   // Browser online/offline events
   window.addEventListener('online', () => {
@@ -147,6 +151,7 @@ export function initNetworkMonitor(supabaseUrl?: string): void {
  * Ferma il monitor di rete.
  */
 export function stopNetworkMonitor(): void {
+  _monitorInitialized = false;
   if (_supabaseCheckInterval) {
     clearInterval(_supabaseCheckInterval);
     _supabaseCheckInterval = null;
