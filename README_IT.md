@@ -28,6 +28,8 @@
   <a href="#-compilazione-dai-sorgenti">Build</a>
 </p>
 
+> ⚠️ **Aggiornamento dalla v1.8.2?** L'auto-updater mostra "Preparazione..." perché la v1.9.0 è migrata da Tauri v1 a **Tauri v2**. Scarica e installa manualmente: [GameStringer_1.9.0_x64_en-US.msi](https://github.com/rouges78/GameStringer/releases/download/v1.9.0/GameStringer_1.9.0_x64_en-US.msi). I futuri aggiornamenti (v1.9.x → v1.9.y) funzioneranno automaticamente.
+
 <p align="center">
   <strong>🌍 Leggi nella tua lingua:</strong><br>
   <a href="README.md">🇬🇧 English</a> ·
