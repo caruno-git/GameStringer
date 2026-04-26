@@ -1858,7 +1858,7 @@ GameStringer v1.8.1 - Guida aggiornata al 09/04/2026
 
 ---
 
-## Novità v1.8.2
+## Novità v1.9.0
 
 ### Miglioramenti UI Community Hub
 - **Community Hub ridisegnato**: design più pulito e coerente senza gradienti eccessivi e blob decorativi

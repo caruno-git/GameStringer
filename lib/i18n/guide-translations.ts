@@ -1,4 +1,4 @@
-// Guide page translations — no placeholders, text only.
+﻿// Guide page translations — no placeholders, text only.
 // Links (NavLink) and structural elements (strong, kbd, code) are in JSX.
 // Fallback: if a language is not defined, English is used.
 
@@ -207,12 +207,12 @@ const it = {
   pluginStep2Title: 'Installa con 1 click', pluginStep2Line1: 'Clicca su "Installa" per scaricare e attivare il plugin. I plugin vengono salvati in userdata/plugins/ e caricati automaticamente all\'avvio.',
   pluginStep3Title: 'Usa nel workflow', pluginStep3Line1: 'I plugin attivi appaiono automaticamente nei menu di traduzione. Non serve riavviare GameStringer.',
   pluginTip: 'I plugin sono sandboxed per sicurezza. Puoi sviluppare il tuo plugin usando il SDK TypeScript.',
-  // v1.8.2 — Ollama HTTP Direct
+  // v1.9.0 — Ollama HTTP Direct
   ollamaHttpTitle: 'Ollama HTTP Diretto', ollamaHttpDesc: 'Comunicazione diretta con Ollama via HTTP — niente più dipendenza dall\'IPC locale.',
   ollamaHttpStep1Title: 'Configura endpoint HTTP', ollamaHttpStep1Line1: 'Nelle impostazioni Ollama, attiva "HTTP Direct". Inserisci l\'URL del server (default: http://localhost:11434). Supporta anche server Ollama remoti.',
   ollamaHttpStep2Title: 'Verifica connessione', ollamaHttpStep2Line1: 'Il test di connessione controlla che l\'endpoint risponda e mostra i modelli disponibili. Fallback automatico a IPC se HTTP non disponibile.',
   ollamaHttpTip: 'HTTP Direct elimina i problemi di IPC su Windows e permette di usare Ollama su macchine remote nella rete.',
-  // v1.8.2 — Epic Credentials
+  // v1.9.0 — Epic Credentials
   epicCredsTitle: 'Epic Games — Credenziali Dirette', epicCredsDesc: 'Collega Epic Games senza OAuth usando le credenziali dell\'account.',
   epicCredsStep1Title: 'Inserisci credenziali', epicCredsStep1Line1: 'Nelle impostazioni Stores → Epic, inserisci email e password del tuo account Epic. Le credenziali vengono criptate con AES-256-GCM.',
   epicCredsStep2Title: 'Autenticazione diretta', epicCredsStep2Line1: 'GameStringer si connette direttamente ai server Epic senza browser OAuth. Recupera la libreria completa con DLC e giochi gratuiti.',
@@ -318,12 +318,12 @@ const en: GT = {
   pluginStep2Title: 'Install with 1 click', pluginStep2Line1: 'Click "Install" to download and activate the plugin. Plugins are saved to userdata/plugins/ and loaded automatically on startup.',
   pluginStep3Title: 'Use in workflow', pluginStep3Line1: 'Active plugins appear automatically in translation menus. No need to restart GameStringer.',
   pluginTip: 'Plugins are sandboxed for security. You can develop your own plugin using the TypeScript SDK.',
-  // v1.8.2 — Ollama HTTP Direct
+  // v1.9.0 — Ollama HTTP Direct
   ollamaHttpTitle: 'Ollama HTTP Direct', ollamaHttpDesc: 'Direct HTTP communication with Ollama — no more dependency on local IPC.',
   ollamaHttpStep1Title: 'Configure HTTP endpoint', ollamaHttpStep1Line1: 'In Ollama settings, enable "HTTP Direct". Enter the server URL (default: http://localhost:11434). Also supports remote Ollama servers.',
   ollamaHttpStep2Title: 'Verify connection', ollamaHttpStep2Line1: 'The connection test checks that the endpoint responds and shows available models. Automatic fallback to IPC if HTTP is not available.',
   ollamaHttpTip: 'HTTP Direct eliminates IPC issues on Windows and allows using Ollama on remote machines on the network.',
-  // v1.8.2 — Epic Credentials
+  // v1.9.0 — Epic Credentials
   epicCredsTitle: 'Epic Games — Direct Credentials', epicCredsDesc: 'Connect Epic Games without OAuth using account credentials.',
   epicCredsStep1Title: 'Enter credentials', epicCredsStep1Line1: 'In Settings → Stores → Epic, enter your Epic account email and password. Credentials are encrypted with AES-256-GCM.',
   epicCredsStep2Title: 'Direct authentication', epicCredsStep2Line1: 'GameStringer connects directly to Epic servers without OAuth browser flow. Retrieves complete library with DLC and free games.',
@@ -427,12 +427,12 @@ const es: GT = {
   pluginStep2Title: 'Instalar con 1 clic', pluginStep2Line1: 'Haz clic en "Instalar" para descargar y activar el plugin. Los plugins se guardan en userdata/plugins/ y se cargan automáticamente al inicio.',
   pluginStep3Title: 'Usar en el flujo de trabajo', pluginStep3Line1: 'Los plugins activos aparecen automáticamente en los menús de traducción. No es necesario reiniciar GameStringer.',
   pluginTip: 'Los plugins están sandboxed por seguridad. Puedes desarrollar tu propio plugin usando el SDK TypeScript.',
-  // v1.8.2 — Ollama HTTP Direct
+  // v1.9.0 — Ollama HTTP Direct
   ollamaHttpTitle: 'Ollama HTTP Direct', ollamaHttpDesc: 'Comunicación HTTP directa con Ollama — sin más dependencia del IPC local.',
   ollamaHttpStep1Title: 'Configurar endpoint HTTP', ollamaHttpStep1Line1: 'En la configuración de Ollama, activa "HTTP Direct". Introduce la URL del servidor (predeterminado: http://localhost:11434). También soporta servidores Ollama remotos.',
   ollamaHttpStep2Title: 'Verificar conexión', ollamaHttpStep2Line1: 'La prueba de conexión comprueba que el endpoint responde y muestra los modelos disponibles. Fallback automático a IPC si HTTP no está disponible.',
   ollamaHttpTip: 'HTTP Direct elimina los problemas de IPC en Windows y permite usar Ollama en máquinas remotas de la red.',
-  // v1.8.2 — Epic Credentials
+  // v1.9.0 — Epic Credentials
   epicCredsTitle: 'Epic Games — Credenciales Directas', epicCredsDesc: 'Conecta Epic Games sin OAuth usando las credenciales de la cuenta.',
   epicCredsStep1Title: 'Introducir credenciales', epicCredsStep1Line1: 'En Ajustes → Tiendas → Epic, introduce el email y la contraseña de tu cuenta Epic. Las credenciales se encriptan con AES-256-GCM.',
   epicCredsStep2Title: 'Autenticación directa', epicCredsStep2Line1: 'GameStringer se conecta directamente a los servidores de Epic sin flujo OAuth del navegador. Recupera la biblioteca completa con DLC y juegos gratuitos.',
@@ -477,12 +477,12 @@ const fr: GT = { ...en, tabQuickStart: 'Démarrage Rapide', tabWorkflows: 'Flux 
   pluginStep2Title: 'Installer en 1 clic', pluginStep2Line1: 'Cliquez sur "Installer" pour télécharger et activer le plugin. Les plugins sont enregistrés dans userdata/plugins/ et chargés automatiquement au démarrage.',
   pluginStep3Title: 'Utiliser dans le workflow', pluginStep3Line1: 'Les plugins actifs apparaissent automatiquement dans les menus de traduction. Pas besoin de redémarrer GameStringer.',
   pluginTip: 'Les plugins sont sandboxés pour la sécurité. Vous pouvez développer votre propre plugin en utilisant le SDK TypeScript.',
-  // v1.8.2 — Ollama HTTP Direct
+  // v1.9.0 — Ollama HTTP Direct
   ollamaHttpTitle: 'Ollama HTTP Direct', ollamaHttpDesc: 'Communication HTTP directe avec Ollama — plus de dépendance à l\'IPC local.',
   ollamaHttpStep1Title: 'Configurer l\'endpoint HTTP', ollamaHttpStep1Line1: 'Dans les paramètres Ollama, activez "HTTP Direct". Entrez l\'URL du serveur (défaut: http://localhost:11434). Prend également en charge les serveurs Ollama distants.',
   ollamaHttpStep2Title: 'Vérifier la connexion', ollamaHttpStep2Line1: 'Le test de connexion vérifie que l\'endpoint répond et affiche les modèles disponibles. Retour automatique à IPC si HTTP n\'est pas disponible.',
   ollamaHttpTip: 'HTTP Direct élimine les problèmes d\'IPC sur Windows et permet d\'utiliser Ollama sur des machines distantes du réseau.',
-  // v1.8.2 — Epic Credentials
+  // v1.9.0 — Epic Credentials
   epicCredsTitle: 'Epic Games — Identifiants Directs', epicCredsDesc: 'Connectez Epic Games sans OAuth en utilisant les identifiants du compte.',
   epicCredsStep1Title: 'Saisir les identifiants', epicCredsStep1Line1: 'Dans Paramètres → Magasins → Epic, saisissez l\'email et le mot de passe de votre compte Epic. Les identifiants sont cryptés avec AES-256-GCM.',
   epicCredsStep2Title: 'Authentification directe', epicCredsStep2Line1: 'GameStringer se connecte directement aux serveurs Epic sans flux OAuth du navigateur. Récupère la bibliothèque complète avec DLC et jeux gratuits.',
@@ -522,12 +522,12 @@ const de: GT = { ...en, tabQuickStart: 'Schnellstart', tabWorkflows: 'Arbeitsabl
   pluginStep2Title: 'Mit 1 Klick installieren', pluginStep2Line1: 'Klicken Sie auf "Installieren", um das Plugin herunterzuladen und zu aktivieren. Plugins werden in userdata/plugins/ gespeichert und automatisch beim Start geladen.',
   pluginStep3Title: 'Im Workflow verwenden', pluginStep3Line1: 'Aktive Plugins erscheinen automatisch in den Übersetzungsmenüs. Kein Neustart von GameStringer erforderlich.',
   pluginTip: 'Plugins sind zur Sicherheit sandboxed. Sie können Ihr eigenes Plugin mit dem TypeScript SDK entwickeln.',
-  // v1.8.2 — Ollama HTTP Direct
+  // v1.9.0 — Ollama HTTP Direct
   ollamaHttpTitle: 'Ollama HTTP Direct', ollamaHttpDesc: 'Direkte HTTP-Kommunikation mit Ollama — keine Abhängigkeit mehr von lokalem IPC.',
   ollamaHttpStep1Title: 'HTTP-Endpunkt konfigurieren', ollamaHttpStep1Line1: 'Aktivieren Sie in den Ollama-Einstellungen "HTTP Direct". Geben Sie die Server-URL ein (Standard: http://localhost:11434). Unterstützt auch Remote-Ollama-Server.',
   ollamaHttpStep2Title: 'Verbindung überprüfen', ollamaHttpStep2Line1: 'Der Verbindungstest prüft, ob der Endpunkt antwortet und zeigt verfügbare Modelle an. Automatischer Fallback zu IPC, wenn HTTP nicht verfügbar ist.',
   ollamaHttpTip: 'HTTP Direct beseitigt IPC-Probleme unter Windows und ermöglicht die Nutzung von Ollama auf Remote-Maschinen im Netzwerk.',
-  // v1.8.2 — Epic Credentials
+  // v1.9.0 — Epic Credentials
   epicCredsTitle: 'Epic Games — Direkte Anmeldedaten', epicCredsDesc: 'Verbinden Sie Epic Games ohne OAuth mit Kontodaten.',
   epicCredsStep1Title: 'Anmeldedaten eingeben', epicCredsStep1Line1: 'Geben Sie in Einstellungen → Stores → Epic Ihre Epic-Konto-E-Mail und Passwort ein. Anmeldedaten werden mit AES-256-GCM verschlüsselt.',
   epicCredsStep2Title: 'Direkte Authentifizierung', epicCredsStep2Line1: 'GameStringer verbindet sich direkt mit Epic-Servern ohne OAuth-Browser-Flow. Ruft die vollständige Bibliothek mit DLC und kostenlosen Spielen ab.',
@@ -567,12 +567,12 @@ const ja: GT = { ...en, tabQuickStart: 'クイックスタート', tabWorkflows:
   pluginStep2Title: 'ワンクリックでインストール', pluginStep2Line1: '「インストール」をクリックしてプラグインをダウンロードし有効化。プラグインはuserdata/plugins/に保存され、起動時に自動的に読み込まれます。',
   pluginStep3Title: 'ワークフローで使用', pluginStep3Line1: 'アクティブなプラグインは自動的に翻訳メニューに表示されます。GameStringerの再起動は不要です。',
   pluginTip: 'プラグインはセキュリティのためにサンドボックス化されています。TypeScript SDKを使用して独自のプラグインを開発できます。',
-  // v1.8.2 — Ollama HTTP Direct
+  // v1.9.0 — Ollama HTTP Direct
   ollamaHttpTitle: 'Ollama HTTPダイレクト', ollamaHttpDesc: 'Ollamaとの直接HTTP通信 — ローカルIPCへの依存がなくなりました。',
   ollamaHttpStep1Title: 'HTTPエンドポイントを設定', ollamaHttpStep1Line1: 'Ollama設定で「HTTP Direct」を有効化。サーバーURLを入力（デフォルト: http://localhost:11434）。リモートOllamaサーバーもサポート。',
   ollamaHttpStep2Title: '接続を確認', ollamaHttpStep2Line1: '接続テストはエンドポイントが応答するか確認し、利用可能なモデルを表示します。HTTPが利用できない場合はIPCに自動フォールバック。',
   ollamaHttpTip: 'HTTP DirectはWindowsでのIPC問題を解消し、ネットワーク上のリモートマシンでOllamaを使用できるようにします。',
-  // v1.8.2 — Epic Credentials
+  // v1.9.0 — Epic Credentials
   epicCredsTitle: 'Epic Games — ダイレクト認証情報', epicCredsDesc: 'アカウント認証情報を使用してOAuthなしでEpic Gamesに接続。',
   epicCredsStep1Title: '認証情報を入力', epicCredsStep1Line1: '設定 → ストア → Epicで、Epicアカウントのメールとパスワードを入力。認証情報はAES-256-GCMで暗号化されます。',
   epicCredsStep2Title: '直接認証', epicCredsStep2Line1: 'GameStringerはブラウザOAuthフローなしでEpicサーバーに直接接続。DLCと無料ゲームを含む完全なライブラリを取得します。',
@@ -612,12 +612,12 @@ const zh: GT = { ...en, tabQuickStart: '快速开始', tabWorkflows: '工作流�
   pluginStep2Title: '一键安装', pluginStep2Line1: '点击"安装"下载并激活插件。插件保存在userdata/plugins/中，并在启动时自动加载。',
   pluginStep3Title: '在工作流中使用', pluginStep3Line1: '活动插件会自动出现在翻译菜单中。无需重新启动GameStringer。',
   pluginTip: '插件为安全而进行沙盒处理。您可以使用TypeScript SDK开发自己的插件。',
-  // v1.8.2 — Ollama HTTP Direct
+  // v1.9.0 — Ollama HTTP Direct
   ollamaHttpTitle: 'Ollama HTTP直连', ollamaHttpDesc: '与Ollama的直接HTTP通信 — 不再依赖本地IPC。',
   ollamaHttpStep1Title: '配置HTTP端点', ollamaHttpStep1Line1: '在Ollama设置中，启用"HTTP Direct"。输入服务器URL（默认：http://localhost:11434）。还支持远程Ollama服务器。',
   ollamaHttpStep2Title: '验证连接', ollamaHttpStep2Line1: '连接测试检查端点是否响应并显示可用模型。如果HTTP不可用，自动回退到IPC。',
   ollamaHttpTip: 'HTTP直连消除了Windows上的IPC问题，并允许在网络上的远程机器上使用Ollama。',
-  // v1.8.2 — Epic Credentials
+  // v1.9.0 — Epic Credentials
   epicCredsTitle: 'Epic Games — 直连凭证', epicCredsDesc: '使用账户凭证无需OAuth即可连接Epic Games。',
   epicCredsStep1Title: '输入凭证', epicCredsStep1Line1: '在设置 → 商店 → Epic中，输入您的Epic账户电子邮件和密码。凭证使用AES-256-GCM加密。',
   epicCredsStep2Title: '直接认证', epicCredsStep2Line1: 'GameStringer无需浏览器OAuth流程直接连接到Epic服务器。检索包含DLC和免费游戏的完整库。',
@@ -663,12 +663,12 @@ const ko: GT = { ...en, tabQuickStart: '빠른 시작', tabWorkflows: '워크플
   pluginStep2Title: '원클릭 설치', pluginStep2Line1: '"설치"를 클릭하여 플러그인을 다운로드하고 활성화하세요. 플러그인은 userdata/plugins/에 저장되고 시작 시 자동으로 로드됩니다.',
   pluginStep3Title: '워크플로우에서 사용', pluginStep3Line1: '활성 플러그인은 자동으로 번역 메뉴에 나타납니다. GameStringer를 다시 시작할 필요가 없습니다.',
   pluginTip: '플러그인은 보안을 위해 샌드박스 처리됩니다. TypeScript SDK를 사용하여 자신만의 플러그인을 개발할 수 있습니다.',
-  // v1.8.2 — Ollama HTTP Direct
+  // v1.9.0 — Ollama HTTP Direct
   ollamaHttpTitle: 'Ollama HTTP 다이렉트', ollamaHttpDesc: 'Ollama와의 직접 HTTP 통신 — 로컬 IPC에 대한 의존성이 더 이상 없습니다.',
   ollamaHttpStep1Title: 'HTTP 엔드포인트 구성', ollamaHttpStep1Line1: 'Ollama 설정에서 "HTTP Direct"를 활성화하세요. 서버 URL을 입력하세요(기본값: http://localhost:11434). 원격 Ollama 서버도 지원합니다.',
   ollamaHttpStep2Title: '연결 확인', ollamaHttpStep2Line1: '연결 테스트는 엔드포인트가 응답하는지 확인하고 사용 가능한 모델을 표시합니다. HTTP를 사용할 수 없으면 IPC로 자동 폴백합니다.',
   ollamaHttpTip: 'HTTP 다이렉트는 Windows의 IPC 문제를 해결하고 네트워크의 원격 머신에서 Ollama를 사용할 수 있게 합니다.',
-  // v1.8.2 — Epic Credentials
+  // v1.9.0 — Epic Credentials
   epicCredsTitle: 'Epic Games — 다이렉트 자격 증명', epicCredsDesc: '계정 자격 증명을 사용하여 OAuth 없이 Epic Games에 연결.',
   epicCredsStep1Title: '자격 증명 입력', epicCredsStep1Line1: '설정 → 스토어 → Epic에서 Epic 계정 이메일과 비밀번호를 입력하세요. 자격 증명은 AES-256-GCM으로 암호화됩니다.',
   epicCredsStep2Title: '직접 인증', epicCredsStep2Line1: 'GameStringer는 브라우저 OAuth 흐름 없이 Epic 서버에 직접 연결합니다. DLC와 무료 게임이 포함된 완전한 라이브러리를 검색합니다.',

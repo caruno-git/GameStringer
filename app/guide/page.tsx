@@ -832,13 +832,13 @@ export default function GuidePage() {
                 </CardContent>
               </Card>
 
-              {/* ── CARD 12: Ollama HTTP Direct (v1.8.2) ────────────────── */}
+              {/* ── CARD 12: Ollama HTTP Direct (v1.9.0) ────────────────── */}
               <Card className="border-teal-500/30 bg-gradient-to-br from-teal-950/20 to-slate-900/30">
                 <CardHeader className="py-2 px-3">
                   <CardTitle className="text-sm flex items-center gap-2">
                     <Cpu className="w-4 h-4 text-teal-400" />
                     {g.ollamaHttpTitle}
-                    <Badge variant="outline" className="ml-auto text-2xs border-teal-500/40 text-teal-300">v1.8.2</Badge>
+                    <Badge variant="outline" className="ml-auto text-2xs border-teal-500/40 text-teal-300">v1.9.0</Badge>
                   </CardTitle>
                   <CardDescription className="text-xs">
                     {g.ollamaHttpDesc}
@@ -855,13 +855,13 @@ export default function GuidePage() {
                 </CardContent>
               </Card>
 
-              {/* ── CARD 13: Epic Credentials (v1.8.2) ──────────────────── */}
+              {/* ── CARD 13: Epic Credentials (v1.9.0) ──────────────────── */}
               <Card className="border-yellow-500/30 bg-gradient-to-br from-yellow-950/20 to-slate-900/30">
                 <CardHeader className="py-2 px-3">
                   <CardTitle className="text-sm flex items-center gap-2">
                     <Gamepad2 className="w-4 h-4 text-yellow-400" />
                     {g.epicCredsTitle}
-                    <Badge variant="outline" className="ml-auto text-2xs border-yellow-500/40 text-yellow-300">v1.8.2</Badge>
+                    <Badge variant="outline" className="ml-auto text-2xs border-yellow-500/40 text-yellow-300">v1.9.0</Badge>
                   </CardTitle>
                   <CardDescription className="text-xs">
                     {g.epicCredsDesc}

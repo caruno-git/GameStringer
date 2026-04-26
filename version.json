@@ -1,5 +1,5 @@
-{
-  "version": "1.8.2",
+﻿{
+  "version": "1.9.0",
   "major": 1,
   "minor": 8,
   "patch": 2,
@@ -9,7 +9,7 @@
   "gitHash": "0805f0b",
   "branch": "main",
   "changelog": {
-    "1.8.2": {
+    "1.9.0": {
       "date": "2026-04-23",
       "type": "patch",
       "changes": [

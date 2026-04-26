@@ -485,7 +485,7 @@ Real-time community chat integrated into the Community Hub, powered by Supabase 
 
 ---
 
-## What's New v1.8.2
+## What's New v1.9.0
 
 ### Community Hub UI Improvements
 - **Redesigned Community Hub**: cleaner, more consistent design without excessive gradients and decorative blobs

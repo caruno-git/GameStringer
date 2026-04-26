@@ -485,7 +485,7 @@ Chat en temps réel intégré au Community Hub, propulsé par Supabase Realtime.
 
 ---
 
-## Nouveautés v1.8.2
+## Nouveautés v1.9.0
 
 ### Améliorations UI du Community Hub
 - **Community Hub redessiné**: design plus propre et cohérent sans dégradés excessifs et blobs décoratifs

@@ -485,7 +485,7 @@ Unity (Mono/IL2CPP), Unreal Engine, Godot, RPG Maker, Ren'Py, Source Engine, Cry
 
 ---
 
-## Что нового в v1.8.2
+## Что нового в v1.9.0
 
 ### Улучшения UI Community Hub
 - **Переработанный Community Hub**: более чистый и согласованный дизайн без излишних градиентов и декоративных блобов

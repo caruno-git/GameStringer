@@ -55,7 +55,7 @@
 
 ---
 
-## �� v1.8.2 - 2026-04-22
+## �� v1.9.0 - 2026-04-22
 
 ### Bug Fix & Stores
 - **Fix Ollama IPC**: sostituiti tutti i `check_ollama_status` IPC con HTTP diretto a localhost:11434 (main-layout, page.tsx, ollama-manager.ts, ollama-setup-wizard.tsx, ollama-manager settings) — eliminati errori `ipc.localhost ERR_CONNECTION_REFUSED`

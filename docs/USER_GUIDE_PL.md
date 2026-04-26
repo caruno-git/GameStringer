@@ -485,7 +485,7 @@ Czat w czasie rzeczywistym zintegrowany z Community Hub, oparty na Supabase Real
 
 ---
 
-## Nowości v1.8.2
+## Nowości v1.9.0
 
 ### Ulepszenia UI Community Hub
 - **Przeprojektowany Community Hub**: czystszy i bardziej spójny projekt bez nadmiernych gradientów i dekoracyjnych blobów

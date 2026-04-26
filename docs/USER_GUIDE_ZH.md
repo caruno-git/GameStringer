@@ -485,7 +485,7 @@ Unity游戏（Mono和IL2CPP）的**最佳方法**。
 
 ---
 
-## v1.8.2 新功能
+## v1.9.0 新功能
 
 ### Community Hub UI 改进
 - **重新设计的 Community Hub**: 更干净、一致的设计，没有过度的渐变和装饰性 blob
