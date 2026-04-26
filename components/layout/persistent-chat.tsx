@@ -65,6 +65,7 @@ import {
   type ChatMessage,
   type UserPresence,
 } from '@/lib/community-chat';
+import { getSupabase } from '@/lib/community-hub-backend';
 import { translateChatMessage } from '@/lib/ai-translate-direct';
 import { clientLogger } from '@/lib/client-logger';
 
@@ -148,26 +149,58 @@ export function PersistentChat() {
       return;
     }
 
+    let authSubscription: { data: { subscription: { unsubscribe: () => void } } } | null = null;
+    let initRetryTimeout: ReturnType<typeof setTimeout> | null = null;
+    let retryCount = 0;
+    const MAX_RETRIES = 3;
+
     const init = async () => {
       const timeout = <T,>(promise: Promise<T>, ms: number): Promise<T> =>
         Promise.race([promise, new Promise<never>((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))]);
 
       try {
-        let uid = await timeout(getCurrentUserId(), 5000).catch(() => null);
+        clientLogger.debug('[PersistentChat] Starting init, retry:', retryCount);
+        let uid = await timeout(getCurrentUserId(), 8000).catch((err) => {
+          clientLogger.debug('[PersistentChat] getCurrentUserId failed:', err);
+          return null;
+        });
+        
         if (!uid) {
-          uid = await timeout(autoSyncGSToSupabase(), 5000).catch(() => null);
+          clientLogger.debug('[PersistentChat] No uid from getCurrentUserId, trying autoSync...');
+          uid = await timeout(autoSyncGSToSupabase(), 8000).catch((err) => {
+            clientLogger.warn('[PersistentChat] autoSyncGSToSupabase failed:', err);
+            return null;
+          });
+          if (uid) {
+            clientLogger.debug('[PersistentChat] autoSync succeeded, uid:', uid);
+          }
+        } else {
+          clientLogger.debug('[PersistentChat] Got uid from getCurrentUserId:', uid);
         }
+        
         setUserId(uid);
-        const chatRooms = await timeout(fetchRooms(), 5000).catch(() => [] as ChatRoom[]);
-        setRooms(chatRooms);
-        if (chatRooms.length > 0) {
-          setActiveRoom(chatRooms[0]);
-        }
+        
         if (uid) {
+          const chatRooms = await timeout(fetchRooms(), 5000).catch((err) => {
+            clientLogger.warn('[PersistentChat] fetchRooms failed:', err);
+            return [] as ChatRoom[];
+          });
+          setRooms(chatRooms);
+          if (chatRooms.length > 0 && !activeRoom) {
+            setActiveRoom(chatRooms[0]);
+          }
+          
           updatePresence('online').catch(() => {});
           unsubPresenceRef.current = await timeout(subscribeToPresence((users) => {
             setOnlineUsers(users);
           }), 5000).catch(() => null);
+        } else if (retryCount < MAX_RETRIES) {
+          // Retry after delay if no uid yet
+          retryCount++;
+          clientLogger.debug(`[PersistentChat] No uid, scheduling retry ${retryCount}/${MAX_RETRIES} in 3s...`);
+          initRetryTimeout = setTimeout(init, 3000);
+        } else {
+          clientLogger.warn('[PersistentChat] Max retries reached, no uid available');
         }
       } catch (e: unknown) {
         const errObj = e as { message?: string; code?: string; details?: string };
@@ -179,11 +212,34 @@ export function PersistentChat() {
         setIsLoading(false);
       }
     };
+    
     init();
+
+    // ─── Subscribe to Supabase auth state changes ─────────────────
+    const setupAuthListener = async () => {
+      try {
+        const supabase = await getSupabase();
+        authSubscription = supabase.auth.onAuthStateChange((event, session) => {
+          clientLogger.debug(`[PersistentChat] Auth state changed: ${event}, uid: ${session?.user?.id ?? 'none'}`);
+          if (event === 'SIGNED_IN' && session?.user?.id) {
+            setUserId(session.user.id);
+            // Re-init rooms and presence
+            init();
+          } else if (event === 'SIGNED_OUT') {
+            setUserId(null);
+          }
+        });
+      } catch (err) {
+        clientLogger.warn('[PersistentChat] Failed to setup auth listener:', err);
+      }
+    };
+    setupAuthListener();
 
     return () => {
       unsubMessageRef.current?.();
       unsubPresenceRef.current?.();
+      if (initRetryTimeout) clearTimeout(initRetryTimeout);
+      authSubscription?.data?.subscription?.unsubscribe();
       updatePresence('offline').catch(() => {});
     };
   }, []);
