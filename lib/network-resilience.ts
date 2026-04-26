@@ -96,21 +96,26 @@ function updateStatus(partial: Partial<NetworkStatus>): void {
  */
 let _monitorInitialized = false;
 
+// Store listener references for cleanup
+let _onlineHandler: (() => void) | null = null;
+let _offlineHandler: (() => void) | null = null;
+
 export function initNetworkMonitor(supabaseUrl?: string): void {
   if (typeof window === 'undefined') return;
   if (_monitorInitialized) return;
   _monitorInitialized = true;
 
   // Browser online/offline events
-  window.addEventListener('online', () => {
+  _onlineHandler = () => {
     clientLogger.info('[NetworkResilience] Browser: online');
     updateStatus({ isOnline: true });
-  });
-
-  window.addEventListener('offline', () => {
+  };
+  _offlineHandler = () => {
     clientLogger.info('[NetworkResilience] Browser: offline');
     updateStatus({ isOnline: false, isSupabaseOnline: false });
-  });
+  };
+  window.addEventListener('online', _onlineHandler);
+  window.addEventListener('offline', _offlineHandler);
 
   // Initial state
   updateStatus({ isOnline: navigator.onLine });
@@ -152,6 +157,14 @@ export function initNetworkMonitor(supabaseUrl?: string): void {
  */
 export function stopNetworkMonitor(): void {
   _monitorInitialized = false;
+  if (_onlineHandler) {
+    window.removeEventListener('online', _onlineHandler);
+    _onlineHandler = null;
+  }
+  if (_offlineHandler) {
+    window.removeEventListener('offline', _offlineHandler);
+    _offlineHandler = null;
+  }
   if (_supabaseCheckInterval) {
     clearInterval(_supabaseCheckInterval);
     _supabaseCheckInterval = null;
