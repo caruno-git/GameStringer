@@ -45,6 +45,8 @@ jobs:
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
+        env:
+          DATABASE_URL: "file:./dev.db"
 
       - name: Force rebuild tauri-build (ensure __TAURI_BUNDLE_TYPE marker)
         shell: bash
@@ -207,6 +209,8 @@ jobs:
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
+        env:
+          DATABASE_URL: "file:./dev.db"
 
       - name: Force rebuild tauri-build (ensure __TAURI_BUNDLE_TYPE marker)
         run: |
@@ -285,6 +289,8 @@ jobs:
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
+        env:
+          DATABASE_URL: "file:./dev.db"
 
       - name: Force rebuild tauri-build (ensure __TAURI_BUNDLE_TYPE marker)
         run: |
