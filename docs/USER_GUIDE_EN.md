@@ -1,4 +1,4 @@
-# GameStringer - Complete Guide
+﻿# GameStringer - Complete Guide
 
 ## Table of Contents
 
@@ -410,7 +410,7 @@ Real-time community chat integrated into the Community Hub, powered by Supabase 
 - Active internet connection
 - Supabase backend configured (for self-hosting)
 
-## What's New v1.6.0
+## What's New v1.9.0
 
 ### Bethesda Engine Patcher
 - **Supported games**: Skyrim LE/SE/AE, Fallout 3/NV/4, Oblivion, Starfield
@@ -521,7 +521,7 @@ Real-time community chat integrated into the Community Hub, powered by Supabase 
 
 ---
 
-## What's New in v1.6.0
+## What's New in v1.9.0
 
 ### 🟢 Unified Online Presence
 
@@ -615,4 +615,4 @@ Startup time optimization:
 
 ---
 
-GameStringer v1.6.0 - Guide updated 26/04/2026
+GameStringer v1.9.0 - Guide updated 26/04/2026

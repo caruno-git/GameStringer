@@ -413,7 +413,7 @@ Unity (Mono/IL2CPP), Unreal Engine, Godot, RPG Maker, Ren'Py, Source Engine, Cry
 - **Создание пользовательских комнат**: комнаты для проектов или игр
 - **Авто-вход**: автоматическое подключение через профиль GameStringer
 
-## Что нового в v1.6.0
+## Что нового в v1.9.0
 
 ### Патчер Bethesda Engine
 - **Поддерживаемые игры**: Skyrim LE/SE/AE, Fallout 3/NV/4, Oblivion, Starfield
@@ -521,7 +521,7 @@ Unity (Mono/IL2CPP), Unreal Engine, Godot, RPG Maker, Ren'Py, Source Engine, Cry
 
 ---
 
-## Что нового в v1.6.0
+## Что нового в v1.9.0
 
 ### 🟢 Единая система присутствия онлайн
 
@@ -615,4 +615,4 @@ Unity (Mono/IL2CPP), Unreal Engine, Godot, RPG Maker, Ren'Py, Source Engine, Cry
 
 ---
 
-GameStringer v1.6.0 - Руководство обновлено 26.04.2026
+GameStringer v1.9.0 - Руководство обновлено 26.04.2026

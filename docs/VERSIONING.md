@@ -1,4 +1,4 @@
-# GameStringer Version Management System
+﻿# GameStringer Version Management System
 
 Sistema di versioning automatico per GameStringer che segue il **Semantic Versioning (SemVer)**.
 
@@ -14,7 +14,7 @@ MAJOR.MINOR.PATCH
 
 ## Versione Corrente
 
-**v1.6.0** (Build 123) - 04/04/2026
+**v1.9.0** (Build 123) - 04/04/2026
 
 ## File da Aggiornare per ogni Release
 

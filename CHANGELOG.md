@@ -1,6 +1,61 @@
-# GameStringer Changelog
+﻿# GameStringer Changelog
 
-## 🐛 v1.8.2 - 2026-04-22
+## 🚀 v1.9.0 - 2026-04-26
+
+### Unified Online Presence
+- **Presenza unificata**: sistema combinato Supabase Realtime + DB fallback
+- Heartbeat globale ogni 30s, auto-away (2+ min senza focus), auto-online al ritorno
+- Widget "Utenti Online" con username, avatar e indicatore Realtime
+- `lib/presence.ts` — modulo unificato, delega da `social.ts` e `community-chat.ts`
+
+### System Tray Notifications
+- **Notifiche OS native** via Tauri per: chat, traduzioni, errori, aggiornamenti, giochi, amici, news
+- Preferenze configurabili per tipo + ore di silenzio (quiet hours)
+- Notifiche critiche (errori, aggiornamenti) bypassano quiet hours
+- Tooltip tray con conteggio notifiche non lette
+- `lib/tray-notifications.ts` — bridge frontend, `send_native_notification` + `update_tray_tooltip` in Rust
+
+### Error Boundaries + Crash Recovery
+- **WidgetErrorBoundary**: recovery automatico dopo 5s (max 3 tentativi)
+- **AppErrorBoundary**: schermata errore con "Ricarica App"
+- `components/error-boundary.tsx`
+
+### Network Resilience / Offline Mode
+- **Network Monitor**: rileva online/offline + Supabase health check ogni 30s
+- Barra stato connessione (rossa/amber/verde)
+- Retry con exponential backoff (1s, 2s, 4s)
+- Coda offline: operazioni accodate e eseguite al ritorno connessione
+- `lib/network-resilience.ts` — guard anti-doppio-init, cleanup listener
+
+### Character Voice Profiles (Voice Cloning)
+- **Estrazione automatica** personaggi e stile linguistico dalle stringhe di dialogo
+- 16 toni, 5 livelli formalità, 5 fasce d'età, catchphrases, speech patterns
+- Iniezione automatica nel prompt di traduzione per coerenza personaggio
+- `lib/voice-profiles.ts` + `components/settings/voice-profile-manager.tsx`
+
+### Fine-Tuning Infrastructure
+- **Dataset da correzioni umane** (Adaptive MT) → JSONL
+- 4 formati export: OpenAI, Ollama, Alpaca, ChatML
+- Model management per-game, integrazione Ollama
+- `lib/fine-tuning.ts` + `components/settings/fine-tuning-manager.tsx`
+
+### Code Splitting / Lazy Loading
+- 8 componenti pesanti convertiti a `React.lazy` + `Suspense`
+- Avvio più rapido, meno memoria usata
+
+### Bug Fix
+- **Fix NetworkResilience doppio init**: guard `_monitorInitialized` + cleanup listener in `stopNetworkMonitor`
+- **Fix Supabase 400 user_profiles**: session check prima della query
+- **Fix tray version strings**: tooltip e menu aggiornati da v1.5.0 a v1.9.0
+- **Fix icon param**: parametro `icon` usato in `send_native_notification` Rust
+- **Fix quiet hours bypass**: notifiche critiche bypassano ore di silenzio
+
+### Docs
+- Guide utente aggiornate in 11 lingue (IT, EN, DE, ES, FR, JA, KO, PL, PT, RU, ZH)
+
+---
+
+## �� v1.8.2 - 2026-04-22
 
 ### Bug Fix & Stores
 - **Fix Ollama IPC**: sostituiti tutti i `check_ollama_status` IPC con HTTP diretto a localhost:11434 (main-layout, page.tsx, ollama-manager.ts, ollama-setup-wizard.tsx, ollama-manager settings) — eliminati errori `ipc.localhost ERR_CONNECTION_REFUSED`
@@ -133,7 +188,7 @@
 - 140 unit test per i parser Bethesda (54) e CRI Middleware (86): BSA/BA2, STRINGS, ESP/ESM, CPK, @UTF, CRILAYLA, MSG/BMD/JSON/XML/FTD
 - Documentazione `RELEASE_PROCESS.md` riscritta con tutte le lezioni apprese
 
-## 🚀 v1.6.0 - 2026-04-04
+## 🚀 v1.9.0 - 2026-04-04
 
 - Prediction Tool (P.T.): analisi traduzione per-gioco con difficulty score 0-100, DRM detection, encoding analysis, translation complexity, confidence score, LLM time estimates su 18 modelli, 5 chain Local/Cloud/Hybrid, export report
 - P.T.Rank / Classifica Rapida: ranking giochi per difficoltà con ordine suggerito di traduzione

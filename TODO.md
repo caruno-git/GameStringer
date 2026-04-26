@@ -1,6 +1,6 @@
-# 📋 TODO.md - GameStringer Development Tasks
+﻿# 📋 TODO.md - GameStringer Development Tasks
 
-> Ultimo aggiornamento: 4 Aprile 2026 — v1.6.0
+> Ultimo aggiornamento: 4 Aprile 2026 — v1.9.0
 
 ---
 

@@ -1,4 +1,4 @@
-#![cfg_attr(
+﻿#![cfg_attr(
     all(not(debug_assertions), target_os = "windows"),
     windows_subsystem = "windows"
 )]
@@ -1100,7 +1100,7 @@ fn main() {
 
             // ── Stato Sistema ────────────────────────────────
             let ollama_status = MenuItem::with_id(app, "ollama_status", "🟢 Ollama: Verifica...", false, None::<&str>)?;
-            let version_info = MenuItem::with_id(app, "version_info", "ℹ️ v1.6.0 (build 130)", false, None::<&str>)?;
+            let version_info = MenuItem::with_id(app, "version_info", "ℹ️ v1.9.0 (build 131)", false, None::<&str>)?;
 
             let sep4 = PredefinedMenuItem::separator(app)?;
 
@@ -1161,7 +1161,7 @@ fn main() {
                 .icon(app.default_window_icon().cloned().unwrap())
                 .menu(&menu)
                 .show_menu_on_left_click(false)
-                .tooltip("GameStringer v1.6.0 — AI Game Translation")
+                .tooltip("GameStringer v1.9.0 — AI Game Translation")
                 .on_menu_event(|app, event| {
                     match event.id.as_ref() {
                         // ── Finestra ──

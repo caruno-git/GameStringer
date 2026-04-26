@@ -1,4 +1,4 @@
-# GameStringer -- Release Process
+﻿# GameStringer -- Release Process
 
 Complete procedure to ship a new version **with working auto-update** on
 Windows, macOS, and Linux.
@@ -139,7 +139,7 @@ uploads the result to the GitHub release.
 ## 3. Post-Release Verification
 
 Do **all** of these before announcing. They take two minutes and catch
-every class of bug that broke v1.6.0 and v1.6.1 early builds.
+every class of bug that broke v1.9.0 and v1.6.1 early builds.
 
 ### 3.1 Check all assets are present
 

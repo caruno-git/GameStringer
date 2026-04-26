@@ -413,7 +413,7 @@ Chat en temps réel intégré au Community Hub, propulsé par Supabase Realtime.
 - **Créer des salons personnalisés** : salons dédiés pour projets ou jeux
 - **Auto-login** : connexion automatique via profil GameStringer
 
-## Nouveautés v1.6.0
+## Nouveautés v1.9.0
 
 ### Patcheur Bethesda Engine
 - **Jeux pris en charge** : Skyrim LE/SE/AE, Fallout 3/NV/4, Oblivion, Starfield
@@ -521,7 +521,7 @@ Chat en temps réel intégré au Community Hub, propulsé par Supabase Realtime.
 
 ---
 
-## Nouveautés v1.6.0
+## Nouveautés v1.9.0
 
 ### 🟢 Présence En Ligne Unifiée
 
@@ -615,4 +615,4 @@ Optimisation du temps de démarrage :
 
 ---
 
-GameStringer v1.6.0 - Guide mise à jour le 26/04/2026
+GameStringer v1.9.0 - Guide mise à jour le 26/04/2026

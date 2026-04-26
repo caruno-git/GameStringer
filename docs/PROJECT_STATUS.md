@@ -1,4 +1,4 @@
-# Stato del Progetto GameStringer
+﻿# Stato del Progetto GameStringer
 
 ## Ultimo Aggiornamento: 13/04/2026 - v1.8.1
 
@@ -60,7 +60,7 @@ Audit generale del codebase con fix sistematici su 380+ file in 4 commit.
 
 ---
 
-### Nuove Feature v1.6.0
+### Nuove Feature v1.9.0
 
 - **Bethesda Engine Patcher**: Skyrim LE/SE/AE, Fallout 3/NV/4, Oblivion, Starfield — BSA v103-105, BA2 GNRL/DX10, ESP/ESM, STRINGS
 - **CRI Middleware Patcher**: Persona 5 Royal, Yakuza, Tales of, Dragon Ball — CPK + CRILAYLA + MSG/BMD/FTD

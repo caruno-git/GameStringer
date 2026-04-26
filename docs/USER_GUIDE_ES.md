@@ -1,4 +1,4 @@
-# GameStringer - Guía Completa
+﻿# GameStringer - Guía Completa
 
 ## Índice
 
@@ -413,7 +413,7 @@ Chat en tiempo real integrado en el Community Hub, impulsado por Supabase Realti
 - **Crear salas personalizadas**: salas dedicadas para proyectos o juegos
 - **Auto-login**: conexión automática vía perfil GameStringer
 
-## Novedades v1.6.0
+## Novedades v1.9.0
 
 ### Parcheador Bethesda Engine
 - **Juegos compatibles**: Skyrim LE/SE/AE, Fallout 3/NV/4, Oblivion, Starfield
@@ -521,7 +521,7 @@ Chat en tiempo real integrado en el Community Hub, impulsado por Supabase Realti
 
 ---
 
-## Novedades en v1.6.0
+## Novedades en v1.9.0
 
 ### 🟢 Presencia Online Unificada
 
@@ -615,4 +615,4 @@ Optimización del tiempo de inicio:
 
 ---
 
-GameStringer v1.6.0 - Guía actualizada 26/04/2026
+GameStringer v1.9.0 - Guía actualizada 26/04/2026

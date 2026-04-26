@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useMemo } from 'react';
 import { useVersion } from '@/lib/version';
@@ -458,7 +458,7 @@ export default function GuidePage() {
                   <CardTitle className="text-sm flex items-center gap-2">
                     <Brain className="w-4 h-4 text-purple-400" />
                     Prediction Tool (P.T.) — Lo strumento più potente
-                    <Badge variant="outline" className="ml-auto text-2xs border-purple-500/40 text-purple-300">v1.6.0</Badge>
+                    <Badge variant="outline" className="ml-auto text-2xs border-purple-500/40 text-purple-300">v1.9.0</Badge>
                   </CardTitle>
                   <CardDescription className="text-xs">
                     Analizza in profondità un gioco <em>prima</em> di tradurlo: difficoltà, engine, volume stringhe, DRM, encoding, tempi stimati LLM e chain suggerite.
@@ -534,7 +534,7 @@ export default function GuidePage() {
                   <CardTitle className="text-sm flex items-center gap-2">
                     <FlaskConical className="w-4 h-4 text-sky-400" />
                     Dry Run Scanner — Scansione sicura dell&apos;intera libreria
-                    <Badge variant="outline" className="ml-auto text-2xs border-sky-500/40 text-sky-300">v1.6.0</Badge>
+                    <Badge variant="outline" className="ml-auto text-2xs border-sky-500/40 text-sky-300">v1.9.0</Badge>
                   </CardTitle>
                   <CardDescription className="text-xs">
                     Analizza <strong>tutti</strong> i tuoi giochi Steam (800+) in batch <strong>senza modificare nessun file</strong>. Identifica quali sono traducibili e con quale engine.
@@ -606,7 +606,7 @@ export default function GuidePage() {
                   <CardTitle className="text-sm flex items-center gap-2">
                     <Trophy className="w-4 h-4 text-amber-400" />
                     P.T.Rank — Classifica Rapida
-                    <Badge variant="outline" className="ml-auto text-2xs border-amber-500/40 text-amber-300">v1.6.0</Badge>
+                    <Badge variant="outline" className="ml-auto text-2xs border-amber-500/40 text-amber-300">v1.9.0</Badge>
                   </CardTitle>
                   <CardDescription className="text-xs">
                     Ordina tutti i giochi analizzati dal <strong>più facile</strong> al <strong>più difficile</strong> da tradurre. Perfetto per decidere da dove cominciare.
@@ -651,7 +651,7 @@ export default function GuidePage() {
                   <CardTitle className="text-sm flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-indigo-400" />
                     &quot;String it!&quot; — Traduzione in un click
-                    <Badge variant="outline" className="ml-auto text-2xs border-indigo-500/40 text-indigo-300">v1.6.0</Badge>
+                    <Badge variant="outline" className="ml-auto text-2xs border-indigo-500/40 text-indigo-300">v1.9.0</Badge>
                   </CardTitle>
                   <CardDescription className="text-xs">
                     Bottone viola <Sparkles className="inline h-3 w-3 text-indigo-400" /> che appare in <em>hover</em> sulla game card: lancia direttamente il Translation Wizard precompilato con tutto ciò che serve (appid, engine, path).

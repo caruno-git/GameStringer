@@ -1,4 +1,4 @@
-<p align="center">
+﻿<p align="center">
   <img src="public/logo.png" alt="GameStringer Logo" width="180" />
 </p>
 
@@ -175,8 +175,8 @@ GameStringer prend en charge **20+ moteurs** avec différents niveaux de profond
 | **Kirikiri** | ✅ Complet | Parsing `.ks` / `.scn` |
 | **TyranoScript** | ✅ Complet | Extracteur fast-path avec patching JSON |
 | **Electron** | ✅ Complet | Dépaquetage ASAR + détection JSON i18n |
-| **Bethesda (Skyrim/Fallout/Oblivion/Starfield)** | ✅ **NEW v1.6.0** | Parser BSA v103-105 + BA2 GNRL/DX10 + ESP/ESM (FULL/DESC/NAM1), STRINGS/DLSTRINGS/ILSTRINGS |
-| **CRI Middleware (Persona/Yakuza/Tales of/Dragon Ball)** | ✅ **NEW v1.6.0** | CPK + CRILAYLA + MSG/BMD/FTD avec auto-détection Shift-JIS/UTF-8/UTF-16 |
+| **Bethesda (Skyrim/Fallout/Oblivion/Starfield)** | ✅ **NEW v1.9.0** | Parser BSA v103-105 + BA2 GNRL/DX10 + ESP/ESM (FULL/DESC/NAM1), STRINGS/DLSTRINGS/ILSTRINGS |
+| **CRI Middleware (Persona/Yakuza/Tales of/Dragon Ball)** | ✅ **NEW v1.9.0** | CPK + CRILAYLA + MSG/BMD/FTD avec auto-détection Shift-JIS/UTF-8/UTF-16 |
 | **Visionaire Studio** | ✅ Complet | Aventures Daedalic (Deponia, Edna, etc.) |
 | **Danganronpa WAD** | ✅ Complet | Parser d'archive WAD + patching des dialogues STX |
 
@@ -210,7 +210,7 @@ GameStringer prend en charge **20+ moteurs** avec différents niveaux de profond
 - **Live Quality Preview** : voyez les scores de qualité en temps réel pendant la traduction par lot
 - **Support RTL** : détection automatique de direction et gestion de l'attribut `dir`
 
-### 🧠 P.T. — Prediction Tool (v1.6.0)
+### 🧠 P.T. — Prediction Tool (v1.9.0)
 
 - **Difficulty Score 0-100** avec facteurs pondérés (volume, moteur, DRM, encodage, complexité)
 - **Estimations de temps pour 18 modèles LLM** incluant Gemma 4 (27B MoE A4B / E4B / E2B)
@@ -252,8 +252,8 @@ GameStringer prend en charge **20+ moteurs** avec différents niveaux de profond
 
 - **Unity** : auto-installeur BepInEx + XUnity.AutoTranslator, Unity Localization Package (StringTable, SharedTableData, catalogue Addressables, validateur Smart Strings)
 - **Unreal Engine** : extraction `.locres` + empaquetage mod `_P.pak`
-- **Bethesda Engine Patcher** (NEW v1.6.0) : Skyrim LE/SE/AE, Fallout 3/NV/4, Oblivion, Starfield — BSA v103-105 + BA2 GNRL/DX10 + ESP/ESM (FULL/DESC/NAM1)
-- **CRI Middleware Patcher** (NEW v1.6.0) : Persona 5 Royal, Yakuza, Tales of, Dragon Ball — CPK + CRILAYLA + MSG/BMD/FTD
+- **Bethesda Engine Patcher** (NEW v1.9.0) : Skyrim LE/SE/AE, Fallout 3/NV/4, Oblivion, Starfield — BSA v103-105 + BA2 GNRL/DX10 + ESP/ESM (FULL/DESC/NAM1)
+- **CRI Middleware Patcher** (NEW v1.9.0) : Persona 5 Royal, Yakuza, Tales of, Dragon Ball — CPK + CRILAYLA + MSG/BMD/FTD
 - **Ren'Py**, **RPG Maker**, **Godot**, **GameMaker**, **Kirikiri**, **Wolf RPG**, **Telltale**, **Visionaire**, **Danganronpa WAD** — tous avec parsers natifs
 - **Wizard Stepper** : UI multi-étapes partagée pour tous les patchers
 - **Universal PO Export** (gettext `.po`) pour chaque patcher avec métadonnées projet/langue/source/moteur
@@ -281,7 +281,7 @@ GameStringer prend en charge **20+ moteurs** avec différents niveaux de profond
 - **Répondre / modifier / supprimer** les messages avec ownership imposé par RLS
 - **Widget drawer extensible** dans le coin inférieur droit
 
-### ♿ Accessibilité (v1.6.0)
+### ♿ Accessibilité (v1.9.0)
 
 - **WCAG 2.1 AA sweep** — `aria-label` sur les boutons icône, en-têtes sémantiques `CardTitle`, `focus-visible` sur toutes les primitives, lien skip-to-content, landmark `main`, helpers `sr-only` en italien
 - **`prefers-reduced-motion`** respecté dans toutes les animations
@@ -289,7 +289,7 @@ GameStringer prend en charge **20+ moteurs** avec différents niveaux de profond
 - **UI en 11 langues** : IT, EN, ES, FR, DE, JA, ZH, KO, PT, RU, PL
 - **Support du layout RTL** avec détection automatique de direction
 
-### 🎨 Design System (v1.6.0)
+### 🎨 Design System (v1.9.0)
 
 - **Variantes Card** via `cva` : default, muted, highlight, success, error, warning
 - **Tailles de Button** incluant `xs` et `icon-sm`

@@ -1,4 +1,4 @@
-# 📖 GameStringer - Guida Utente Completa
+﻿# 📖 GameStringer - Guida Utente Completa
 
 ## Indice
 
@@ -57,7 +57,7 @@
 53. [Chat Community in Tempo Reale](#chat-community-in-tempo-reale) *(NUOVO v1.5.0)*
 54. [Novità v1.5.0](#novità-v150)
 55. [Translation Innovations 2026](#translation-innovations-2026) *(NUOVO)*
-56. [Novità v1.6.0](#novità-v160) *(NUOVO v1.6.0)*
+56. [Novità v1.9.0](#novità-v160) *(NUOVO v1.9.0)*
 
 ---
 
@@ -1779,7 +1779,7 @@ La Chat Community è una funzionalità di messaggistica in tempo reale integrata
 - **Widget chat** in basso a destra con drawer espandibile
 - **i18n**: traduzioni chat in tutte le 11 lingue supportate
 
-## Novità v1.6.0
+## Novità v1.9.0
 
 ### Patcher Bethesda Engine
 - **Giochi supportati**: Skyrim LE/SE/AE, Fallout 3/NV/4, Oblivion, Starfield
@@ -1971,7 +1971,7 @@ Aggiunte 3 nuove chain preset ottimizzate:
 
 ---
 
-## Novità v1.6.0
+## Novità v1.9.0
 
 ### 🟢 Presenza Online Unificata
 
@@ -2065,4 +2065,4 @@ Ottimizzazione del tempo di caricamento:
 
 ---
 
-GameStringer v1.6.0 - Guida aggiornata 26/04/2026
+GameStringer v1.9.0 - Guida aggiornata 26/04/2026

@@ -1,4 +1,4 @@
-# GameStringer Plugin System — Design Document
+﻿# GameStringer Plugin System — Design Document
 
 ## Overview
 
@@ -147,7 +147,7 @@ I plugin vengono distribuiti come cartelle `.gsplugin` contenenti:
 ## Roadmap
 
 - **v1.5.0**: ✅ Scaffold base, caricamento plugin, API detect
-- **v1.6.0**: ✅ API extract/patch complete, sandbox
+- **v1.9.0**: ✅ API extract/patch complete, sandbox
 - **v1.7.0**: ✅ Community Hub plugin browser
 - **v1.8.1**: ✅ PatcherPlugin interface completa, template generator, distribuzione .gsplugin
 

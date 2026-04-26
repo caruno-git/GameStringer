@@ -1,4 +1,4 @@
-<p align="center">
+﻿<p align="center">
   <img src="public/logo.png" alt="GameStringer Logo" width="180" />
 </p>
 
@@ -175,8 +175,8 @@ GameStringer 支持具有不同深度级别的 **20+ 引擎**:
 | **Kirikiri** | ✅ 完整 | `.ks` / `.scn` 解析 |
 | **TyranoScript** | ✅ 完整 | 带 JSON 修补的 fast-path 提取器 |
 | **Electron** | ✅ 完整 | ASAR 解包 + i18n JSON 检测 |
-| **Bethesda(Skyrim/Fallout/Oblivion/Starfield)** | ✅ **NEW v1.6.0** | BSA v103-105 + BA2 GNRL/DX10 + ESP/ESM(FULL/DESC/NAM1)解析器,STRINGS/DLSTRINGS/ILSTRINGS |
-| **CRI Middleware(女神异闻录/如龙/传说系列/龙珠)** | ✅ **NEW v1.6.0** | CPK + CRILAYLA + MSG/BMD/FTD,自动检测 Shift-JIS/UTF-8/UTF-16 |
+| **Bethesda(Skyrim/Fallout/Oblivion/Starfield)** | ✅ **NEW v1.9.0** | BSA v103-105 + BA2 GNRL/DX10 + ESP/ESM(FULL/DESC/NAM1)解析器,STRINGS/DLSTRINGS/ILSTRINGS |
+| **CRI Middleware(女神异闻录/如龙/传说系列/龙珠)** | ✅ **NEW v1.9.0** | CPK + CRILAYLA + MSG/BMD/FTD,自动检测 Shift-JIS/UTF-8/UTF-16 |
 | **Visionaire Studio** | ✅ 完整 | Daedalic 冒险游戏(Deponia、Edna 等) |
 | **Danganronpa WAD** | ✅ 完整 | WAD 存档解析器 + STX 对话修补 |
 
@@ -210,7 +210,7 @@ GameStringer 支持具有不同深度级别的 **20+ 引擎**:
 - **Live Quality Preview**:在批量翻译期间实时查看质量评分
 - **RTL 支持**:自动方向检测和 `dir` 属性处理
 
-### 🧠 P.T. — Prediction Tool (v1.6.0)
+### 🧠 P.T. — Prediction Tool (v1.9.0)
 
 - **Difficulty Score 0-100**,带加权因素(量、引擎、DRM、编码、复杂度)
 - **18 个 LLM 模型的时间估计**,包括 Gemma 4(27B MoE A4B / E4B / E2B)
@@ -252,8 +252,8 @@ GameStringer 支持具有不同深度级别的 **20+ 引擎**:
 
 - **Unity**:BepInEx + XUnity.AutoTranslator 自动安装程序,Unity Localization Package(StringTable、SharedTableData、Addressables 目录、Smart Strings 验证器)
 - **Unreal Engine**:`.locres` 提取 + `_P.pak` Mod 打包
-- **Bethesda Engine Patcher**(NEW v1.6.0):Skyrim LE/SE/AE、Fallout 3/NV/4、Oblivion、Starfield — BSA v103-105 + BA2 GNRL/DX10 + ESP/ESM(FULL/DESC/NAM1)
-- **CRI Middleware Patcher**(NEW v1.6.0):女神异闻录 5 Royal、如龙、传说系列、龙珠 — CPK + CRILAYLA + MSG/BMD/FTD
+- **Bethesda Engine Patcher**(NEW v1.9.0):Skyrim LE/SE/AE、Fallout 3/NV/4、Oblivion、Starfield — BSA v103-105 + BA2 GNRL/DX10 + ESP/ESM(FULL/DESC/NAM1)
+- **CRI Middleware Patcher**(NEW v1.9.0):女神异闻录 5 Royal、如龙、传说系列、龙珠 — CPK + CRILAYLA + MSG/BMD/FTD
 - **Ren'Py**、**RPG Maker**、**Godot**、**GameMaker**、**Kirikiri**、**Wolf RPG**、**Telltale**、**Visionaire**、**Danganronpa WAD** — 全部带原生解析器
 - **Wizard Stepper**:所有补丁器的共享多步 UI
 - 每个补丁器的 **Universal PO Export**(gettext `.po`),带项目/语言/源/引擎元数据
@@ -281,7 +281,7 @@ GameStringer 支持具有不同深度级别的 **20+ 引擎**:
 - 带 RLS 强制所有权的**回复 / 编辑 / 删除**消息
 - 右下角的**可展开抽屉小部件**
 
-### ♿ 无障碍 (v1.6.0)
+### ♿ 无障碍 (v1.9.0)
 
 - **WCAG 2.1 AA sweep** — 图标按钮上的 `aria-label`、语义 `CardTitle` 标题、所有原语上的 `focus-visible`、skip-to-content 链接、`main` 地标、意大利语 `sr-only` 助手
 - 所有动画中尊重 **`prefers-reduced-motion`**
@@ -289,7 +289,7 @@ GameStringer 支持具有不同深度级别的 **20+ 引擎**:
 - **11 种语言 UI**:IT、EN、ES、FR、DE、JA、ZH、KO、PT、RU、PL
 - 带自动方向检测的 **RTL 布局支持**
 
-### 🎨 Design System (v1.6.0)
+### 🎨 Design System (v1.9.0)
 
 - 通过 `cva` 的 **Card 变体**:default、muted、highlight、success、error、warning
 - 包括 `xs` 和 `icon-sm` 的 **Button 尺寸**

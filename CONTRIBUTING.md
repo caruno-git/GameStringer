@@ -1,4 +1,4 @@
-# Contributing to GameStringer
+﻿# Contributing to GameStringer
 
 Thank you for your interest in contributing to **GameStringer**! This project is a community-driven effort to make video games playable in every language, and contributions of all kinds — code, translations, bug reports, documentation, engine research — are genuinely appreciated.
 
@@ -112,29 +112,29 @@ GameStringer/
 │   ├── guide/                # In-app user guide (Quickstart/Tools/Advanced/Shortcuts)
 │   ├── batch/                # Batch folder translation
 │   ├── community-hub/        # Community memories + GitHub Discussions
-│   ├── bethesda-patcher/     # (v1.6.0) Bethesda Engine patcher UI
-│   ├── cri-patcher/          # (v1.6.0) CRI Middleware patcher UI
-│   ├── unity-localization/   # (v1.6.0) Unity Localization Package pipeline
+│   ├── bethesda-patcher/     # (v1.9.0) Bethesda Engine patcher UI
+│   ├── cri-patcher/          # (v1.9.0) CRI Middleware patcher UI
+│   ├── unity-localization/   # (v1.9.0) Unity Localization Package pipeline
 │   └── settings/             # Providers, API keys, profiles
 ├── components/               # Shared React components (game-detail-client, main-layout, …)
 │   └── ui/                   # shadcn/ui primitives + wizard-stepper
 ├── lib/                      # Frontend helpers
 │   ├── i18n/                 # Translation strings (11 locales)
 │   ├── tools-registry.ts     # Registry used by the guide and navigation
-│   ├── bethesda-patcher.ts   # (v1.6.0) Bethesda frontend bindings
-│   ├── cri-patcher.ts        # (v1.6.0) CRI frontend bindings
-│   ├── unity-localization.ts # (v1.6.0) Unity Loc frontend bindings
-│   └── po-export.ts          # (v1.6.0) Universal PO (gettext) exporter
+│   ├── bethesda-patcher.ts   # (v1.9.0) Bethesda frontend bindings
+│   ├── cri-patcher.ts        # (v1.9.0) CRI frontend bindings
+│   ├── unity-localization.ts # (v1.9.0) Unity Loc frontend bindings
+│   └── po-export.ts          # (v1.9.0) Universal PO (gettext) exporter
 ├── src-tauri/                # Rust backend (Tauri 2)
 │   ├── src/
 │   │   ├── main.rs           # Tauri invoke_handler registration
 │   │   ├── commands/         # One file per feature area (~100 commands)
 │   │   │   ├── prediction_tool.rs     # P.T., P.T.Rank, Dry Run, Workflow Orchestrator
 │   │   │   ├── game_update_tracker.rs # Steam buildid + patch integrity
-│   │   │   ├── bethesda_patcher.rs    # (v1.6.0) BSA/BA2/ESP parser
-│   │   │   ├── cri_patcher.rs         # (v1.6.0) CPK/CRILAYLA/MSG
-│   │   │   ├── unity_localization.rs  # (v1.6.0) StringTable/Smart Strings
-│   │   │   ├── po_export.rs           # (v1.6.0) Universal .po exporter
+│   │   │   ├── bethesda_patcher.rs    # (v1.9.0) BSA/BA2/ESP parser
+│   │   │   ├── cri_patcher.rs         # (v1.9.0) CPK/CRILAYLA/MSG
+│   │   │   ├── unity_localization.rs  # (v1.9.0) StringTable/Smart Strings
+│   │   │   ├── po_export.rs           # (v1.9.0) Universal .po exporter
 │   │   │   └── …
 │   │   └── engine_detector.rs         # Auto-detect 20+ engines from folder content
 │   └── Cargo.toml
@@ -201,7 +201,7 @@ GameStringer/
 - Use functional React components with hooks. No class components.
 - Server Components where possible (App Router default), Client Components only when needed (`'use client'`).
 - Prefer **shadcn/ui** + **Radix UI** primitives over custom components. Use `components/ui/*`.
-- Use **Tailwind CSS** with the existing design tokens. For custom sizes prefer the text-micro / text-2xs / xs / icon-sm utilities introduced in v1.6.0 before reaching for arbitrary values.
+- Use **Tailwind CSS** with the existing design tokens. For custom sizes prefer the text-micro / text-2xs / xs / icon-sm utilities introduced in v1.9.0 before reaching for arbitrary values.
 - Call the Rust backend via `invoke<T>('command_name', { ... })` from `@tauri-apps/api/core`. Avoid duplicating that import path — check `lib/tauri-api.ts` first.
 - i18n strings go in `lib/i18n/locales/<lang>.json`. See [Contributing Translations](#-contributing-translations).
 
@@ -214,7 +214,7 @@ GameStringer/
 - For new engine parsers: document the file format in a top-of-file comment, add the engine to `engine_detector.rs`, and wire the command in `main.rs`.
 - Run `cargo clippy -- -D warnings` before pushing. Fix or explicitly allow each warning.
 
-### Accessibility (v1.6.0 commitment)
+### Accessibility (v1.9.0 commitment)
 
 - **Every icon button** must have an `aria-label`.
 - **Interactive elements** must be focusable and have a visible `focus-visible` state.
@@ -286,7 +286,7 @@ Follow a lightweight **Conventional Commits** style:
 feat: Bethesda Engine Patcher — BSA v103-105 + BA2 + ESP parser
 fix: prevent console flash on child process spawns (Windows)
 a11y: aria-label on icon buttons + text-micro/text-2xs utilities
-chore: bump version to v1.6.0 across app, docs, and site
+chore: bump version to v1.9.0 across app, docs, and site
 ```
 
 ### Pull Requests
@@ -361,7 +361,7 @@ Adding support for a new engine is one of the most impactful contributions. Here
 8. **Test on a real game** — ship only if it works end-to-end on at least one title.
 9. **Document it** in the engine table in `README.md` and the user guides.
 
-Check the v1.6.0 additions (`bethesda_patcher.rs`, `cri_patcher.rs`, `unity_localization.rs`) for reference implementations.
+Check the v1.9.0 additions (`bethesda_patcher.rs`, `cri_patcher.rs`, `unity_localization.rs`) for reference implementations.
 
 ---
 

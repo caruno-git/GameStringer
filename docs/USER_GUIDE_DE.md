@@ -1,4 +1,4 @@
-# GameStringer - Vollständige Anleitung
+﻿# GameStringer - Vollständige Anleitung
 
 ## Inhaltsverzeichnis
 
@@ -413,7 +413,7 @@ Echtzeit-Community-Chat im Community Hub, betrieben mit Supabase Realtime.
 - **Eigene Räume erstellen**: dedizierte Räume für Projekte oder Spiele
 - **Auto-Login**: automatische Verbindung über GameStringer-Profil
 
-## Neu in v1.6.0
+## Neu in v1.9.0
 
 ### Bethesda Engine Patcher
 - **Unterstützte Spiele**: Skyrim LE/SE/AE, Fallout 3/NV/4, Oblivion, Starfield
@@ -521,7 +521,7 @@ Echtzeit-Community-Chat im Community Hub, betrieben mit Supabase Realtime.
 
 ---
 
-## Was ist neu in v1.6.0
+## Was ist neu in v1.9.0
 
 ### 🟢 Einheitliche Online-Präsenz
 
@@ -615,4 +615,4 @@ Optimierung der Startzeit:
 
 ---
 
-GameStringer v1.6.0 - Anleitung aktualisiert am 26.04.2026
+GameStringer v1.9.0 - Anleitung aktualisiert am 26.04.2026

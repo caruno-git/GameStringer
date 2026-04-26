@@ -413,7 +413,7 @@ Czat w czasie rzeczywistym zintegrowany z Community Hub, oparty na Supabase Real
 - **Tworzenie własnych pokojów**: dedykowane pokoje dla projektów lub gier
 - **Auto-login**: automatyczne połączenie przez profil GameStringer
 
-## Nowości v1.6.0
+## Nowości v1.9.0
 
 ### Patcher Bethesda Engine
 - **Obsługiwane gry**: Skyrim LE/SE/AE, Fallout 3/NV/4, Oblivion, Starfield
@@ -521,7 +521,7 @@ Czat w czasie rzeczywistym zintegrowany z Community Hub, oparty na Supabase Real
 
 ---
 
-## Nowości w v1.6.0
+## Nowości w v1.9.0
 
 ### 🟢 Ujednolicona Obecność Online
 
@@ -615,4 +615,4 @@ Optymalizacja czasu startu:
 
 ---
 
-GameStringer v1.6.0 - Przewodnik zaktualizowany 26.04.2026
+GameStringer v1.9.0 - Przewodnik zaktualizowany 26.04.2026

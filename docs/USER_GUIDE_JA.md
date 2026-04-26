@@ -413,7 +413,7 @@ Community Hubに統合されたリアルタイムチャット。Supabase Realtim
 - **カスタムルーム作成**：プロジェクトやゲーム専用ルーム
 - **自動ログイン**：GameStringerプロフィールで自動接続
 
-## v1.6.0の新機能
+## v1.9.0の新機能
 
 ### Bethesdaエンジン パッチャー
 - **対応ゲーム**: Skyrim LE/SE/AE, Fallout 3/NV/4, Oblivion, Starfield
@@ -521,7 +521,7 @@ Community Hubに統合されたリアルタイムチャット。Supabase Realtim
 
 ---
 
-## v1.6.0の新機能
+## v1.9.0の新機能
 
 ### 🟢 統合オンラインプレゼンス
 
@@ -615,4 +615,4 @@ Supabase Realtimeとデータベースを組み合わせた統合プレゼンス
 
 ---
 
-GameStringer v1.6.0 - ガイド更新日 2026/04/26
+GameStringer v1.9.0 - ガイド更新日 2026/04/26

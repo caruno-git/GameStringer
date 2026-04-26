@@ -413,7 +413,7 @@ Unity游戏（Mono和IL2CPP）的**最佳方法**。
 - **创建自定义聊天室**：为项目或游戏创建专用聊天室
 - **自动登录**：通过GameStringer个人资料自动连接
 
-## v1.6.0 新功能
+## v1.9.0 新功能
 
 ### Bethesda 引擎补丁器
 - **支持游戏**: Skyrim LE/SE/AE、Fallout 3/NV/4、Oblivion、Starfield
@@ -521,7 +521,7 @@ Unity游戏（Mono和IL2CPP）的**最佳方法**。
 
 ---
 
-## v1.6.0 新功能
+## v1.9.0 新功能
 
 ### 🟢 统一在线状态
 
@@ -615,4 +615,4 @@ Unity游戏（Mono和IL2CPP）的**最佳方法**。
 
 ---
 
-GameStringer v1.6.0 - 指南更新于 2026/04/26
+GameStringer v1.9.0 - 指南更新于 2026/04/26
