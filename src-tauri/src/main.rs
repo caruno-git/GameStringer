@@ -57,22 +57,16 @@ async fn send_native_notification(
     app: tauri::AppHandle,
     title: String,
     body: String,
-    icon: Option<String>,
+    _icon: Option<String>,
 ) -> Result<(), String> {
     use tauri_plugin_notification::NotificationExt;
     
-    let builder = app.notification()
+    // Build and show notification (icon not supported in current tauri-plugin-notification API)
+    app.notification()
         .builder()
         .title(&title)
-        .body(&body);
-    
-    // Icon support (if provided as file path)
-    if let Some(icon_path) = icon {
-        let _ = builder.icon(&icon_path);
-    }
-    
-    // Mostra la notifica
-    builder.show()
+        .body(&body)
+        .show()
         .map_err(|e| format!("Errore notifica: {}", e))
 }
 
