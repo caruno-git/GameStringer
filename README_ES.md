@@ -1,4 +1,4 @@
-﻿<p align="center">
+<p align="center">
   <img src="public/logo.png" alt="GameStringer Logo" width="180" />
 </p>
 
@@ -188,7 +188,7 @@ GameStringer soporta **20+ motores** con distintos niveles de profundidad:
 
 ## ✨ Funciones
 
-### 🆕 Novedades en v1.8.1
+### 🆕 Novedades en v1.9.0
 
 - **Live Translation Overlay** — Traducción del juego en tiempo real con overlay OCR transparente
 - **Hub Marketplace** — Mercado comunitario de paquetes de traducción con instalación en un clic
@@ -204,7 +204,7 @@ GameStringer soporta **20+ motores** con distintos niveles de profundidad:
 - **Context-aware**: entiende el género del juego, la voz del personaje, el tono, narrativa vs UI vs diálogo
 - **Translation Memory y Glosario**: consistencia en todo el proyecto con extracción automática de glosario
 - **Multi-LLM Compare**: ejecuta múltiples proveedores en paralelo, elige el mejor resultado por cadena
-- **Auto-Select Engine** (NEW v1.7.0): preset `auto` que clasifica dinámicamente los proveedores por idioma de destino + género del juego (DeepL para europeos, Claude para CJK, boost basado en género)
+- **Auto-Select Engine** (NEW v1.9.0): preset `auto` que clasifica dinámicamente los proveedores por idioma de destino + género del juego (DeepL para europeos, Claude para CJK, boost basado en género)
 - **Quality gates**: puntuación QA automática en cada cadena traducida (0-100) con ContentTypeBadge
 - **Vision LLM Translator**: usa capturas in-game para contexto (Ollama, Gemini, GPT-4o)
 - **Live Quality Preview**: ve las puntuaciones de calidad en tiempo real durante la traducción por lotes
@@ -239,9 +239,9 @@ GameStringer soporta **20+ motores** con distintos niveles de profundidad:
 - **Batch Translation**: traduce juegos o carpetas enteras a la vez
 - **Traductor de Subtítulos**: SRT, VTT, ASS/SSA con preservación de tiempos
 - **OCR Translator**: extrae texto de juegos retro (presets 8-bit, 16-bit, DOS) con backend Tauri Tesseract real
-- **Voice Pipeline**: speech-to-text → traducir → text-to-speech con **Duration Matching** (NEW v1.7.0) — ajusta automáticamente la velocidad para coincidir con la duración del audio original
-- **Lip Sync** (NEW v1.7.0): integración Rhubarb para generación de visemas, exportación para Unity/Unreal
-- **Gridly CSV Export/Import** (NEW v1.7.0): formato multi-idioma compatible con Gridly/Lokalise/Crowdin
+- **Voice Pipeline**: speech-to-text → traducir → text-to-speech con **Duration Matching** (NEW v1.9.0) — ajusta automáticamente la velocidad para coincidir con la duración del audio original
+- **Lip Sync** (NEW v1.9.0): integración Rhubarb para generación de visemas, exportación para Unity/Unreal
+- **Gridly CSV Export/Import** (NEW v1.9.0): formato multi-idioma compatible con Gridly/Lokalise/Crowdin
 - **Overlay en tiempo real**: ve traducciones mientras juegas vía VR/screen overlay
 - **Auto-Translate Review**: botón "Translate all untranslated" con barra de progreso
 - **Lore Assistant**: chat RAG que conoce el lore y los diálogos del juego
@@ -266,7 +266,7 @@ GameStringer soporta **20+ motores** con distintos niveles de profundidad:
 - **Ollama Setup Wizard**: instalación paso a paso de IA local
 - **Ollama Manager**: auto-discovery de modelos desde el registro de ollama.com + auto-refresh al enfocar/navegar
 - **Debug Console**: consola integrada con log intercept
-- **Video Extractor** (v1.7.0): extrae y convierte video FMV de juegos retro/modernos con upscaling IA
+- **Video Extractor** (v1.9.0): extrae y convierte video FMV de juegos retro/modernos con upscaling IA
 - **Plugin System**: documento de diseño para plugins de terceros (ver `PLUGIN_SYSTEM.md`)
 - **Community Hub**: comparte y descarga translation memories + integración con GitHub Discussions
 - **Public API v1**: endpoints REST para integración (`/api/v1/translate`, `/api/v1/batch`)
@@ -421,6 +421,6 @@ Consulta [LICENSE](LICENSE) para más detalles. ¿Preguntas? Abre una [Discussio
 
 <p align="center">
   Hecho con ❤️ para los gamers que quieren jugar en su propio idioma<br>
-  <strong>GameStringer v1.8.1</strong> · © 2025-2026 GameStringer Team
-  <strong>GameStringer v1.7.0</strong> · © 2025-2026 GameStringer Team
+  <strong>GameStringer v1.9.0</strong> · © 2025-2026 GameStringer Team
+  <strong>GameStringer v1.9.0</strong> · © 2025-2026 GameStringer Team
 </p>

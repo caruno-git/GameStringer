@@ -187,15 +187,16 @@ GameStringer supports **20+ engines** with varying levels of depth:
 
 ## ✨ Features
 
-### 🆕 New in v1.8.1
+### 🆕 New in v1.9.0
 
-- **Live Translation Overlay** — Real-time game translation with transparent OCR overlay
-- **Hub Marketplace** — Community translation pack marketplace with 1-click install
-- **Translation Memory Network** — Federated community translation sharing
-- **AI Dubbing Pipeline** — End-to-end game voice dubbing (STT → Translate → TTS → Patch)
-- **Plugin System** — Community-extensible game engine patcher plugins
-- **Code Quality Audit** — ESLint 1218→20, TypeScript 2427→2, npm audit 39→2 vulnerabilities
-- **Performance** — 11 unused deps removed, dynamic imports on heavy pages (-86 kB)
+- **Unified Online Presence** — Supabase Realtime + DB fallback, auto-away/auto-online, heartbeat every 30s
+- **System Tray Notifications** — Native OS notifications for chat, translations, errors, updates, games, friends, news with configurable quiet hours
+- **Error Boundaries + Crash Recovery** — WidgetErrorBoundary (auto-retry 5s, max 3), AppErrorBoundary with reload
+- **Network Resilience / Offline Mode** — Network monitor, status bar (red/amber/green), exponential backoff retry, offline queue
+- **Character Voice Profiles (Voice Cloning)** — Auto-extract character style from dialogue, 16 tones, prompt injection for consistent translation
+- **Fine-Tuning Infrastructure** — Datasets from human corrections (Adaptive MT), 4 export formats, per-game model management with Ollama
+- **Code Splitting / Lazy Loading** — 8 heavy components converted to React.lazy + Suspense for faster startup
+- **Bug Fixes** — NetworkResilience double-init + listener leak, Supabase 400 user_profiles, tray version strings, quiet hours bypass for critical notifications
 
 ### 🤖 AI Translation
 
@@ -301,7 +302,7 @@ GameStringer supports **20+ engines** with varying levels of depth:
 - **Signed auto-updates**: one-click update from the app via Tauri Updater
 - **Profiles**: multiple user profiles with recovery keys
 - **Global Hotkeys**: `Ctrl+Shift+T` OCR, `Ctrl+Shift+Q` Quick Translate, `Ctrl+Alt+O` Overlay, `Alt+T` XUnity toggle
-- **System Tray**: quick actions, live Ollama status, tools submenu
+- **System Tray**: quick actions, live Ollama status, tools submenu, native OS notifications with preferences
 - **Cross-platform**: Windows & Linux with native builds
 - **Windows tray fix**: prevents console flash loop on child process spawn
 
@@ -420,6 +421,5 @@ See [LICENSE](LICENSE) for details. Questions? Open a [Discussion](https://githu
 
 <p align="center">
   Made with ❤️ for gamers who want to play in their own language<br>
-  <strong>GameStringer v1.8.1</strong> · © 2025-2026 GameStringer Team
-  <strong>GameStringer v1.7.0</strong> · © 2025-2026 GameStringer Team
+  <strong>GameStringer v1.9.0</strong> · © 2025-2026 GameStringer Team
 </p>
