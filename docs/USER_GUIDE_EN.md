@@ -521,4 +521,98 @@ Real-time community chat integrated into the Community Hub, powered by Supabase 
 
 ---
 
-GameStringer v1.8.2 - Guide updated 23/04/2026
+## What's New in v1.6.0
+
+### 🟢 Unified Online Presence
+
+Unified presence system combining Supabase Realtime and database:
+
+- **Instant updates**: Online users appear in real time (Supabase Realtime Presence)
+- **Global heartbeat**: Presence status updated automatically every 30 seconds
+- **Auto-away**: If the window is not focused for 2+ minutes, status becomes "Away"
+- **Auto-online**: When the window regains focus, status returns to "Online"
+- **DB fallback**: If Realtime is unavailable, the system uses the database as fallback
+- **Updated widget**: The "Online Users" widget shows usernames, avatars, and Realtime indicator
+
+### 🔔 System Tray Notifications
+
+Native OS notifications for important events:
+
+- **💬 Chat Messages**: OS notification when you receive a message in the community chat
+- **✅ Translations Completed**: Notification when a translation finishes successfully
+- **❌ Translation/System Errors**: Notification for critical errors (always visible, even when window is focused)
+- **🔄 App Updates**: Notification when a GameStringer update is available
+- **🎮 Game Updates**: Notification when an updated game may have invalidated the patch
+- **🟢 Friends Online**: Notification when a friend comes online
+- **📰 News**: Notifications for community news and updates
+
+**Configuration**: Settings → Notifications → System Tray Notifications
+- Toggle for each notification type
+- **Quiet Hours**: Suppress notifications during specific hours (e.g., 23:00-07:00)
+- **Test Button**: Send a test notification to verify functionality
+- **Tray Tooltip**: The tray icon shows the unread notification count
+
+### 🛡️ Error Boundaries + Crash Recovery
+
+Protection against component crashes:
+
+- **WidgetErrorBoundary**: If a widget (Chat, Background Translations, etc.) crashes, it shows a compact message and automatically attempts recovery after 5 seconds (max 3 attempts)
+- **AppErrorBoundary**: If the entire app crashes, it shows an error screen with "Reload App" option
+- **Auto-recovery**: Widgets restore automatically without user intervention
+
+### 🌐 Network Resilience / Offline Mode
+
+Graceful handling of disconnections:
+
+- **Network Monitor**: Detects online/offline status + Supabase health check every 30 seconds
+- **Connection Status Bar**: Red bar at top if offline, amber if Supabase is down, green when connection is restored
+- **Retry with Backoff**: Failed network operations are automatically retried with exponential backoff (1s, 2s, 4s)
+- **Offline Queue**: If you're offline, operations (chat messages, presence updates) are queued and executed when connection returns
+- **"Offline mode"**: Changes will be automatically synchronized when the connection returns
+
+### 🎙️ Character Voice Profiles (Voice Cloning)
+
+System to preserve character "voice" during translation:
+
+- **Auto-Extraction**: Analyzes game dialogue strings to identify characters and their linguistic style
+- **16 Available Tones**: Formal, Casual, Aggressive, Gentle, Mysterious, Comedic, Dramatic, Stoic, Sarcastic, Wise, Childish, Noble, Pirate, Military, Academic, Street
+- **5 Formality Levels**: Very formal → Very informal
+- **5 Age Groups**: Child, Teen, Young Adult, Adult, Elder
+- **Speech Patterns**: Automatic recognition of patterns (archaic words, exclamations, frequent questions)
+- **Catchphrases**: Automatic identification of recurring character expressions
+- **Prompt Injection**: Voice profiles are automatically injected into the translation prompt to maintain character consistency
+- **Default Profile**: Set a profile as fallback for unidentified characters
+
+**How to use**:
+1. On the Auto-Translate page, after loading files, the "Character Voice Profiles" panel appears
+2. Click **"Auto-Extract"** to analyze dialogues and create profiles
+3. Or create profiles manually with **"New Profile"**
+4. Profiles are applied automatically during translation
+
+### 🧠 Fine-Tuning Infrastructure
+
+System to generate training datasets and manage per-game models:
+
+- **Dataset from Corrections**: Generate JSONL datasets from human corrections (Adaptive MT)
+- **4 Export Formats**: OpenAI JSONL, Ollama JSONL, Alpaca JSON, ChatML TXT
+- **Approved Only**: Option to use only approved corrections in the dataset
+- **Model Management**: Register and manage fine-tuned models per game
+- **Ollama Integration**: Check Ollama availability for local training
+- **Dataset Statistics**: Example count, average length, quality score
+
+**How to use**:
+1. Go to **Settings → AI → Fine-Tuning Infrastructure**
+2. Select the language pair and click **"Generate"** to create the dataset from your corrections
+3. Click **"Export"** to download the dataset in your desired format
+4. Use the dataset for fine-tuning with Ollama or cloud providers
+
+### ⚡ Code Splitting / Lazy Loading
+
+Startup time optimization:
+
+- 8 heavy components (Chat, Background Jobs, Command Palette, etc.) are loaded only when needed
+- The app starts faster and uses less memory
+
+---
+
+GameStringer v1.6.0 - Guide updated 26/04/2026

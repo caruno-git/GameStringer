@@ -1,4 +1,4 @@
-# GameStringer - Kompletny przewodnik
+﻿# GameStringer - Kompletny przewodnik
 
 ## Spis treści
 
@@ -521,4 +521,98 @@ Czat w czasie rzeczywistym zintegrowany z Community Hub, oparty na Supabase Real
 
 ---
 
-GameStringer v1.8.2 - Przewodnik zaktualizowany 23.04.2026
+## Nowości w v1.6.0
+
+### 🟢 Ujednolicona Obecność Online
+
+Ujednolicony system obecności łączący Supabase Realtime i bazę danych:
+
+- **Natychmiastowe aktualizacje**: Użytkownicy online pojawiają się w czasie rzeczywistym (Supabase Realtime Presence)
+- **Globalny heartbeat**: Status obecności aktualizowany automatycznie co 30 sekund
+- **Auto-away**: Jeśli okno nie ma focusu przez 2+ minuty, status zmienia się na "Nieobecny"
+- **Auto-online**: Gdy okno odzyskuje focus, status wraca do "Online"
+- **Fallback DB**: Jeśli Realtime jest niedostępny, system używa bazy danych jako fallback
+- **Zaktualizowany widget**: Widget "Użytkownicy Online" wyświetla nazwy, awatary i wskaźnik Realtime
+
+### 🔔 Powiadomienia System Tray
+
+Natywne powiadomienia OS dla ważnych zdarzeń:
+
+- **💬 Wiadomości Chat**: Powiadomienie OS po otrzymaniu wiadomości w chacie społeczności
+- **✅ Tłumaczenia Zakończone**: Powiadomienie gdy tłumaczenie kończy się sukcesem
+- **❌ Błędy Tłumaczenia/Systemu**: Powiadomienie o błędach krytycznych (zawsze widoczne)
+- **🔄 Aktualizacje Aplikacji**: Powiadomienie gdy dostępna jest aktualizacja GameStringer
+- **🎮 Aktualizacje Gier**: Powiadomienie gdy zaktualizowana gra mogła unieważnić patch
+- **🟢 Znajomi Online**: Powiadomienie gdy znajomy się loguje
+- **📰 Wiadomości**: Powiadomienia o newsach i aktualizacjach społeczności
+
+**Konfiguracja**: Ustawienia → Powiadomienia → Powiadomienia System Tray
+- Toggle dla każdego typu powiadomienia
+- **Ciche Godziny**: Tłumienie powiadomień w określonych godzinach (np. 23:00-07:00)
+- **Przycisk Test**: Wyślij powiadomienie testowe aby zweryfikować działanie
+- **Tooltip Tray**: Ikona w trayu wyświetla liczbę nieprzeczytanych powiadomień
+
+### 🛡️ Error Boundaries + Odzyskiwanie po Crashu
+
+Ochrona przed crashami komponentów:
+
+- **WidgetErrorBoundary**: Jeśli widget crashuje, wyświetla kompaktową wiadomość i automatycznie próbuje odzyskać po 5 sekundach (max 3 próby)
+- **AppErrorBoundary**: Jeśli cała app crashuje, wyświetla ekran błędu z opcją "Przeładuj App"
+- **Auto-recovery**: Widgety przywracane automatycznie bez interwencji użytkownika
+
+### 🌐 Resilience Sieci / Tryb Offline
+
+Elegancka obsługa rozłączeń:
+
+- **Monitor Sieci**: Wykrywa status online/offline + health check Supabase co 30 sekund
+- **Pasek Statusu Połączenia**: Czerwony pasek na górze jeśli offline, amber jeśli Supabase down, zielony gdy połączenie odzyskane
+- **Retry z Backoff**: Nieudane operacje sieciowe automatycznie ponawiane z wykładniczym backoff (1s, 2s, 4s)
+- **Kolejka Offline**: Jeśli jesteś offline, operacje (wiadomości chat, aktualizacje obecności) są kolejkowane i wykonywane po powrocie połączenia
+- **"Tryb offline"**: Zmiany będą automatycznie synchronizowane po powrocie połączenia
+
+### 🎙️ Profile Głosowe Postaci (Voice Cloning)
+
+System zachowania "głosu" postaci podczas tłumaczenia:
+
+- **Automatyczna Ekstrakcja**: Analizuje dialogi gry aby zidentyfikować postacie i ich styl językowy
+- **16 Dostępnych Tonów**: Formalny, Swobodny, Agresywny, Łagodny, Tajemniczy, Komiczny, Dramatyczny, Stoicki, Sarkastyczny, Mądry, Dziecięcy, Szlachetny, Piracki, Wojskowy, Akademicki, Uliczny
+- **5 Poziomów Formalności**: Bardzo formalny → Bardzo nieformalny
+- **5 Grup Wiekowych**: Dziecko, Nastolatek, Młody dorosły, Dorosły, Starszy
+- **Wzorce Mowy**: Automatyczne rozpoznawanie wzorców (archaiczne słowa, wykrzyknienia, częste pytania)
+- **Catchphrases**: Automatyczna identyfikacja powtarzających się wyrażeń postaci
+- **Iniekcja w Prompt**: Profile głosowe automatycznie wstrzykiwane w prompt tłumaczenia
+- **Profil Domyślny**: Ustaw profil jako fallback dla niezidentyfikowanych postaci
+
+**Jak używać**:
+1. Na stronie Auto-Translate, po załadowaniu plików, pojawia się panel "Profile Głosowe Postaci"
+2. Kliknij **"Ekstrahuj Automatycznie"** aby przeanalizować dialogi
+3. Lub twórz profile ręcznie z **"Nowy Profil"**
+4. Profile są automatycznie stosowane podczas tłumaczenia
+
+### 🧠 Infrastruktura Fine-Tuningu
+
+System generowania datasetów treningowych i zarządzania modelami per-gra:
+
+- **Dataset z Korekt**: Generuj dataset JSONL z korekt ludzkich (Adaptive MT)
+- **4 Formaty Eksportu**: OpenAI JSONL, Ollama JSONL, Alpaca JSON, ChatML TXT
+- **Tylko Zatwierdzone**: Opcja używania tylko zatwierdzonych korekt w datasecie
+- **Zarządzanie Modelami**: Rejestruj i zarządzaj modelami fine-tuned per-gra
+- **Integracja Ollama**: Sprawdź dostępność Ollama dla lokalnego treningu
+- **Statystyki Datasetu**: Liczba przykładów, średnia długość, wynik jakości
+
+**Jak używać**:
+1. Przejdź do **Ustawienia → AI → Infrastruktura Fine-Tuningu**
+2. Wybierz parę języków i kliknij **"Generuj"**
+3. Kliknij **"Eksportuj"** aby pobrać w wybranym formacie
+4. Użyj datasetu do fine-tuningu z Ollama lub dostawcami cloud
+
+### ⚡ Code Splitting / Lazy Loading
+
+Optymalizacja czasu startu:
+
+- 8 ciężkich komponentów (Chat, Zadania w tle, Paleta komend itp.) ładowanych tylko gdy potrzebne
+- Aplikacja uruchamia się szybciej i używa mniej pamięci
+
+---
+
+GameStringer v1.6.0 - Przewodnik zaktualizowany 26.04.2026
