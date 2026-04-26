@@ -1,13 +1,15 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Users,
   Circle,
   Gamepad2,
-  RefreshCw
+  RefreshCw,
+  Wifi,
+  WifiOff,
 } from 'lucide-react';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import {
   Tooltip,
@@ -16,9 +18,11 @@ import {
   TooltipProvider,
 } from '@/components/ui/tooltip';
 import {
+  onPresenceUpdate,
   getOnlineUsers,
-  type UserPresence
-} from '@/lib/social';
+  refreshOnlineUsers,
+  type OnlineUser,
+} from '@/lib/presence';
 import { useTranslation } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
@@ -29,6 +33,13 @@ const STATUS_COLORS: Record<string, string> = {
   away: 'bg-yellow-500',
   busy: 'bg-red-500',
   offline: 'bg-slate-500',
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  online: '🟢 Online',
+  away: '🟡 Away',
+  busy: '🔴 Busy',
+  offline: '⚫ Offline',
 };
 
 // ─── ONLINE USERS WIDGET ─────────────────────────────────────────────────────
@@ -47,25 +58,36 @@ export function OnlineUsersWidget({
   className 
 }: OnlineUsersWidgetProps) {
   const { t } = useTranslation();
-  const [onlineUsers, setOnlineUsers] = useState<UserPresence[]>([]);
+  const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const loadData = useCallback(async () => {
-    try {
-      const users = await getOnlineUsers(50);
-      setOnlineUsers(users);
-    } catch (error) {
-      console.error('[OnlineUsersWidget] Error:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    loadData();
-    const interval = setInterval(loadData, 30000);
-    return () => clearInterval(interval);
-  }, [loadData]);
+    // Subscribe to Realtime presence updates
+    const unsub = onPresenceUpdate((users) => {
+      setOnlineUsers(users);
+      setLoading(false);
+      setConnected(true);
+    });
+
+    // Also do an initial refresh from DB (in case Realtime hasn't synced)
+    refreshOnlineUsers().then((users) => {
+      if (users.length > 0) {
+        setOnlineUsers(users);
+      }
+      setLoading(false);
+    }).catch(() => setLoading(false));
+
+    // Periodic DB refresh as fallback (every 60s)
+    const interval = setInterval(() => {
+      refreshOnlineUsers().catch(() => {});
+    }, 60000);
+
+    return () => {
+      unsub();
+      clearInterval(interval);
+    };
+  }, []);
 
   if (loading) {
     return (
@@ -97,7 +119,17 @@ export function OnlineUsersWidget({
           <Badge variant="secondary" className="text-xs bg-emerald-500/20 text-emerald-400">
             {onlineUsers.length}
           </Badge>
+          {connected && (
+            <Wifi className="h-3 w-3 text-emerald-500/60" />
+          )}
         </div>
+        <button
+          onClick={() => refreshOnlineUsers()}
+          className="p-1 rounded hover:bg-slate-700/50 transition-colors"
+          title="Aggiorna"
+        >
+          <RefreshCw className="h-3 w-3 text-slate-500" />
+        </button>
       </div>
 
       {/* Users List */}
@@ -105,14 +137,15 @@ export function OnlineUsersWidget({
         <div className="space-y-2">
           {displayUsers.map(user => (
             <div
-              key={user.user_id}
-              onClick={() => onUserClick?.(user.user_id)}
+              key={user.userId}
+              onClick={() => onUserClick?.(user.userId)}
               className="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-700/50 cursor-pointer transition-colors"
             >
               <div className="relative">
                 <Avatar className="h-8 w-8">
+                  {user.avatar && <AvatarImage src={user.avatar} alt={user.username} />}
                   <AvatarFallback className="bg-slate-700 text-xs">
-                    {user.user_id.slice(0, 2).toUpperCase()}
+                    {user.username.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className={cn(
@@ -122,15 +155,17 @@ export function OnlineUsersWidget({
               </div>
               
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-white truncate">{user.user_id}</p>
-                {showActivity && user.current_game ? (
+                <p className="text-sm text-white truncate">{user.username}</p>
+                {showActivity && user.currentGame ? (
                   <p className="text-xs text-emerald-400 flex items-center gap-1 truncate">
                     <Gamepad2 className="h-3 w-3" />
-                    {user.current_game}
+                    {user.currentGame}
                   </p>
-                ) : showActivity && user.current_activity ? (
-                  <p className="text-xs text-slate-400 truncate">{user.current_activity}</p>
-                ) : null}
+                ) : showActivity && user.currentActivity ? (
+                  <p className="text-xs text-slate-400 truncate">{user.currentActivity}</p>
+                ) : (
+                  <p className="text-2xs text-slate-500">{STATUS_LABELS[user.status] || ''}</p>
+                )}
               </div>
             </div>
           ))}
@@ -145,7 +180,9 @@ export function OnlineUsersWidget({
         </div>
       ) : (
         <div className="text-center py-4">
+          <WifiOff className="h-6 w-6 text-slate-600 mx-auto mb-2" />
           <p className="text-sm text-slate-500">{t('social.noOnlineUsers')}</p>
+          <p className="text-2xs text-slate-600 mt-1">Connettiti per vedere chi è online</p>
         </div>
       )}
     </div>
@@ -163,13 +200,16 @@ export function OnlineIndicator({ className }: OnlineIndicatorProps) {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    const load = async () => {
-      const users = await getOnlineUsers(100);
+    // Subscribe to Realtime presence updates (instant)
+    const unsub = onPresenceUpdate((users) => {
       setCount(users.length);
-    };
-    load();
-    const interval = setInterval(load, 60000);
-    return () => clearInterval(interval);
+    });
+
+    // Initial load
+    const users = getOnlineUsers();
+    setCount(users.length);
+
+    return () => { unsub(); };
   }, []);
 
   return (

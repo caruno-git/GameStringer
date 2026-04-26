@@ -258,13 +258,30 @@ class NewsFeedService {
           const link = item.querySelector('link')?.textContent?.trim() || '';
           const pubDate = item.querySelector('pubDate')?.textContent?.trim() || '';
 
-          // Cerca immagine in enclosure, media:content, media:thumbnail, o nel description
+          // Cerca immagine in vari tag RSS comuni
           let image = item.querySelector('enclosure[type^="image"]')?.getAttribute('url') || '';
           if (!image) image = item.querySelector('media\\:content, content')?.getAttribute('url') || '';
           if (!image) image = item.querySelector('media\\:thumbnail, thumbnail')?.getAttribute('url') || '';
+          if (!image) image = item.querySelector('image url')?.textContent?.trim() || '';
+          if (!image) image = item.querySelector('featuredImage, featured-image')?.textContent?.trim() || '';
+          // Namespace media: con fallback
+          if (!image) {
+            const mediaContent = item.getElementsByTagNameNS('http://search.yahoo.com/mrss/', 'content')[0];
+            if (mediaContent) image = mediaContent.getAttribute('url') || '';
+          }
+          if (!image) {
+            const mediaThumbnail = item.getElementsByTagNameNS('http://search.yahoo.com/mrss/', 'thumbnail')[0];
+            if (mediaThumbnail) image = mediaThumbnail.getAttribute('url') || '';
+          }
+          // Cerca img nel description HTML
           if (!image) {
             const imgMatch = desc.match(/<img[^>]+src=["']([^"']+)["']/);
             if (imgMatch) image = imgMatch[1];
+          }
+          // Cerca URL immagine diretto nel content
+          if (!image) {
+            const urlMatch = desc.match(/(https?:\/\/[^\s"'<>]+\.(?:jpg|jpeg|png|gif|webp))/i);
+            if (urlMatch) image = urlMatch[1];
           }
 
           // Pulisci HTML dal description
@@ -299,9 +316,26 @@ class NewsFeedService {
         const pubDate = entry.querySelector('published, updated')?.textContent?.trim() || '';
 
         let image = entry.querySelector('media\\:content, content[type^="image"]')?.getAttribute('url') || '';
+        if (!image) image = entry.querySelector('media\\:thumbnail, thumbnail')?.getAttribute('url') || '';
+        if (!image) image = entry.querySelector('featuredImage, featured-image')?.textContent?.trim() || '';
+        // Namespace media: con fallback
+        if (!image) {
+          const mediaContent = entry.getElementsByTagNameNS('http://search.yahoo.com/mrss/', 'content')[0];
+          if (mediaContent) image = mediaContent.getAttribute('url') || '';
+        }
+        if (!image) {
+          const mediaThumbnail = entry.getElementsByTagNameNS('http://search.yahoo.com/mrss/', 'thumbnail')[0];
+          if (mediaThumbnail) image = mediaThumbnail.getAttribute('url') || '';
+        }
+        // Cerca img nel description HTML
         if (!image) {
           const imgMatch = desc.match(/<img[^>]+src=["']([^"']+)["']/);
           if (imgMatch) image = imgMatch[1];
+        }
+        // Cerca URL immagine diretto nel content
+        if (!image) {
+          const urlMatch = desc.match(/(https?:\/\/[^\s"'<>]+\.(?:jpg|jpeg|png|gif|webp))/i);
+          if (urlMatch) image = urlMatch[1];
         }
 
         const cleanDesc = desc.replace(/<[^>]+>/g, '').substring(0, 300);

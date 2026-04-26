@@ -14,6 +14,7 @@ import { Download, X } from 'lucide-react';
 import { open } from '@tauri-apps/plugin-shell';
 import { toast } from 'sonner';
 import { useTranslation } from '@/lib/i18n';
+import { notifyAppUpdate } from '@/lib/tray-notifications';
 
 export function UpdateBell() {
   const { t } = useTranslation();
@@ -26,6 +27,13 @@ export function UpdateBell() {
     checkForUpdate: checkTauriUpdate 
   } = useTauriUpdater();
   const [isOpen, setIsOpen] = useState(false);
+
+  // Notify via tray when update is detected
+  React.useEffect(() => {
+    if (hasUpdate && updateInfo?.latest_version) {
+      notifyAppUpdate(updateInfo.latest_version).catch(() => {});
+    }
+  }, [hasUpdate, updateInfo?.latest_version]);
 
   const handleDownload = async () => {
     try {

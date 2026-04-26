@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { cn } from '@/lib/utils';
 import { useVersion } from '@/lib/version';
 import { Button } from '@/components/ui/button';
@@ -81,20 +81,31 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { InteractiveTutorial } from '@/components/onboarding/interactive-tutorial';
-import { TermsOfUse } from '@/components/onboarding/terms-of-use';
 import { TutorialProvider } from '@/components/tutorial/tutorial-provider';
 import { TutorialOverlay } from '@/components/tutorial/tutorial-overlay';
 import { TutorialMenu } from '@/components/tutorial/tutorial-menu';
-// OfflineIndicator import removed — not currently used
-import { CommandPalette } from '@/components/ui/command-palette';
-import { GlobalSearch } from '@/components/layout/global-search';
-import { SystemOverlay } from '@/components/system-overlay';
 import { useTranslation } from '@/lib/i18n';
 import { useScreen } from '@/components/providers/screen-provider';
 import { isChatEnabled, autoSyncGSToSupabase } from '@/lib/community-chat';
-import { PersistentChat } from '@/components/layout/persistent-chat';
 import { clientLogger } from '@/lib/client-logger';
+
+// Lazy-loaded components for code splitting
+const InteractiveTutorial = lazy(() => import('@/components/onboarding/interactive-tutorial').then(m => ({ default: m.InteractiveTutorial })));
+const TermsOfUse = lazy(() => import('@/components/onboarding/terms-of-use').then(m => ({ default: m.TermsOfUse })));
+const CommandPalette = lazy(() => import('@/components/ui/command-palette').then(m => ({ default: m.CommandPalette })));
+const GlobalSearch = lazy(() => import('@/components/layout/global-search').then(m => ({ default: m.GlobalSearch })));
+const SystemOverlay = lazy(() => import('@/components/system-overlay').then(m => ({ default: m.SystemOverlay })));
+const PersistentChat = lazy(() => import('@/components/layout/persistent-chat').then(m => ({ default: m.PersistentChat })));
+const BackgroundJobsIndicator = lazy(() => import('@/components/translator/background-jobs-widget').then(m => ({ default: m.BackgroundJobsIndicator })));
+const BackgroundJobsWidget = lazy(() => import('@/components/translator/background-jobs-widget').then(m => ({ default: m.BackgroundJobsWidget })));
+
+// Minimal Suspense fallback
+const LazyFallback = () => null;
+import { initPresence, goOffline } from '@/lib/presence';
+import { notifyChatMessage, clearTrayNotifications, updateTrayTooltip } from '@/lib/tray-notifications';
+import { WidgetErrorBoundary } from '@/components/error-boundary';
+import { initNetworkMonitor, stopNetworkMonitor } from '@/lib/network-resilience';
+import { NetworkStatusBar } from '@/components/layout/network-status-bar';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -303,12 +314,42 @@ export function MainLayout({ children }: MainLayoutProps) {
     // Aggiorna status del sistema solo all'avvio (no polling continuo)
     updateSystemStatus();
 
+    // Initialize network resilience monitor
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    initNetworkMonitor(supabaseUrl);
+
     // Auto-sync chat Supabase appena loggato (in background, non blocca l'UI)
     if (isChatEnabled()) {
       autoSyncGSToSupabase().then((uid) => {
-        if (uid) clientLogger.debug('[MainLayout] Chat Supabase pronta, userId:', uid);
+        if (uid) {
+          clientLogger.debug('[MainLayout] Chat Supabase pronta, userId:', uid);
+          // Initialize unified presence system (Realtime + heartbeat)
+          initPresence(uid).then(() => {
+            clientLogger.debug('[MainLayout] Presence inizializzato');
+          }).catch(() => {});
+        }
       }).catch(() => {});
     }
+
+    // ── Tray Notifications: ascolta eventi chat per notifiche OS ──
+    const handleChatMessage = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.author && detail?.content) {
+        notifyChatMessage(detail.author, detail.content);
+      }
+    };
+    window.addEventListener('gs-chat-message', handleChatMessage);
+
+    // Update tray tooltip on init
+    updateTrayTooltip().catch(() => {});
+    
+    // Cleanup presence on unmount
+    return () => {
+      goOffline().catch(() => {});
+      stopNetworkMonitor();
+      window.removeEventListener('gs-chat-message', handleChatMessage);
+      clearTrayNotifications().catch(() => {});
+    };
   }, []);
 
   // Auto-expand gruppo sidebar in base alla pagina corrente
@@ -429,6 +470,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <TutorialProvider>
+      <NetworkStatusBar />
       <div className="flex h-full bg-background">
         {/* Skip to content — a11y */}
         <a
@@ -1071,6 +1113,8 @@ export function MainLayout({ children }: MainLayoutProps) {
 
               <SupportButton />
               
+              <Suspense fallback={<LazyFallback />}><BackgroundJobsIndicator /></Suspense>
+              
               <div className="h-6 w-px bg-slate-800/60 mx-1" />
               
               <ProfileHeader />
@@ -1098,13 +1142,20 @@ export function MainLayout({ children }: MainLayoutProps) {
         </div>
         
         {/* Persistent Chat Widget — visibile su tutte le pagine */}
-        <PersistentChat />
+        <WidgetErrorBoundary name="Chat">
+          <Suspense fallback={<LazyFallback />}><PersistentChat /></Suspense>
+        </WidgetErrorBoundary>
 
         {/* Profile Notifications */}
         <ProfileNotifications />
         
+        {/* Background Translation Jobs Widget */}
+        <WidgetErrorBoundary name="Traduzioni Background">
+          <Suspense fallback={<LazyFallback />}><BackgroundJobsWidget /></Suspense>
+        </WidgetErrorBoundary>
+        
         {/* System Monitor Overlay */}
-        <SystemOverlay position="bottom-right" compact />
+        <Suspense fallback={<LazyFallback />}><SystemOverlay position="bottom-right" compact /></Suspense>
         
         {/* Auto Updater Notification */}
         <AutoUpdater />
@@ -1172,19 +1223,19 @@ export function MainLayout({ children }: MainLayoutProps) {
         </Dialog>
 
         {/* Terms of Use (DEVE apparire PRIMA del tutorial) */}
-        <TermsOfUse />
+        <Suspense fallback={<LazyFallback />}><TermsOfUse /></Suspense>
 
         {/* Tutorial Interattivo (onboarding prima visita) */}
-        <InteractiveTutorial />
+        <Suspense fallback={<LazyFallback />}><InteractiveTutorial /></Suspense>
         
         {/* Tutorial per-pagina (provider context) */}
         <TutorialOverlay />
         
         {/* Command Palette (Ctrl+K) */}
-        <CommandPalette />
+        <Suspense fallback={<LazyFallback />}><CommandPalette /></Suspense>
         
         {/* Global Search */}
-        <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
+        <Suspense fallback={<LazyFallback />}><GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} /></Suspense>
         
         {/* Exit Confirmation Dialog */}
         <AlertDialog open={exitDialogOpen} onOpenChange={setExitDialogOpen}>

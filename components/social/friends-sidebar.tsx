@@ -11,9 +11,6 @@ import {
   ChevronUp,
   Gamepad2,
   Zap,
-  GripVertical,
-  Pin,
-  PinOff,
   MoreVertical,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -45,10 +42,7 @@ import {
 } from '@dnd-kit/core';
 import {
   arrayMove,
-  SortableContext,
   sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-  useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
@@ -64,6 +58,7 @@ import {
   type Friendship,
 } from '@/lib/social';
 import { useQuickAccess, type QuickAccessItem } from '@/hooks/use-drag-drop';
+import { QuickAccessSection, QuickAccessDropZone as QuickAccessEmptyZone } from './quick-access';
 
 // =============================================================================
 // TYPES
@@ -80,140 +75,6 @@ interface FriendsSidebarProps {
 interface FriendWithPresence extends Friendship {
   profile: UserProfile;
   presence: UserPresence | null;
-}
-
-// =============================================================================
-// QUICK ACCESS DROP ZONE
-// =============================================================================
-
-function QuickAccessDropZone({ 
-  onDrop, 
-  isOver 
-}: { 
-  onDrop: (item: QuickAccessItem) => void;
-  isOver: boolean;
-}) {
-  const { setNodeRef, isOver: isDroppableOver } = useDroppable({
-    id: 'quick-access-drop-zone',
-  });
-
-  return (
-    <div
-      ref={setNodeRef}
-      className={cn(
-        'relative p-4 rounded-xl border-2 border-dashed transition-all duration-200',
-        'bg-gradient-to-br from-violet-500/10 to-indigo-500/10',
-        isDroppableOver || isOver
-          ? 'border-violet-400 bg-violet-500/20 scale-[1.02]'
-          : 'border-violet-500/30 hover:border-violet-400/50'
-      )}
-    >
-      <div className="flex flex-col items-center justify-center text-center">
-        <div className={cn(
-          'w-10 h-10 rounded-full flex items-center justify-center mb-2 transition-all',
-          isDroppableOver || isOver
-            ? 'bg-violet-500/30 scale-110'
-            : 'bg-violet-500/20'
-        )}>
-          <Pin className={cn(
-            'h-5 w-5 transition-colors',
-            isDroppableOver || isOver ? 'text-violet-300' : 'text-violet-400'
-          )} />
-        </div>
-        <p className="text-xs font-medium text-violet-200">
-          Trascina qui amici per l&apos;accesso rapido
-        </p>
-        <p className="text-[10px] text-violet-400/70 mt-1">
-          Clicca per aprire chat immediatamente
-        </p>
-      </div>
-    </div>
-  );
-}
-
-// =============================================================================
-// QUICK ACCESS ITEM
-// =============================================================================
-
-function QuickAccessCard({ 
-  item, 
-  onRemove, 
-  onClick 
-}: { 
-  item: QuickAccessItem;
-  onRemove: () => void;
-  onClick: () => void;
-}) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: item.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className={cn(
-        'group relative flex flex-col items-center gap-1.5 p-2 rounded-xl cursor-pointer',
-        'bg-slate-800/50 hover:bg-slate-700/60 transition-all duration-200',
-        'border border-transparent hover:border-violet-500/30',
-        isDragging && 'opacity-50 scale-95'
-      )}
-      onClick={onClick}
-    >
-      {/* Drag Handle */}
-      <div
-        {...attributes}
-        {...listeners}
-        className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
-      >
-        <GripVertical className="h-3 w-3 text-slate-500" />
-      </div>
-
-      {/* Remove Button */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onRemove();
-        }}
-        className="absolute top-1 left-1 opacity-0 group-hover:opacity-100 transition-opacity"
-      >
-        <PinOff className="h-3 w-3 text-slate-500 hover:text-rose-400" />
-      </button>
-
-      {/* Avatar */}
-      <div className="relative">
-        <Avatar className="h-12 w-12 ring-2 ring-offset-1 ring-offset-slate-900 transition-all group-hover:ring-violet-500/50">
-          <AvatarImage src={item.avatar} />
-          <AvatarFallback className="bg-gradient-to-br from-violet-600 to-indigo-600 text-white text-xs">
-            {item.name.slice(0, 2).toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-        {/* Status indicator */}
-        <div className={cn(
-          'absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-slate-900',
-          item.status === 'online' && 'bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.6)]',
-          item.status === 'away' && 'bg-amber-500 shadow-[0_0_6px_rgba(245,158,11,0.6)]',
-          item.status === 'busy' && 'bg-rose-500 shadow-[0_0_6px_rgba(244,63,94,0.6)]',
-          (!item.status || item.status === 'offline') && 'bg-slate-500'
-        )} />
-      </div>
-
-      {/* Name */}
-      <span className="text-[10px] font-medium text-slate-300 truncate max-w-[60px] text-center">
-        {item.name}
-      </span>
-    </div>
-  );
 }
 
 // =============================================================================
@@ -234,7 +95,7 @@ function FriendCard({
   onAddToQuickAccess: () => void;
 }) {
   const status = friend.presence?.status || 'offline';
-  const activity = friend.presence?.activity;
+  const activity = friend.presence?.current_activity;
 
   const {
     attributes,
@@ -243,7 +104,7 @@ function FriendCard({
     transform,
     isDragging,
   } = useDraggable({
-    id: `friend-${friend.friend_id}`,
+    id: `friend-${friend.profile.id}`,
     data: {
       type: 'friend',
       friend,
@@ -366,7 +227,18 @@ export function FriendsSidebar({
           getPendingFriendRequests(userId),
         ]);
         
-        setFriends(friendsData);
+        // Transform UserProfile & { presence: UserPresence } to FriendWithPresence
+        const transformedFriends = friendsData.map(f => ({
+          id: f.id,
+          requester_id: userId,
+          addressee_id: f.id,
+          status: 'accepted' as const,
+          created_at: new Date().toISOString(),
+          profile: f,
+          presence: f.presence,
+        }));
+        
+        setFriends(transformedFriends);
         setPendingRequests(requestsData);
       } catch (error) {
         console.error('Failed to load friends:', error);
@@ -406,12 +278,12 @@ export function FriendsSidebar({
 
   // Handlers
   const handleStartChat = useCallback((friend: FriendWithPresence) => {
-    onStartChat?.(friend.friend_id, friend.profile.username || 'Utente');
+    onStartChat?.(friend.profile.id, friend.profile.username || 'Utente');
   }, [onStartChat]);
 
   const handleAddToQuickAccess = useCallback((friend: FriendWithPresence) => {
     addItem({
-      id: friend.friend_id,
+      id: friend.profile.id,
       type: 'friend',
       name: friend.profile.username || 'Utente',
       avatar: friend.profile.avatar_url || undefined,
@@ -432,7 +304,7 @@ export function FriendsSidebar({
     // Dropping on quick access zone
     if (over.id === 'quick-access-drop-zone') {
       const friendId = (active.id as string).replace('friend-', '');
-      const friend = friends.find(f => f.friend_id === friendId);
+      const friend = friends.find(f => f.profile.id === friendId);
       if (friend && !isInQuickAccess(friendId)) {
         handleAddToQuickAccess(friend);
       }
@@ -466,7 +338,7 @@ export function FriendsSidebar({
         </Button>
         <div className="w-8 h-px bg-slate-800" />
         {onlineFriends.slice(0, 5).map(friend => (
-          <TooltipProvider key={friend.friend_id} delayDuration={0}>
+          <TooltipProvider key={friend.profile.id} delayDuration={0}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
@@ -484,7 +356,7 @@ export function FriendsSidebar({
               </TooltipTrigger>
               <TooltipContent side="right">
                 <p className="font-medium">{friend.profile.username}</p>
-                <p className="text-xs text-emerald-400">{friend.presence?.activity || 'Online'}</p>
+                <p className="text-xs text-emerald-400">{friend.presence?.current_activity || 'Online'}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -544,35 +416,14 @@ export function FriendsSidebar({
           <div className="p-2 space-y-3">
             {/* Quick Access Section */}
             {quickAccessItems.length > 0 ? (
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between px-1">
-                  <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider flex items-center gap-1">
-                    <Zap className="h-2.5 w-2.5" />
-                    Rapido
-                  </span>
-                  <span className="text-[10px] text-slate-600">{quickAccessItems.length}</span>
-                </div>
-                <SortableContext
-                  items={quickAccessItems.map(i => i.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <div className="grid grid-cols-4 gap-2">
-                    {quickAccessItems.map((item) => (
-                      <QuickAccessCard
-                        key={item.id}
-                        item={item}
-                        onRemove={() => removeItem(item.id)}
-                        onClick={() => onStartChat?.(item.id, item.name)}
-                      />
-                    ))}
-                  </div>
-                </SortableContext>
-              </div>
-            ) : (
-              <QuickAccessDropZone
-                onDrop={handleAddToQuickAccess}
-                isOver={activeDragId?.startsWith('friend-') || false}
+              <QuickAccessSection
+                items={quickAccessItems}
+                onRemove={removeItem}
+                onClick={(id, name) => onStartChat?.(id, name)}
+                onReorder={reorderItems}
               />
+            ) : (
+              <QuickAccessEmptyZone isOver={activeDragId?.startsWith('friend-') || false} />
             )}
 
             {/* Pending Requests */}
@@ -662,11 +513,11 @@ export function FriendsSidebar({
                   <div className="space-y-0.5">
                     {onlineFriends.map((friend) => (
                       <FriendCard
-                        key={friend.friend_id}
+                        key={friend.profile.id}
                         friend={friend}
                         onStartChat={handleStartChat}
-                        onOpenProfile={(f) => onOpenProfile?.(f.friend_id)}
-                        isQuickAccess={isInQuickAccess(friend.friend_id)}
+                        onOpenProfile={(f) => onOpenProfile?.(f.profile.id)}
+                        isQuickAccess={isInQuickAccess(friend.profile.id)}
                         onAddToQuickAccess={() => handleAddToQuickAccess(friend)}
                       />
                     ))}
@@ -699,11 +550,11 @@ export function FriendsSidebar({
                   <div className="space-y-1 opacity-60">
                     {offlineFriends.map((friend) => (
                       <FriendCard
-                        key={friend.friend_id}
+                        key={friend.profile.id}
                         friend={friend}
                         onStartChat={handleStartChat}
-                        onOpenProfile={(f) => onOpenProfile?.(f.friend_id)}
-                        isQuickAccess={isInQuickAccess(friend.friend_id)}
+                        onOpenProfile={(f) => onOpenProfile?.(f.profile.id)}
+                        isQuickAccess={isInQuickAccess(friend.profile.id)}
                         onAddToQuickAccess={() => handleAddToQuickAccess(friend)}
                       />
                     ))}

@@ -43,6 +43,34 @@ fn close_app(app: tauri::AppHandle) {
     app.exit(0);
 }
 
+/// Aggiorna il tooltip del tray icon con conteggio notifiche
+#[tauri::command]
+fn update_tray_tooltip(app: tauri::AppHandle, tooltip: String) {
+    if let Some(tray) = app.tray_by_id("main-tray") {
+        let _ = tray.set_tooltip(Some(&tooltip));
+    }
+}
+
+/// Invia una notifica nativa del sistema operativo
+#[tauri::command]
+async fn send_native_notification(
+    app: tauri::AppHandle,
+    title: String,
+    body: String,
+    icon: Option<String>,
+) -> Result<(), String> {
+    use tauri_plugin_notification::NotificationExt;
+    
+    let builder = app.notification()
+        .builder()
+        .title(&title)
+        .body(&body);
+    
+    // Mostra la notifica
+    builder.show()
+        .map_err(|e| format!("Errore notifica: {}", e))
+}
+
 fn main() {
     // Usa la directory dei dati dell'app per evitare che Tauri riavvii quando i file cambiano
     let app_data_dir = if cfg!(debug_assertions) {
@@ -103,6 +131,7 @@ fn main() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_notification::init())
         .manage({
             #[cfg(windows)]
             { commands::anti_cheat::AntiCheatState::default() }
@@ -122,6 +151,8 @@ fn main() {
         .manage(notification_state)
         .invoke_handler(tauri::generate_handler![
             close_app,
+            update_tray_tooltip,
+            send_native_notification,
             commands::steam::auto_detect_steam_config,
             commands::steam::test_steam_connection,
             commands::steam::disconnect_steam,

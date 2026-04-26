@@ -64,7 +64,7 @@ export function OllamaManager() {
       const isTauriEnv = typeof window !== 'undefined' && ((window as unknown as Record<string, unknown>).__TAURI_INTERNALS__ || (window as unknown as Record<string, unknown>).__TAURI_IPC__);
       setIsTauri(!!isTauriEnv);
       try {
-        const resp = await fetch('http://localhost:11434/api/tags', { 
+        const resp = await fetch('http://127.0.0.1:11434/api/tags', { 
           signal: AbortSignal.timeout(3000) 
         });
         if (resp.ok) {

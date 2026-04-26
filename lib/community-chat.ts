@@ -14,6 +14,7 @@
 import { SupabaseClient, RealtimeChannel } from '@supabase/supabase-js';
 import { clientLogger } from '@/lib/client-logger';
 import { getSupabase as getSharedSupabase } from './community-hub-backend';
+import { initPresence, setPresenceStatus, goOffline, getOnlineUsers as getUnifiedOnline, onPresenceUpdate, type OnlineUser, type PresenceStatus } from './presence';
 
 // ─── TYPES ──────────────────────────────────────────────────────
 
@@ -483,113 +484,49 @@ export async function subscribeToRoom(roomId: string, onMessage: MessageCallback
 }
 
 export async function subscribeToPresence(onPresence: PresenceCallback): Promise<() => void> {
-  const supabase = await getSupabase();
+  // Delegate to unified presence system
+  // The unified system handles Realtime + DB fallback + heartbeat
+  const unsub = onPresenceUpdate((users: OnlineUser[]) => {
+    // Convert OnlineUser to UserPresence for backward compatibility
+    onPresence(users.map(u => ({
+      userId: u.userId,
+      username: u.username,
+      avatar: u.avatar || undefined,
+      status: u.status === 'busy' ? 'online' : u.status,
+      lastSeen: u.lastHeartbeat,
+    })));
+  });
 
-  if (_presenceSubscription) {
-    supabase.removeChannel(_presenceSubscription);
-    _presenceSubscription = null;
+  // Also init presence for current user if not already done
+  const userId = await getCurrentUserId();
+  if (userId) {
+    await initPresence(userId);
   }
 
-  const channel = supabase
-    .channel('online-users')
-    .on('presence', { event: 'sync' }, () => {
-      const state = channel.presenceState();
-      const seen = new Set<string>();
-      const users: UserPresence[] = [];
-      for (const key of Object.keys(state)) {
-        const presences = state[key] as Array<Record<string, unknown>>;
-        for (const p of presences) {
-          const uid = p.user_id as string;
-          if (uid && !seen.has(uid)) {
-            seen.add(uid);
-            users.push({
-              userId: uid,
-              username: p.username as string | undefined,
-              avatar: p.avatar as string | undefined,
-              status: 'online',
-              lastSeen: new Date().toISOString(),
-            });
-          }
-        }
-      }
-      onPresence(users);
-    })
-    .subscribe(async (status: string) => {
-      if (status === 'SUBSCRIBED') {
-        const userId = await getCurrentUserId();
-        if (userId) {
-          // Get user profile for presence
-          try {
-            const { data: profile } = await supabase
-              .from('user_profiles')
-              .select('username, avatar_url')
-              .eq('id', userId)
-              .maybeSingle();
-            channel.track({
-              user_id: userId,
-              username: profile?.username || 'Utente',
-              avatar: profile?.avatar_url || '',
-              online_at: new Date().toISOString(),
-            });
-          } catch {
-            channel.track({
-              user_id: userId,
-              username: 'Utente',
-              online_at: new Date().toISOString(),
-            });
-          }
-        }
-      }
-    });
-
-  _presenceSubscription = channel;
-
-  return () => {
-    supabase.removeChannel(channel);
-    _presenceSubscription = null;
-  };
+  return unsub;
 }
 
 // ─── PRESENCE ───────────────────────────────────────────────────
 
 export async function updatePresence(status: 'online' | 'away' | 'offline'): Promise<void> {
   try {
-    const supabase = await getSupabase();
-    const userId = await getCurrentUserId();
-    if (!userId) return;
-    await supabase.from('community_presence').upsert(
-      { user_id: userId, status, last_seen: new Date().toISOString() },
-      { onConflict: 'user_id' }
-    );
+    // Delegate to unified presence system
+    await setPresenceStatus(status as PresenceStatus);
   } catch {
     // Silent fail — presence is best-effort
   }
 }
 
 export async function getOnlineUsers(): Promise<UserPresence[]> {
-  const supabase = await getSupabase();
-  const { data } = await supabase
-    .from('community_presence')
-    .select('*')
-    .eq('status', 'online')
-    .order('last_seen', { ascending: false });
-
-  if (!data || data.length === 0) return [];
-
-  // Fetch profili separatamente
-  const userIds = [...new Set((data as Record<string, unknown>[]).map(r => r.user_id as string).filter(Boolean))];
-  const profilesMap = await fetchProfilesMap(userIds);
-
-  return (data as Record<string, unknown>[]).map((row) => {
-    const profile = profilesMap.get(row.user_id as string);
-    return {
-      userId: row.user_id as string,
-      username: profile?.username || 'Utente',
-      avatar: profile?.avatar_url || undefined,
-      status: row.status as UserPresence['status'],
-      lastSeen: row.last_seen as string,
-    };
-  });
+  // Delegate to unified presence system
+  const users = getUnifiedOnline();
+  return users.map(u => ({
+    userId: u.userId,
+    username: u.username,
+    avatar: u.avatar || undefined,
+    status: (u.status === 'busy' ? 'online' : u.status) as UserPresence['status'],
+    lastSeen: u.lastHeartbeat,
+  }));
 }
 
 // ─── ROOM MEMBERSHIP ────────────────────────────────────────────

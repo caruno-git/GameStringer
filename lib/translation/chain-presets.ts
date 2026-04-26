@@ -14,7 +14,7 @@ import { resetProviderBlocks } from './provider-blocking';
 import type { GameGenre } from '../genre-prompts';
 
 /** Preset di chain selezionabili per costo/qualita */
-export type ChainPreset = 'free' | 'economy' | 'balanced' | 'quality' | 'max_quality' | 'auto';
+export type ChainPreset = 'free' | 'privacy' | 'economy' | 'balanced' | 'quality' | 'max_quality' | 'creative' | 'long_context' | 'voice' | 'auto';
 
 export interface ChainPresetInfo {
   id: ChainPreset;
@@ -34,16 +34,25 @@ export const CHAIN_PRESETS: ChainPresetInfo[] = [
     cost: '$0',
     quality: '⭐⭐⭐⭐',
     speed: '🏎 Media',
-    providers: ['hymt', 'translategemma', 'ollama', 'lmstudio', 'groq-gptoss', 'groq', 'cerebras', 'openrouter', 'nllb', 'mymemory', 'lingva'],
+    providers: ['hymt', 'translategemma', 'ollama', 'lmstudio', 'groq-gptoss', 'groq', 'cerebras', 'openrouter', 'nllb', 'mymemory', 'lingva', 'libretranslate'],
+  },
+  {
+    id: 'privacy',
+    name: '🔒 Privacy',
+    description: 'LibreTranslate self-hosted, Ollama locale, NLLB — nessun dato lascia il tuo PC',
+    cost: '$0',
+    quality: '⭐⭐⭐',
+    speed: '⚡ Locale',
+    providers: ['libretranslate', 'ollama', 'lmstudio', 'hymt', 'translategemma', 'nllb'],
   },
   {
     id: 'economy',
     name: '💰 Economica',
-    description: 'HY-MT/TranslateGemma locali + Gemini free + DeepSeek economico + fallback',
+    description: 'HY-MT/TranslateGemma locali + Gemini 3.1 (cost-efficient) + DeepSeek + fallback',
     cost: '~$0.10',
     quality: '⭐⭐⭐⭐',
     speed: '🚀 Veloce',
-    providers: ['hymt', 'translategemma', 'gemini', 'groq', 'cerebras', 'deepseek', 'mistral', 'openrouter', 'nllb', 'mymemory', 'lingva'],
+    providers: ['hymt', 'translategemma', 'gemini-3.1', 'gemini', 'groq', 'cerebras', 'deepseek', 'mistral', 'openrouter', 'nllb', 'mymemory', 'lingva'],
   },
   {
     id: 'balanced',
@@ -52,25 +61,52 @@ export const CHAIN_PRESETS: ChainPresetInfo[] = [
     cost: '~$0.25',
     quality: '⭐⭐⭐⭐',
     speed: '🚀 Veloce',
-    providers: ['hymt', 'translategemma', 'gemini', 'deepseek', 'deepl', 'modelwiz', 'qwen', 'mistral', 'groq-gptoss', 'groq', 'cerebras', 'together', 'fireworks', 'cohere', 'openrouter', 'openai', 'nllb', 'mymemory', 'lingva'],
+    providers: ['hymt', 'translategemma', 'gemini-3.1', 'gemini', 'deepseek', 'deepl', 'modelwiz', 'qwen', 'mistral', 'groq-gptoss', 'groq', 'cerebras', 'together', 'fireworks', 'cohere', 'openrouter', 'openai', 'nllb', 'mymemory', 'lingva'],
   },
   {
     id: 'quality',
     name: '✨ Qualità',
-    description: 'AI premium — Anthropic, OpenAI, Mistral come priorità',
+    description: 'AI premium — Claude 3.5/4 (creative), OpenAI, Mistral come priorità',
     cost: '~$0.50',
     quality: '⭐⭐⭐⭐⭐',
     speed: '🚀 Veloce',
-    providers: ['deepl', 'modelwiz', 'anthropic', 'openai', 'qwen', 'mistral', 'gemini', 'cohere', 'together', 'deepseek', 'fireworks', 'mymemory'],
+    providers: ['deepl', 'modelwiz', 'anthropic-claude4', 'anthropic', 'openai', 'qwen', 'mistral', 'gemini-3.1', 'gemini', 'cohere', 'together', 'deepseek', 'fireworks', 'mymemory'],
   },
   {
     id: 'max_quality',
     name: '👑 Massima Qualità',
-    description: 'Tutti i 16 provider — mai senza traduzione',
+    description: 'Tutti i provider inclusi Voice API — mai senza traduzione',
     cost: '~$1.00+',
     quality: '⭐⭐⭐⭐⭐',
     speed: '🚀 Veloce',
-    providers: ['deepl', 'modelwiz', 'anthropic', 'openai', 'qwen', 'translategemma', 'ollama', 'lmstudio', 'mistral', 'gemini', 'cohere', 'together', 'deepseek', 'fireworks', 'groq-gptoss', 'groq', 'cerebras', 'openrouter', 'hymt', 'nllb', 'mymemory', 'lingva'],
+    providers: ['deepl', 'deepl-voice', 'modelwiz', 'anthropic-claude4', 'anthropic', 'openai', 'qwen', 'translategemma', 'ollama', 'lmstudio', 'mistral', 'gemini-3.1', 'gemini', 'cohere', 'together', 'deepseek', 'fireworks', 'groq-gptoss', 'groq', 'cerebras', 'openrouter', 'hymt', 'nllb', 'mymemory', 'lingva'],
+  },
+  {
+    id: 'creative',
+    name: '🎭 Creative/Narrative',
+    description: 'Claude 3.5/4 Sonnet per traduzioni creative, narrative, sfumature emotive',
+    cost: '~$0.60',
+    quality: '⭐⭐⭐⭐⭐',
+    speed: '🚀 Adattiva',
+    providers: ['anthropic-claude4', 'anthropic', 'openai', 'gemini-3.1', 'gemini', 'deepl', 'modelwiz'],
+  },
+  {
+    id: 'long_context',
+    name: '📚 Long Context',
+    description: 'Gemini 3.1 Flash-Lite per documenti lunghi, script interi, multi-file',
+    cost: '~$0.30',
+    quality: '⭐⭐⭐⭐⭐',
+    speed: '🚀 Veloce',
+    providers: ['gemini-3.1', 'gemini', 'anthropic-claude4', 'openai', 'deepseek', 'qwen'],
+  },
+  {
+    id: 'voice',
+    name: '🎤 Voice Translation',
+    description: 'DeepL Voice API per traduzione vocale real-time con TTS',
+    cost: '~$0.40',
+    quality: '⭐⭐⭐⭐⭐',
+    speed: '⚡ Real-time',
+    providers: ['deepl-voice', 'deepl', 'gemini-3.1', 'anthropic-claude4', 'openai'],
   },
   {
     id: 'auto',

@@ -12,20 +12,34 @@ import { RagGlossary } from '../rag-glossary';
 import { harvestBatch, batchContextToPromptHint, type HarvestInput } from '../context-harvester';
 import { buildFewShotBlock } from '../adaptive-mt';
 import { buildGenrePromptBlock } from '../genre-prompts';
+import { findVoiceProfileForString, buildVoicePromptInjection } from '../voice-profiles';
 import { clientLogger } from '@/lib/client-logger';
 // Import the interface type to avoid circular dependency
 // TranslateOptions is defined in ai-translate-direct.ts which imports from this file
 import type { TranslateOptions } from '../ai-translate-direct';
 
-/** Costruisce il prompt di traduzione con RAG/glossario opzionale */
+/** Costruisce il prompt di traduzione con RAG/glossario opzionale + Custom Prompt System */
 export function buildTranslationPrompt(opts: TranslateOptions): string {
   const srcLang = opts.sourceLanguage || 'en';
 
   // Genre-aware prompt: inietta istruzioni di stile specifiche per genere
   const genreBlock = opts.gameGenre ? buildGenrePromptBlock(opts.gameGenre, opts.targetLanguage) : '';
+  
+  // Custom Prompt System: persona e tono specifici
+  let customInstructions = '';
+  if (opts.persona) {
+    customInstructions += `\nPersona: Translate as if you are ${opts.persona}.`;
+  }
+  if (opts.tone) {
+    customInstructions += `\nTone: Use a ${opts.tone} tone and style.`;
+  }
+  if (opts.customPrompt) {
+    customInstructions += `\n${opts.customPrompt}`;
+  }
+  
   let prompt = genreBlock
-    ? `${genreBlock}\n\nTranslate the following texts from ${srcLang} to ${opts.targetLanguage}. Return ONLY a JSON array of translated strings, same order.`
-    : `Translate the following texts from ${srcLang} to ${opts.targetLanguage}. Return ONLY a JSON array of translated strings, same order.`;
+    ? `${genreBlock}${customInstructions}\n\nTranslate the following texts from ${srcLang} to ${opts.targetLanguage}. Return ONLY a JSON array of translated strings, same order.`
+    : `Translate the following texts from ${srcLang} to ${opts.targetLanguage}${customInstructions ? ' following these instructions:' + customInstructions : ''}. Return ONLY a JSON array of translated strings, same order.`;
 
   // RAG Dinamico: Estrae i termini dal glossario e li inietta nel prompt SOLO se rilevanti per questo blocco di testo
   if (opts.gameId) {
@@ -100,6 +114,27 @@ export function buildTranslationPrompt(opts: TranslateOptions): string {
     }
   } catch (e: unknown) {
     clientLogger.warn('[AdaptiveMT] Few-shot injection failed:', e);
+  }
+
+  // Voice Profiles: inietta istruzioni di voce per personaggi identificati
+  if (opts.gameId && opts.texts.length > 0) {
+    try {
+      const voiceHints: string[] = [];
+      const seenProfiles = new Set<string>();
+      for (const text of opts.texts) {
+        const profile = findVoiceProfileForString(opts.gameId, text);
+        if (profile && !seenProfiles.has(profile.id)) {
+          seenProfiles.add(profile.id);
+          const injection = buildVoicePromptInjection(profile, opts.targetLanguage);
+          voiceHints.push(`[CHARACTER: ${profile.characterName}] ${injection.customPrompt}`);
+        }
+      }
+      if (voiceHints.length > 0) {
+        prompt += `\n\n[CHARACTER VOICE PROFILES]\n${voiceHints.join('\n\n')}`;
+      }
+    } catch (e: unknown) {
+      clientLogger.warn('[VoiceProfiles] Injection failed:', e);
+    }
   }
 
   prompt += `\n\n${opts.texts.map((t, i) => `${i + 1}. ${t}`).join('\n')}`;

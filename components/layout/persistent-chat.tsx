@@ -206,6 +206,10 @@ export function PersistentChat() {
             // Notifica per messaggi di altri utenti
             if (newMsg.authorId !== userId) {
               if (!open) setUnreadCount((c) => c + 1);
+              // Notifica OS via tray (se finestra non in focus)
+              window.dispatchEvent(new CustomEvent('gs-chat-message', {
+                detail: { author: newMsg.authorName || newMsg.authorId, content: newMsg.content }
+              }));
               // Suono notifica (breve beep)
               try {
                 const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();

@@ -6,7 +6,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import Providers from '@/components/providers';
 import { Toaster } from 'sonner';
 import { ProfileWrapper } from '@/components/profiles/profile-wrapper';
-import { ErrorBoundary } from '@/components/error-boundary';
+import { ErrorBoundary, AppErrorBoundary } from '@/components/error-boundary';
 import { ProgressProvider } from '@/components/progress/progress-provider';
 import { ProgressUIManager } from '@/components/progress/progress-ui-manager';
 import { I18nProvider } from '@/lib/i18n';
@@ -29,7 +29,7 @@ export default function RootLayout({
     <html lang="it" className="dark" suppressHydrationWarning>
       <body className={inter.className}>
         <AnimatedBackground />
-        <ErrorBoundary>
+        <AppErrorBoundary>
           <ThemeProvider>
             <I18nProvider>
             <ScreenProvider>
@@ -53,7 +53,7 @@ export default function RootLayout({
             </ScreenProvider>
             </I18nProvider>
           </ThemeProvider>
-        </ErrorBoundary>
+        </AppErrorBoundary>
       </body>
     </html>
   );

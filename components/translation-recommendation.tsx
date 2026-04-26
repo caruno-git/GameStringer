@@ -12,6 +12,10 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
+import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { invoke } from '@/lib/tauri-api';
 import { translateWithFallback, translateWithFallbackBatched, CHAIN_PRESETS, setChainPreset, getChainPreset, hasAvailableProviders, checkChainRequirements, type ChainPreset, type ProviderRequirement } from '@/lib/ai-translate-direct';
@@ -48,6 +52,9 @@ import {
   ChevronRight,
   Loader2,
   Bot,
+  UserCircle,
+  MessageSquare,
+  Volume2,
   Shield,
   Lightbulb,
   Cpu,
@@ -172,6 +179,12 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
   const [selectedChain, setSelectedChain] = useState<ChainPreset>('balanced');
   const [chainWarnings, setChainWarnings] = useState<ProviderRequirement[]>([]);
   const [checkingChain, setCheckingChain] = useState(false);
+  
+  // Custom Prompt & Voice - quick settings per questa traduzione
+  const [quickPersona, setQuickPersona] = useState<string>('');
+  const [quickTone, setQuickTone] = useState<string>('');
+  const [enableVoiceOutput, setEnableVoiceOutput] = useState<boolean>(false);
+  const [showAdvancedOptions, setShowAdvancedOptions] = useState<boolean>(false);
   const [autoState, setAutoState] = useState<AutoTranslationState>({
     isRunning: false,
     isPaused: false,
@@ -599,10 +612,17 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
             clientLogger.debug(`[Unreal] Entries: ${extractResult.entries.length}, con testo non vuoto: ${textsToTranslate.length}`);
             if (textsToTranslate.length > 0) {
               updateProgress(60, `Traducendo ${textsToTranslate.length} stringhe...`);
+              const customSettings = JSON.parse(localStorage.getItem('gs_custom_prompt_settings') || '{}');
               const trResult = await translateWithFallbackBatched({
                 texts: textsToTranslate,
                 targetLanguage: 'it',
                 sourceLanguage: 'en',
+                persona: quickPersona || customSettings.persona,
+                tone: quickTone || customSettings.tone,
+                customPrompt: customSettings.customPrompt,
+                enableVoice: enableVoiceOutput || customSettings.enableVoice,
+                speakerVoice: customSettings.speakerVoice,
+                preserveVoice: customSettings.preserveVoice,
               }, 20, (done, total) => {
                 const pct = 60 + Math.round((done / total) * 30);
                 updateProgress(pct, `Tradotte ${done}/${total} stringhe...`);
@@ -1005,12 +1025,21 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
               : 'Danganronpa visual novel game dialogue';
             
             // Traduzione con fallback automatico (Gemini → DeepSeek → OpenAI)
+            // Carica custom settings se presenti
+            const customSettings = JSON.parse(localStorage.getItem('gs_custom_prompt_settings') || '{}');
             try {
               const result = await translateWithFallback({
                 texts,
                 targetLanguage: 'it',
                 sourceLanguage: 'en',
-                context: contextStr
+                context: contextStr,
+                // Custom Prompt & Voice
+                persona: quickPersona || customSettings.persona,
+                tone: quickTone || customSettings.tone,
+                customPrompt: customSettings.customPrompt,
+                enableVoice: enableVoiceOutput || customSettings.enableVoice,
+                speakerVoice: customSettings.speakerVoice,
+                preserveVoice: customSettings.preserveVoice,
               });
               
               if (result.success) {
@@ -1484,6 +1513,103 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
                       ))}
                     </div>
                   </details>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Opzioni Avanzate - Custom Prompt & Voice */}
+          <div className="border border-slate-700/50 rounded-lg overflow-hidden">
+            <button
+              onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
+              className="w-full flex items-center justify-between p-3 bg-slate-800/30 hover:bg-slate-800/50 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-purple-400" />
+                <span className="text-sm font-medium text-slate-200">Opzioni Avanzate</span>
+                {(quickPersona || quickTone || enableVoiceOutput) && (
+                  <Badge variant="outline" className="text-xs bg-purple-500/10 border-purple-500/30 text-purple-300">
+                    Attivo
+                  </Badge>
+                )}
+              </div>
+              <ChevronRight className={`h-4 w-4 text-slate-400 transition-transform ${showAdvancedOptions ? 'rotate-90' : ''}`} />
+            </button>
+            
+            {showAdvancedOptions && (
+              <div className="p-3 space-y-3 bg-slate-800/20">
+                {/* Persona & Tone */}
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-slate-400 flex items-center gap-1">
+                      <UserCircle className="h-3 w-3" />
+                      Persona
+                    </Label>
+                    <Select value={quickPersona} onValueChange={setQuickPersona}>
+                      <SelectTrigger className="text-xs h-8">
+                        <SelectValue placeholder="Default" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">Default</SelectItem>
+                        <SelectItem value="a wise old wizard">Mago saggio</SelectItem>
+                        <SelectItem value="a medieval knight">Cavaliere</SelectItem>
+                        <SelectItem value="a pirate captain">Pirata</SelectItem>
+                        <SelectItem value="a sci-fi captain">Capitano sci-fi</SelectItem>
+                        <SelectItem value="a horror narrator">Narratore horror</SelectItem>
+                        <SelectItem value="a noble lady">Dama nobile</SelectItem>
+                        <SelectItem value="a street-smart kid">Ragazzo di strada</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-slate-400 flex items-center gap-1">
+                      <MessageSquare className="h-3 w-3" />
+                      Tono
+                    </Label>
+                    <Select value={quickTone} onValueChange={setQuickTone}>
+                      <SelectTrigger className="text-xs h-8">
+                        <SelectValue placeholder="Default" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">Default</SelectItem>
+                        <SelectItem value="formal">Formale</SelectItem>
+                        <SelectItem value="casual">Casuale</SelectItem>
+                        <SelectItem value="humorous">Umoristico</SelectItem>
+                        <SelectItem value="mysterious">Misterioso</SelectItem>
+                        <SelectItem value="epic">Epico</SelectItem>
+                        <SelectItem value="dark">Dark</SelectItem>
+                        <SelectItem value="romantic">Romantico</SelectItem>
+                        <SelectItem value="sarcastic">Sarcastico</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* DeepL Voice Toggle */}
+                <div className="flex items-center justify-between p-2 rounded bg-slate-800/30">
+                  <div className="flex items-center gap-2">
+                    <Volume2 className="h-4 w-4 text-emerald-400" />
+                    <div>
+                      <span className="text-xs font-medium text-slate-200">Voice Output</span>
+                      <p className="text-2xs text-slate-500">DeepL Voice API (40+ lingue)</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={enableVoiceOutput}
+                    onCheckedChange={setEnableVoiceOutput}
+                  />
+                </div>
+
+                {(quickPersona || quickTone) && (
+                  <div className="p-2 rounded bg-purple-500/10 border border-purple-500/20">
+                    <p className="text-2xs text-purple-300">
+                      <span className="font-medium">Anteprima:</span>{' '}
+                      {quickPersona && `Persona: "${quickPersona}"`}
+                      {quickPersona && quickTone && ' · '}
+                      {quickTone && `Tono: "${quickTone}"`}
+                    </p>
+                  </div>
                 )}
               </div>
             )}

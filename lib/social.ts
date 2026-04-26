@@ -4,6 +4,7 @@
  */
 
 import { getSupabase, isSupabaseConfigured } from './community-hub-backend';
+import { initPresence as unifiedInit, setPresenceStatus as unifiedSetStatus, goOffline as unifiedGoOffline, getOnlineUsers as unifiedGetOnline, onPresenceUpdate, type OnlineUser, type PresenceStatus } from './presence';
 
 // Cache per ricordare quali tabelle esistono ed evitare ripetuti 404
 const _tableExists: Record<string, boolean> = {};
@@ -318,34 +319,27 @@ export async function updatePresence(
   activity?: string,
   game?: string
 ): Promise<void> {
-  if (!userId || !isTableAvailable('user_presence') || !isSupabaseConfigured()) return;
+  if (!userId) return;
   try {
-    const supabase = await getSupabase();
-    // Verifica sessione valida: deve avere identities reali (non solo anon key)
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.user) return;
-    const hasRealAuth = Array.isArray(session.user.identities) && session.user.identities.length > 0;
-    if (!hasRealAuth) return;
-    // Usa RPC update_user_presence (definita in forum-schema.sql) per evitare 409 su upsert
-    const { error } = await supabase.rpc('update_user_presence', {
-      p_user_id: userId,
-      p_status: status,
-      p_activity: activity || null,
-      p_game: game || null,
-    });
-    if (error) {
-      // Qualsiasi errore dalla RPC → marca tabella come mancante per evitare retry
-      markTableMissing('user_presence');
-    }
+    // Delegate to unified presence system (Realtime + DB fallback + heartbeat)
+    await unifiedSetStatus(status as PresenceStatus, activity, game);
   } catch { /* silenzioso */ }
 }
 
 export async function getOnlineUsers(limit = 50): Promise<UserPresence[]> {
-  const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-  const data = await safeQuery<UserPresence[]>('user_presence', (supabase) =>
-    supabase.from('user_presence').select('*').gt('last_heartbeat', fiveMinAgo).limit(limit)
-  );
-  return data || [];
+  try {
+    const online = unifiedGetOnline().slice(0, limit);
+    // Convert OnlineUser to UserPresence for backward compatibility
+    return online.map(u => ({
+      user_id: u.userId,
+      status: u.status,
+      current_activity: u.currentActivity,
+      current_game: u.currentGame,
+      last_heartbeat: u.lastHeartbeat,
+    }));
+  } catch {
+    return [];
+  }
 }
 
 export async function getOnlineFriends(userId: string): Promise<(UserProfile & { presence: UserPresence })[]> {

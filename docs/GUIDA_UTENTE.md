@@ -56,6 +56,7 @@
 52. [Novità v1.4.2](#novità-v142)
 53. [Chat Community in Tempo Reale](#chat-community-in-tempo-reale) *(NUOVO v1.5.0)*
 54. [Novità v1.5.0](#novità-v150)
+55. [Translation Innovations 2026](#translation-innovations-2026) *(NUOVO)*
 
 ---
 
@@ -1892,4 +1893,81 @@ GameStringer v1.8.1 - Guida aggiornata al 09/04/2026
 
 ---
 
-GameStringer v1.8.2 - Guida aggiornata 23/04/2026
+## Translation Innovations 2026
+
+### 🚀 Nuove Feature AI (Aprile 2026)
+
+#### Gemini 3.1 Flash-Lite — Long Context, Cost-Efficient
+
+Nuovo provider **Google Gemini 3.1 Flash-Lite** per traduzioni di documenti lunghi:
+
+- **Context Window**: Fino a 1 milione di token (4x rispetto a Gemini 2.0)
+- **Costo**: Metà prezzo rispetto a Gemini 2.0 Flash
+- **Max Output**: 32,768 token per risposta
+- **Use Case Ideale**: Script interi, documentazione tecnica, file multipli in batch
+- **Come usarlo**: Seleziona la chain **"📚 Long Context"** nelle opzioni di traduzione
+
+#### Claude 3.5/4 Sonnet — Creative & Narrative Translations
+
+Aggiornamento provider **Anthropic Claude** per traduzioni creative:
+
+- **Modello**: Claude 3.5 Sonnet (2024-10-22)
+- **Specialità**: Traduzioni narrative, sfumature emotive, dialoghi caratterizzati
+- **Use Case Ideale**: Visual Novel, RPG giapponesi, giochi narrativi
+- **Come usarlo**: Seleziona la chain **"🎭 Creative/Narrative"** per priorità Claude 3.5/4
+
+#### DeepL Voice API — Real-Time Voice Translation
+
+Nuovo supporto **DeepL Voice API** per traduzione vocale real-time:
+
+- **Funzionalità**: Traduzione testo → voce in 40+ lingue
+- **Voice Preservation**: Mantiene caratteristiche della voce originale (beta)
+- **Voci TTS**: Integrazione con OpenAI TTS (Nova, Alloy, Echo, Fable, Onyx, Shimmer)
+- **Fallback**: Automatico a DeepL testo se Voice non disponibile
+- **Come usarlo**: 
+  1. Abilita nelle **Impostazioni → AI → Custom Prompt & Voice**
+  2. O attiva nel dialog di conferma traduzione → **Opzioni Avanzate → Voice Output**
+
+#### Custom Prompt System — Prompt Engineering Flessibile
+
+Nuovo sistema globale per personalizzare i prompt di tutti i provider LLM:
+
+**Configurazione Globale** (Impostazioni → AI → Custom Prompt & Voice):
+- **Persona**: Traduci come se fossi un personaggio specifico
+  - Mago saggio, Cavaliere medievale, Pirata, Capitano sci-fi, Narratore horror, ecc.
+- **Tono**: Stile di traduzione personalizzato
+  - Formale, Casuale, Umoristico, Misterioso, Epico, Dark, Romantico, Sarcastico
+- **Prompt Personalizzato**: Istruzioni libere aggiunte al prompt di sistema
+
+**Override per Traduzione** (nel dialog di conferma):
+- Sezione **"Opzioni Avanzate"** espandibile
+- Override temporaneo di persona e tono per quella specifica traduzione
+- Badge "Attivo" quando le opzioni sono configurate
+
+**Come funziona**:
+1. Le impostazioni globali si applicano automaticamente a tutte le traduzioni
+2. Gli override nel dialog hanno priorità per quella specifica sessione
+3. I parametri vengono passati a tutti i provider LLM (Claude, Gemini, GPT, ecc.)
+
+#### Nuove Chain Presets
+
+Aggiunte 3 nuove chain preset ottimizzate:
+
+| Chain | Descrizione | Costo | Provider Prioritari |
+|-------|-------------|-------|---------------------|
+| 🎭 **Creative** | Traduzioni narrative, sfumature emotive | ~$0.60 | Claude 3.5/4, OpenAI, Gemini |
+| 📚 **Long Context** | Documenti lunghi, script interi | ~$0.30 | Gemini 3.1, Claude 4, OpenAI |
+| 🎤 **Voice** | Traduzione vocale real-time | ~$0.40 | DeepL Voice, Gemini 3.1, Claude 4 |
+
+#### Provider Aggiornati
+
+| Provider | Stato | Note |
+|----------|-------|------|
+| Gemini 3.1 Flash-Lite | ✅ Nuovo | Long context, cost-efficient |
+| Claude 3.5 Sonnet | ✅ Aggiornato | Creative/narrative translations |
+| Claude 4 | ✅ Alias | Stesso endpoint, modello più recente |
+| DeepL Voice | ✅ Nuovo | Real-time voice translation |
+
+---
+
+GameStringer v1.8.2 - Guida aggiornata 25/04/2026

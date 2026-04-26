@@ -54,6 +54,14 @@ const ProfileNotificationSettings = dynamic(
   () => import('@/components/notifications/profile-notification-settings').then(m => ({ default: m.ProfileNotificationSettings })),
   { ssr: false }
 );
+const TrayNotificationPreferences = dynamic(
+  () => import('@/components/settings/tray-notification-preferences').then(m => ({ default: m.TrayNotificationPreferences })),
+  { ssr: false }
+);
+const FineTuningManager = dynamic(
+  () => import('@/components/settings/fine-tuning-manager').then(m => ({ default: m.FineTuningManager })),
+  { ssr: false }
+);
 const AutoBackupSettings = dynamic(
   () => import('@/components/settings/auto-backup-settings').then(m => ({ default: m.AutoBackupSettings })),
   { ssr: false }
@@ -70,6 +78,11 @@ const VramSettingsCard = dynamic(
   () => import('@/components/settings/vram-settings-card').then(m => ({ default: m.VramSettingsCard })),
   { ssr: false }
 );
+const CustomPromptSettings = dynamic(
+  () => import('@/components/settings/custom-prompt-settings').then(m => ({ default: m.CustomPromptSettings })),
+  { ssr: false }
+);
+
 import { invoke } from '@/lib/tauri-api';
 import { saveConfig as saveSupabaseConfig, SUPABASE_MIGRATION_SQL } from '@/lib/community-hub-backend';
 import { clientLogger } from '@/lib/client-logger';
@@ -676,6 +689,7 @@ export default function SettingsPage() {
         {/* Translation Tab */}
         <TabsContent value="translation" className="space-y-6">
           <OllamaManager />
+          <FineTuningManager />
           
           {/* LM Studio Settings */}
           <Card>
@@ -1083,6 +1097,9 @@ export default function SettingsPage() {
 
           {/* Multi-LLM Comparison */}
           <MultiLlmComparisonSettings />
+
+          {/* Custom Prompt & Voice */}
+          <CustomPromptSettings />
         </TabsContent>
 
         {/* Backup Tab */}
@@ -1155,6 +1172,7 @@ export default function SettingsPage() {
 
         {/* Notifications Tab */}
         <TabsContent value="notifications" className="space-y-6">
+          <TrayNotificationPreferences />
           <ProfileNotificationSettings />
         </TabsContent>
 

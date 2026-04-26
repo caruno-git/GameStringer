@@ -120,12 +120,14 @@ export function normalizeLangCode(lang: string): string {
 export const PROVIDER_LABELS: Record<string, string> = {
   translategemma: 'TranslateGemma (locale)',
   hymt: 'HY-MT1.5 Tencent (locale, #1 WMT25)',
-  gemini: 'Google Gemini',
+  gemini: 'Google Gemini 2.0 Flash',
+  'gemini-3.1': 'Google Gemini 3.1 Flash-Lite (Long Context)',
   groq: 'Groq (Llama 3.3 70B)',
   'groq-gptoss': 'Groq (GPT-OSS 120B)',
   deepseek: 'DeepSeek',
   openai: 'OpenAI',
-  anthropic: 'Anthropic Claude',
+  anthropic: 'Anthropic Claude 3.5 Sonnet',
+  'anthropic-claude4': 'Anthropic Claude 4 (Creative/Narrative)',
   mistral: 'Mistral AI',
   cohere: 'Cohere',
   together: 'Together AI',
@@ -133,6 +135,7 @@ export const PROVIDER_LABELS: Record<string, string> = {
   openrouter: 'OpenRouter',
   cerebras: 'Cerebras',
   deepl: 'DeepL',
+  'deepl-voice': 'DeepL Voice API (Real-time)',
   qwen: 'Qwen3 (Alibaba)',
   mymemory: 'MyMemory',
   lingva: 'Lingva Translate',
@@ -140,6 +143,8 @@ export const PROVIDER_LABELS: Record<string, string> = {
   lmstudio: 'LM Studio (locale, OpenAI-compatible)',
   modelwiz: 'Alocai ModelWiz (MT gaming)',
   nllb: 'NLLB-200 Meta (200 lingue, gratis)',
+  libretranslate: 'LibreTranslate / LTEngine (self-hosted, privacy)',
+  azure: 'Azure Custom Translator (domain-specific models)',
 };
 
 /** Provider che richiedono Ollama */
@@ -148,11 +153,13 @@ export const OLLAMA_PROVIDERS = ['translategemma', 'hymt', 'ollama'];
 /** Provider -> URL per ottenere API key */
 export const API_KEY_URLS: Record<string, string> = {
   gemini: 'https://aistudio.google.com/app/apikey',
+  'gemini-3.1': 'https://aistudio.google.com/app/apikey',
   groq: 'https://console.groq.com/keys',
   'groq-gptoss': 'https://console.groq.com/keys',
   deepseek: 'https://platform.deepseek.com/api_keys',
   openai: 'https://platform.openai.com/api-keys',
   anthropic: 'https://console.anthropic.com/settings/keys',
+  'anthropic-claude4': 'https://console.anthropic.com/settings/keys',
   mistral: 'https://console.mistral.ai/api-keys',
   cohere: 'https://dashboard.cohere.com/api-keys',
   together: 'https://api.together.xyz/settings/api-keys',
@@ -160,6 +167,9 @@ export const API_KEY_URLS: Record<string, string> = {
   openrouter: 'https://openrouter.ai/keys',
   cerebras: 'https://cloud.cerebras.ai/platform',
   deepl: 'https://www.deepl.com/pro-api',
+  'deepl-voice': 'https://www.deepl.com/pro-api',
   qwen: 'https://dashscope.console.aliyun.com/apiKey',
   modelwiz: 'https://www.alocai.com/download-modelwiz',
+  libretranslate: 'https://libretranslate.com/ (self-hosted)',
+  azure: 'https://portal.azure.com/ → Cognitive Services → Translator',
 };

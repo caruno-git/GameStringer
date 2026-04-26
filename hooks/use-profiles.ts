@@ -129,6 +129,27 @@ export function useProfilesCore(): UseProfilesReturn {
     initialize();
   }, []); // NESSUNA DIPENDENZA per evitare loop infinito
 
+  // Sincronizza currentProfile con localStorage per la chat community bridge
+  useEffect(() => {
+    if (currentProfile) {
+      try {
+        localStorage.setItem('gamestringer_current_profile', JSON.stringify({
+          id: currentProfile.id,
+          name: currentProfile.name,
+          avatar_path: currentProfile.avatar_path,
+        }));
+        clientLogger.debug('✅ useProfiles: Profilo sincronizzato con localStorage per chat');
+      } catch (e) {
+        clientLogger.warn('⚠️ useProfiles: Errore sincronizzazione localStorage:', e);
+      }
+    } else {
+      // Rimuovi dal localStorage se non c'è più un profilo
+      try {
+        localStorage.removeItem('gamestringer_current_profile');
+      } catch {}
+    }
+  }, [currentProfile]);
+
   // Listen for auth changes from other instances and refresh current profile
   // Ascolta sia DOM events (stessa webview) che Tauri events (cross-webview: main ↔ popup)
   useEffect(() => {

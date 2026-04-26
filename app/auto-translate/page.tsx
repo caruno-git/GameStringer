@@ -62,6 +62,8 @@ import {
 import { exportTMX, exportXLIFF, exportPO, type TranslatedFile, type PatchMetadata } from "@/lib/patch-exporter"
 import { useTranslation } from '@/lib/i18n';
 import { clientLogger } from '@/lib/client-logger';
+import { getBackgroundTranslationManager, type BGJobFile, type BGJobString } from '@/lib/background-translation';
+import { VoiceProfileManager } from '@/components/settings/voice-profile-manager';
 
 // ============================================================================
 // TYPES
@@ -728,6 +730,32 @@ export default function AutoTranslatePage() {
     clientLogger.debug('[AutoTranslate] Stop richiesto dall\'utente')
   }, [])
 
+  const handleSendToBackground = useCallback(() => {
+    if (files.length === 0 || !gameInfo) return
+    const mgr = getBackgroundTranslationManager()
+    const bgFiles: BGJobFile[] = files.map(f => ({
+      name: f.name,
+      format: f.format,
+      strings: f.parsed.strings.map(s => ({
+        key: s.key,
+        value: s.value,
+        comment: s.comment,
+        maxLength: s.maxLength,
+      } as BGJobString)),
+    }))
+    const job = mgr.createJob({
+      gameId: gameInfo.gameId,
+      gameName: gameInfo.gameName,
+      gameImage: gameInfo.gameImage,
+      sourceLang,
+      targetLang,
+      files: bgFiles,
+      useContextHarvest,
+    })
+    mgr.startJob(job.id)
+    clientLogger.debug(`[AutoTranslate] Job inviato in background: ${job.id}`)
+  }, [files, gameInfo, sourceLang, targetLang, useContextHarvest])
+
   const handleStartTranslation = useCallback(async (resumeFromCheckpoint = false) => {
     if (files.length === 0) return
 
@@ -938,6 +966,15 @@ export default function AutoTranslatePage() {
           : `Translation completed: ${actualTranslated} strings translated for ${gameTitle}`,
       })
     } catch {}
+    // Tray notification bridge event
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('bg-translation-event', {
+        detail: {
+          type: wasStopped ? 'job_failed' : 'job_completed',
+          job: { gameName: gameTitle || 'Gioco', translatedCount: actualTranslated, errors: wasStopped ? ['Fermata utente'] : [] }
+        }
+      }));
+    }
     // Vai a review solo se ci sono traduzioni utili
     if (actualTranslated > 0) setStep('review')
   }, [files, sourceLang, targetLang, useContextHarvest, gameInfo, loadCheckpoint, clearCheckpoint, saveCheckpoint])
@@ -1957,6 +1994,11 @@ export default function AutoTranslatePage() {
                       </Tooltip>
                     </TooltipProvider>
 
+                    {/* Voice Profiles — character style preservation */}
+                    {gameInfo?.gameId && (
+                      <VoiceProfileManager gameId={gameInfo.gameId} gameStrings={files.flatMap(f => f.parsed?.strings?.map(s => s.value) || [])} />
+                    )}
+
                     <Button
                       onClick={() => handleStartTranslation(false)}
                       disabled={files.length === 0 || isTranslating}
@@ -1964,6 +2006,15 @@ export default function AutoTranslatePage() {
                     >
                       <Zap className="h-4 w-4 mr-2" />
                       Translate {totalStrings} strings
+                    </Button>
+                    <Button
+                      onClick={handleSendToBackground}
+                      disabled={files.length === 0 || isTranslating || !gameInfo}
+                      variant="outline"
+                      className="w-full h-8 text-xs border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/20 hover:text-indigo-200"
+                    >
+                      <Activity className="h-3.5 w-3.5 mr-1.5" />
+                      Traduci in Background
                     </Button>
                     <p className="text-2xs text-muted-foreground text-center">
                       Estimation: ~{(() => { const s = Math.ceil(totalStrings / 20 * 3); return s >= 60 ? `${Math.floor(s/60)}m ${s%60}s` : `${s}s` })()}
