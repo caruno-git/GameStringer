@@ -170,15 +170,19 @@ export function PersistentChat() {
         setUserId(uid);
         
         if (uid) {
+          setLoadError(null); // Clear any previous timeout error
           const chatRooms = await timeout(fetchRooms(), 8000).catch((err) => {
             clientLogger.warn('[PersistentChat] fetchRooms failed:', err);
             setLoadError('Impossibile caricare le stanze. Riprova più tardi.');
             return [] as ChatRoom[];
-          });
+          }) ?? [] as ChatRoom[];
           setRooms(chatRooms);
           if (chatRooms.length > 0 && !activeRoom) {
             setActiveRoom(chatRooms[0]);
           }
+          
+          // Clear error on success
+          if (chatRooms.length > 0) setLoadError(null);
           
           updatePresence('online').catch(() => {});
           unsubPresenceRef.current = await timeout(subscribeToPresence((users) => {
@@ -202,6 +206,8 @@ export function PersistentChat() {
         setLoadError('Errore di connessione. Riprova.');
       } finally {
         setIsLoading(false);
+        // Cancel max timeout since init completed (success or fail)
+        if (maxTimeout) { clearTimeout(maxTimeout); maxTimeout = null; }
       }
     };
 
