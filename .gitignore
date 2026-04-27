@@ -17,8 +17,13 @@
 /src-tauri/target/
 /src-tauri/Cargo.lock
 
-# Build artifacts (DLLs, tools output)
-/tools/AssetRipper/Output*/
+# External tools & large binaries (download separately)
+/tools/AssetRipper/
+/tools/UABEA/
+/tools/UIToolkitTranslator/
+/tools/assetstools_inject/
+/tools/drat/
+/tools/esoteric_ebb_strings/
 /ue-translator-dll/build/
 /unity-translator-dll/build/
 *.pdb
