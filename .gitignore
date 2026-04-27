@@ -82,6 +82,9 @@ Thumbs.db
 *.temp
 .port
 /temp/
+__s1.txt
+__testout.txt
+__tr.json
 
 # Test artifacts
 *.exe
