@@ -40,7 +40,7 @@ import {
   getRecordTypeLabel,
   formatFileSize,
   formatFormId,
-} from '@/lib/bethesda-patcher'
+} from '@/lib/patchers/bethesda-patcher'
 
 // ---------------------------------------------------------------------------
 // Helpers

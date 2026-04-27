@@ -25,7 +25,7 @@ import {
   needsHumanReview,
   generateImprovementSuggestions,
   QualityScore 
-} from '@/lib/translation-quality';
+} from '@/lib/quality/translation-quality';
 import { translationMemory } from '@/lib/translation-memory';
 import { useTranslation } from '@/lib/i18n';
 

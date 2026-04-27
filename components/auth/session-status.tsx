@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useProfileAuth } from '@/lib/profile-auth';
+import { useProfileAuth } from '@/lib/auth/auth/profile-auth';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 

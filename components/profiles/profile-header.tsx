@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useProfileAuth } from '@/lib/profile-auth';
+import { useProfileAuth } from '@/lib/auth/auth/profile-auth';
 import { useProfiles } from '@/hooks/use-profiles';
 import { useProfileSettings } from '@/hooks/use-profile-settings';
 import { Button } from '@/components/ui/button';
@@ -45,7 +45,7 @@ import { AvatarUpload } from './avatar-upload';
 import { SecurityDialog } from './security-dialog';
 import { ThemeCustomizer } from '@/components/theme/theme-customizer';
 import { cn } from '@/lib/utils';
-import { exportProfile, importProfile } from '@/lib/profile-export';
+import { exportProfile, importProfile } from '@/lib/auth/auth/profile-export';
 import { formatDistanceToNow } from 'date-fns';
 import { enUS, it } from 'date-fns/locale';
 import { useTranslation } from '@/lib/i18n';

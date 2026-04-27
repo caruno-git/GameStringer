@@ -86,7 +86,7 @@ import { TutorialOverlay } from '@/components/tutorial/tutorial-overlay';
 import { TutorialMenu } from '@/components/tutorial/tutorial-menu';
 import { useTranslation } from '@/lib/i18n';
 import { useScreen } from '@/components/providers/screen-provider';
-import { isChatEnabled, autoSyncGSToSupabase } from '@/lib/community-chat';
+import { isChatEnabled, autoSyncGSToSupabase } from '@/lib/social/social/community-chat';
 import { clientLogger } from '@/lib/client-logger';
 
 // Lazy-loaded components for code splitting
@@ -101,8 +101,8 @@ const BackgroundJobsWidget = lazy(() => import('@/components/translator/backgrou
 
 // Minimal Suspense fallback
 const LazyFallback = () => null;
-import { initPresence, goOffline } from '@/lib/presence';
-import { notifyChatMessage, clearTrayNotifications, updateTrayTooltip } from '@/lib/tray-notifications';
+import { initPresence, goOffline } from '@/lib/social/social/presence';
+import { notifyChatMessage, clearTrayNotifications, updateTrayTooltip } from '@/lib/notifications/notifications/tray-notifications';
 import { WidgetErrorBoundary } from '@/components/error-boundary';
 import { initNetworkMonitor, stopNetworkMonitor } from '@/lib/network-resilience';
 import { NetworkStatusBar } from '@/components/layout/network-status-bar';

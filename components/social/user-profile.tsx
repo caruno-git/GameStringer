@@ -56,8 +56,8 @@ import {
   type UserProfile,
   type Achievement,
   type ActivityItem
-} from '@/lib/social';
-import { getThreads, type ForumThread } from '@/lib/forum';
+} from '@/lib/social/social';
+import { getThreads, type ForumThread } from '@/lib/social/forum';
 import { formatDistanceToNow } from 'date-fns';
 import { it } from 'date-fns/locale';
 

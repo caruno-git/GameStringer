@@ -37,7 +37,7 @@ import {
   importFromPO,
   formatFileSize,
   getGameProfile,
-} from '@/lib/cri-patcher';
+} from '@/lib/patchers/cri-patcher';
 
 // ---------------------------------------------------------------------------
 // Helpers

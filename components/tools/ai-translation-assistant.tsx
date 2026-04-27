@@ -42,7 +42,7 @@ import {
   type AIProvider, 
   type GameTranslationContext,
   type AITranslationResult 
-} from '@/lib/ai-translation-service';
+} from '@/lib/ai/ai-translation-service';
 
 const genres = [
   { value: 'rpg', label: 'RPG' },

@@ -32,7 +32,7 @@ import {
   getVisemeAtTime,
   convertToUnityAnimation,
   convertToUnrealFaceFX,
-} from '@/lib/rhubarb-lipsync';
+} from '@/lib/voice/rhubarb-lipsync';
 
 // ── Main Component ────────────────────────────────────────────────────
 

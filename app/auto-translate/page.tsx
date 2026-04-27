@@ -48,10 +48,10 @@ import {
 import { cn } from "@/lib/utils"
 import { invoke } from "@/lib/tauri-api"
 import { detectFormat, parseFile, type ParseResult } from "@/lib/file-parsers"
-import { translateSmart } from "@/lib/ai-translate-direct"
-import { runQualityGates, type QualityReport } from "@/lib/quality-gates"
+import { translateSmart } from "@/lib/ai/ai-translate-direct"
+import { runQualityGates, type QualityReport } from "@/lib/quality/quality-gates"
 import { harvestBatch, type HarvestInput } from "@/lib/context-harvester"
-import { addCorrection } from "@/lib/adaptive-mt"
+import { addCorrection } from "@/lib/ai/adaptive-mt"
 import {
   generatePatch,
   generateZipBlob,
@@ -62,7 +62,7 @@ import {
 import { exportTMX, exportXLIFF, exportPO, type TranslatedFile, type PatchMetadata } from "@/lib/patch-exporter"
 import { useTranslation } from '@/lib/i18n';
 import { clientLogger } from '@/lib/client-logger';
-import { getBackgroundTranslationManager, type BGJobFile, type BGJobString } from '@/lib/background-translation';
+import { getBackgroundTranslationManager, type BGJobFile, type BGJobString } from '@/lib/batch/background-translation';
 import { VoiceProfileManager } from '@/components/settings/voice-profile-manager';
 
 // ============================================================================

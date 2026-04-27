@@ -19,9 +19,9 @@ import {
   Check,
   Brain
 } from 'lucide-react';
-import { CHARACTER_PRESETS, getQualityCategory } from '@/lib/translation-quality';
+import { CHARACTER_PRESETS, getQualityCategory } from '@/lib/quality/translation-quality';
 import { useTranslation } from '@/lib/i18n';
-import { translateSingleWithFallback } from '@/lib/ai-translate-direct';
+import { translateSingleWithFallback } from '@/lib/ai/ai-translate-direct';
 import { clientLogger } from '@/lib/client-logger';
 
 interface TranslationResult {

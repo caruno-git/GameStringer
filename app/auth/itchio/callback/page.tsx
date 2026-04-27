@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { signIn } from '@/lib/auth';
+import { signIn } from '@/lib/auth/auth';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n';
 import { clientLogger } from '@/lib/client-logger';

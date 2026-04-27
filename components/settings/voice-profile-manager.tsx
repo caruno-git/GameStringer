@@ -27,7 +27,7 @@ import {
   deleteVoiceProfile,
   setDefaultVoiceProfile,
   extractVoiceProfilesFromStrings,
-} from '@/lib/voice-profiles';
+} from '@/lib/voice/voice-profiles';
 
 const TONE_OPTIONS: { value: VoiceTone; label: string }[] = [
   { value: 'formal', label: 'Formale' },

@@ -44,7 +44,7 @@ import {
   type ForumThread,
   type ForumPost,
   type ForumCategory,
-} from '@/lib/forum';
+} from '@/lib/social/forum';
 import { formatDistanceToNow, format } from 'date-fns';
 import { it, enUS } from 'date-fns/locale';
 import { toast } from 'sonner';

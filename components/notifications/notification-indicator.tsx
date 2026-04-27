@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 // Badge import removed — not currently used
 import { cn } from '@/lib/utils';
 import { useNotifications } from '@/hooks/use-notifications';
-import { announceNotificationCount, createHelpText } from '@/lib/notification-accessibility';
+import { announceNotificationCount, createHelpText } from '@/lib/notifications/notifications/notification-accessibility';
 
 interface NotificationIndicatorProps {
   onClick?: () => void;

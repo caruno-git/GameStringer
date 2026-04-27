@@ -37,7 +37,7 @@ import { invoke } from '@/lib/tauri-api';
 import { ensureArray } from '@/lib/array-utils';
 import { clientLogger } from '@/lib/client-logger';
 import { useTranslation } from '@/lib/i18n';
-import { qualityScoringService, type TranslationProject } from '@/lib/quality-scoring';
+import { qualityScoringService, type TranslationProject } from '@/lib/quality/quality-scoring';
 import { toast } from 'sonner';
 
 // ─── Types ──────────────────────────────────────────────────

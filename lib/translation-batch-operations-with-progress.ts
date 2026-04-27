@@ -4,9 +4,9 @@
 
 import { Languages, Download, Upload, Check, X, Trash2, FileText } from 'lucide-react';
 import type { BatchOperation, TranslationBatchItem } from '@/lib/types/batch-operations';
-import type { BatchItem } from '@/lib/batch-processor';
+import type { BatchItem } from '@/lib/batch/batch-processor';
 import type { ProgressState } from '@/lib/types/progress';
-import { createProgressBatchProcessor } from '@/lib/progress-batch-processor';
+import { createProgressBatchProcessor } from '@/lib/batch/progress-batch-processor';
 
 // Helper to cast TranslationBatchItem processors to BatchItem processors
 type BatchItemProcessor = (item: BatchItem) => Promise<unknown>;

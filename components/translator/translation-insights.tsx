@@ -18,8 +18,8 @@ import {
   XCircle,
   Zap
 } from 'lucide-react';
-import { classifyContent, type ContentType } from '@/lib/content-classifier';
-import { calculateQualityScore, getQualityCategory, type QualityScore } from '@/lib/translation-quality';
+import { classifyContent, type ContentType } from '@/lib/ai/content-classifier';
+import { calculateQualityScore, getQualityCategory, type QualityScore } from '@/lib/quality/translation-quality';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n';
 

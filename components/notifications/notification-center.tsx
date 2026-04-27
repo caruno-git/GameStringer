@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { X, Bell, Trash2, Check, MoreVertical, Filter, CheckCheck, Mail, Search, ArrowUpDown, Square, CheckSquare, HelpCircle } from 'lucide-react';
 import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation';
-import { announceFilterChange, announceSearchResults } from '@/lib/notification-accessibility';
+import { announceFilterChange, announceSearchResults } from '@/lib/notifications/notifications/notification-accessibility';
 import { KeyboardShortcutsHelp } from './keyboard-shortcuts-help';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';

@@ -18,8 +18,8 @@ import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { invoke } from '@/lib/tauri-api';
-import { translateWithFallback, translateWithFallbackBatched, CHAIN_PRESETS, setChainPreset, getChainPreset, hasAvailableProviders, checkChainRequirements, type ChainPreset, type ProviderRequirement } from '@/lib/ai-translate-direct';
-import { filterDanganronpaDialogues } from '@/lib/danganronpa-filter';
+import { translateWithFallback, translateWithFallbackBatched, CHAIN_PRESETS, setChainPreset, getChainPreset, hasAvailableProviders, checkChainRequirements, type ChainPreset, type ProviderRequirement } from '@/lib/ai/ai-translate-direct';
+import { filterDanganronpaDialogues } from '@/lib/patchers/danganronpa-filter';
 import { canTranslate, addTranslationCount } from '@/lib/donation-gate';
 import { DonationDialog } from '@/components/donation-dialog';
 import {

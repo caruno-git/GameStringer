@@ -24,7 +24,7 @@ import {
   sendFriendRequest,
   getFriends,
   type UserProfile
-} from '@/lib/social';
+} from '@/lib/social/social';
 import { useDebounce } from '@/hooks/use-debounce';
 
 // ─── USER SEARCH RESULT ──────────────────────────────────────────────────────

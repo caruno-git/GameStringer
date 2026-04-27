@@ -27,7 +27,7 @@ import {
   markNotificationRead,
   markAllNotificationsRead,
   type Notification
-} from '@/lib/social';
+} from '@/lib/social/social';
 import { formatDistanceToNow } from 'date-fns';
 import { it } from 'date-fns/locale';
 import { cn } from '@/lib/utils';

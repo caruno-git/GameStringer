@@ -22,7 +22,7 @@ import {
   CharacterProfile, 
   CharacterArchetype,
   ARCHETYPE_PRESETS 
-} from '@/lib/character-voice-ai';
+} from '@/lib/ai/character-voice-ai';
 
 const ARCHETYPE_ICONS: Record<CharacterArchetype, React.ReactNode> = {
   hero: <Sword className="h-4 w-4 text-blue-400" />,

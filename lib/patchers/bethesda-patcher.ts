@@ -177,7 +177,7 @@ export async function translateStringEntries(
   entries: StringEntry[],
   options?: TranslateOptions,
 ): Promise<StringEntry[]> {
-  const { translateWithFallback } = await import('@/lib/ai-translate-direct');
+  const { translateWithFallback } = await import('@/lib/ai/ai-translate-direct');
   const batchSize = options?.batchSize ?? 20;
   const result = entries.map((e) => ({ ...e }));
 
@@ -218,7 +218,7 @@ export async function translatePluginEntries(
   entries: PluginStringEntry[],
   options?: TranslateOptions,
 ): Promise<PluginStringEntry[]> {
-  const { translateWithFallback } = await import('@/lib/ai-translate-direct');
+  const { translateWithFallback } = await import('@/lib/ai/ai-translate-direct');
   const batchSize = options?.batchSize ?? 20;
   const result = entries.map((e) => ({ ...e }));
 

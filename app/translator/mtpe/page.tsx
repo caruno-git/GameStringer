@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { translateSingleSmart } from '@/lib/ai-translate-direct';
+import { translateSingleSmart } from '@/lib/ai/ai-translate-direct';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';

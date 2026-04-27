@@ -12,8 +12,8 @@ import {
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useTranslation } from '@/lib/i18n';
-import { buildSingleTranslationPrompt, detectGenreFromText, getAllGenres, type GameGenre } from '@/lib/genre-prompts';
-import { suggestImprovement, type PostEditSuggestion } from '@/lib/ai-post-edit';
+import { buildSingleTranslationPrompt, detectGenreFromText, getAllGenres, type GameGenre } from '@/lib/ai/genre-prompts';
+import { suggestImprovement, type PostEditSuggestion } from '@/lib/ai/ai-post-edit';
 import { saveSnapshot, loadSnapshot, calculateDiff, formatDiffSummary, type IncrementalDiff, type StringEntry } from '@/lib/incremental-translator';
 
 interface CsvEntry { id: string; english: string; translated: string; category: string; done: boolean; }

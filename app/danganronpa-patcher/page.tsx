@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { translateSingleSmart } from '@/lib/ai-translate-direct';
+import { translateSingleSmart } from '@/lib/ai/ai-translate-direct';
 import { invoke } from '@tauri-apps/api/core';
 import { open, save } from '@tauri-apps/plugin-dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

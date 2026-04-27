@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { translateSingleWithFallback, getApiKeys } from '@/lib/ai-translate-direct';
+import { translateSingleWithFallback, getApiKeys } from '@/lib/ai/ai-translate-direct';
 import {
   Mic,
   Play,

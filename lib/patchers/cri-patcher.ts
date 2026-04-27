@@ -232,7 +232,7 @@ export async function translateCriEntries(
   entries: CriStringEntry[],
   options: CriTranslateOptions,
 ): Promise<CriStringEntry[]> {
-  const { translateWithFallback } = await import('@/lib/ai-translate-direct');
+  const { translateWithFallback } = await import('@/lib/ai/ai-translate-direct');
 
   const batchSize = options.batchSize ?? 20;
   const result = entries.map((e) => ({ ...e }));

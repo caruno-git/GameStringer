@@ -29,7 +29,7 @@ import {
   type FineTuningModel,
   type FineTuningConfig,
   DEFAULT_CONFIG,
-} from '@/lib/fine-tuning';
+} from '@/lib/ai/fine-tuning';
 
 export function FineTuningManager({ gameId }: { gameId?: string }) {
   const [datasets, setDatasets] = useState<FineTuningDataset[]>([]);

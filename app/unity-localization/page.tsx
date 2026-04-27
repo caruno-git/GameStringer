@@ -30,7 +30,7 @@ import {
   validateAllTranslations,
   exportTableToCSV,
   exportTableToJSON,
-} from "@/lib/unity-localization";
+} from "@/lib/patchers/unity-localization";
 
 // ---------------------------------------------------------------------------
 // Helpers

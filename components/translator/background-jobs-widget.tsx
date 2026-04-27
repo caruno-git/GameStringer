@@ -17,7 +17,7 @@ import {
   getBackgroundTranslationManager,
   type BGTranslationJob,
   type BGJobEvent,
-} from '@/lib/background-translation';
+} from '@/lib/batch/background-translation';
 
 // ============================================================================
 // MINI INDICATOR — always visible in header/sidebar

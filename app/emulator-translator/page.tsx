@@ -12,10 +12,10 @@ import {
 import { invoke } from '@/lib/tauri-api';
 import { toast } from 'sonner';
 import { useTranslation } from '@/lib/i18n';
-import { translateSingleSmart } from '@/lib/ai-translate-direct';
+import { translateSingleSmart } from '@/lib/ai/ai-translate-direct';
 import { rawPixelsToBase64 } from '@/lib/image-utils';
 import Link from 'next/link';
-import { RETRO_PLATFORMS, type RetroPlatform } from '@/lib/community-hub-service';
+import { RETRO_PLATFORMS, type RetroPlatform } from '@/lib/social/social/community-hub-service';
 import { clientLogger } from '@/lib/client-logger';
 
 interface WindowInfo {
@@ -166,9 +166,9 @@ export default function EmulatorTranslatorPage() {
       const base64 = rawPixelsToBase64(capture.data, capture.width, capture.height);
 
       // Use Tesseract OCR
-      const { recognizeText } = await import('@/lib/ocr-service');
+      const { recognizeText } = await import('@/lib/ocr/ocr-service');
       const ocrLangMap: Record<string, string> = { ja: 'jpn', en: 'eng', 'zh-Hans': 'chi_sim', ko: 'kor' };
-      const ocrLang = (ocrLangMap[sourceLang] || 'eng') as import('@/lib/ocr-service').OCRLanguage;
+      const ocrLang = (ocrLangMap[sourceLang] || 'eng') as import('@/lib/ocr/ocr-service').OCRLanguage;
       const ocrResult = await recognizeText(`data:image/png;base64,${base64}`, ocrLang);
 
       const lines = (ocrResult.lines || [])
@@ -236,9 +236,9 @@ export default function EmulatorTranslatorPage() {
     setScreenshotTexts([]);
     setScreenshotProcessing(true);
     try {
-      const { recognizeText } = await import('@/lib/ocr-service');
+      const { recognizeText } = await import('@/lib/ocr/ocr-service');
       const ocrLangMap: Record<string, string> = { ja: 'jpn', en: 'eng', 'zh-Hans': 'chi_sim', ko: 'kor' };
-      const ocrLang = (ocrLangMap[sourceLang] || 'eng') as import('@/lib/ocr-service').OCRLanguage;
+      const ocrLang = (ocrLangMap[sourceLang] || 'eng') as import('@/lib/ocr/ocr-service').OCRLanguage;
       const ocrResult = await recognizeText(imageDataUrl, ocrLang);
       
       if (!ocrResult.lines || ocrResult.lines.length === 0) {

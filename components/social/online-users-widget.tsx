@@ -22,7 +22,7 @@ import {
   getOnlineUsers,
   refreshOnlineUsers,
   type OnlineUser,
-} from '@/lib/presence';
+} from '@/lib/social/social/presence';
 import { useTranslation } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 

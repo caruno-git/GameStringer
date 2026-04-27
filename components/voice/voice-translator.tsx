@@ -25,7 +25,7 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from '@/lib/i18n';
-import { translateSingleWithFallback, getApiKeys } from '@/lib/ai-translate-direct';
+import { translateSingleWithFallback, getApiKeys } from '@/lib/ai/ai-translate-direct';
 import { clientLogger } from '@/lib/client-logger';
 
 interface TranscriptionSegment {

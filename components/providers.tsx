@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { AuthProvider } from '@/lib/unified-auth';
+import { AuthProvider } from '@/lib/auth/auth/unified-auth';
 // Rimosso NotificationProvider per semplificare
 
 interface ProvidersProps {

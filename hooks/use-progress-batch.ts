@@ -2,8 +2,8 @@
 
 import { useCallback } from 'react';
 import { useProgress } from '@/components/progress/progress-provider';
-import { ProgressBatchProcessor, createProgressBatchProcessor } from '@/lib/progress-batch-processor';
-import type { BatchItem } from '@/lib/batch-processor';
+import { ProgressBatchProcessor, createProgressBatchProcessor } from '@/lib/batch/progress-batch-processor';
+import type { BatchItem } from '@/lib/batch/batch-processor';
 import type { BatchOperationType, BatchResult } from '@/lib/types/batch-operations';
 import type { ProgressConfig } from '@/lib/types/progress';
 

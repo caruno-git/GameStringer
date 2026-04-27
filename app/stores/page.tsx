@@ -11,7 +11,7 @@ import { CheckCircle, Plug, Unplug, XCircle, Loader2, AlertCircle, CheckCircle2,
 
 import React, { useState, useEffect } from 'react';
 import Image, { StaticImageData } from 'next/image';
-import { useSession, signIn, signOut, isProviderConnected } from '@/lib/auth';
+import { useSession, signIn, signOut, isProviderConnected } from '@/lib/auth/auth';
 import { toast } from 'sonner';
 import { invoke } from '@/lib/tauri-api';
 import { ItchioModal } from '@/components/modals/itchio-modal';

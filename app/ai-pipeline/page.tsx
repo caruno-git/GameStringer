@@ -45,7 +45,7 @@ import {
   type MultiAgentConfig,
   type AgentModelConfig,
   type BenchmarkEntry,
-} from "@/lib/ai-pipeline"
+} from "@/lib/ai/ai-pipeline"
 import { useTranslation } from '@/lib/i18n';
 import { clientLogger } from '@/lib/client-logger';
 

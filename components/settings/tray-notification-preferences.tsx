@@ -14,7 +14,7 @@ import {
   sendTrayNotification,
   TrayNotificationType,
   NotificationPreferences,
-} from '@/lib/tray-notifications';
+} from '@/lib/notifications/notifications/tray-notifications';
 
 interface NotificationTypeConfig {
   key: keyof NotificationPreferences;

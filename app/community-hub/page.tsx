@@ -16,12 +16,12 @@ import { ForumHome, ThreadView, NewThread } from '@/components/forum';
 import { FriendsSidebar, NotificationsPanel, OnlineIndicator, ChatPanel } from '@/components/social';
 import { SocialOnboarding } from '@/components/social/social-onboarding';
 import { useProfiles } from '@/hooks/use-profiles';
-import { updatePresence } from '@/lib/social';
-import { getForumStats, type ForumStats } from '@/lib/forum';
+import { updatePresence } from '@/lib/social/social';
+import { getForumStats, type ForumStats } from '@/lib/social/forum';
 import { Button } from '@/components/ui/button';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import type { ForumThread } from '@/lib/forum';
+import type { ForumThread } from '@/lib/social/forum';
 
 type View = 'home' | 'thread' | 'new';
 

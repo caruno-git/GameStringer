@@ -336,7 +336,7 @@ export async function translateStringTable(
   targetLocale: string,
   options?: TranslateOptions,
 ): Promise<StringTableInfo> {
-  const { translateWithFallback } = await import('@/lib/ai-translate-direct');
+  const { translateWithFallback } = await import('@/lib/ai/ai-translate-direct');
 
   const batchSize = options?.batchSize ?? 20;
   const preserveSmart = options?.preserveSmartStrings ?? true;

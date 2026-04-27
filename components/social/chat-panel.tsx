@@ -30,7 +30,7 @@ import {
   getProfile,
   type ChatConversationWithDetails,
   type ChatMessage
-} from '@/lib/social';
+} from '@/lib/social/social';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { it } from 'date-fns/locale';

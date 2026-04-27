@@ -16,7 +16,7 @@ import {
   ReviewStats,
   REVIEW_CATEGORIES,
   SEVERITY_CONFIG
-} from "@/lib/ai-review-agent"
+} from "@/lib/ai/ai-review-agent"
 import {
   Bot,
   Sparkles,

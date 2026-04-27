@@ -26,7 +26,7 @@ import {
   type ForumCategory,
   type ForumThread,
   type PackData,
-} from '@/lib/forum';
+} from '@/lib/social/forum';
 import { toast } from 'sonner';
 
 // ─── LANGUAGES ───────────────────────────────────────────────────────────────

@@ -56,7 +56,7 @@ import {
   type UserProfile,
   type UserPresence,
   type Friendship,
-} from '@/lib/social';
+} from '@/lib/social/social';
 import { useQuickAccess, type QuickAccessItem } from '@/hooks/use-drag-drop';
 import { QuickAccessSection, QuickAccessDropZone as QuickAccessEmptyZone } from './quick-access';
 

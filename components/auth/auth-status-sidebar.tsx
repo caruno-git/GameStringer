@@ -1,6 +1,6 @@
 'use client';
 
-import { useProfileAuth } from '@/lib/profile-auth';
+import { useProfileAuth } from '@/lib/auth/auth/profile-auth';
 import {
   Shield,
   ShieldCheck,

@@ -14,7 +14,7 @@ import {
   getComparisonConfig,
   hasAvailableProviders,
   type ComparisonConfig,
-} from '@/lib/ai-translate-direct';
+} from '@/lib/ai/ai-translate-direct';
 import { useTranslation } from '@/lib/i18n';
 
 const JUDGE_PROVIDERS = [

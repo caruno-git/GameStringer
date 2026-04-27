@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useProfileAuth } from '@/lib/profile-auth';
+import { useProfileAuth } from '@/lib/auth/auth/profile-auth';
 import { clientLogger } from '@/lib/client-logger';
 import {
   Notification,

@@ -28,7 +28,7 @@ import {
   importProject,
   type PatchProject,
   type AntiCheatResult,
-} from '@/lib/binary-string-patcher';
+} from '@/lib/patchers/binary-string-patcher';
 import {
   translateWithFallbackBatched,
   CHAIN_PRESETS,
@@ -36,8 +36,8 @@ import {
   getChainPreset,
   hasAvailableProviders,
   type ChainPreset,
-} from '@/lib/ai-translate-direct';
-import { addCorrection } from '@/lib/adaptive-mt';
+} from '@/lib/ai/ai-translate-direct';
+import { addCorrection } from '@/lib/ai/adaptive-mt';
 import { clientLogger } from '@/lib/client-logger';
 
 type Step = 'load' | 'extract' | 'translate' | 'review' | 'patch';

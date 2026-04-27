@@ -34,8 +34,8 @@ import {
   type OCREngineInfo,
   type MultiOCRResult,
   type EngineProbeResult,
-} from "@/lib/ocr-engines"
-import type { OCRLanguage } from "@/lib/ocr-service"
+} from "@/lib/ocr/ocr-engines"
+import type { OCRLanguage } from "@/lib/ocr/ocr-service"
 import { useTranslation } from '@/lib/i18n';
 import { clientLogger } from '@/lib/client-logger';
 

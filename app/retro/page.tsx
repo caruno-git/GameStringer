@@ -31,7 +31,7 @@ import {
   TextBlock,
   PLATFORM_NAMES,
   PLATFORM_TOOLS
-} from "@/lib/retro-rom-tools";
+} from "@/lib/patchers/retro-rom-tools";
 import { useTranslation } from "@/lib/i18n";
 
 export default function RetroPage() {

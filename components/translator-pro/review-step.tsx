@@ -12,8 +12,8 @@ import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n';
 import { type BatchTranslationJob } from '@/lib/neural-translator';
 import { QualityScoreBadge, ContentTypeBadge } from '@/components/translator/translation-insights';
-import { classifyContent } from '@/lib/content-classifier';
-import { calculateQualityScore } from '@/lib/translation-quality';
+import { classifyContent } from '@/lib/ai/content-classifier';
+import { calculateQualityScore } from '@/lib/quality/translation-quality';
 
 // ============================================================================
 // TYPES

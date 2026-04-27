@@ -26,7 +26,7 @@ import {
   Copy,
   Sparkles
 } from 'lucide-react';
-import { CHARACTER_PRESETS, type CharacterProfile } from '@/lib/translation-quality';
+import { CHARACTER_PRESETS, type CharacterProfile } from '@/lib/quality/translation-quality';
 import { useTranslation } from '@/lib/i18n';
 import { clientLogger } from '@/lib/client-logger';
 

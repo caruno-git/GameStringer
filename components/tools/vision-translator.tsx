@@ -20,7 +20,7 @@ import {
   Zap,
   Brain
 } from 'lucide-react';
-import { visionTranslate, getAvailableVisionModels, captureGameScreenshot, type VisionTranslateResult } from '@/lib/vision-translate';
+import { visionTranslate, getAvailableVisionModels, captureGameScreenshot, type VisionTranslateResult } from '@/lib/ocr/vision-translate';
 import { useTranslation } from '@/lib/i18n';
 
 const TARGET_LANGUAGES = [

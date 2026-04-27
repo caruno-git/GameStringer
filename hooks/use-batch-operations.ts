@@ -2,8 +2,8 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { BatchResult, BatchOperationType, BatchOperationStatus } from '@/lib/types/batch-operations';
-import { batchOperationManager } from '@/lib/batch-operation-manager';
-import { BatchItem } from '@/lib/batch-processor';
+import { batchOperationManager } from '@/lib/batch/batch-operation-manager';
+import { BatchItem } from '@/lib/batch/batch-processor';
 import { clientLogger } from '@/lib/client-logger';
 
 export interface UseBatchOperationsOptions {

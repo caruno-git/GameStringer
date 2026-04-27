@@ -66,9 +66,9 @@ import {
   type ChatRoom,
   type ChatMessage,
   type UserPresence,
-} from '@/lib/community-chat';
-import { getSupabase } from '@/lib/community-hub-backend';
-import { translateChatMessage } from '@/lib/ai-translate-direct';
+} from '@/lib/social/social/community-chat';
+import { getSupabase } from '@/lib/social/social/community-hub-backend';
+import { translateChatMessage } from '@/lib/ai/ai-translate-direct';
 import { clientLogger } from '@/lib/client-logger';
 
 // ─── Room icon helper ───────────────────────────────────────────

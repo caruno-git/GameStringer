@@ -9,8 +9,8 @@ import { invoke } from '@/lib/tauri-api';
 import { toast } from 'sonner';
 import { useOcrHotkey } from '@/hooks/use-global-hotkeys';
 import { useTranslation } from '@/lib/i18n';
-import { VlmTranslator } from '@/lib/vlm-translator';
-import { translateSingleSmart } from '@/lib/ai-translate-direct';
+import { VlmTranslator } from '@/lib/ocr/vlm-translator';
+import { translateSingleSmart } from '@/lib/ai/ai-translate-direct';
 import { rawPixelsToBase64 } from '@/lib/image-utils';
 import { clientLogger } from '@/lib/client-logger';
 
@@ -313,9 +313,9 @@ export default function OcrTranslatorPage() {
     setScreenshotProcessing(true);
     try {
       // Import Tesseract OCR
-      const { recognizeText } = await import('@/lib/ocr-service');
+      const { recognizeText } = await import('@/lib/ocr/ocr-service');
       const ocrLangMap: Record<string, string> = { ja: 'jpn', en: 'eng', 'zh-Hans': 'chi_sim', ko: 'kor' };
-      const ocrLang = (ocrLangMap[config.language] || 'eng') as import('@/lib/ocr-service').OCRLanguage;
+      const ocrLang = (ocrLangMap[config.language] || 'eng') as import('@/lib/ocr/ocr-service').OCRLanguage;
       const ocrResult = await recognizeText(imageDataUrl, ocrLang);
       
       if (!ocrResult.lines || ocrResult.lines.length === 0) {

@@ -9,7 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { translateWithFallback } from '@/lib/ai-translate-direct';
+import { translateWithFallback } from '@/lib/ai/ai-translate-direct';
 import { 
   Play, Pause, Square, Settings, Eye,
   Monitor, Languages,

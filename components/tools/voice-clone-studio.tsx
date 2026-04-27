@@ -26,7 +26,7 @@ import {
   VOICE_PRESETS, 
   OPENAI_VOICES,
   SynthesisResult 
-} from '@/lib/voice-clone';
+} from '@/lib/voice/voice-clone';
 
 export function VoiceCloneStudio() {
   const { t } = useTranslation();

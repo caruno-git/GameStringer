@@ -45,7 +45,7 @@ import {
   type ForumCategory,
   type ForumThread,
   type ThreadsFilter,
-} from '@/lib/forum';
+} from '@/lib/social/forum';
 import { formatDistanceToNow } from 'date-fns';
 import { it, enUS } from 'date-fns/locale';
 import { cn } from '@/lib/utils';

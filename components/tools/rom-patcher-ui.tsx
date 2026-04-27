@@ -37,7 +37,7 @@ import {
   type PatchResult,
   type CreatePatchResult,
   type PatchInfo
-} from '@/lib/rom-patcher';
+} from '@/lib/patchers/rom-patcher';
 
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -137,7 +137,7 @@ export function RomPatcherUI() {
 
   const handleVerifyRoundtrip = async () => {
     if (!createResult?.patch || !createOriginal || !createModified) return;
-    const { applyPatch: applyPatchFn } = await import('@/lib/rom-patcher');
+    const { applyPatch: applyPatchFn } = await import('@/lib/patchers/rom-patcher');
     const applied = applyPatchFn(createOriginal.data, createResult.patch);
     if (!applied.success || !applied.output) {
       setVerifyStatus('fail');

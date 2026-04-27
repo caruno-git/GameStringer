@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { ProfileAuthProvider } from '@/lib/profile-auth';
+import { ProfileAuthProvider } from '@/lib/auth/auth/profile-auth';
 import { ProfilesProvider } from '@/hooks/use-profiles';
 import { ProtectedRoute } from '@/components/auth/protected-route';
 import { MainLayout } from '@/components/layout/main-layout';
-import { sessionPersistence } from '@/lib/session-persistence';
+import { sessionPersistence } from '@/lib/auth/auth/session-persistence';
 import { isProtectedRoute } from '@/lib/route-config';
 import { Loader2 } from 'lucide-react';
 import { clientLogger } from '@/lib/client-logger';

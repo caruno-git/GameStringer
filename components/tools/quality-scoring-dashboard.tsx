@@ -21,7 +21,7 @@ import {
   type QualityStats,
   type QualityTag,
   type TranslationEntry
-} from '@/lib/quality-scoring';
+} from '@/lib/quality/quality-scoring';
 import { useTranslation } from '@/lib/i18n';
 import { clientLogger } from '@/lib/client-logger';
 

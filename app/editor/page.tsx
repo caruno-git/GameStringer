@@ -18,7 +18,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useToast } from '@/components/ui/use-toast';
-import { notifications } from '@/lib/notifications';
+import { notifications } from '@/lib/notifications/notifications';
 import { offlineCache } from '@/lib/offline-cache';
 import { TranslationImportDialog } from '@/components/translation-import-dialog';
 import { motion } from 'framer-motion';

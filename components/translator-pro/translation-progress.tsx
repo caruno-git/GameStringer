@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n';
 import { formatTimeRemaining, type BatchProgress } from '@/lib/neural-translator';
 import { QualityScoreBadge } from '@/components/translator/translation-insights';
-import { calculateQualityScore } from '@/lib/translation-quality';
+import { calculateQualityScore } from '@/lib/quality/translation-quality';
 
 // ============================================================================
 // TYPES

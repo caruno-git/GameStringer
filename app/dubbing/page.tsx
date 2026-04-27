@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n';
 import { toast } from 'sonner';
-import { DubbingPipeline, type DubbingConfig, type DubbingProgress, type DubbingResult } from '@/lib/dubbing-pipeline';
+import { DubbingPipeline, type DubbingConfig, type DubbingProgress, type DubbingResult } from '@/lib/voice/dubbing-pipeline';
 import { clientLogger } from '@/lib/client-logger';
 
 const LANGUAGES = [

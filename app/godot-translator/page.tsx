@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { WizardStepper, type WizardStep } from '@/components/ui/wizard-stepper';
 import Link from 'next/link';
 import { useTranslation } from '@/lib/i18n';
-import { buildSingleTranslationPrompt, detectGenreFromText, getAllGenres, type GameGenre } from '@/lib/genre-prompts';
+import { buildSingleTranslationPrompt, detectGenreFromText, getAllGenres, type GameGenre } from '@/lib/ai/genre-prompts';
 import { generatePOString, entriesToGeneric, type PoMetadata } from '@/lib/po-export';
 
 interface LocaleEntry {
