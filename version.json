@@ -1,12 +1,12 @@
 {
-  "version": "1.9.0",
+  "version": "1.9.1",
   "major": 1,
-  "minor": 8,
-  "patch": 2,
+  "minor": 9,
+  "patch": 1,
   "prerelease": null,
-  "buildNumber": 126,
-  "buildDate": "2026-04-21T22:03:00.000Z",
-  "gitHash": "0805f0b",
+  "buildNumber": 128,
+  "buildDate": "2026-04-27T06:40:46.538Z",
+  "gitHash": "114c453",
   "branch": "main",
   "changelog": {
     "1.9.0": {
@@ -603,6 +603,13 @@
         "OCR Image Processor: wiring a backend Tauri Tesseract (sostituisce stub simulateOCR)",
         "Text utilities: text-micro (9px) + text-2xs (10px) per eliminare classi Tailwind arbitrarie",
         "Fix: prevent console flash loop su spawn processi Windows quando l'app è in tray (helper process_util::no_window_command)"
+      ]
+    },
+    "1.8.3": {
+      "date": "2026-04-27",
+      "type": "patch",
+      "changes": [
+        "Fix chat auto-connect coordination"
       ]
     }
   }

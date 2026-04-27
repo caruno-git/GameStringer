@@ -1,6 +1,6 @@
 {
   "productName": "GameStringer",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "identifier": "com.gamestringer.app",
   "build": {
     "beforeDevCommand": "npx next dev -p 3222",
