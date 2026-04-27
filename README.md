@@ -10,8 +10,9 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.9.0-blue" alt="Version" />
-  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey" alt="Platform" />
+  <a href="https://www.gamestringer.ai"><img src="https://img.shields.io/badge/🌐_Website-gamestringer.ai-indigo" alt="Website" /></a>
+  <img src="https://img.shields.io/badge/version-1.9.1-blue" alt="Version" />
+  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey" alt="Platform" />
   <img src="https://img.shields.io/badge/license-Source--Available-green" alt="License" />
   <img src="https://img.shields.io/badge/Tauri_2-24C8DB?logo=tauri&logoColor=white" alt="Tauri" />
   <img src="https://img.shields.io/badge/Next.js_15-black?logo=next.js" alt="Next.js" />
@@ -19,6 +20,7 @@
 </p>
 
 <p align="center">
+  <a href="https://www.gamestringer.ai">Website</a> ·
   <a href="#-what-is-gamestringer">What is it</a> ·
   <a href="#-download">Download</a> ·
   <a href="#-how-it-works">How it works</a> ·
@@ -28,7 +30,7 @@
   <a href="#-build-from-source">Build</a>
 </p>
 
-> ⚠️ **Upgrading from v1.8.2?** The auto-updater shows "Preparazione..." because v1.9.0 migrated from Tauri v1 to **Tauri v2**. Download and install manually: [GameStringer_1.9.0_x64_en-US.msi](https://github.com/rouges78/GameStringer/releases/download/v1.9.0/GameStringer_1.9.0_x64_en-US.msi). Future updates (v1.9.x → v1.9.y) will work automatically.
+> ⚠️ **Upgrading from v1.8.x?** v1.9.0 migrated from Tauri v1 to **Tauri v2** — auto-updater won't work for this jump. Download **v1.9.1** manually: [GameStringer_1.9.1_x64-setup.exe](https://github.com/rouges78/GameStringer/releases/download/v1.9.1/GameStringer_1.9.1_x64-setup.exe). Future updates (v1.9.1 → v1.9.x) will work automatically.
 
 <p align="center">
   <strong>🌍 Read in your language:</strong><br>
@@ -108,12 +110,15 @@ Get the latest release from **[GitHub Releases](https://github.com/rouges78/Game
 
 | Platform | File | Notes |
 |----------|------|-------|
-| **Windows** | `GameStringer-Setup.exe` | Installer (recommended) |
-| **Windows** | `GameStringer-Portable.zip` | No install needed |
+| **Windows** | `GameStringer_1.9.1_x64-setup.exe` | Installer (recommended) |
+| **Windows** | `GameStringer_1.9.1_x64-portable.zip` | No install needed |
+| **Windows** | `GameStringer_1.9.1_x64_en-US.msi` | MSI alternative |
+| **macOS** | `GameStringer_1.9.1_x64.dmg` | Intel Mac |
+| **macOS** | `GameStringer_aarch64.app.tar.gz` | Apple Silicon |
 | **Linux** | `GameStringer.AppImage` | Universal (recommended) |
 | **Linux** | `GameStringer.deb` | Debian / Ubuntu |
 
-**Requirements:** Windows 10+ or Linux (Ubuntu 22.04+, Fedora 38+), 4 GB RAM (8 GB+ for local AI), 500 MB disk. Releases are **code-signed** and **auto-updated** via Tauri Updater.
+**Requirements:** Windows 10+, macOS 10.15+, or Linux (Ubuntu 22.04+, Fedora 38+). 4 GB RAM (8 GB+ for local AI), 500 MB disk. Releases are **code-signed** and **auto-updated** via Tauri Updater.
 
 ---
 
@@ -188,6 +193,13 @@ GameStringer supports **20+ engines** with varying levels of depth:
 ---
 
 ## ✨ Features
+
+### 🆕 New in v1.9.1
+
+- **Fix CSP blocking Supabase** — Community Chat was silently blocked by Tauri v2's strict Content Security Policy. Added `https://*.supabase.co` and `wss://*.supabase.co` to `connect-src`
+- **Fix chat auto-connect** — Coordinated auth between `main-layout` and `persistent-chat` via custom events, eliminating race conditions
+- **Fix timeout error** — Stale closure in max-timeout caused false "Tempo di caricamento troppo lungo" even when chat loaded successfully
+- **macOS builds** — DMG (Intel) and `.app.tar.gz` (Apple Silicon) now available
 
 ### 🆕 New in v1.9.0
 
@@ -423,5 +435,5 @@ See [LICENSE](LICENSE) for details. Questions? Open a [Discussion](https://githu
 
 <p align="center">
   Made with ❤️ for gamers who want to play in their own language<br>
-  <strong>GameStringer v1.9.0</strong> · © 2025-2026 GameStringer Team
+  <strong>GameStringer v1.9.1</strong> · <a href="https://www.gamestringer.ai">gamestringer.ai</a> · © 2025-2026 GameStringer Team
 </p>
