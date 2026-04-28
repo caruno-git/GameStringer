@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.9.0-blue" alt="Version" />
+  <img src="https://img.shields.io/badge/version-1.9.1-blue" alt="Version" />
   <img src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey" alt="Platform" />
   <img src="https://img.shields.io/badge/license-Source--Available-green" alt="License" />
   <img src="https://img.shields.io/badge/Tauri_2-24C8DB?logo=tauri&logoColor=white" alt="Tauri" />
@@ -175,8 +175,8 @@ GameStringer unterstützt **20+ Engines** mit unterschiedlichem Tiefgang:
 | **Kirikiri** | ✅ Vollständig | `.ks` / `.scn`-Parsing |
 | **TyranoScript** | ✅ Vollständig | Fast-Path-Extractor mit JSON-Patching |
 | **Electron** | ✅ Vollständig | ASAR-Unpacking + i18n-JSON-Erkennung |
-| **Bethesda (Skyrim/Fallout/Oblivion/Starfield)** | ✅ **NEW v1.9.0** | BSA v103-105 + BA2 GNRL/DX10 + ESP/ESM (FULL/DESC/NAM1) Parser, STRINGS/DLSTRINGS/ILSTRINGS |
-| **CRI Middleware (Persona/Yakuza/Tales of/Dragon Ball)** | ✅ **NEW v1.9.0** | CPK + CRILAYLA + MSG/BMD/FTD mit automatischer Erkennung von Shift-JIS/UTF-8/UTF-16 |
+| **Bethesda (Skyrim/Fallout/Oblivion/Starfield)** | ✅ **NEW v1.9.0/1.9.1** | BSA v103-105 + BA2 GNRL/DX10 + ESP/ESM (FULL/DESC/NAM1) Parser, STRINGS/DLSTRINGS/ILSTRINGS |
+| **CRI Middleware (Persona/Yakuza/Tales of/Dragon Ball)** | ✅ **NEW v1.9.0/1.9.1** | CPK + CRILAYLA + MSG/BMD/FTD mit automatischer Erkennung von Shift-JIS/UTF-8/UTF-16 |
 | **Visionaire Studio** | ✅ Vollständig | Daedalic-Adventures (Deponia, Edna usw.) |
 | **Danganronpa WAD** | ✅ Vollständig | WAD-Archiv-Parser + STX-Dialog-Patching |
 
