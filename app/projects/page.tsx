@@ -38,6 +38,7 @@ import { ensureArray } from '@/lib/array-utils';
 import { clientLogger } from '@/lib/client-logger';
 import { useTranslation } from '@/lib/i18n';
 import { qualityScoringService, type TranslationProject } from '@/lib/quality/quality-scoring';
+import { projectService, type TranslationProject as ActiveProject } from '@/lib/services/translation-projects';
 import { toast } from 'sonner';
 
 // ─── Types ──────────────────────────────────────────────────
@@ -53,7 +54,7 @@ interface UnifiedProject {
   totalStrings: number;
   completedStrings: number;
   lastUpdated: string;
-  source: 'quality' | 'dictionary' | 'translation_memory' | 'game';
+  source: 'active' | 'quality' | 'dictionary' | 'translation_memory' | 'game';
   status: 'in_progress' | 'completed' | 'empty';
   qualityScore?: number;
   openHref?: string;
@@ -78,6 +79,7 @@ const LANG_FLAGS: Record<string, string> = {
 };
 
 const SOURCE_LABELS: Record<UnifiedProject['source'], { label: string; color: string; icon: typeof BookOpen }> = {
+  active: { label: 'In Traduzione', color: 'bg-violet-500/20 text-violet-300 border-violet-500/30', icon: Rocket },
   quality: { label: 'Quality Scoring', color: 'bg-purple-500/20 text-purple-300 border-purple-500/30', icon: TrendingUp },
   dictionary: { label: 'Dictionary', color: 'bg-blue-500/20 text-blue-300 border-blue-500/30', icon: BookOpen },
   translation_memory: { label: 'Translation Memory', color: 'bg-amber-500/20 text-amber-300 border-amber-500/30', icon: Languages },
@@ -130,6 +132,32 @@ interface GameApiItem {
 
 async function loadAllProjects(): Promise<UnifiedProject[]> {
   const projectsMap = new Map<string, UnifiedProject>();
+
+  // 0. Active Translation Projects (IndexedDB) - PRIORITÀ MASSIMA
+  try {
+    const activeProjects = await projectService.getAllProjects();
+    for (const p of activeProjects) {
+      const key = `active:${p.id}`;
+      projectsMap.set(key, {
+        id: key,
+        gameId: p.gameId,
+        gameName: p.gameName,
+        coverUrl: p.gameImage,
+        platform: p.engine || 'unknown',
+        sourceLanguage: p.sourceLanguage,
+        targetLanguage: p.targetLanguage,
+        totalStrings: p.totalStrings,
+        completedStrings: p.translatedStrings,
+        lastUpdated: p.lastActivityAt || p.updatedAt,
+        source: 'active',
+        status: p.status === 'completed' ? 'completed' : p.status === 'active' ? 'in_progress' : 'empty',
+        openHref: `/auto-translate?gameId=${encodeURIComponent(p.gameId)}&resume=true`,
+      });
+    }
+    clientLogger.debug(`[Projects] Caricati ${activeProjects.length} progetti attivi`);
+  } catch (e: unknown) {
+    clientLogger.warn('[Projects] Progetti attivi non disponibili:', e);
+  }
 
   // 1. Quality Scoring projects (localStorage)
   try {
@@ -689,3 +717,4 @@ function StatCard({
     </div>
   );
 }
+

@@ -93,3 +93,4 @@ export type TranslateRequest = z.infer<typeof translateRequestSchema>;
 export type BatchTranslateRequest = z.infer<typeof batchTranslateRequestSchema>;
 export type SecretsRequest = z.infer<typeof secretsRequestSchema>;
 export type DictionaryAddRequest = z.infer<typeof dictionaryAddSchema>;
+

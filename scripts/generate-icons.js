@@ -1,60 +1,71 @@
 const sharp = require('sharp');
+const toIco = require('to-ico');
 const path = require('path');
 const fs = require('fs');
 
 const iconsDir = path.join(__dirname, '..', 'src-tauri', 'icons');
-const sourceFile = path.join(iconsDir, 'gs.png');
+const sourceFile = path.join(iconsDir, 'icon-neon.svg');
 
 async function generateIcons() {
-  console.log('🎨 Generazione icone da gs.png (275x275)...\n');
+  console.log('🎨 Generazione icone dalla nuova icona SVG...\n');
 
   if (!fs.existsSync(sourceFile)) {
-    console.error('❌ File gs.png non trovato in src-tauri/icons/');
+    console.error('❌ File icon-neon.svg non trovato in src-tauri/icons/');
     process.exit(1);
   }
 
+  const svgBuffer = fs.readFileSync(sourceFile);
+
+  // Tutte le dimensioni necessarie per Tauri
   const sizes = [
     { name: '32x32.png', size: 32 },
     { name: '128x128.png', size: 128 },
     { name: '128x128@2x.png', size: 256 },
+    { name: '256x256.png', size: 256 },
+    { name: '512x512.png', size: 512 },
+    { name: 'icon.png', size: 512 },
   ];
 
   for (const { name, size } of sizes) {
     const outputPath = path.join(iconsDir, name);
-    await sharp(sourceFile)
-      .resize(size, size, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    await sharp(svgBuffer)
+      .resize(size, size)
       .png()
       .toFile(outputPath);
     console.log(`✅ ${name} (${size}x${size})`);
   }
 
-  // Genera anche le icone per ICO (16, 32, 48, 256)
+  // Genera layers PNG per ICO (16, 32, 48, 256)
   const icoSizes = [16, 32, 48, 256];
-  const icoBuffers = [];
-  
-  for (const size of icoSizes) {
-    const buffer = await sharp(sourceFile)
-      .resize(size, size, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
-      .png()
-      .toBuffer();
-    icoBuffers.push({ size, buffer });
-    console.log(`✅ ICO layer ${size}x${size}`);
-  }
-
-  // Salva i PNG per uso futuro
   const pngDir = path.join(iconsDir, 'png');
   if (!fs.existsSync(pngDir)) fs.mkdirSync(pngDir);
   
-  for (const { size, buffer } of icoBuffers) {
-    fs.writeFileSync(path.join(pngDir, `icon-${size}.png`), buffer);
+  const icoBuffers = [];
+  for (const size of icoSizes) {
+    const buffer = await sharp(svgBuffer)
+      .resize(size, size)
+      .png()
+      .toBuffer();
+    const pngPath = path.join(pngDir, `icon-${size}.png`);
+    fs.writeFileSync(pngPath, buffer);
+    icoBuffers.push(buffer);
+    console.log(`✅ ICO layer ${size}x${size}`);
   }
 
-  console.log('\n✅ Icone PNG generate!');
-  console.log('\n⚠️  Per creare icon.ico:');
-  console.log('   1. Vai su https://icoconvert.com/ o https://convertio.co/');
-  console.log('   2. Carica src-tauri/icons/png/icon-256.png');
-  console.log('   3. Seleziona tutte le dimensioni (16, 32, 48, 256)');
-  console.log('   4. Scarica e sostituisci src-tauri/icons/icon.ico');
+  // Genera icon.ico automaticamente con to-ico
+  try {
+    const icoBuffer = await toIco(icoBuffers);
+    fs.writeFileSync(path.join(iconsDir, 'icon.ico'), icoBuffer);
+    console.log('✅ icon.ico generato automaticamente!');
+  } catch (e) {
+    console.warn('⚠️  icon.ico fallito:', e.message);
+  }
+
+  console.log('\n✅ Tutte le icone generate!');
+  console.log('\n💡 Per Mac (icon.icns):');
+  console.log('   1. Vai su https://cloudconvert.com/png-to-icns');
+  console.log('   2. Carica src-tauri/icons/512x512.png');
+  console.log('   3. Salva come src-tauri/icons/icon.icns');
 }
 
 generateIcons().catch(console.error);

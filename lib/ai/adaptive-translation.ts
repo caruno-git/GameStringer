@@ -325,3 +325,4 @@ export function autoAdaptSettings(
   
   return analysis;
 }
+

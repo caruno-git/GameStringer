@@ -75,7 +75,7 @@ function QuickAccessCard({ item, onRemove, onClick }: QuickAccessCardProps) {
       {/* Avatar with status */}
       <div className="relative">
         <Avatar className="h-12 w-12 ring-2 ring-offset-1 ring-offset-slate-900 transition-all group-hover:ring-violet-500/50">
-          <AvatarImage src={item.avatar} />
+          {item.avatar && !item.avatar.startsWith('gradient-') && !item.avatar.startsWith('avatar_') && <AvatarImage src={item.avatar} />}
           <AvatarFallback className="bg-gradient-to-br from-violet-600 to-indigo-600 text-white text-xs">
             {item.name.slice(0, 2).toUpperCase()}
           </AvatarFallback>
@@ -184,3 +184,4 @@ export function QuickAccessDropZone({ isOver }: QuickAccessDropZoneProps) {
     </div>
   );
 }
+

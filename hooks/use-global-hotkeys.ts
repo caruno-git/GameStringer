@@ -165,3 +165,4 @@ export function useQuickTranslateHotkey(onTranslate: () => void) {
     quick_translate: onTranslate,
   });
 }
+

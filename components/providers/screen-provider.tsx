@@ -147,3 +147,4 @@ export function ScreenProvider({ children }: ScreenProviderProps) {
 }
 
 export default ScreenProvider;
+

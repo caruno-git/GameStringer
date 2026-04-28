@@ -235,7 +235,7 @@ export function CreateProfileDialog({ open, onOpenChange, onProfileCreated }: Cr
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-sm p-0 overflow-hidden bg-slate-950/95 backdrop-blur-xl border-slate-800/50 shadow-2xl">
+      <DialogContent className="sm:max-w-sm p-0 overflow-hidden bg-slate-900/60 backdrop-blur-2xl border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.5)]">
         <VisuallyHidden.Root><DialogTitle>{t('profile.newProfile')}</DialogTitle></VisuallyHidden.Root>
         
         {/* Hero Header */}
@@ -499,5 +499,6 @@ export function CreateProfileDialog({ open, onOpenChange, onProfileCreated }: Cr
     </Dialog>
   );
 }
+
 
 

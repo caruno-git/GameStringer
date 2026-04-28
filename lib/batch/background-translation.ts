@@ -11,9 +11,9 @@
  * - Integrazione con il sistema di notifiche Tauri
  */
 
-import { translateSmart, type TranslateResult } from './ai-translate-direct';
-import { runQualityGates, type QualityReport } from './quality-gates';
-import { harvestBatch, type HarvestInput } from './context-harvester';
+import { translateSmart, type TranslateResult } from '@/lib/ai/ai-translate-direct';
+import { runQualityGates, type QualityReport } from '@/lib/quality/quality-gates';
+import { harvestBatch, type HarvestInput } from '@/lib/context-harvester';
 import { clientLogger } from '@/lib/client-logger';
 
 // ============================================================================
@@ -612,3 +612,4 @@ export function getBackgroundTranslationManager(): BackgroundTranslationManager 
   }
   return _instance;
 }
+

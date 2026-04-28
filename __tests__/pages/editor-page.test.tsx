@@ -50,3 +50,4 @@ describe('EditorPage', () => {
     expect(document.body).toBeTruthy();
   });
 });
+

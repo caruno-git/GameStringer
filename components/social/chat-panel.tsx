@@ -505,3 +505,4 @@ export function ChatPanel({ userId, initialUserId }: ChatPanelProps) {
 }
 
 export default ChatPanel;
+

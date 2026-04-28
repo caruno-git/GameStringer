@@ -117,3 +117,4 @@ export const DELETE = withErrorHandler(async function(request: NextRequest) {
 
   return NextResponse.json({ message: 'Game deleted successfully' });
 });
+

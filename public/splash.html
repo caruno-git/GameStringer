@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GameStringer</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#0a0a0f;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overflow:hidden}
+    .bg{position:absolute;inset:0;background:linear-gradient(135deg,rgba(79,70,229,.12),transparent 50%,rgba(147,51,234,.12))}
+    .g1,.g2{position:absolute;width:280px;height:280px;border-radius:50%;filter:blur(80px);animation:pulse 3s ease-in-out infinite}
+    .g1{top:15%;left:15%;background:rgba(99,102,241,.12)}
+    .g2{bottom:15%;right:15%;background:rgba(147,51,234,.12);animation-delay:1s}
+    .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(99,102,241,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,.02) 1px,transparent 1px);background-size:48px 48px}
+    
+    .c{position:relative;z-index:10;text-align:center}
+    
+    /* Logo container - starts big, shrinks down */
+    .logo-wrap{animation:logoShrink 1.5s ease-out forwards}
+    @keyframes logoShrink{
+      0%{transform:scale(1.8)}
+      100%{transform:scale(1)}
+    }
+    
+    .logo{width:88px;height:88px;margin:0 auto 20px;position:relative}
+    
+    /* Ring - morphs from circle to rounded square */
+    .ring{
+      position:absolute;inset:0;
+      background:linear-gradient(135deg,#6366f1,#a855f7,#ec4899);
+      animation:spin 6s linear infinite, morph 1.5s ease-out forwards, colorShift 3s ease-in-out infinite;
+      opacity:.8;filter:blur(3px)
+    }
+    @keyframes morph{
+      0%{border-radius:50%}
+      100%{border-radius:18px}
+    }
+    @keyframes colorShift{
+      0%,100%{background:linear-gradient(135deg,#6366f1,#a855f7,#ec4899)}
+      33%{background:linear-gradient(135deg,#a855f7,#ec4899,#6366f1)}
+      66%{background:linear-gradient(135deg,#ec4899,#6366f1,#a855f7)}
+    }
+    
+    /* Inner box - morphs from circle to rounded square */
+    .inner{
+      position:absolute;inset:4px;
+      background:#0a0a0f;
+      display:flex;align-items:center;justify-content:center;
+      animation:morphInner 1.5s ease-out forwards
+    }
+    @keyframes morphInner{
+      0%{border-radius:50%}
+      100%{border-radius:14px}
+    }
+    
+    /* GS text - fades in */
+    .txt{
+      font-size:2.2rem;font-weight:900;
+      background:linear-gradient(135deg,#818cf8,#c084fc,#f472b6);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      animation:textFade 1s ease-out .5s both, colorShiftText 3s ease-in-out infinite
+    }
+    @keyframes textFade{
+      0%{opacity:0;transform:scale(.5)}
+      100%{opacity:1;transform:scale(1)}
+    }
+    @keyframes colorShiftText{
+      0%,100%{background:linear-gradient(135deg,#818cf8,#c084fc,#f472b6)}
+      33%{background:linear-gradient(135deg,#c084fc,#f472b6,#818cf8)}
+      66%{background:linear-gradient(135deg,#f472b6,#818cf8,#c084fc)}
+    }
+    
+    /* Glow - pulses with color shift */
+    .glow{
+      position:absolute;inset:-8px;
+      background:linear-gradient(135deg,#6366f1,#a855f7);
+      opacity:.15;filter:blur(20px);
+      animation:pulse 2s ease-in-out infinite, morphGlow 1.5s ease-out forwards
+    }
+    @keyframes morphGlow{
+      0%{border-radius:50%}
+      100%{border-radius:24px}
+    }
+    
+    /* Title - slides up and fades in */
+    h1{
+      font-size:1.75rem;color:#fff;margin-bottom:6px;font-weight:700;letter-spacing:-.5px;
+      animation:slideUp .8s ease-out 1s both
+    }
+    h1 span{
+      background:linear-gradient(90deg,#818cf8,#c084fc);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text
+    }
+    @keyframes slideUp{
+      0%{opacity:0;transform:translateY(20px)}
+      100%{opacity:1;transform:translateY(0)}
+    }
+    
+    /* Loading bar - slides up */
+    .bar{
+      width:160px;height:3px;background:#1e293b;border-radius:99px;margin:0 auto 14px;overflow:hidden;
+      animation:slideUp .8s ease-out 1.2s both
+    }
+    .bar::after{
+      content:'';display:block;height:100%;width:40%;
+      background:linear-gradient(90deg,#6366f1,#a855f7,#6366f1);
+      border-radius:99px;animation:load 1.2s ease-in-out infinite
+    }
+    
+    /* Status text */
+    p{color:#64748b;font-size:.8rem;animation:slideUp .8s ease-out 1.4s both}
+    .ver{position:fixed;bottom:10px;font-size:.65rem;color:#334155;animation:slideUp .8s ease-out 1.6s both}
+    
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+    @keyframes load{0%{transform:translateX(-150%)}100%{transform:translateX(350%)}}
+  </style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="g1"></div>
+  <div class="g2"></div>
+  <div class="grid"></div>
+  <div class="c">
+    <div class="logo-wrap">
+      <div class="logo">
+        <div class="glow"></div>
+        <div class="ring"></div>
+        <div class="inner"><div class="txt">GS</div></div>
+      </div>
+    </div>
+    <h1>Game<span>Stringer</span></h1>
+    <div class="bar"></div>
+    <p>Caricamento libreria...</p>
+  </div>
+  <span class="ver">v1.9.1</span>
+</body>
+</html>

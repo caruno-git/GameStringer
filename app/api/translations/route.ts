@@ -137,3 +137,4 @@ export const DELETE = withErrorHandler(async function(request: NextRequest) {
 
   return NextResponse.json({ success: true });
 });
+

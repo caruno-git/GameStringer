@@ -825,3 +825,4 @@ export const genericTranslations: Record<string, string> = {
   'Victory': 'Vittoria',
   'Defeat': 'Sconfitta',
 };
+

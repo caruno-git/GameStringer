@@ -644,3 +644,4 @@ export const PLATFORM_TOOLS: Record<RomPlatform, string[]> = {
   n64: ['N64 Texture Tool'],
   unknown: []
 };
+

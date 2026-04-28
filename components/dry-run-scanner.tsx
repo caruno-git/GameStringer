@@ -245,3 +245,4 @@ function SummaryCard({ label, value, icon, color }: { label: string; value: numb
     </Card>
   );
 }
+

@@ -87,6 +87,7 @@ const ReviewStep = dynamic(
   { ssr: false }
 );
 import { getRecommendedProvider, computeCostEstimate } from '@/lib/translator-pro/cost-calculator';
+import { projectService } from '@/lib/services/translation-projects';
 
 // ============================================================================
 // TYPES
@@ -831,6 +832,30 @@ export default function TranslatorProPage() {
     setProgress(null);
     setTranslatedFiles(new Map());
     setTranslatedItems([]); // Reset results accumulati
+    
+    // 🎯 Crea/recupera progetto automaticamente
+    let currentProject = null;
+    if (selectedGame?.id) {
+      try {
+        const totalStrings = filesToTranslate.reduce((sum, f) => sum + (f.parseResult?.strings?.length || 0), 0);
+        currentProject = await projectService.createOrGetProject({
+          gameId: selectedGame.id,
+          gameName: selectedGame.name || 'Unknown Game',
+          gameImage: selectedGame.coverUrl,
+          sourceLanguage,
+          targetLanguage,
+          files: filesToTranslate.map(f => ({
+            path: f.name,
+            name: f.name,
+            type: f.parseResult?.format || 'unknown',
+            strings: f.parseResult?.strings?.length || 0
+          }))
+        });
+        clientLogger.debug(`[Neural Translator] Progetto: ${currentProject.id}`);
+      } catch (e) {
+        clientLogger.warn('[Neural Translator] Impossibile creare progetto:', e);
+      }
+    }
     
     clientLogger.debug(`[Neural Translator] Starting translation with provider: ${provider}`);
     clientLogger.debug(`[Neural Translator] Files to translate: ${filesToTranslate.length}`);
@@ -2034,6 +2059,7 @@ export default function TranslatorProPage() {
     </div>
   );
 }
+
 
 
 

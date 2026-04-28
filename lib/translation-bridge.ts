@@ -257,3 +257,4 @@ export class TranslationBridgeClient {
 
 // Singleton instance
 export const translationBridge = new TranslationBridgeClient();
+

@@ -322,3 +322,4 @@ export class ActivityHistoryClient {
 
 // Singleton instance
 export const activityHistory = new ActivityHistoryClient();
+

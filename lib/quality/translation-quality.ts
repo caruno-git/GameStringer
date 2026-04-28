@@ -557,3 +557,4 @@ export function getQualityCategory(score: number): {
     return { category: 'poor', label: 'Scarsa', color: 'text-red-500' };
   }
 }
+

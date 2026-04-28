@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e1b4b"/>
+      <stop offset="50%" style="stop-color:#312e81"/>
+      <stop offset="100%" style="stop-color:#1e1b4b"/>
+    </linearGradient>
+    
+    <linearGradient id="glowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b5cf6"/>
+      <stop offset="50%" style="stop-color:#6366f1"/>
+      <stop offset="100%" style="stop-color:#a855f7"/>
+    </linearGradient>
+    
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#22d3ee"/>
+      <stop offset="50%" style="stop-color:#38bdf8"/>
+      <stop offset="100%" style="stop-color:#818cf8"/>
+    </linearGradient>
+    
+    <!-- Filters -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="innerShadow">
+      <feOffset dx="0" dy="4"/>
+      <feGaussianBlur stdDeviation="8" result="offset-blur"/>
+      <feComposite operator="out" in="SourceGraphic" in2="offset-blur" result="inverse"/>
+      <feFlood flood-color="black" flood-opacity="0.3" result="color"/>
+      <feComposite operator="in" in="color" in2="inverse" result="shadow"/>
+      <feComposite operator="over" in="shadow" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGradient)"/>
+  
+  <!-- Outer glow ring -->
+  <rect x="16" y="16" width="480" height="480" rx="112" 
+        fill="none" stroke="url(#glowGradient)" stroke-width="4" 
+        opacity="0.6" filter="url(#glow)"/>
+  
+  <!-- Inner decorative ring -->
+  <rect x="32" y="32" width="448" height="448" rx="96" 
+        fill="none" stroke="url(#accentGradient)" stroke-width="2" 
+        opacity="0.4"/>
+  
+  <!-- Main G/Gamepad shape -->
+  <g transform="translate(256, 256)" filter="url(#glow)">
+    <!-- Main body - stylized G -->
+    <path d="M -120,-80 
+             C -120,-140 -80,-160 0,-160 
+             C 80,-160 120,-140 120,-80 
+             L 120,40 
+             C 120,100 80,120 0,120 
+             C -80,120 -120,100 -120,40 
+             L -120,-20 
+             L -60,-20 
+             L -60,20 
+             C -60,50 -40,70 0,70 
+             C 40,70 60,50 60,20 
+             L 60,-40 
+             C 60,-70 40,-90 0,-90 
+             C -40,-90 -60,-70 -60,-40 
+             L -60,0 
+             L -120,0 Z" 
+          fill="url(#glowGradient)"/>
+    
+    <!-- Inner highlight -->
+    <path d="M -100,-60 
+             C -100,-110 -70,-130 0,-130 
+             C 70,-130 100,-110 100,-60 
+             L 100,30 
+             C 100,80 70,100 0,100 
+             C -70,100 -100,80 -100,30 
+             L -100,0" 
+          fill="none" stroke="white" stroke-width="3" opacity="0.2"/>
+    
+    <!-- Gamepad buttons decoration -->
+    <circle cx="70" cy="-100" r="12" fill="#22d3ee" opacity="0.9"/>
+    <circle cx="95" cy="-80" r="12" fill="#f472b6" opacity="0.9"/>
+    <circle cx="70" cy="-60" r="12" fill="#a3e635" opacity="0.9"/>
+    <circle cx="45" cy="-80" r="12" fill="#fbbf24" opacity="0.9"/>
+    
+    <!-- D-pad left side -->
+    <rect x="-95" y="-92" width="10" height="30" rx="3" fill="#334155" opacity="0.8"/>
+    <rect x="-105" y="-82" width="30" height="10" rx="3" fill="#334155" opacity="0.8"/>
+  </g>
+  
+  <!-- Translation/Language indicator -->
+  <g transform="translate(400, 80)">
+    <circle r="32" fill="url(#accentGradient)" opacity="0.2"/>
+    <path d="M -15,-10 L 0,5 L 15,-10" stroke="#22d3ee" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M -15,5 L 0,20 L 15,5" stroke="#22d3ee" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Decorative dots -->
+  <circle cx="80" cy="400" r="6" fill="#8b5cf6" opacity="0.6"/>
+  <circle cx="100" cy="420" r="4" fill="#6366f1" opacity="0.5"/>
+  <circle cx="60" cy="430" r="3" fill="#a855f7" opacity="0.4"/>
+</svg>

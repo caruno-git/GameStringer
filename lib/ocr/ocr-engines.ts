@@ -692,3 +692,4 @@ export function saveOCRSettings(settings: Partial<OCRSettings>): void {
 // ============================================================================
 
 export type { OCRResult, OCRWord, OCRLine, BoundingBox, OCRProgress, OCRLanguage };
+

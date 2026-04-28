@@ -105,3 +105,4 @@ function generateMockGames() {
 
 // Esporta anche la funzione invoke originale per compatibilità
 export { safeInvoke as invoke };
+

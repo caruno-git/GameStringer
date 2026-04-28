@@ -6,7 +6,7 @@
  * Usato dal Translation Wizard per orchestrare automaticamente il flusso.
  */
 
-import { findCommunityTranslation } from './community-translations';
+import { findCommunityTranslation } from '@/lib/social/community-translations';
 
 export type StrategyId = 
   | 'text-files'       // CSV, JSON, XML, PO, TXT — traduzione diretta file
@@ -579,3 +579,4 @@ export function getStrategy(id: StrategyId): TranslationStrategy {
 export function getAllStrategies(): TranslationStrategy[] {
   return Object.values(STRATEGIES);
 }
+

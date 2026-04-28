@@ -414,3 +414,4 @@ export function useStringNotes(stringId?: string) {
 }
 
 export default stringNotesManager;
+

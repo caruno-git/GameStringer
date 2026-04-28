@@ -94,3 +94,4 @@ describe('LANG_PROVIDER_AFFINITY', () => {
     expect(LANG_PROVIDER_AFFINITY['FR']).toBeDefined();
   });
 });
+

@@ -379,3 +379,4 @@ class GameTranslationProfileManager {
 
 // Singleton instance
 export const translationProfileManager = new GameTranslationProfileManager();
+

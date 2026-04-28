@@ -37,3 +37,4 @@ export async function dismissErrorOverlay(page: Page): Promise<void> {
     // Nessun overlay da chiudere
   }
 }
+

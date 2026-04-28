@@ -66,3 +66,4 @@ export function canTranslate(): { allowed: boolean; count: number; limit: number
 
 /** Limite gratuito */
 export const FREE_LIMIT = FREE_TRANSLATION_LIMIT;
+

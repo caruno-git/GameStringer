@@ -327,3 +327,4 @@ export function BatchInsightsSummary({ items, targetLanguage = 'it' }: BatchInsi
     </div>
   );
 }
+

@@ -75,3 +75,4 @@ export const LazyVisualEditorPage = lazyPage(
   () => import('@/app/visual-editor/page'),
   { ssr: false }
 );
+

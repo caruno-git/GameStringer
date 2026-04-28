@@ -353,3 +353,4 @@ Return ONLY a JSON array: [{"index": 1, "translation": "..."}, ...]`;
     return texts.map(original => ({ original, translated: original, confidence: 0.5 }));
   }
 }
+

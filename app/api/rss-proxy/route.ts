@@ -44,3 +44,4 @@ export const GET = withErrorHandler(async function(request: NextRequest) {
     },
   });
 });
+

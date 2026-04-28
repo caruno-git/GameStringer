@@ -282,3 +282,4 @@ export function EmotionStats({ texts, className }: EmotionStatsProps) {
     </div>
   )
 }
+

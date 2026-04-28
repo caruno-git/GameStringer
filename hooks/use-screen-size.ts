@@ -247,3 +247,4 @@ export function getScreenCssVariables(screen: ScreenInfo): Record<string, string
 }
 
 export default useScreenSize;
+

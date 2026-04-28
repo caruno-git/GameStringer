@@ -22,7 +22,7 @@ import {
   getOnlineUsers,
   refreshOnlineUsers,
   type OnlineUser,
-} from '@/lib/social/social/presence';
+} from '@/lib/social/presence';
 import { useTranslation } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
@@ -143,7 +143,7 @@ export function OnlineUsersWidget({
             >
               <div className="relative">
                 <Avatar className="h-8 w-8">
-                  {user.avatar && <AvatarImage src={user.avatar} alt={user.username} />}
+                  {user.avatar && !user.avatar.startsWith('gradient-') && !user.avatar.startsWith('avatar_') && <AvatarImage src={user.avatar} alt={user.username} />}
                   <AvatarFallback className="bg-slate-700 text-xs">
                     {user.username.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
@@ -234,3 +234,4 @@ export function OnlineIndicator({ className }: OnlineIndicatorProps) {
 }
 
 export default OnlineUsersWidget;
+

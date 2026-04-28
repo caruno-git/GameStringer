@@ -48,6 +48,7 @@ import {
 import { cn } from "@/lib/utils"
 import { invoke } from "@/lib/tauri-api"
 import { detectFormat, parseFile, type ParseResult } from "@/lib/file-parsers"
+import { projectService } from "@/lib/services/translation-projects"
 import { translateSmart } from "@/lib/ai/ai-translate-direct"
 import { runQualityGates, type QualityReport } from "@/lib/quality/quality-gates"
 import { harvestBatch, type HarvestInput } from "@/lib/context-harvester"
@@ -771,6 +772,29 @@ export default function AutoTranslatePage() {
     let globalTranslated = 0
     let consecutiveFailedBatches = 0
 
+    // 🎯 Crea/recupera progetto automaticamente
+    let currentProject = null
+    if (gameInfo?.gameId) {
+      try {
+        currentProject = await projectService.createOrGetProject({
+          gameId: gameInfo.gameId,
+          gameName: gameInfo.gameName || 'Unknown Game',
+          gameImage: gameInfo.gameImage,
+          sourceLanguage: sourceLang,
+          targetLanguage: targetLang,
+          files: files.map(f => ({
+            path: f.name,
+            name: f.name,
+            type: f.parsed?.format || 'unknown',
+            strings: f.parsed?.strings?.length || 0
+          }))
+        })
+        clientLogger.debug(`[AutoTranslate] Progetto: ${currentProject.id}`)
+      } catch (e) {
+        clientLogger.warn('[AutoTranslate] Impossibile creare progetto:', e)
+      }
+    }
+
     // Carica checkpoint esistente se si riprende
     let allTranslated: Map<string, TranslatedString[]>
     const existingKeys = new Set<string>()
@@ -954,6 +978,19 @@ export default function AutoTranslatePage() {
     const actualTranslated = [...allTranslated.values()].flat().filter(t => t.translation).length
     setProgress(prev => prev ? { ...prev, percent: wasStopped ? Math.round((actualTranslated / totalStrCount) * 100) : 100, currentStep: wasStopped ? `Stopped — ${actualTranslated} strings saved` : 'Completed!' } : null)
     setIsTranslating(false)
+    
+    // 🎯 Aggiorna progetto con progresso finale
+    if (currentProject) {
+      try {
+        await projectService.updateProgress(currentProject.id, actualTranslated)
+        if (!wasStopped && actualTranslated >= totalStrCount) {
+          // Traduzione completata - chiedi se condividere
+          clientLogger.debug('[AutoTranslate] Traduzione completata, progetto aggiornato')
+        }
+      } catch (e) {
+        clientLogger.warn('[AutoTranslate] Impossibile aggiornare progetto:', e)
+      }
+    }
     if (files.length > 0) setSelectedFile(files[0].name)
     // Notifica OS traduzione completata/fermata
     try {
@@ -2633,3 +2670,4 @@ export default function AutoTranslatePage() {
     </div>
   )
 }
+

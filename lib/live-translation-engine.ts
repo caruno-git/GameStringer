@@ -8,9 +8,9 @@
  * unchanged frames, and translation caching.
  */
 
-import { captureScreen, type CaptureOptions } from './screen-capture';
-import { recognizeText, type OCRLanguage, type OCRLine } from './ocr-service';
-import { translateWithFallback, type TranslateOptions } from './ai-translate-direct';
+import { captureScreen, type CaptureOptions } from '@/lib/ocr/screen-capture';
+import { recognizeText, type OCRLanguage, type OCRLine } from '@/lib/ocr/ocr-service';
+import { translateWithFallback, type TranslateOptions } from '@/lib/ai/ai-translate-direct';
 import { clientLogger } from './client-logger';
 
 // ── Types ──────────────────────────────────────────────────
@@ -374,3 +374,4 @@ class LiveTranslationEngine {
 
 export const liveTranslationEngine = new LiveTranslationEngine();
 export default liveTranslationEngine;
+

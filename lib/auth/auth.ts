@@ -186,3 +186,4 @@ export const getConnectedAccount = (provider: string): ConnectedAccount | null =
 export const getAllConnectedAccounts = (): ConnectedAccount[] => {
   return getStoredAccounts();
 };
+

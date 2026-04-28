@@ -30,3 +30,4 @@ export const GET = withErrorHandler(async function(req: NextRequest) {
 
   return NextResponse.json({ status: 'idle', done: 0, total: 0, errors: 0, rate: 0, eta: 0 });
 });
+

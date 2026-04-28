@@ -16,3 +16,4 @@ export const stores: Store[] = [
   { id: 'rockstar', name: 'Rockstar Games', testCommand: 'test_rockstar_connection' },
   { id: 'amazon', name: 'Amazon Games', testCommand: 'test_amazon_connection' },
 ];
+

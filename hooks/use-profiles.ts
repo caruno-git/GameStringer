@@ -10,8 +10,8 @@ import {
   ProfileResponse 
 } from '@/types/profiles';
 import { ensureArray } from '@/lib/array-utils';
-import { profileCache } from '@/lib/auth/auth/profile-cache';
-import { profilePreloader } from '@/lib/auth/auth/profile-preloader';
+import { profileCache } from '@/lib/auth/profile-cache';
+import { profilePreloader } from '@/lib/auth/profile-preloader';
 import { clientLogger } from '@/lib/client-logger';
 
 export const ProfilesContext = createContext<UseProfilesReturn | null>(null);
@@ -225,7 +225,7 @@ export function useProfilesCore(): UseProfilesReturn {
         // Aggiorna session persistence in background
         setTimeout(async () => {
           try {
-            const { sessionPersistence } = await import('@/lib/auth/auth/session-persistence');
+            const { sessionPersistence } = await import('@/lib/auth/session-persistence');
             await sessionPersistence.syncWithBackend();
             clientLogger.debug('🔄 Session persistence sincronizzata');
           } catch (error: unknown) {
@@ -276,7 +276,7 @@ export function useProfilesCore(): UseProfilesReturn {
         // Aggiorna session persistence in background
         setTimeout(async () => {
           try {
-            const { sessionPersistence } = await import('@/lib/auth/auth/session-persistence');
+            const { sessionPersistence } = await import('@/lib/auth/session-persistence');
             await sessionPersistence.syncWithBackend();
             clientLogger.debug('🔄 Session persistence sincronizzata dopo switch');
           } catch (error: unknown) {

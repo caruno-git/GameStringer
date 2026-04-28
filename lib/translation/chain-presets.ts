@@ -205,3 +205,4 @@ export function getAutoProviderChain(
   clientLogger.debug(`[Auto-Select] Lingua: ${lang}, Genere: ${gameGenre || 'n/a'} -> Chain: [${available.join(', ')}]`);
   return available;
 }
+

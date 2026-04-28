@@ -34,3 +34,4 @@ export function rawPixelsToBase64(
   // Esporta come Base64 PNG (più leggero per testo UI rispetto a JPEG)
   return canvas.toDataURL('image/png');
 }
+

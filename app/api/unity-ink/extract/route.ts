@@ -107,3 +107,4 @@ function isDisplayText(text: string): boolean {
   if (text === '\\n' || text === '\n') return false;
   return true;
 }
+

@@ -94,6 +94,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
   const [activities, setActivities] = useState<RecentActivityProps[]>([]);
+  const [activitiesLoading, setActivitiesLoading] = useState(true);
   const [_lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [activityOrder, setActivityOrder] = useState<'newest' | 'oldest'>('newest');
@@ -193,6 +194,24 @@ export default function Dashboard() {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
+      
+      // Load activities FIRST (fast) - prevents empty flash
+      if (activities.length === 0) {
+        try {
+          const recentFromBackend = await activityHistory.getRecent(10);
+          const recentActivities = recentFromBackend.map((a: Activity) => ({
+            color: `bg-${activityColors[a.activity_type]}-500`,
+            text: a.title,
+            time: activityHistory.formatRelativeTime(a.timestamp),
+            type: a.activity_type,
+            icon: activityIcons[a.activity_type]
+          }));
+          setActivities(recentActivities);
+          setActivitiesLoading(false);
+        } catch {
+          setActivitiesLoading(false);
+        }
+      }
       
       let games: unknown[] = [];
       
@@ -381,6 +400,7 @@ export default function Dashboard() {
         translationStats
       });
 
+      // Silently refresh activities (no loading state change)
       try {
         const recentFromBackend = await activityHistory.getRecent(10);
         const recentActivities = recentFromBackend.map((a: Activity) => ({
@@ -392,10 +412,11 @@ export default function Dashboard() {
         }));
         setActivities(recentActivities);
       } catch {
-        setActivities([]);
+        // Keep existing activities on error
       }
       setLastUpdate(new Date());
       setLoading(false);
+      setActivitiesLoading(false);
     } catch (error: unknown) {
       clientLogger.error(`Dashboard loading error: ${String(error)}`);
       setLoading(false);
@@ -768,14 +789,10 @@ export default function Dashboard() {
               </div>
               
               <div className="max-h-[220px] overflow-y-auto custom-scrollbar">
-                {loading ? (
-                  <div className="flex items-center justify-center py-8">
-                    <RefreshCw className="h-4 w-4 text-[#67c1f5] animate-spin" />
-                  </div>
-                ) : activities.length > 0 ? (
+                {activities.length > 0 ? (
                   <div className="p-1.5 space-y-0.5">
                     {(activityOrder === 'oldest' ? [...activities].reverse() : activities)
-                      .filter((activity, index, arr) => 
+                      .filter((activity, index, arr) =>
                         index === 0 || activity.text !== arr[index - 1].text
                       )
                       .slice(0, 10)
@@ -791,6 +808,10 @@ export default function Dashboard() {
                           </div>
                         </div>
                       ))}
+                  </div>
+                ) : activitiesLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <RefreshCw className="h-4 w-4 text-[#67c1f5] animate-spin" />
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-8 text-[#8f98a0]/30 gap-2">
@@ -845,6 +866,7 @@ export default function Dashboard() {
     </div>
   );
 }
+
 
 
 

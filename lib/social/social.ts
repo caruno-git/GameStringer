@@ -777,3 +777,4 @@ export async function markConversationRead(
       .eq('user_id', userId);
   } catch { /* silenzioso */ }
 }
+

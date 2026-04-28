@@ -52,3 +52,4 @@ export const POST = withErrorHandler(async function(request: NextRequest) {
 
   return NextResponse.json(data);
 });
+

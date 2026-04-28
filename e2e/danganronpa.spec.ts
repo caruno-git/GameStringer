@@ -84,3 +84,4 @@ test.describe('Danganronpa - Cost Estimation', () => {
     expect(cost).toBeGreaterThan(0);
   });
 });
+

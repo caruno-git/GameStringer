@@ -1607,3 +1607,4 @@ export default function DanganronpaPatcherPage() {
     </div>
   );
 }
+

@@ -429,3 +429,4 @@ export function useTranslationAnalytics() {
 }
 
 export default translationAnalytics;
+

@@ -273,3 +273,4 @@ describe('Danganronpa Auto-Translator', () => {
     });
   });
 });
+

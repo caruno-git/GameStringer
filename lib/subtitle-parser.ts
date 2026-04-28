@@ -619,3 +619,4 @@ export function validateSubtitles(file: SubtitleFile): {
     errors
   };
 }
+

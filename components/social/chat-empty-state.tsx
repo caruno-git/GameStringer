@@ -115,3 +115,4 @@ export function ChatDropZone({ isOver }: ChatDropZoneProps) {
     </div>
   );
 }
+

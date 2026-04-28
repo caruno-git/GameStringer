@@ -1199,3 +1199,4 @@ function downloadFile(content: string, filename: string, mimeType: string) {
   a.click();
   URL.revokeObjectURL(url);
 }
+

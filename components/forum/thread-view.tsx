@@ -482,3 +482,4 @@ function PostCard({ post, locale, userId, isThreadAuthor, onReply, onMarkSolutio
     </div>
   );
 }
+

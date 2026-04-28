@@ -96,3 +96,4 @@ export function useFontSize() {
     availableSizes: Object.values(fontSizeConfigs),
   };
 }
+

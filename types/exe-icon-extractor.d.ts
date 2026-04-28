@@ -3,3 +3,4 @@ declare module '@bitdisaster/exe-icon-extractor' {
     getIcon: (executablePath: string, size: 'large' | 'small') => Buffer;
   };
 }
+

@@ -421,3 +421,4 @@ export function getLanguageFlag(code: string): string {
   };
   return flags[code] || '🌐';
 }
+

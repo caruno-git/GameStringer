@@ -811,3 +811,4 @@ export function composeGenreAndCharacterContext(options: {
 
   return parts.join('\n');
 }
+

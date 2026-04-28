@@ -266,3 +266,4 @@ export function formatDiffSummary(diff: IncrementalDiff): string {
   parts.push(`=${diff.stats.unchangedCount} invariate`);
   return parts.join(', ');
 }
+

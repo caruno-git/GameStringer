@@ -349,22 +349,42 @@ export async function fetchMessages(roomId: string, limit = 50, before?: string)
   return data.map(row => mapMessageWithProfile(row, profilesMap)).reverse();
 }
 
+// Cache to avoid repeated failed queries
+let _chatProfileQueryFailed = false;
+let _chatProfileQueryFailedAt = 0;
+
 async function fetchProfilesMap(userIds: string[]): Promise<Map<string, { username: string; avatar_url: string | null }>> {
   const map = new Map<string, { username: string; avatar_url: string | null }>();
   if (userIds.length === 0) return map;
+  
+  // Skip if recent query failed (avoid spamming 400 errors)
+  if (_chatProfileQueryFailed && Date.now() - _chatProfileQueryFailedAt < 60000) {
+    return map;
+  }
+  
   try {
     const supabase = await getSupabase();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('user_profiles')
       .select('user_id, username, avatar_url')
       .in('user_id', userIds);
+    
+    if (error) {
+      _chatProfileQueryFailed = true;
+      _chatProfileQueryFailedAt = Date.now();
+      return map;
+    }
+    
+    _chatProfileQueryFailed = false;
+    
     if (data) {
       data.forEach(p => {
         if (p.user_id) map.set(p.user_id as string, { username: p.username as string, avatar_url: p.avatar_url as string | null });
       });
     }
   } catch {
-    // Silenziosamente fallisce se la tabella non esiste
+    _chatProfileQueryFailed = true;
+    _chatProfileQueryFailedAt = Date.now();
   }
   return map;
 }
@@ -577,4 +597,5 @@ function mapRoom(row: Record<string, unknown>): ChatRoom {
     createdAt: row.created_at as string,
   };
 }
+
 

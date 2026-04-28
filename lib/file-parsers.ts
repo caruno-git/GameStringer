@@ -1052,3 +1052,4 @@ export const FORMAT_DESCRIPTIONS: Record<FileFormat, string> = {
   rpy: "Ren'Py Script",
   unknown: 'Unknown Format'
 };
+

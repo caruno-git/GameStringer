@@ -173,3 +173,4 @@ export const API_KEY_URLS: Record<string, string> = {
   libretranslate: 'https://libretranslate.com/ (self-hosted)',
   azure: 'https://portal.azure.com/ → Cognitive Services → Translator',
 };
+

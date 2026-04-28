@@ -301,3 +301,4 @@ export class AppErrorBoundary extends Component<{ children: ReactNode }, AppStat
     return this.props.children;
   }
 }
+

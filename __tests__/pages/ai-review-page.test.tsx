@@ -43,3 +43,4 @@ describe('AIReviewPage', () => {
     expect(document.body).toBeTruthy();
   });
 });
+

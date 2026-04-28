@@ -54,3 +54,4 @@ export const GET = withErrorHandler(async function() {
     timestamp: new Date().toISOString()
   });
 });
+

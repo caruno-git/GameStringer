@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useProfileAuth } from '@/lib/auth/auth/profile-auth';
+import { useProfileAuth } from '@/lib/auth/profile-auth';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { 
@@ -207,5 +207,6 @@ export function ProfileNotifications() {
     </div>
   );
 }
+
 
 

@@ -60,7 +60,7 @@ import {
   type ChatRoom,
   type ChatMessage,
   type UserPresence,
-} from '@/lib/social/social/community-chat';
+} from '@/lib/social/community-chat';
 import { translateChatMessage } from '@/lib/ai/ai-translate-direct';
 import { clientLogger } from '@/lib/client-logger';
 
@@ -539,7 +539,7 @@ export function CommunityChat() {
                   <div className="w-8 flex-shrink-0">
                     {showAvatar && (
                       <Avatar className="h-7 w-7">
-                        <AvatarImage src={msg.authorAvatar} />
+                        {msg.authorAvatar && !msg.authorAvatar.startsWith('gradient-') && !msg.authorAvatar.startsWith('avatar_') && <AvatarImage src={msg.authorAvatar} />}
                         <AvatarFallback className="text-2xs bg-slate-700">
                           {(msg.authorName || '?')[0].toUpperCase()}
                         </AvatarFallback>
@@ -757,3 +757,4 @@ export function CommunityChat() {
     </div>
   );
 }
+

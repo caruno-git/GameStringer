@@ -3,7 +3,7 @@
  * Uses Tauri commands for native screen capture when available,
  * falls back to browser APIs when running in web mode
  */
-import { safeInvoke as invoke } from './tauri-wrapper';
+import { safeInvoke as invoke } from '@/lib/tauri-wrapper';
 
 export interface CaptureResult {
   success: boolean;
@@ -269,3 +269,4 @@ export function createCaptureStream(
     }
   };
 }
+

@@ -1,7 +1,9 @@
 'use client';
 
 import { createPortal } from 'react-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut, Download, Maximize2 } from 'lucide-react';
+import { useState, useCallback, useEffect } from 'react';
 
 interface Screenshot {
   id?: number;
@@ -17,100 +19,206 @@ interface ScreenshotLightboxProps {
 }
 
 export function ScreenshotLightbox({ screenshots, selectedIndex, onClose, onNavigate }: ScreenshotLightboxProps) {
+  const [zoom, setZoom] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Reset zoom when changing image
+  useEffect(() => {
+    setZoom(1);
+    setIsLoading(true);
+  }, [selectedIndex]);
+
+  const handleZoomIn = useCallback(() => setZoom(z => Math.min(z + 0.5, 3)), []);
+  const handleZoomOut = useCallback(() => setZoom(z => Math.max(z - 0.5, 0.5)), []);
+  const handleZoomReset = useCallback(() => setZoom(1), []);
+
+  const handleDownload = useCallback(() => {
+    const url = screenshots[selectedIndex]?.path_full || screenshots[selectedIndex]?.path_thumbnail;
+    if (url) {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `screenshot-${selectedIndex + 1}.jpg`;
+      a.click();
+    }
+  }, [screenshots, selectedIndex]);
+
   if (typeof document === 'undefined') return null;
+
+  const currentScreenshot = screenshots[selectedIndex];
+  const hasPrev = selectedIndex > 0;
+  const hasNext = selectedIndex < screenshots.length - 1;
 
   return createPortal(
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-xl flex items-center justify-center"
-      onClick={onClose}
+      className="fixed inset-0 z-[9999] flex flex-col"
       onKeyDown={(e) => {
         if (e.key === 'Escape') onClose();
-        if (e.key === 'ArrowRight' && selectedIndex < screenshots.length - 1) {
-          onNavigate(selectedIndex + 1);
-        }
-        if (e.key === 'ArrowLeft' && selectedIndex > 0) {
-          onNavigate(selectedIndex - 1);
-        }
+        if (e.key === 'ArrowRight' && hasNext) onNavigate(selectedIndex + 1);
+        if (e.key === 'ArrowLeft' && hasPrev) onNavigate(selectedIndex - 1);
+        if (e.key === '+' || e.key === '=') handleZoomIn();
+        if (e.key === '-') handleZoomOut();
+        if (e.key === '0') handleZoomReset();
       }}
       tabIndex={0}
       ref={(el) => el?.focus()}
     >
-      {/* Container con immagine e controlli */}
-      <motion.div
-        key={selectedIndex}
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.15 }}
-        className="relative flex flex-col items-center"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Immagine con controlli attaccati */}
-        <div className="relative">
-          <img
-            src={screenshots[selectedIndex]?.path_full || screenshots[selectedIndex]?.path_thumbnail}
-            alt={`Screenshot ${selectedIndex + 1}`}
-            className="max-w-[85vw] max-h-[75vh] object-contain rounded-lg shadow-xl"
-          />
-
-          {/* X chiudi - angolo alto destra della foto */}
-          <button
-            className="absolute -top-2 -right-2 w-7 h-7 rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-600 flex items-center justify-center text-slate-300 hover:text-white transition-all shadow-lg"
-            onClick={onClose}
-          >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-
-          {/* Freccia sinistra - bordo sinistro della foto */}
-          {selectedIndex > 0 && (
-            <button
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-md bg-slate-800/80 hover:bg-slate-700 border border-slate-600/50 flex items-center justify-center text-slate-300 hover:text-white transition-all"
-              onClick={(e) => { e.stopPropagation(); onNavigate(selectedIndex - 1); }}
-            >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-          )}
-
-          {/* Freccia destra - bordo destro della foto */}
-          {selectedIndex < screenshots.length - 1 && (
-            <button
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-md bg-slate-800/80 hover:bg-slate-700 border border-slate-600/50 flex items-center justify-center text-slate-300 hover:text-white transition-all"
-              onClick={(e) => { e.stopPropagation(); onNavigate(selectedIndex + 1); }}
-            >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          )}
+      {/* Background with gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(99,102,241,0.08),transparent_70%)]" />
+      
+      {/* Top bar */}
+      <div className="relative z-10 flex items-center justify-between px-4 py-3 bg-slate-900/80 backdrop-blur-sm border-b border-slate-800/50">
+        <div className="flex items-center gap-3">
+          <span className="text-sm font-medium text-white">Screenshot</span>
+          <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-medium">
+            {selectedIndex + 1} / {screenshots.length}
+          </span>
         </div>
+        
+        {/* Toolbar */}
+        <div className="flex items-center gap-1">
+          <button
+            onClick={handleZoomOut}
+            className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+            title="Zoom out (-)"
+          >
+            <ZoomOut className="w-4 h-4" />
+          </button>
+          <span className="px-2 text-xs text-slate-500 min-w-[3rem] text-center">{Math.round(zoom * 100)}%</span>
+          <button
+            onClick={handleZoomIn}
+            className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+            title="Zoom in (+)"
+          >
+            <ZoomIn className="w-4 h-4" />
+          </button>
+          <div className="w-px h-4 bg-slate-700 mx-2" />
+          <button
+            onClick={handleZoomReset}
+            className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+            title="Fit to screen (0)"
+          >
+            <Maximize2 className="w-4 h-4" />
+          </button>
+          <button
+            onClick={handleDownload}
+            className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+            title="Download"
+          >
+            <Download className="w-4 h-4" />
+          </button>
+          <div className="w-px h-4 bg-slate-700 mx-2" />
+          <button
+            onClick={onClose}
+            className="p-2 rounded-lg hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-colors"
+            title="Close (Esc)"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
 
-        {/* Thumbnails sotto */}
-        <div className="flex items-center gap-1.5 mt-3">
-          {screenshots.slice(0, 10).map((screenshot: Screenshot, index: number) => (
-            <button
+      {/* Main content area */}
+      <div className="relative flex-1 flex items-center justify-center overflow-hidden" onClick={onClose}>
+        {/* Navigation buttons - large clickable areas */}
+        {hasPrev && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onNavigate(selectedIndex - 1); }}
+            className="absolute left-0 top-0 bottom-0 w-24 z-20 flex items-center justify-start pl-4 group"
+          >
+            <div className="w-12 h-12 rounded-full bg-slate-900/80 backdrop-blur-sm border border-slate-700/50 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-slate-800 group-hover:border-slate-600 transition-all group-hover:scale-110">
+              <ChevronLeft className="w-6 h-6" />
+            </div>
+          </button>
+        )}
+        
+        {hasNext && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onNavigate(selectedIndex + 1); }}
+            className="absolute right-0 top-0 bottom-0 w-24 z-20 flex items-center justify-end pr-4 group"
+          >
+            <div className="w-12 h-12 rounded-full bg-slate-900/80 backdrop-blur-sm border border-slate-700/50 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-slate-800 group-hover:border-slate-600 transition-all group-hover:scale-110">
+              <ChevronRight className="w-6 h-6" />
+            </div>
+          </button>
+        )}
+
+        {/* Image container */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={selectedIndex}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.2 }}
+            className="relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Loading skeleton */}
+            {isLoading && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-16 h-16 rounded-full border-4 border-indigo-500/30 border-t-indigo-500 animate-spin" />
+              </div>
+            )}
+            
+            {/* Main image */}
+            <motion.img
+              src={currentScreenshot?.path_full || currentScreenshot?.path_thumbnail}
+              alt={`Screenshot ${selectedIndex + 1}`}
+              className="max-w-[85vw] max-h-[70vh] object-contain rounded-xl shadow-2xl shadow-black/50 cursor-grab active:cursor-grabbing"
+              style={{ transform: `scale(${zoom})` }}
+              onLoad={() => setIsLoading(false)}
+              draggable={false}
+            />
+            
+            {/* Image frame glow */}
+            <div className="absolute -inset-1 rounded-xl bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-pink-500/20 blur-xl -z-10 opacity-50" />
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Thumbnail strip */}
+      <div className="relative z-10 bg-slate-900/80 backdrop-blur-sm border-t border-slate-800/50 px-4 py-3">
+        <div className="flex items-center justify-center gap-2 overflow-x-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent pb-1">
+          {screenshots.map((screenshot, index) => (
+            <motion.button
               key={index}
-              className={`w-12 h-7 rounded overflow-hidden transition-all border ${
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={`relative flex-shrink-0 rounded-lg overflow-hidden transition-all duration-200 ${
                 index === selectedIndex
-                  ? 'border-purple-500 scale-105'
-                  : 'border-transparent opacity-50 hover:opacity-80'
+                  ? 'ring-2 ring-indigo-500 ring-offset-2 ring-offset-slate-900'
+                  : 'opacity-50 hover:opacity-100'
               }`}
-              onClick={(e) => { e.stopPropagation(); onNavigate(index); }}
+              onClick={() => onNavigate(index)}
             >
-              <img src={screenshot.path_thumbnail} alt="" className="w-full h-full object-cover" />
-            </button>
+              <img 
+                src={screenshot.path_thumbnail} 
+                alt={`Thumbnail ${index + 1}`}
+                className="w-20 h-12 object-cover"
+              />
+              {index === selectedIndex && (
+                <motion.div 
+                  layoutId="thumbnail-indicator"
+                  className="absolute inset-0 bg-indigo-500/10"
+                />
+              )}
+            </motion.button>
           ))}
         </div>
-        <div className="text-slate-500 text-xs mt-1.5">
-          {selectedIndex + 1} / {screenshots.length}
+        
+        {/* Keyboard hints */}
+        <div className="flex items-center justify-center gap-4 mt-2 text-xs text-slate-500">
+          <span><kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">←</kbd> <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">→</kbd> Naviga</span>
+          <span><kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">+</kbd> <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">-</kbd> Zoom</span>
+          <span><kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">Esc</kbd> Chiudi</span>
         </div>
-      </motion.div>
+      </div>
     </motion.div>,
     document.body
   );
 }
+

@@ -102,3 +102,4 @@ export const GAME_GENRES = [
 ] as const;
 
 export type GameGenre = typeof GAME_GENRES[number];
+

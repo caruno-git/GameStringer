@@ -3,7 +3,7 @@
  * Salva traduzioni in localStorage per uso offline
  */
 
-import { translateSingleWithFallback } from './ai-translate-direct';
+import { translateSingleWithFallback } from '@/lib/ai/ai-translate-direct';
 
 const CACHE_KEY = 'gs_translation_cache';
 const CACHE_VERSION = 1;
@@ -256,3 +256,4 @@ export function useOfflineTranslation() {
 }
 
 export default offlineCache;
+

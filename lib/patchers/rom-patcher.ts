@@ -551,3 +551,4 @@ export function createPatch(
   if (fmt === 'ips') return createIPS(original, modified);
   return createBPS(original, modified, metadata);
 }
+

@@ -342,3 +342,4 @@ function CompletedJobCard({ job, onRemove, onOpenResults }: {
     </div>
   );
 }
+

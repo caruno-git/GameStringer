@@ -5,19 +5,49 @@ import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { HelpCircle, Play, RotateCcw, CheckCircle2 } from 'lucide-react';
+import { 
+  GraduationCap, 
+  RotateCcw, 
+  CheckCircle2, 
+  Sparkles,
+  BookOpen,
+  Gamepad2,
+  Languages,
+  Wrench,
+  Users,
+  ChevronRight
+} from 'lucide-react';
 import { useTutorial, getCompletedTutorials } from './tutorial-provider';
 import { getAllTutorials } from '@/lib/tutorial-configs';
 import { useTranslation } from '@/lib/i18n';
 import type { TutorialConfig } from '@/lib/types/tutorial';
+import { cn } from '@/lib/utils';
 
 interface TutorialMenuProps {
   userId?: string;
 }
+
+// Icone per ogni tipo di tutorial
+const TUTORIAL_ICONS: Record<string, typeof BookOpen> = {
+  'getting-started': Sparkles,
+  'library': Gamepad2,
+  'translation': Languages,
+  'tools': Wrench,
+  'community': Users,
+};
+
+// Colori per ogni tipo di tutorial
+const TUTORIAL_COLORS: Record<string, { bg: string; text: string; border: string }> = {
+  'getting-started': { bg: 'bg-violet-500/20', text: 'text-violet-400', border: 'border-violet-500/30' },
+  'library': { bg: 'bg-emerald-500/20', text: 'text-emerald-400', border: 'border-emerald-500/30' },
+  'translation': { bg: 'bg-amber-500/20', text: 'text-amber-400', border: 'border-amber-500/30' },
+  'tools': { bg: 'bg-cyan-500/20', text: 'text-cyan-400', border: 'border-cyan-500/30' },
+  'community': { bg: 'bg-rose-500/20', text: 'text-rose-400', border: 'border-rose-500/30' },
+};
+
+const DEFAULT_COLOR = { bg: 'bg-indigo-500/20', text: 'text-indigo-400', border: 'border-indigo-500/30' };
 
 export function TutorialMenu({ userId: _userId }: TutorialMenuProps) {
   const { startTutorial, isActive } = useTutorial();
@@ -26,6 +56,9 @@ export function TutorialMenu({ userId: _userId }: TutorialMenuProps) {
 
   const allTutorials = getAllTutorials();
   const completed = typeof window !== 'undefined' ? getCompletedTutorials() : [];
+  const completedCount = completed.length;
+  const totalCount = allTutorials.length;
+  const progress = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   const handleStart = (tutorial: TutorialConfig) => {
     setOpen(false);
@@ -48,61 +81,138 @@ export function TutorialMenu({ userId: _userId }: TutorialMenuProps) {
     return val === key ? fallback : val;
   };
 
+  // Determina il tipo di tutorial dal suo ID
+  const getTutorialType = (id: string): string => {
+    if (id.includes('start') || id.includes('intro') || id.includes('welcome')) return 'getting-started';
+    if (id.includes('library') || id.includes('game')) return 'library';
+    if (id.includes('translat') || id.includes('wizard')) return 'translation';
+    if (id.includes('tool') || id.includes('patch')) return 'tools';
+    if (id.includes('community') || id.includes('social')) return 'community';
+    return 'getting-started';
+  };
+
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
           size="sm"
-          className="h-8 w-8 p-0 text-slate-500 hover:text-slate-300"
+          className={cn(
+            "h-8 w-8 p-0 transition-all",
+            open ? "text-violet-400 bg-violet-500/10" : "text-slate-500 hover:text-violet-400 hover:bg-violet-500/10"
+          )}
           disabled={isActive}
         >
-          <HelpCircle className="h-4 w-4" />
+          <GraduationCap className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         side="right"
         align="end"
-        sideOffset={8}
-        className="w-72 max-h-[calc(100vh-2rem)] overflow-y-auto"
+        sideOffset={12}
+        className="w-80 p-0 bg-slate-900/95 border-slate-700/50 backdrop-blur-xl shadow-xl shadow-black/50"
       >
-        <div className="px-2 py-1.5">
-          <p className="text-xs font-medium text-slate-400">{t('tutorial.menu.available')}</p>
+        {/* Header */}
+        <div className="p-4 border-b border-slate-800/60">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/30">
+              <GraduationCap className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h3 className="font-bold text-white">{t('nav.tutorialAndGuide')}</h3>
+              <p className="text-2xs text-slate-400">Impara a usare GameStringer</p>
+            </div>
+          </div>
+          
+          {/* Progress bar */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between text-2xs">
+              <span className="text-slate-400">Progresso</span>
+              <span className="text-violet-400 font-medium">{completedCount}/{totalCount} completati</span>
+            </div>
+            <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-violet-500 to-indigo-500 rounded-full transition-all duration-500"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
         </div>
-        <DropdownMenuSeparator />
-        {allTutorials.map((tutorial) => {
-          const isDone = completed.includes(tutorial.id);
-          return (
-            <DropdownMenuItem
-              key={tutorial.id}
-              onClick={() => handleStart(tutorial)}
-              className="flex items-start gap-2 cursor-pointer py-2"
-            >
-              {isDone ? (
-                <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0" />
-              ) : (
-                <Play className="h-3.5 w-3.5 text-purple-400 shrink-0" />
-              )}
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium leading-tight">{getGuideText(tutorial.id, 'name', tutorial.name)}</p>
-                <p className="text-2xs text-slate-500 leading-snug mt-0.5 line-clamp-2">{getGuideText(tutorial.id, 'description', tutorial.description)}</p>
-              </div>
-            </DropdownMenuItem>
-          );
-        })}
+
+        {/* Tutorial list */}
+        <div className="p-2 max-h-[350px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700">
+          {allTutorials.map((tutorial) => {
+            const isDone = completed.includes(tutorial.id);
+            const type = getTutorialType(tutorial.id);
+            const Icon = TUTORIAL_ICONS[type] || BookOpen;
+            const colors = TUTORIAL_COLORS[type] || DEFAULT_COLOR;
+            
+            return (
+              <button
+                key={tutorial.id}
+                onClick={() => handleStart(tutorial)}
+                className={cn(
+                  "w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all duration-200 group",
+                  isDone 
+                    ? "bg-slate-800/30 hover:bg-slate-800/50" 
+                    : "hover:bg-slate-800/60"
+                )}
+              >
+                {/* Icon */}
+                <div className={cn(
+                  "w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-110",
+                  colors.bg
+                )}>
+                  {isDone ? (
+                    <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                  ) : (
+                    <Icon className={cn("h-4 w-4", colors.text)} />
+                  )}
+                </div>
+                
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className={cn(
+                      "text-sm font-medium leading-tight truncate",
+                      isDone ? "text-slate-400" : "text-white group-hover:text-violet-100"
+                    )}>
+                      {getGuideText(tutorial.id, 'name', tutorial.name)}
+                    </p>
+                    {isDone && (
+                      <span className="text-2xs px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-medium">
+                        ✓
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-2xs text-slate-500 leading-snug mt-0.5 line-clamp-1">
+                    {getGuideText(tutorial.id, 'description', tutorial.description)}
+                  </p>
+                </div>
+                
+                {/* Arrow */}
+                {!isDone && (
+                  <ChevronRight className="h-4 w-4 text-slate-600 group-hover:text-violet-400 group-hover:translate-x-0.5 transition-all shrink-0" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Footer */}
         {completed.length > 0 && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
+          <div className="p-2 border-t border-slate-800/60">
+            <button
               onClick={handleReset}
-              className="flex items-center gap-2 cursor-pointer text-slate-400"
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors text-xs"
             >
-              <RotateCcw className="h-3.5 w-3.5 shrink-0" />
-              <span className="text-xs">{t('tutorial.menu.resetAll')}</span>
-            </DropdownMenuItem>
-          </>
+              <RotateCcw className="h-3.5 w-3.5" />
+              {t('tutorial.menu.resetAll')}
+            </button>
+          </div>
         )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
+

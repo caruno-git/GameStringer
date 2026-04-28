@@ -20,7 +20,7 @@
  * - Sync: pull on demand, push after translation completes
  */
 
-import { getSupabase, getCurrentUser } from './community-hub-backend';
+import { getSupabase, getCurrentUser } from '@/lib/social/community-hub-backend';
 import { clientLogger } from './client-logger';
 
 // ── Types ──────────────────────────────────────────────────
@@ -394,3 +394,4 @@ function mapSharedTMRow(row: Record<string, unknown>): SharedTMEntry {
     updatedAt: row.updated_at as string,
   };
 }
+

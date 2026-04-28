@@ -9,6 +9,17 @@
   "gitHash": "114c453",
   "branch": "main",
   "changelog": {
+    "1.9.1": {
+      "date": "2026-04-29",
+      "type": "patch",
+      "changes": [
+        "Community Chat: fix avatars (gradient-IDs non generano più errori 404)",
+        "Community Chat: traduzione completa UI in 11 lingue",
+        "Icona di sistema: redesign neon GS logo e aggiunta icon.ico",
+        "Tauri: rimosso doppio start di Next.js per evitare conflitti sulla porta 3222",
+        "Splash Screen: aggiunto timeout di fallback (5s) per sblocco UI"
+      ]
+    },
     "1.9.0": {
       "date": "2026-04-23",
       "type": "patch",
@@ -606,7 +617,7 @@
       ]
     },
     "1.8.3": {
-      "date": "2026-04-27",
+      "date": "2026-04-18",
       "type": "patch",
       "changes": [
         "Fix chat auto-connect coordination"

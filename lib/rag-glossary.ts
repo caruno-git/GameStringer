@@ -101,3 +101,4 @@ export class RagGlossary {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 }
+

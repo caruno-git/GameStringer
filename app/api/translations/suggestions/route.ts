@@ -93,3 +93,4 @@ export const POST = withErrorHandler(async function(request: NextRequest) {
 
   return NextResponse.json(suggestions.slice(0, 8));
 });
+

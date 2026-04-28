@@ -467,3 +467,4 @@ export function getFileWatcher(): FileWatcherEngine {
   }
   return watcherInstance;
 }
+

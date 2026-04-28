@@ -876,3 +876,4 @@ Feedback di guida immediato e chiaro.`
 
 export const aiTranslationService = new AITranslationService();
 export default aiTranslationService;
+

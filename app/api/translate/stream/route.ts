@@ -218,3 +218,4 @@ IMPORTANT: Output ONLY the translated text, nothing else. No explanations, no qu
     },
   }) as NextResponse;
 });
+

@@ -404,3 +404,4 @@ function formatVTTTime(ms: number): string {
   
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}.${pad(millis, 3)}`;
 }
+

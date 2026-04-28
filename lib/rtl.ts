@@ -36,3 +36,4 @@ export function applyDocumentDirection(langCode: string): void {
   document.documentElement.dir = dir;
   document.documentElement.lang = langCode;
 }
+

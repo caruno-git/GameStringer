@@ -275,3 +275,4 @@ export function cleanupOldTranslations(maxAgeDays: number = 7): number {
   saveTranslationProgress(state);
   return original - state.activeTranslations.length;
 }
+

@@ -94,3 +94,4 @@ export const invoke = async <T = unknown>(cmd: string, args?: Record<string, unk
 export const isTauri = (): boolean => {
   return IS_TAURI;
 };
+

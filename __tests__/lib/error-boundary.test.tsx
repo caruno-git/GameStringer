@@ -90,3 +90,4 @@ describe('PageErrorFallback', () => {
     expect(onRetry).toHaveBeenCalled();
   });
 });
+

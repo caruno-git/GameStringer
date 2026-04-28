@@ -25,3 +25,4 @@ declare module 'steamgriddb' {
     getGrids(options: { type?: 'game'; id: number; styles?: string[]; dimensions?: string[]; mimes?: string[]; nsfw?: string; humor?: string; }): Promise<Grid[]>;
   }
 }
+

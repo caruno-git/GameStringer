@@ -28,3 +28,4 @@ export default defineConfig({
   ],
   /* webServer disabilitato - avviare manualmente: npm run dev:simple */
 });
+

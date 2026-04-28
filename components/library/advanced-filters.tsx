@@ -436,3 +436,4 @@ export function useGameFilter(games: FilterableGame[]) {
 }
 
 export default AdvancedFilters;
+

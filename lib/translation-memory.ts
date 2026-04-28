@@ -10,7 +10,7 @@
 
 import { clientLogger } from '@/lib/client-logger';
 
-import { translateSingleWithFallback } from './ai-translate-direct';
+import { translateSingleWithFallback } from '@/lib/ai/ai-translate-direct';
 
 import { invoke } from '@/lib/tauri-api';
 
@@ -838,3 +838,4 @@ export async function translateBatchWithMemory(
     }
   };
 }
+

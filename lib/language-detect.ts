@@ -211,3 +211,4 @@ export function getLanguageName(code: string): string {
 export function getSupportedLanguages(): { code: string; name: string }[] {
   return Object.entries(LANGUAGE_NAMES).map(([code, name]) => ({ code, name }));
 }
+

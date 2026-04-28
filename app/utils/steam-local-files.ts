@@ -77,3 +77,4 @@ export async function getInstalledSteamAppIds(): Promise<Set<number>> {
     clientLogger.debug(`[API/STEAM/GAMES] Found ${installedAppIds.size} installed games on local drives.`);
     return installedAppIds;
 }
+

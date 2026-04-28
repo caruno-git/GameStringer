@@ -2127,3 +2127,4 @@ export default function PredictionToolPage() {
     </div>
   );
 }
+

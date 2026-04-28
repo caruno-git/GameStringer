@@ -613,3 +613,4 @@ export function getProjectStats(project: PatchProject) {
 
   return { total, translated, percentage: total > 0 ? Math.round((translated / total) * 100) : 0, byCategory, byLanguage };
 }
+

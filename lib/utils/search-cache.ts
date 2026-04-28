@@ -231,3 +231,4 @@ export function memoizeSearch<T>(
 }
 
 export default SearchCache;
+

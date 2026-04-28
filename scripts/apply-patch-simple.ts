@@ -62,3 +62,4 @@ console.log(`   DA: ${outputFile}`);
 console.log(`   A: ${path.dirname(dialogueFile)}`);
 console.log('3. Rinomina il file patchato come l\'originale');
 console.log('4. Avvia Decarnation e goditi i dialoghi in italiano! 🇮🇹');
+

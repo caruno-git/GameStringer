@@ -16,7 +16,7 @@
 import { SupabaseClient, RealtimeChannel } from '@supabase/supabase-js';
 import { getSupabase, isSupabaseConfigured } from './community-hub-backend';
 import { clientLogger } from '@/lib/client-logger';
-import { withRetry } from './network-resilience';
+import { withRetry } from '@/lib/network-resilience';
 
 // ============================================================================
 // TYPES
@@ -80,7 +80,19 @@ async function ensureChannel(): Promise<RealtimeChannel | null> {
   try {
     const supabase = await getSupabase();
 
-    if (_channel) return _channel;
+    // Return existing channel if still valid
+    if (_channel) {
+      // Check if channel is still subscribed
+      const state = _channel.state;
+      if (state === 'joined' || state === 'joining') {
+        return _channel;
+      }
+      // Channel is in bad state, clean it up
+      try {
+        await supabase.removeChannel(_channel);
+      } catch { /* ignore */ }
+      _channel = null;
+    }
 
     _channel = supabase
       .channel(CHANNEL_NAME, {
@@ -97,9 +109,14 @@ async function ensureChannel(): Promise<RealtimeChannel | null> {
           for (const p of presences) {
             if (p.user_id && !seen.has(p.user_id)) {
               seen.add(p.user_id);
+              // Clean up ugly auto-generated usernames
+              let displayName = p.username || 'Utente';
+              if (displayName.startsWith('user_') || displayName.startsWith('gs_')) {
+                displayName = `Utente ${(p.user_id as string).substring(0, 6)}`;
+              }
               users.push({
                 userId: p.user_id,
-                username: p.username || 'Utente',
+                username: displayName,
                 avatar: p.avatar || null,
                 status: (p.status as PresenceStatus) || 'online',
                 currentActivity: p.activity || null,
@@ -246,16 +263,22 @@ async function getDbOnlineUsers(limit = 50): Promise<OnlineUser[]> {
       const userIds = [...new Set((cpData as Record<string, unknown>[]).map(r => r.user_id as string).filter(Boolean))];
       const profilesMap = await fetchProfilesMap(userIds);
 
-      return (cpData as Record<string, unknown>[]).map(row => ({
-        userId: row.user_id as string,
-        username: profilesMap.get(row.user_id as string)?.username || 'Utente',
-        avatar: profilesMap.get(row.user_id as string)?.avatar_url || null,
-        status: (row.status as PresenceStatus) || 'online',
-        currentActivity: null,
-        currentGame: null,
-        onlineAt: row.last_seen as string || new Date().toISOString(),
-        lastHeartbeat: row.last_seen as string || new Date().toISOString(),
-      }));
+      return (cpData as Record<string, unknown>[]).map(row => {
+        const rawUsername = profilesMap.get(row.user_id as string)?.username || 'Utente';
+        const displayName = (rawUsername.startsWith('user_') || rawUsername.startsWith('gs_'))
+          ? `Utente ${(row.user_id as string).substring(0, 6)}`
+          : rawUsername;
+        return {
+          userId: row.user_id as string,
+          username: displayName,
+          avatar: profilesMap.get(row.user_id as string)?.avatar_url || null,
+          status: (row.status as PresenceStatus) || 'online',
+          currentActivity: null,
+          currentGame: null,
+          onlineAt: row.last_seen as string || new Date().toISOString(),
+          lastHeartbeat: row.last_seen as string || new Date().toISOString(),
+        };
+      });
     }
 
     if (!data) return [];
@@ -263,16 +286,22 @@ async function getDbOnlineUsers(limit = 50): Promise<OnlineUser[]> {
     const userIds = [...new Set((data as Record<string, unknown>[]).map(r => r.user_id as string).filter(Boolean))];
     const profilesMap = await fetchProfilesMap(userIds);
 
-    return (data as Record<string, unknown>[]).map(row => ({
-      userId: row.user_id as string,
-      username: profilesMap.get(row.user_id as string)?.username || 'Utente',
-      avatar: profilesMap.get(row.user_id as string)?.avatar_url || null,
-      status: (row.status as PresenceStatus) || 'online',
-      currentActivity: (row.current_activity as string) || null,
-      currentGame: (row.current_game as string) || null,
-      onlineAt: row.last_heartbeat as string || new Date().toISOString(),
-      lastHeartbeat: row.last_heartbeat as string || new Date().toISOString(),
-    }));
+    return (data as Record<string, unknown>[]).map(row => {
+      const rawUsername = profilesMap.get(row.user_id as string)?.username || 'Utente';
+      const displayName = (rawUsername.startsWith('user_') || rawUsername.startsWith('gs_'))
+        ? `Utente ${(row.user_id as string).substring(0, 6)}`
+        : rawUsername;
+      return {
+        userId: row.user_id as string,
+        username: displayName,
+        avatar: profilesMap.get(row.user_id as string)?.avatar_url || null,
+        status: (row.status as PresenceStatus) || 'online',
+        currentActivity: (row.current_activity as string) || null,
+        currentGame: (row.current_game as string) || null,
+        onlineAt: row.last_heartbeat as string || new Date().toISOString(),
+        lastHeartbeat: row.last_heartbeat as string || new Date().toISOString(),
+      };
+    });
   } catch {
     return [];
   }
@@ -282,9 +311,19 @@ async function getDbOnlineUsers(limit = 50): Promise<OnlineUser[]> {
 // PROFILE HELPERS
 // ============================================================================
 
+// Cache to avoid repeated failed queries
+let _profileQueryFailed = false;
+let _profileQueryFailedAt = 0;
+const PROFILE_QUERY_RETRY_MS = 60000; // Retry after 1 minute
+
 async function fetchProfilesMap(userIds: string[]): Promise<Map<string, { username: string; avatar_url: string | null }>> {
   const map = new Map<string, { username: string; avatar_url: string | null }>();
   if (userIds.length === 0) return map;
+
+  // Skip if recent query failed (avoid spamming 400 errors)
+  if (_profileQueryFailed && Date.now() - _profileQueryFailedAt < PROFILE_QUERY_RETRY_MS) {
+    return map;
+  }
 
   try {
     const supabase = await getSupabase();
@@ -294,10 +333,20 @@ async function fetchProfilesMap(userIds: string[]): Promise<Map<string, { userna
     if (!session?.user) return map;
 
     // Try user_profiles with user_id column
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('user_profiles')
       .select('user_id, username, avatar_url')
       .in('user_id', userIds);
+
+    if (error) {
+      // Mark as failed to avoid repeated queries
+      _profileQueryFailed = true;
+      _profileQueryFailedAt = Date.now();
+      return map;
+    }
+
+    // Reset failure flag on success
+    _profileQueryFailed = false;
 
     if (data) {
       for (const p of data) {
@@ -324,8 +373,28 @@ async function fetchProfilesMap(userIds: string[]): Promise<Map<string, { userna
 }
 
 async function getUsername(userId: string): Promise<string> {
+  // 1. Try local GS profile first (most reliable)
+  if (typeof window !== 'undefined') {
+    try {
+      const rawProfile = localStorage.getItem('gamestringer_current_profile');
+      if (rawProfile) {
+        const p = JSON.parse(rawProfile);
+        if (p?.name && p.name.length > 0 && !p.name.startsWith('user_')) {
+          return p.name;
+        }
+      }
+    } catch {}
+  }
+  
+  // 2. Try Supabase user_profiles
   const map = await fetchProfilesMap([userId]);
-  return map.get(userId)?.username || 'Utente';
+  const dbUsername = map.get(userId)?.username;
+  if (dbUsername && !dbUsername.startsWith('user_')) {
+    return dbUsername;
+  }
+  
+  // 3. Fallback: generate friendly name from userId
+  return `Utente ${userId.substring(0, 6)}`;
 }
 
 async function getAvatar(userId: string): Promise<string> {
@@ -341,18 +410,18 @@ async function getAvatar(userId: string): Promise<string> {
  * Inizializza il sistema presenza: autentica, entra nel canale, avvia heartbeat
  */
 export async function initPresence(userId: string): Promise<void> {
-  if (_initialized && _myUserId === userId) return;
+  if (_initialized && _myUserId === userId) {
+    clientLogger.debug(`[Presence] Già inizializzato per: ${userId}`);
+    return;
+  }
   _myUserId = userId;
   _myStatus = 'online';
   _initialized = true;
 
   clientLogger.debug(`[Presence] Init per utente: ${userId}`);
 
-  // 1. Join Realtime channel
-  const channel = await ensureChannel();
-  if (channel) {
-    await trackPresence();
-  }
+  // 1. Join Realtime channel (trackPresence is called in subscribe callback)
+  await ensureChannel();
 
   // 2. Update DB
   await updateDbPresence();
@@ -536,3 +605,4 @@ if (typeof window !== 'undefined') {
     }
   });
 }
+

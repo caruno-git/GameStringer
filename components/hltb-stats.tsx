@@ -153,3 +153,4 @@ export function HltbStats({ gameName, className }: HltbStatsProps) {
     </div>
   );
 }
+

@@ -5,15 +5,15 @@
  * Integra Translation Memory, Quality Gates e Content Classification.
  */
 
-import { translationMemory, translateWithMemory } from './translation-memory';
+import { translationMemory, translateWithMemory } from '@/lib/translation-memory';
 import { clientLogger } from '@/lib/client-logger';
-import { runQualityGates, quickQualityCheck, QualityReport } from './quality-gates';
-import { classifyBatch, ContentClassification } from './content-classifier';
-import { translateSmart } from './ai-translate-direct';
-import { buildRelevantGlossaryHint, extractTerms, loadGlossary, loadGlossaryConfig } from './auto-glossary';
-import { harvestBatch, type HarvestInput, type BatchHarvestResult } from './context-harvester';
-import { composeGenreAndCharacterContext, type GameGenre } from './genre-prompts';
-import { suggestBatchImprovements, type PostEditRequest } from './ai-post-edit';
+import { runQualityGates, quickQualityCheck, QualityReport } from '@/lib/quality/quality-gates';
+import { classifyBatch, ContentClassification } from '@/lib/ai/content-classifier';
+import { translateSmart } from '@/lib/ai/ai-translate-direct';
+import { buildRelevantGlossaryHint, extractTerms, loadGlossary, loadGlossaryConfig } from '@/lib/auto-glossary';
+import { harvestBatch, type HarvestInput, type BatchHarvestResult } from '@/lib/context-harvester';
+import { composeGenreAndCharacterContext, type GameGenre } from '@/lib/ai/genre-prompts';
+import { suggestBatchImprovements, type PostEditRequest } from '@/lib/ai/ai-post-edit';
 
 // ============================================================================
 // TYPES
@@ -1256,3 +1256,4 @@ function escapeCSV(str: string): string {
 function escapeTSV(str: string): string {
   return str.replace(/\t/g, '\\t').replace(/\n/g, '\\n');
 }
+

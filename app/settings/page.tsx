@@ -84,7 +84,7 @@ const CustomPromptSettings = dynamic(
 );
 
 import { invoke } from '@/lib/tauri-api';
-import { saveConfig as saveSupabaseConfig, SUPABASE_MIGRATION_SQL } from '@/lib/social/social/community-hub-backend';
+import { saveConfig as saveSupabaseConfig, SUPABASE_MIGRATION_SQL } from '@/lib/social/community-hub-backend';
 import { clientLogger } from '@/lib/client-logger';
 
 // Supabase Settings Component
@@ -1448,5 +1448,6 @@ export default function SettingsPage() {
     </div>
   );
 }
+
 
 

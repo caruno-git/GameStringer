@@ -220,3 +220,4 @@ export class GameProfileManager {
 
 // Singleton instance
 export const gameProfileManager = new GameProfileManager();
+

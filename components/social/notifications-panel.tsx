@@ -292,3 +292,4 @@ export function NotificationsBadge({ userId, onClick }: NotificationsBadgeProps)
 }
 
 export default NotificationsPanel;
+

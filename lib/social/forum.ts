@@ -543,3 +543,4 @@ export async function searchForum(query: string, limit = 20): Promise<ForumThrea
   if (error) return [];
   return data || [];
 }
+

@@ -2160,7 +2160,21 @@
     "back": "Back",
     "verifyKey": "Verify Key",
     "resetPassword": "Reset Password",
-    "done": "Done"
+    "done": "Done",
+    "removeAvatar": "Remove",
+    "recoveryKey": "Recovery Key",
+    "saveKeyDesc": "Save this key to recover your password for",
+    "savedKeyConfirm": "I have saved this key safely",
+    "copy": "Copy",
+    "download": "Download",
+    "newPassword": "New Password",
+    "passwordReset": "Password Reset",
+    "enterKeyDesc": "Enter your 12-word recovery key for",
+    "chooseNewPassword": "Choose a new secure password",
+    "passwordResetSuccess": "Your password has been reset successfully",
+    "historyCleared": "Activity history cleared",
+    "disconnectedAll": "Disconnected from all other sessions",
+    "thisProfile": "this profile"
   },
   "onboarding": {
     "step": "Step {current} of {total}",
@@ -4716,6 +4730,39 @@
       "1": "Manual game addition system",
       "2": "Badge system for VR games",
       "3": "Futuristic dashboard design"
-    }
+    },
+    "latest": "LATEST",
+    "featureUpdate": "✨ Feature Update",
+    "majorRelease": "🚀 Major Release",
+    "patchNotes": "🔧 Patch Notes",
+    "currentVersion": "Current Version"
+  },
+  "communityChat": {
+    "communityChatTitle": "Community Chat",
+    "onlineCount": "{{count}} online",
+    "onlineUsers": "Online Users ({{count}})",
+    "noOneOnline": "No one online",
+    "writeInRoom": "Type in #{{room}}...",
+    "selectRoom": "Select a room...",
+    "sendMessage": "Send message",
+    "loginRequired": "You must login to GameStringer first.",
+    "deletedMessage": "Message deleted",
+    "editedMessage": "(edited)",
+    "connectionError": "Chat connection error",
+    "retry": "Retry",
+    "newRoom": "New Room",
+    "roomName": "Room name (e.g. cyberpunk-ita)",
+    "roomDesc": "Short description",
+    "roomType": "Room type",
+    "cancel": "Cancel",
+    "createRoom": "Create Room",
+    "roomCreated": "Room created successfully!",
+    "generalRoom": "General",
+    "gameRoom": "Specific Game",
+    "translationRoom": "Translation Request",
+    "feedbackRoom": "Feedback & Bugs",
+    "announcementsRoom": "Announcements",
+    "userDefault": "User",
+    "chat": "Chat"
   }
 }

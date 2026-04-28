@@ -7,6 +7,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -20,6 +21,7 @@ import {
 } from 'lucide-react';
 import { formatRecoveryKeyForDisplay, recoveryKeyToString } from '@/lib/recovery-key';
 import { clientLogger } from '@/lib/client-logger';
+import { useTranslation } from '@/lib/i18n';
 
 interface RecoveryKeyDisplayProps {
   open: boolean;
@@ -36,8 +38,9 @@ export function RecoveryKeyDisplay({
   profileName,
   onConfirm,
 }: RecoveryKeyDisplayProps) {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
-  const [_confirmed, setConfirmed] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
 
   const formattedGroups = formatRecoveryKeyForDisplay(recoveryKey);
   const keyString = recoveryKeyToString(recoveryKey);
@@ -85,14 +88,14 @@ Do not share this with anyone.
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg bg-gradient-to-br from-slate-900 via-emerald-900/20 to-slate-900 border-emerald-500/30">
+      <DialogContent className="sm:max-w-lg bg-slate-900/60 backdrop-blur-2xl border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.5)] p-6">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-white">
             <Key className="h-5 w-5 text-emerald-400" />
-            Recovery Key
+            {t('profile.recoveryKey')}
           </DialogTitle>
           <DialogDescription className="text-gray-400">
-            Save this key to recover your password for <span className="text-white font-medium">{profileName}</span>
+            {t('profile.saveKeyDesc')} <span className="text-white font-medium">{profileName}</span>
           </DialogDescription>
         </DialogHeader>
 
@@ -137,12 +140,12 @@ Do not share this with anyone.
               {copied ? (
                 <>
                   <CheckCircle2 className="h-4 w-4 mr-2 text-emerald-400" />
-                  Copied!
+                  {t('profile.copy')}
                 </>
               ) : (
                 <>
                   <Copy className="h-4 w-4 mr-2" />
-                  Copy
+                  {t('profile.copy')}
                 </>
               )}
             </Button>
@@ -152,7 +155,7 @@ Do not share this with anyone.
               className="flex-1 border-slate-700 bg-slate-800/50 hover:bg-slate-700 text-white"
             >
               <Download className="h-4 w-4 mr-2" />
-              Download
+              {t('profile.download')}
             </Button>
           </div>
 
@@ -172,9 +175,10 @@ Do not share this with anyone.
           className="w-full bg-emerald-600 hover:bg-emerald-700"
         >
           <CheckCircle2 className="h-4 w-4 mr-2" />
-          I&apos;ve saved my recovery key
+          {t('profile.savedKeyConfirm')}
         </Button>
       </DialogContent>
     </Dialog>
   );
 }
+

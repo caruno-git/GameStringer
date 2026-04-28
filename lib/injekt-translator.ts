@@ -360,3 +360,4 @@ export function useInjektTranslator() {
     importCache: (data: Record<string, string>) => injektTranslator.importCache(data)
   };
 }
+

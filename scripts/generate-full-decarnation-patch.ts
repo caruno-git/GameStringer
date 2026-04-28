@@ -135,3 +135,4 @@ Vuoi migliorare le traduzioni? Apri una issue o invia una pull request!
 
 // Esegui
 generateFullPatch();
+

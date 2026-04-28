@@ -1244,7 +1244,7 @@
     "plugins": "Plugin",
     "activity": "Attività",
     "statistics": "Statistiche",
-    "tutorialAndGuide": "Tutorial e Guida"
+    "tutorialAndGuide": "Tutorial Guidato"
   },
   "settings": {
     "title": "Impostazioni",
@@ -2160,7 +2160,21 @@
     "back": "Indietro",
     "verifyKey": "Verifica Chiave",
     "resetPassword": "Reimposta Password",
-    "done": "Fatto"
+    "done": "Fatto",
+    "removeAvatar": "Rimuovi",
+    "recoveryKey": "Recovery Key",
+    "saveKeyDesc": "Salva questa chiave per recuperare la password di",
+    "savedKeyConfirm": "Ho salvato questa chiave in un posto sicuro",
+    "copy": "Copia",
+    "download": "Scarica",
+    "newPassword": "Nuova Password",
+    "passwordReset": "Password Ripristinata",
+    "enterKeyDesc": "Inserisci la tua recovery key di 12 parole per",
+    "chooseNewPassword": "Scegli una nuova password sicura",
+    "passwordResetSuccess": "La tua password è stata ripristinata con successo",
+    "historyCleared": "Cronologia attività cancellata",
+    "disconnectedAll": "Disconnesso da tutte le altre sessioni",
+    "thisProfile": "questo profilo"
   },
   "onboarding": {
     "step": "Passo {current} di {total}",
@@ -4716,6 +4730,39 @@
       "1": "Sistema manual game addition",
       "2": "Badge system per VR games",
       "3": "Dashboard design futuristico"
-    }
+    },
+    "latest": "LATEST",
+    "featureUpdate": "✨ Feature Update",
+    "majorRelease": "🚀 Major Release",
+    "patchNotes": "🔧 Patch Notes",
+    "currentVersion": "Versione Attuale"
+  },
+  "communityChat": {
+    "communityChatTitle": "Community Chat",
+    "onlineCount": "{{count}} online",
+    "onlineUsers": "Utenti Online ({{count}})",
+    "noOneOnline": "Nessuno online",
+    "writeInRoom": "Scrivi in #{{room}}...",
+    "selectRoom": "Seleziona stanza...",
+    "sendMessage": "Invia messaggio",
+    "loginRequired": "Devi prima effettuare il login in GameStringer.",
+    "deletedMessage": "Messaggio eliminato",
+    "editedMessage": "(modificato)",
+    "connectionError": "Errore di connessione alla chat",
+    "retry": "Riprova",
+    "newRoom": "Nuova Stanza",
+    "roomName": "Nome stanza (es. cyberpunk-ita)",
+    "roomDesc": "Descrizione breve",
+    "roomType": "Tipo stanza",
+    "cancel": "Annulla",
+    "createRoom": "Crea Stanza",
+    "roomCreated": "Stanza creata con successo!",
+    "generalRoom": "Generale",
+    "gameRoom": "Gioco specifico",
+    "translationRoom": "Richiesta traduzione",
+    "feedbackRoom": "Feedback & Bug",
+    "announcementsRoom": "Annunci",
+    "userDefault": "Utente",
+    "chat": "Chat"
   }
 }

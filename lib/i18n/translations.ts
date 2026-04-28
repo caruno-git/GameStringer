@@ -30,8 +30,9 @@ export const translations = {
   ko,
   pt,
   ru,
-  pl,
+  pl
 } as const;
 
 export type Language = keyof typeof translations;
 export type TranslationKeys = typeof translations['it'];
+

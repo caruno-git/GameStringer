@@ -3,7 +3,7 @@
  */
 
 import { useEffect, useCallback, useRef } from 'react';
-import { NotificationFocusManager } from '@/lib/notifications/notifications/notification-accessibility';
+import { NotificationFocusManager } from '@/lib/notifications/notification-accessibility';
 
 interface UseKeyboardNavigationOptions {
   isActive?: boolean;

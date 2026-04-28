@@ -839,3 +839,4 @@ export function genericToEntries(
     translated: generic[i]?.translation ?? '',
   }))
 }
+

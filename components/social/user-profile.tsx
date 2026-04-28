@@ -620,3 +620,4 @@ export function UserProfileView({ userId, username, currentUserId, onClose }: Us
 }
 
 export default UserProfileView;
+

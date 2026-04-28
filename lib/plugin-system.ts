@@ -1157,3 +1157,4 @@ export function validateFile(content: string, extension: string): ValidationResu
     return { valid: false, errors: [e instanceof Error ? e.message : String(e)], warnings: [] };
   }
 }
+

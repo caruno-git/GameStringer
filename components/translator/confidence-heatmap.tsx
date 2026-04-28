@@ -447,3 +447,4 @@ export function ConfidenceHeatmap({ data, onSelectPair, className }: ConfidenceH
 
 // Export componenti individuali per uso modulare
 export { ConfidenceBadge, SummaryCard, DetailPanel, HeatmapRow }
+

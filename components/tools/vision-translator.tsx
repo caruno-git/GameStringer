@@ -456,3 +456,4 @@ export function VisionTranslator() {
 }
 
 export default VisionTranslator;
+

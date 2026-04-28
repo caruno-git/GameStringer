@@ -271,3 +271,4 @@ ${config.license || 'MIT'}
 
   return { manifest, entrypoint, readme };
 }
+

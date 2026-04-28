@@ -196,3 +196,4 @@ export function getCommunityTranslationCount(): number {
 export function getAllTranslations(lang: string = 'it'): CommunityTranslation[] {
   return COMMUNITY_TRANSLATIONS.filter(t => t.language === lang);
 }
+

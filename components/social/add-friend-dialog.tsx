@@ -251,3 +251,4 @@ export function AddFriendDialog({ currentUserId, trigger, onFriendAdded }: AddFr
 }
 
 export default AddFriendDialog;
+

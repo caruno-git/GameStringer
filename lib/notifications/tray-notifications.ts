@@ -415,3 +415,4 @@ if (typeof window !== 'undefined') {
     // This is a lightweight hook; the presence module itself tracks joins/leaves
   }) as EventListener);
 }
+

@@ -18,9 +18,9 @@
  */
 
 import { translateSmart, type TranslateOptions, type TranslateResult } from './ai-translate-direct';
-import { runQualityGates, type QualityReport } from './quality-gates';
-import { harvestBatch, type HarvestInput, type BatchHarvestResult } from './context-harvester';
-import { buildRelevantGlossaryHint } from './auto-glossary';
+import { runQualityGates, type QualityReport } from '@/lib/quality/quality-gates';
+import { harvestBatch, type HarvestInput, type BatchHarvestResult } from '@/lib/context-harvester';
+import { buildRelevantGlossaryHint } from '@/lib/auto-glossary';
 import { clientLogger } from '@/lib/client-logger';
 
 // ============================================================================
@@ -865,3 +865,4 @@ export async function runMaxQualityPipeline(
     ...options,
   });
 }
+

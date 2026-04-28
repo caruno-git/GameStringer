@@ -236,3 +236,4 @@ export function LoreAssistantChat({ defaultExpanded = true }: { defaultExpanded?
 }
 
 export default LoreAssistantChat;
+

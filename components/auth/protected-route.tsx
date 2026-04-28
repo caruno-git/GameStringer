@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useProfileAuth } from '@/lib/auth/auth/profile-auth';
+import { useProfileAuth } from '@/lib/auth/profile-auth';
 import { ProfileSelector } from '@/components/profiles/profile-selector';
 import { CreateProfileDialog } from '@/components/profiles/create-profile-dialog';
 import { useProfileSettings } from '@/hooks/use-profile-settings';
@@ -117,5 +117,6 @@ export function withAuth<P extends object>(
     );
   };
 }
+
 
 

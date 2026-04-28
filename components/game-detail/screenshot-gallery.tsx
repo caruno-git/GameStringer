@@ -36,3 +36,4 @@ export function ScreenshotGallery({ screenshots, onScreenshotClick }: Screenshot
     </motion.div>
   );
 }
+

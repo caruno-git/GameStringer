@@ -1275,3 +1275,4 @@ function StatCard({ label, value, icon: Icon, color, small }: {
     </div>
   );
 }
+

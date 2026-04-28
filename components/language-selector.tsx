@@ -98,3 +98,4 @@ export function LanguageSelectorCompact({ className }: { className?: string }) {
     </Select>
   );
 }
+

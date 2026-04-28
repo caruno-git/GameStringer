@@ -663,3 +663,4 @@ export function exportTableToJSON(table: StringTableInfo): string {
 export function getLocaleDisplayName(code: string): string {
   return SUPPORTED_LOCALES[code] ?? SUPPORTED_LOCALES[code.split('-')[0]] ?? code;
 }
+

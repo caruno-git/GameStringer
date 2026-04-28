@@ -540,3 +540,4 @@ export function formatFileSize(bytes: number): string {
 export function formatFormId(formId: number): string {
   return '0x' + formId.toString(16).toUpperCase().padStart(8, '0');
 }
+

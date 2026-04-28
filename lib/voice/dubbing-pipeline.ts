@@ -11,8 +11,8 @@
  */
 
 import { voiceCloneService, type VoiceProfile, type SynthesisResult } from './voice-clone';
-import { translateWithFallback } from './ai-translate-direct';
-import { clientLogger } from './client-logger';
+import { translateWithFallback } from '@/lib/ai/ai-translate-direct';
+import { clientLogger } from '@/lib/client-logger';
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -613,3 +613,4 @@ function pad(n: number): string {
 }
 
 export default DubbingPipeline;
+

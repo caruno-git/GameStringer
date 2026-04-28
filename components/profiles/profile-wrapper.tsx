@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { ProfileAuthProvider } from '@/lib/auth/auth/profile-auth';
+import { ProfileAuthProvider } from '@/lib/auth/profile-auth';
 import { ProfilesProvider } from '@/hooks/use-profiles';
 import { ProtectedRoute } from '@/components/auth/protected-route';
 import { MainLayout } from '@/components/layout/main-layout';
-import { sessionPersistence } from '@/lib/auth/auth/session-persistence';
+import { sessionPersistence } from '@/lib/auth/session-persistence';
 import { isProtectedRoute } from '@/lib/route-config';
 import { Loader2 } from 'lucide-react';
 import { clientLogger } from '@/lib/client-logger';
@@ -19,8 +19,31 @@ export function ProfileWrapper({ children }: ProfileWrapperProps) {
   const [isInitializing, setIsInitializing] = useState(true);
   const pathname = usePathname();
 
+  // FALLBACK IMMEDIATO: chiudi splash appena il componente è montato
+  useEffect(() => {
+    const closeSplashFallback = async () => {
+      try {
+        const { invoke } = await import('@tauri-apps/api/core');
+        console.log('[ProfileWrapper] 🚀 Tentativo chiusura splash immediato...');
+        await invoke('close_splash');
+        console.log('[ProfileWrapper] ✅ Splash chiusa con successo');
+      } catch (e) {
+        console.log('[ProfileWrapper] ⚠️ close_splash fallback error:', e);
+      }
+    };
+    // Chiudi splash dopo 2 secondi come fallback assoluto
+    const fallbackTimer = setTimeout(closeSplashFallback, 2000);
+    return () => clearTimeout(fallbackTimer);
+  }, []);
+
   useEffect(() => {
     const initialize = async () => {
+      // Timeout di sicurezza: se dopo 3s non è ancora pronto, forza il completamento
+      const safetyTimeout = setTimeout(() => {
+        clientLogger.warn('⚠️ ProfileWrapper: Safety timeout reached, forcing initialization complete');
+        setIsInitializing(false);
+      }, 3000);
+      
       try {
         clientLogger.debug('🔄 ProfileWrapper: Inizializzazione...');
         
@@ -29,10 +52,10 @@ export function ProfileWrapper({ children }: ProfileWrapperProps) {
           // Setup activity tracking for session persistence con debouncing
           sessionPersistence.setupActivityTracking();
           
-          // Try to restore previous session con timeout
+          // Try to restore previous session con timeout BREVE
           const restorePromise = sessionPersistence.restoreSession();
           const timeoutPromise = new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Session restore timeout')), 1500)
+            setTimeout(() => reject(new Error('Session restore timeout')), 1000)
           );
           
           await Promise.race([restorePromise, timeoutPromise]);
@@ -40,7 +63,7 @@ export function ProfileWrapper({ children }: ProfileWrapperProps) {
           // Clean up any expired sessions
           sessionPersistence.cleanup();
           
-          // Ripristina le connessioni store dal backend Rust
+          // Ripristina le connessioni store dal backend Rust (non bloccante)
           sessionPersistence.restoreStoreConnections().catch(() => {});
           
           clientLogger.debug('✅ ProfileWrapper: Session persistence riabilitato con successo');
@@ -53,6 +76,7 @@ export function ProfileWrapper({ children }: ProfileWrapperProps) {
       } catch (error: unknown) {
         clientLogger.error('❌ ProfileWrapper: Error initializing:', error);
       } finally {
+        clearTimeout(safetyTimeout);
         clientLogger.debug('🏁 ProfileWrapper: setIsInitializing(false)');
         setIsInitializing(false);
       }
@@ -61,19 +85,19 @@ export function ProfileWrapper({ children }: ProfileWrapperProps) {
     initialize();
   }, []);
 
-  // Loading iniziale
+  // Chiudi splash quando il frontend è pronto
+  useEffect(() => {
+    if (!isInitializing) {
+      // Frontend pronto - chiudi splash e mostra main window
+      import('@tauri-apps/api/core').then(({ invoke }) => {
+        invoke('close_splash').catch(() => {});
+      }).catch(() => {});
+    }
+  }, [isInitializing]);
+
+  // Loading iniziale - non mostrare nulla, la splash Tauri è visibile
   if (isInitializing) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4 mx-auto">
-            <Loader2 className="w-8 h-8 text-white animate-spin" />
-          </div>
-          <h1 className="text-2xl font-bold text-white mb-2">GameStringer</h1>
-          <p className="text-blue-200">Inizializzazione...</p>
-        </div>
-      </div>
-    );
+    return null; // Splash Tauri è già visibile
   }
 
   // Determina se la route corrente richiede authentication
@@ -109,5 +133,6 @@ export function ProfileWrapper({ children }: ProfileWrapperProps) {
     </ProfilesProvider>
   );
 }
+
 
 

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useMemo } from 'react';
 import { useVersion } from '@/lib/version';
@@ -1072,3 +1072,4 @@ export default function GuidePage() {
     </div>
   );
 }
+

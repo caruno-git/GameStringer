@@ -150,3 +150,4 @@ describe('api convenience methods', () => {
     expect(mockFetch).toHaveBeenCalledWith('/test', expect.objectContaining({ method: 'DELETE' }));
   });
 });
+

@@ -102,3 +102,4 @@ export function cn(...classes: (string | undefined | null | false)[]): string {
 export function getContrastText(bgColor: 'light' | 'dark'): string {
   return bgColor === 'dark' ? 'text-white' : 'text-gray-900';
 }
+

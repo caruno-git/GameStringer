@@ -442,45 +442,77 @@ function CategoryCard({ category, onClick, onNewThread }: CategoryCardProps) {
   return (
     <button
       onClick={onClick}
-      className="group relative rounded-lg border border-slate-800/60 bg-slate-900/40 p-3 text-left transition-all hover:border-slate-700 hover:bg-slate-800/50"
+      className="group relative rounded-xl overflow-hidden text-left transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-violet-500/10"
     >
-      <div className="flex items-start gap-3">
-        <div className={cn('flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center', theme.iconBg)}>
-          <Icon className={cn('h-4 w-4', theme.icon)} />
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-slate-200 text-sm leading-tight truncate">
-              {t(`forum.categoryNames.${category.slug}`) || category.name}
-            </h3>
-            {category.is_locked && <Lock className="h-3 w-3 text-slate-500 flex-shrink-0" />}
+      {/* Background gradient */}
+      <div className={cn(
+        'absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300',
+        'bg-gradient-to-br',
+        category.slug === 'announcements' && 'from-rose-500/20 to-orange-500/10',
+        category.slug === 'translation-packs' && 'from-amber-500/20 to-yellow-500/10',
+        category.slug === 'help' && 'from-cyan-500/20 to-blue-500/10',
+        category.slug === 'tutorials' && 'from-violet-500/20 to-purple-500/10',
+        category.slug === 'requests' && 'from-emerald-500/20 to-green-500/10',
+        category.slug === 'showcase' && 'from-yellow-500/20 to-amber-500/10',
+        category.slug === 'off-topic' && 'from-slate-500/20 to-slate-600/10',
+        !['announcements', 'translation-packs', 'help', 'tutorials', 'requests', 'showcase', 'off-topic'].includes(category.slug) && 'from-indigo-500/20 to-violet-500/10'
+      )} />
+      
+      <div className="relative p-4 bg-slate-900/60 border border-slate-800/60 rounded-xl backdrop-blur-sm group-hover:border-slate-700/80 transition-colors">
+        <div className="flex items-start gap-4">
+          {/* Icon with glow */}
+          <div className="relative">
+            <div className={cn(
+              'absolute inset-0 rounded-xl blur-md opacity-0 group-hover:opacity-60 transition-opacity',
+              theme.iconBg
+            )} />
+            <div className={cn(
+              'relative w-12 h-12 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110',
+              theme.iconBg
+            )}>
+              <Icon className={cn('h-5 w-5', theme.icon)} />
+            </div>
           </div>
-          <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
-            {t(`forum.categoryDescriptions.${category.slug}`) || category.description || ''}
-          </p>
+          
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="font-bold text-white text-base leading-tight truncate group-hover:text-violet-100 transition-colors">
+                {t(`forum.categoryNames.${category.slug}`) || category.name}
+              </h3>
+              {category.is_locked && <Lock className="h-3.5 w-3.5 text-slate-500 flex-shrink-0" />}
+            </div>
+            <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+              {t(`forum.categoryDescriptions.${category.slug}`) || category.description || ''}
+            </p>
+          </div>
+          
+          <ChevronRight className="h-5 w-5 text-slate-600 group-hover:text-violet-400 group-hover:translate-x-1 transition-all flex-shrink-0 mt-1" />
         </div>
-        <ChevronRight className="h-4 w-4 text-slate-600 group-hover:text-slate-400 transition-colors flex-shrink-0 mt-0.5" />
-      </div>
 
-      {/* Footer */}
-      <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-800/40">
-        <div className="flex items-center gap-1.5 text-xs text-slate-500">
-          <MessageSquare className="h-3 w-3" />
-          <span>{threadCount} {threadCount === 1 ? t('forum.discussion') : (t('forum.discussions') || 'discussioni')}</span>
+        {/* Footer */}
+        <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-800/60">
+          <div className="flex items-center gap-2 text-xs">
+            <div className={cn('flex items-center gap-1.5 px-2 py-1 rounded-md', theme.iconBg)}>
+              <MessageSquare className={cn('h-3 w-3', theme.icon)} />
+              <span className={theme.accent}>{threadCount}</span>
+            </div>
+            <span className="text-slate-500">{threadCount === 1 ? t('forum.discussion') : (t('forum.discussions') || 'discussioni')}</span>
+          </div>
+          {!category.is_locked && (
+            <span
+              role="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onNewThread();
+              }}
+              className="flex items-center gap-1 px-2 py-1 rounded-md bg-violet-500/10 text-violet-400 opacity-0 group-hover:opacity-100 transition-all hover:bg-violet-500/20 text-xs font-medium"
+              title={t('forum.newThread')}
+            >
+              <Plus className="h-3 w-3" />
+              Nuovo
+            </span>
+          )}
         </div>
-        {!category.is_locked && (
-          <span
-            role="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onNewThread();
-            }}
-            className="opacity-0 group-hover:opacity-100 transition-opacity text-xs text-slate-400 hover:text-white"
-            title={t('forum.newThread')}
-          >
-            <Plus className="h-3.5 w-3.5" />
-          </span>
-        )}
       </div>
     </button>
   );
@@ -502,57 +534,72 @@ function TrendingCard({ thread, locale, onClick }: TrendingCardProps) {
   return (
     <button
       onClick={onClick}
-      className="group rounded-lg border border-slate-800/60 bg-slate-900/40 p-3 text-left transition-all hover:border-slate-700 hover:bg-slate-800/50"
+      className="group relative rounded-xl overflow-hidden text-left transition-all duration-300 hover:scale-[1.02]"
     >
-      <div className="flex items-center gap-2 mb-2">
-        {thread.is_pinned && <Pin className="h-3 w-3 text-amber-400" />}
-        {thread.is_translation_pack && (
-          <Badge className="text-2xs h-4 px-1 bg-amber-600/20 text-amber-400 leading-tight">
-            <Package className="h-2.5 w-2.5 mr-0.5" /> PACK
-          </Badge>
-        )}
-        {category && (
-          <Badge variant="outline" className={cn('text-2xs h-4 px-1 border-slate-700/50', theme.accent)}>
-            {t(`forum.categoryNames.${category.slug}`) || category.name}
-          </Badge>
-        )}
-      </div>
-
-      <h4 className="text-sm font-medium text-slate-200 group-hover:text-white transition-colors line-clamp-2 mb-2">
-        {thread.title}
-      </h4>
-
-      <div className="flex items-center justify-between text-2xs">
-        <div className="flex items-center gap-2 text-slate-500 min-w-0">
-          <Avatar className="h-4 w-4 flex-shrink-0">
-            <AvatarImage src={thread.author_avatar || undefined} />
-            <AvatarFallback className="bg-slate-700 text-[9px]">
-              {thread.author_name.charAt(0).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          <span className="truncate">{thread.author_name}</span>
-        </div>
-        <div className="flex items-center gap-2 text-slate-500 flex-shrink-0">
-          <span className="flex items-center gap-0.5">
-            <Eye className="h-3 w-3" />
-            {thread.view_count}
-          </span>
-          {thread.is_translation_pack ? (
-            <span className="flex items-center gap-0.5 text-amber-400">
-              <Download className="h-3 w-3" />
-              {thread.download_count}
-            </span>
-          ) : (
-            <span className="flex items-center gap-0.5">
-              <MessageSquare className="h-3 w-3" />
-              {thread.reply_count}
-            </span>
+      {/* Gradient background on hover */}
+      <div className="absolute inset-0 bg-gradient-to-br from-rose-500/10 via-orange-500/10 to-amber-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      
+      <div className="relative p-4 bg-slate-900/60 border border-slate-800/60 rounded-xl backdrop-blur-sm group-hover:border-rose-500/30 transition-colors h-full flex flex-col">
+        {/* Header badges */}
+        <div className="flex items-center gap-2 mb-3 flex-wrap">
+          {thread.is_pinned && (
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-2xs font-medium">
+              <Pin className="h-2.5 w-2.5" />
+              Pinned
+            </div>
+          )}
+          {thread.is_translation_pack && (
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500/30 to-orange-500/30 text-amber-300 text-2xs font-bold">
+              <Package className="h-2.5 w-2.5" />
+              PACK
+            </div>
+          )}
+          {category && (
+            <div className={cn('px-2 py-0.5 rounded-full text-2xs font-medium', theme.iconBg, theme.accent)}>
+              {t(`forum.categoryNames.${category.slug}`) || category.name}
+            </div>
           )}
         </div>
-      </div>
 
-      <div className="text-2xs text-slate-600 mt-1">
-        {formatDistanceToNow(new Date(thread.created_at), { addSuffix: true, locale })}
+        {/* Title */}
+        <h4 className="text-sm font-bold text-white group-hover:text-rose-100 transition-colors line-clamp-2 mb-3 flex-1">
+          {thread.title}
+        </h4>
+
+        {/* Author & Stats */}
+        <div className="flex items-center justify-between pt-3 border-t border-slate-800/60">
+          <div className="flex items-center gap-2 min-w-0">
+            <Avatar className="h-5 w-5 flex-shrink-0 ring-1 ring-slate-700">
+              <AvatarImage src={thread.author_avatar || undefined} />
+              <AvatarFallback className="bg-gradient-to-br from-rose-500 to-orange-500 text-[9px] text-white font-bold">
+                {thread.author_name.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <span className="text-2xs text-slate-400 truncate">{thread.author_name}</span>
+          </div>
+          <div className="flex items-center gap-3 text-2xs flex-shrink-0">
+            <span className="flex items-center gap-1 text-slate-500">
+              <Eye className="h-3 w-3" />
+              {thread.view_count}
+            </span>
+            {thread.is_translation_pack ? (
+              <span className="flex items-center gap-1 text-amber-400 font-medium">
+                <Download className="h-3 w-3" />
+                {thread.download_count}
+              </span>
+            ) : (
+              <span className="flex items-center gap-1 text-slate-500">
+                <MessageSquare className="h-3 w-3" />
+                {thread.reply_count}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Time */}
+        <div className="text-2xs text-slate-600 mt-2">
+          {formatDistanceToNow(new Date(thread.created_at), { addSuffix: true, locale })}
+        </div>
       </div>
     </button>
   );
@@ -570,75 +617,137 @@ function ThreadRow({ thread, locale, onClick }: ThreadRowProps) {
   const { t } = useTranslation();
   const category = thread.category as ForumCategory | undefined;
   const theme = category ? (CATEGORY_THEMES[category.slug] || DEFAULT_THEME) : DEFAULT_THEME;
+  const Icon = category ? (CATEGORY_ICONS[category.slug] || MessageSquare) : MessageSquare;
 
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center gap-3 p-3 rounded-xl bg-slate-900/40 border border-slate-800 hover:bg-slate-900/80 hover:border-slate-700 transition-all text-left group hover:shadow-lg hover:shadow-violet-500/5"
+      className="w-full group relative rounded-xl overflow-hidden text-left transition-all duration-200 hover:scale-[1.01]"
     >
-      <Avatar className="h-10 w-10 flex-shrink-0 ring-2 ring-slate-800 group-hover:ring-violet-500/30 transition-all">
-        <AvatarImage src={thread.author_avatar || undefined} />
-        <AvatarFallback className="bg-gradient-to-br from-slate-700 to-slate-800 text-xs text-slate-200">
-          {thread.author_name.charAt(0).toUpperCase()}
-        </AvatarFallback>
-      </Avatar>
+      {/* Hover gradient */}
+      <div className={cn(
+        'absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r',
+        thread.is_translation_pack ? 'from-amber-500/10 to-orange-500/5' : 'from-violet-500/10 to-indigo-500/5'
+      )} />
+      
+      <div className="relative flex items-center gap-4 p-4 bg-slate-900/60 border border-slate-800/60 rounded-xl backdrop-blur-sm group-hover:border-slate-700/80 transition-colors">
+        {/* Avatar with category indicator */}
+        <div className="relative flex-shrink-0">
+          <Avatar className="h-12 w-12 ring-2 ring-slate-800 group-hover:ring-violet-500/40 transition-all">
+            <AvatarImage src={thread.author_avatar || undefined} />
+            <AvatarFallback className="bg-gradient-to-br from-violet-500 to-indigo-600 text-sm text-white font-bold">
+              {thread.author_name.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          {/* Category icon badge */}
+          <div className={cn(
+            'absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center ring-2 ring-slate-900',
+            theme.iconBg
+          )}>
+            <Icon className={cn('h-2.5 w-2.5', theme.icon)} />
+          </div>
+        </div>
 
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5 flex-wrap">
-          {thread.is_pinned && <Pin className="h-3 w-3 text-amber-400 flex-shrink-0" />}
-          {thread.is_locked && <Lock className="h-3 w-3 text-red-400 flex-shrink-0" />}
-          {thread.is_solved && <CheckCircle2 className="h-3 w-3 text-emerald-400 flex-shrink-0" />}
+        <div className="flex-1 min-w-0">
+          {/* Title row with badges */}
+          <div className="flex items-center gap-2 flex-wrap mb-1">
+            {thread.is_pinned && (
+              <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 text-2xs font-medium">
+                <Pin className="h-2.5 w-2.5" />
+              </span>
+            )}
+            {thread.is_locked && (
+              <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 text-2xs">
+                <Lock className="h-2.5 w-2.5" />
+              </span>
+            )}
+            {thread.is_solved && (
+              <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-2xs font-medium">
+                <CheckCircle2 className="h-2.5 w-2.5" /> Risolto
+              </span>
+            )}
+            {thread.is_translation_pack && (
+              <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500/30 to-orange-500/30 text-amber-300 text-2xs font-bold">
+                <Package className="h-2.5 w-2.5" /> PACK
+              </span>
+            )}
+          </div>
 
-          <h3 className="text-sm font-semibold text-slate-100 group-hover:text-violet-200 transition-colors truncate">
+          <h3 className="text-sm font-bold text-white group-hover:text-violet-100 transition-colors line-clamp-1 mb-1">
             {thread.title}
           </h3>
 
-          {thread.is_translation_pack && (
-            <Badge className="text-2xs px-1.5 py-0 h-4 bg-amber-600/80 leading-tight">
-              <Package className="h-2.5 w-2.5 mr-0.5" /> {t('forum.pack')}
-            </Badge>
+          {/* Pack info */}
+          {thread.is_translation_pack && thread.pack_data && (
+            <div className="flex items-center gap-2 mb-1.5 text-xs">
+              <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-slate-800/80 text-amber-300">
+                <Gamepad2 className="h-3 w-3" />
+                {thread.pack_data.game_name}
+              </span>
+              <span className="font-mono text-2xs text-slate-400 bg-slate-800/60 px-1.5 py-0.5 rounded">
+                {thread.pack_data.source_lang} → {thread.pack_data.target_lang}
+              </span>
+              {thread.pack_data.string_count > 0 && (
+                <span className="text-slate-500 text-2xs">
+                  {thread.pack_data.string_count.toLocaleString()} stringhe
+                </span>
+              )}
+            </div>
           )}
-        </div>
 
-        {thread.is_translation_pack && thread.pack_data && (
-          <div className="flex items-center gap-2 mt-1 text-xs text-slate-400">
-            <Gamepad2 className="h-3 w-3 text-amber-400" />
-            <span className="truncate">{thread.pack_data.game_name}</span>
-            <span className="text-slate-600">•</span>
-            <span className="font-mono text-2xs">{thread.pack_data.source_lang} → {thread.pack_data.target_lang}</span>
-            {thread.pack_data.string_count > 0 && (
+          {/* Meta info */}
+          <div className="flex items-center gap-2 text-xs text-slate-500">
+            <span className="text-slate-400 font-medium">{thread.author_name}</span>
+            <span className="text-slate-700">•</span>
+            {category && (
               <>
-                <span className="text-slate-600">•</span>
-                <span>{thread.pack_data.string_count.toLocaleString()} {t('communityHub.strings').toLowerCase()}</span>
+                <span className={cn('font-medium', theme.accent)}>
+                  {t(`forum.categoryNames.${category.slug}`) || category.name}
+                </span>
+                <span className="text-slate-700">•</span>
               </>
             )}
+            <span>{formatDistanceToNow(new Date(thread.created_at), { addSuffix: true, locale })}</span>
           </div>
-        )}
-
-        <div className="flex items-center gap-2 mt-1 text-xs text-slate-500">
-          <span className="text-slate-400">{thread.author_name}</span>
-          {category && (
-            <>
-              <span className="text-slate-600">•</span>
-              <span className={cn('font-medium', theme.accent)}>{t(`forum.categoryNames.${category.slug}`) || category.name}</span>
-            </>
-          )}
-          <span className="text-slate-600">•</span>
-          <span>{formatDistanceToNow(new Date(thread.created_at), { addSuffix: true, locale })}</span>
         </div>
-      </div>
 
-      <div className="hidden sm:flex items-center gap-4 text-xs flex-shrink-0">
-        <Stat icon={MessageSquare} value={thread.reply_count} label={t('forum.replies')} />
-        <Stat icon={Eye} value={thread.view_count} label={t('forum.visits')} />
-        {thread.is_translation_pack ? (
-          <Stat icon={Download} value={thread.download_count} label={t('forum.downloads')} accent="text-amber-400" />
-        ) : (
-          <Stat icon={Heart} value={thread.like_count} label={t('forum.likes')} accent="text-rose-400" />
-        )}
-      </div>
+        {/* Stats */}
+        <div className="hidden sm:flex items-center gap-3 flex-shrink-0">
+          <div className="flex flex-col items-center px-3 py-2 rounded-lg bg-slate-800/50">
+            <div className="flex items-center gap-1 text-slate-300 font-bold text-sm">
+              <MessageSquare className="h-3.5 w-3.5" />
+              {thread.reply_count}
+            </div>
+            <span className="text-2xs text-slate-500 uppercase">{t('forum.replies')}</span>
+          </div>
+          <div className="flex flex-col items-center px-3 py-2 rounded-lg bg-slate-800/50">
+            <div className="flex items-center gap-1 text-slate-300 font-bold text-sm">
+              <Eye className="h-3.5 w-3.5" />
+              {thread.view_count}
+            </div>
+            <span className="text-2xs text-slate-500 uppercase">{t('forum.visits')}</span>
+          </div>
+          {thread.is_translation_pack ? (
+            <div className="flex flex-col items-center px-3 py-2 rounded-lg bg-amber-500/10">
+              <div className="flex items-center gap-1 text-amber-400 font-bold text-sm">
+                <Download className="h-3.5 w-3.5" />
+                {thread.download_count}
+              </div>
+              <span className="text-2xs text-amber-500/70 uppercase">{t('forum.downloads')}</span>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center px-3 py-2 rounded-lg bg-rose-500/10">
+              <div className="flex items-center gap-1 text-rose-400 font-bold text-sm">
+                <Heart className="h-3.5 w-3.5" />
+                {thread.like_count}
+              </div>
+              <span className="text-2xs text-rose-500/70 uppercase">{t('forum.likes')}</span>
+            </div>
+          )}
+        </div>
 
-      <ChevronRight className="h-4 w-4 text-slate-600 group-hover:text-violet-400 group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+        <ChevronRight className="h-5 w-5 text-slate-600 group-hover:text-violet-400 group-hover:translate-x-1 transition-all flex-shrink-0" />
+      </div>
     </button>
   );
 }
@@ -729,3 +838,4 @@ function ThreadListSkeleton() {
 // ─── HELPERS ────────────────────────────────────────────────────────────────
 
 type Locale = typeof it;
+

@@ -13,3 +13,4 @@ declare module '@node-steam/vdf' {
    */
   export function stringify(obj: object): string;
 }
+

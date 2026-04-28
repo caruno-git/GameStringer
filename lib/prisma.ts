@@ -76,3 +76,4 @@ process.on('beforeExit', async () => {
 
 // Export health monitoring functions
 export { createDatabaseHealthMonitor, getDatabaseHealthMonitor } from './database-health';
+

@@ -186,3 +186,4 @@ export function RssTicker({ className = '' }: RssTickerProps) {
 }
 
 export default RssTicker;
+

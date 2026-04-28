@@ -21,7 +21,8 @@ import {
   Users, 
   Settings,
   Database,
-  ArrowRight
+  ArrowRight,
+  Gamepad2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n';
@@ -33,6 +34,15 @@ interface SearchItem {
   icon: React.ElementType;
   path: string;
   category: 'navigation' | 'tool' | 'game';
+  image?: string;
+}
+
+interface LibraryGame {
+  id: string;
+  title: string;
+  platform?: string;
+  image?: string;
+  appId?: string;
 }
 
 const navigationItems: SearchItem[] = [
@@ -60,12 +70,47 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
   const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [games, setGames] = useState<LibraryGame[]>([]);
   const router = useRouter();
 
-  const filteredItems = navigationItems.filter(item => 
+  // Load games from library cache on mount
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const cached = sessionStorage.getItem('gs_library_games');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed)) {
+          setGames(parsed.slice(0, 500)); // Limit to 500 games for performance
+        }
+      }
+    } catch {}
+  }, [open]);
+
+  // Convert games to search items
+  const gameItems: SearchItem[] = games
+    .filter(g => g.title?.toLowerCase().includes(query.toLowerCase()))
+    .slice(0, 10) // Max 10 game results
+    .map(g => ({
+      id: `game_${g.id}`,
+      title: g.title,
+      description: g.platform || 'Game',
+      icon: Gamepad2,
+      path: `/library/${g.id}`,
+      category: 'game' as const,
+      image: g.image || undefined
+    }));
+
+  // Filter navigation items
+  const navItems = navigationItems.filter(item => 
     item.title.toLowerCase().includes(query.toLowerCase()) ||
     item.description.toLowerCase().includes(query.toLowerCase())
   );
+
+  // Combine: nav items first, then games (only if query is not empty)
+  const filteredItems = query.length >= 2 
+    ? [...navItems, ...gameItems]
+    : navItems;
 
   const handleSelect = useCallback((item: SearchItem) => {
     router.push(item.path);
@@ -126,38 +171,62 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
           </kbd>
         </div>
         
-        <ScrollArea className="max-h-[300px]">
+        <ScrollArea className="max-h-[400px]">
           {filteredItems.length === 0 ? (
             <div className="py-6 text-center text-sm text-muted-foreground">
-              No results per &quot;{query}&quot;
+              {query.length < 2 ? 'Type at least 2 characters to search games...' : `No results for "${query}"`}
             </div>
           ) : (
             <div className="p-2">
+              {/* Show category labels */}
+              {navItems.length > 0 && query.length >= 2 && (
+                <div className="px-3 py-1 text-2xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Pages
+                </div>
+              )}
               {filteredItems.map((item, index) => {
                 const Icon = item.icon;
+                const isGame = item.category === 'game';
+                const showGameLabel = isGame && index === navItems.length && gameItems.length > 0;
+                
                 return (
-                  <button
-                    key={item.id}
-                    onClick={() => handleSelect(item)}
-                    className={cn(
-                      "flex items-center gap-3 w-full px-3 py-2 rounded-lg text-left transition-colors",
-                      index === selectedIndex 
-                        ? "bg-accent text-accent-foreground" 
-                        : "hover:bg-muted"
+                  <div key={item.id}>
+                    {showGameLabel && (
+                      <div className="px-3 py-1 mt-2 text-2xs font-medium text-muted-foreground uppercase tracking-wider border-t pt-2">
+                        🎮 Games ({gameItems.length})
+                      </div>
                     )}
-                  >
-                    <div className={cn(
-                      "flex items-center justify-center w-8 h-8 rounded-lg",
-                      index === selectedIndex ? "bg-primary/20" : "bg-muted"
-                    )}>
-                      <Icon className="h-4 w-4" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{item.title}</p>
-                      <p className="text-xs text-muted-foreground truncate">{item.description}</p>
-                    </div>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100" />
-                  </button>
+                    <button
+                      onClick={() => handleSelect(item)}
+                      className={cn(
+                        "flex items-center gap-3 w-full px-3 py-2 rounded-lg text-left transition-colors",
+                        index === selectedIndex 
+                          ? "bg-accent text-accent-foreground" 
+                          : "hover:bg-muted"
+                      )}
+                    >
+                      {isGame && item.image ? (
+                        <img 
+                          src={item.image} 
+                          alt={item.title}
+                          className="w-10 h-10 rounded-lg object-cover"
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                        />
+                      ) : (
+                        <div className={cn(
+                          "flex items-center justify-center w-8 h-8 rounded-lg shrink-0",
+                          isGame ? "bg-purple-500/20" : (index === selectedIndex ? "bg-primary/20" : "bg-muted")
+                        )}>
+                          <Icon className={cn("h-4 w-4", isGame && "text-purple-400")} />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{item.title}</p>
+                        <p className="text-xs text-muted-foreground truncate">{item.description}</p>
+                      </div>
+                      <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100" />
+                    </button>
+                  </div>
                 );
               })}
             </div>
@@ -182,6 +251,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
     </Dialog>
   );
 }
+
 
 
 

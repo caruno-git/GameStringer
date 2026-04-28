@@ -383,3 +383,4 @@ function InsightCard({
 }
 
 export default GlobalProgressWidget;
+

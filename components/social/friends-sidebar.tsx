@@ -581,3 +581,4 @@ export function FriendsSidebar({
     </DndContext>
   );
 }
+

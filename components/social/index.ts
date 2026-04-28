@@ -10,3 +10,4 @@ export { OnlineUsersWidget, OnlineIndicator } from './online-users-widget';
 export { AddFriendDialog } from './add-friend-dialog';
 export { ChatPanel } from './chat-panel';
 export { SocialOnboarding, ResetOnboardingButton } from './social-onboarding';
+

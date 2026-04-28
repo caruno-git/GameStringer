@@ -40,3 +40,4 @@ export function applyQualityHistory(chain: string[], targetLang: string): string
     return bScore - aScore; // Ordine decrescente
   });
 }
+

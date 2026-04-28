@@ -128,3 +128,4 @@ export function formatRecoveryKeyForDisplay(words: string[]): string[][] {
   }
   return groups;
 }
+

@@ -1,5 +1,5 @@
 import { AgenticTranslator } from './agentic-translator';
-import { type BatchHarvestResult, type HarvestInput } from './context-harvester';
+import { type BatchHarvestResult, type HarvestInput } from '@/lib/context-harvester';
 import { type GameGenre } from './genre-prompts';
 import { clientLogger } from '@/lib/client-logger';
 
@@ -11,30 +11,30 @@ import {
   PROVIDER_LABELS,
   OLLAMA_PROVIDERS,
   API_KEY_URLS,
-} from './translation/language-mappings';
+} from '@/lib/translation/language-mappings';
 import {
   blockProvider,
   isProviderBlocked,
   FREE_PROVIDERS,
   LANG_SENSITIVE_PROVIDERS,
   setCooldown,
-} from './translation/provider-blocking';
+} from '@/lib/translation/provider-blocking';
 import {
   type ChainPreset,
   CHAIN_PRESETS,
   getActiveChainPreset,
   getAutoProviderChain as _getAutoProviderChain,
-} from './translation/chain-presets';
+} from '@/lib/translation/chain-presets';
 import {
   recordProviderQuality,
   applyQualityHistory,
-} from './translation/provider-quality-tracker';
-import { buildTranslationPrompt } from './translation/prompt-builder';
+} from '@/lib/translation/provider-quality-tracker';
+import { buildTranslationPrompt } from '@/lib/translation/prompt-builder';
 
 // Re-export everything for backwards compatibility
-export { resetProviderBlocks } from './translation/provider-blocking';
-export { type ChainPreset, type ChainPresetInfo, CHAIN_PRESETS, setChainPreset, getChainPreset } from './translation/chain-presets';
-export { recordProviderQuality } from './translation/provider-quality-tracker';
+export { resetProviderBlocks } from '@/lib/translation/provider-blocking';
+export { type ChainPreset, type ChainPresetInfo, CHAIN_PRESETS, setChainPreset, getChainPreset } from '@/lib/translation/chain-presets';
+export { recordProviderQuality } from '@/lib/translation/provider-quality-tracker';
 
 /**
  * AI Translation - Chiamate dirette API (NO API routes Next.js)
@@ -1775,7 +1775,7 @@ export async function translateWithFallback(
   // Auto-inject TM RAG context se non già presente (lazy import per evitare circular dep)
   if (!opts.tmContext && opts.texts.length > 0 && opts.texts.length <= 50) {
     try {
-      const { translationMemory } = await import('./translation-memory');
+      const { translationMemory } = await import('@/lib/translation-memory');
       await translationMemory.initialize(opts.sourceLanguage || 'en', opts.targetLanguage);
       const tmCtx = translationMemory.getRelevantTMContext(opts.texts, {
         maxPerText: 2,
@@ -1794,7 +1794,7 @@ export async function translateWithFallback(
   // Auto-lookup shared TM Network for pre-translated strings
   if (opts.texts.length > 0 && opts.texts.length <= 100) {
     try {
-      const { lookupSharedTM, getTMNetworkConfig } = await import('./tm-network');
+      const { lookupSharedTM, getTMNetworkConfig } = await import('@/lib/tm-network');
       const tmConfig = getTMNetworkConfig();
       if (tmConfig.enabled && tmConfig.pullOnTranslate) {
         const shared = await lookupSharedTM(
@@ -2570,3 +2570,4 @@ export async function translateSingleSmart(
     comparison: result.comparison,
   };
 }
+

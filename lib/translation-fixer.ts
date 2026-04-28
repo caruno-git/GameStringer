@@ -333,3 +333,4 @@ export function detectGameType(issues: TranslationIssue[]): string {
   
   return 'unknown';
 }
+

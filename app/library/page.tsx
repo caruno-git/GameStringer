@@ -429,7 +429,7 @@ function LibraryListView() {
   const { t, language } = useTranslation();
   const lib = translations[language]?.library || translations.it.library;
   const [games, setGames] = useState<Game[]>(_libCache.games.loaded ? _libCache.games.data : []);
-  const [isLoading, setIsLoading] = useState(!_libCache.games.loaded);
+  const [isLoading, setIsLoading] = useState(false); // Start false, show UI immediately
   const [coverCache, setCoverCache] = useState<Record<string, string>>({});
   const [showDryRun, setShowDryRun] = useState(false);
   const libraryLoadedRef = React.useRef(false);
@@ -702,13 +702,8 @@ function LibraryListView() {
           setGamesWithValidation(cachedGames);
           setIsLoading(false);
           
-          // Se la cache manca di giochi non-Steam, forza revalidate (cache incompleta)
-          const hasNonSteamGames = cachedGames.some(g => g.platform !== 'Steam');
-          if (!hasNonSteamGames || epicCount <= 1) {
-            clientLogger.debug(`⚠️ Cache incompleta (Epic: ${epicCount}, nonSteam: ${hasNonSteamGames}), forzo revalidate...`);
-            fetchGames();
-            return;
-          }
+          // Solo se cache è veramente vecchia (>24h) forza revalidate
+          // Non forzare più per "cache incompleta" - l'utente potrebbe non avere Epic/GOG
           
           if (cacheAge < CACHE_FRESH_TTL_MS) {
             // Cache fresca (<15min): nessun aggiornamento necessario
@@ -718,7 +713,7 @@ function LibraryListView() {
           
           // Cache stale (>15min): aggiorna in background senza bloccare UI
           clientLogger.debug(`🔄 Cache stale (${Math.round(cacheAge/1000)}s), revalidate in background...`);
-          fetchGames(); // Aggiorna in background, UI già visibile
+          fetchGames(true); // background=true, no loading spinner
           return;
         }
       } catch (e: unknown) {
@@ -729,10 +724,10 @@ function LibraryListView() {
       fetchGames();
     };
 
-    const fetchGames = async () => {
+    const fetchGames = async (background = false) => {
       try {
-        // Non mostrare loading spinner se ci sono già giochi visibili (revalidate in background)
-        if (!games || games.length === 0) {
+        // Non mostrare loading spinner se background revalidate
+        if (!background) {
           setIsLoading(true);
         }
         const t0 = performance.now();
@@ -1895,6 +1890,7 @@ function LibraryListView() {
     </div>
   );
 }
+
 
 
 

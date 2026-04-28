@@ -14,7 +14,7 @@ import { Download, X } from 'lucide-react';
 import { open } from '@tauri-apps/plugin-shell';
 import { toast } from 'sonner';
 import { useTranslation } from '@/lib/i18n';
-import { notifyAppUpdate } from '@/lib/notifications/notifications/tray-notifications';
+import { notifyAppUpdate } from '@/lib/notifications/tray-notifications';
 
 export function UpdateBell() {
   const { t } = useTranslation();
@@ -206,3 +206,4 @@ export function UpdateBell() {
     </Popover>
   );
 }
+

@@ -95,3 +95,4 @@ test.describe('Navigation - Error Handling', () => {
     expect(realErrors.length).toBeLessThanOrEqual(5);
   });
 });
+

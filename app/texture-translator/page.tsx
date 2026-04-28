@@ -8,3 +8,4 @@ export default function TextureTranslatorPage() {
   const { t: _t } = useTranslation();
   return <TextureTranslator />;
 }
+

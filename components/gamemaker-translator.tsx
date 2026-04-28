@@ -642,3 +642,4 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
     </div>
   );
 }
+

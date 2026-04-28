@@ -20,7 +20,7 @@ import { safeInvoke as invoke } from '@/lib/tauri-wrapper';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n';
 import { detectStrategy, getAlternativeStrategies, type TranslationStrategy, type GameContext } from '@/lib/wizard-strategies';
-import { findCommunityTranslation } from '@/lib/social/social/community-translations';
+import { findCommunityTranslation } from '@/lib/social/community-translations';
 import { translateSmart } from '@/lib/ai/ai-translate-direct';
 import { extractStringsFromBuffer, fitToByteLength, applyPatch, detectAntiCheat, detectLanguage } from '@/lib/patchers/binary-string-patcher';
 import { clientLogger } from '@/lib/client-logger';
@@ -2554,6 +2554,7 @@ export default function TranslationWizardPage() {
     </div>
   );
 }
+
 
 
 

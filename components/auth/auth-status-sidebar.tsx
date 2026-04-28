@@ -1,6 +1,6 @@
 'use client';
 
-import { useProfileAuth } from '@/lib/auth/auth/profile-auth';
+import { useProfileAuth } from '@/lib/auth/profile-auth';
 import {
   Shield,
   ShieldCheck,
@@ -215,5 +215,6 @@ export function AuthStatusSidebar({ isExpanded }: AuthStatusSidebarProps) {
     </div>
   );
 }
+
 
 

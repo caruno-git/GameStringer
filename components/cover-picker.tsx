@@ -847,3 +847,4 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
 }
 
 export default CoverPicker;
+

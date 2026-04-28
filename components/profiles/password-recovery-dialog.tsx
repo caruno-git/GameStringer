@@ -17,6 +17,7 @@ import {
   isValidRecoveryKeyFormat, 
   verifyProfileRecoveryKey 
 } from '@/lib/recovery-key';
+import { useTranslation } from '@/lib/i18n';
 
 interface PasswordRecoveryDialogProps {
   open: boolean;
@@ -33,6 +34,7 @@ export function PasswordRecoveryDialog({
   profileName,
   profileId,
 }: PasswordRecoveryDialogProps) {
+  const { t } = useTranslation();
   const [step, setStep] = useState<RecoveryStep>('key');
   const [recoveryKeyInput, setRecoveryKeyInput] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -105,7 +107,7 @@ export function PasswordRecoveryDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 border-purple-500/30">
+      <DialogContent className="sm:max-w-md bg-slate-900/60 backdrop-blur-2xl border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.5)] p-6">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-white">
             {step === 'success' ? (
@@ -113,14 +115,14 @@ export function PasswordRecoveryDialog({
             ) : (
               <KeyRound className="h-5 w-5 text-purple-400" />
             )}
-            {step === 'key' && 'Recover Password'}
-            {step === 'newPassword' && 'New Password'}
-            {step === 'success' && 'Password Reset'}
+            {step === 'key' && t('profile.recoveryKey')}
+            {step === 'newPassword' && t('profile.newPassword')}
+            {step === 'success' && t('profile.passwordReset')}
           </DialogTitle>
           <DialogDescription className="text-gray-400">
-            {step === 'key' && `Enter your 12-word recovery key for ${profileName || 'this profile'}`}
-            {step === 'newPassword' && 'Choose a new secure password'}
-            {step === 'success' && 'Your password has been reset successfully'}
+            {step === 'key' && `${t('profile.enterKeyDesc')} ${profileName || t('profile.thisProfile')}`}
+            {step === 'newPassword' && t('profile.chooseNewPassword')}
+            {step === 'success' && t('profile.passwordResetSuccess')}
           </DialogDescription>
         </DialogHeader>
 

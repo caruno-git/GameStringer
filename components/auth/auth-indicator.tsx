@@ -1,6 +1,6 @@
 'use client';
 
-import { useProfileAuth } from '@/lib/auth/auth/profile-auth';
+import { useProfileAuth } from '@/lib/auth/profile-auth';
 import { Badge } from '@/components/ui/badge';
 import { Shield, ShieldAlert, ShieldCheck, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -88,5 +88,6 @@ export function AuthIndicator({ showDetails = false, className }: AuthIndicatorP
     </div>
   );
 }
+
 
 

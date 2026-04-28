@@ -724,3 +724,4 @@ export const categoryMeta: Record<string, { label: string; color: string }> = {
   tools: { label: 'Strumenti', color: 'emerald' },
   resources: { label: 'Risorse', color: 'orange' },
 };
+

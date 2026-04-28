@@ -12,7 +12,7 @@
  * - Priorità traduzione
  */
 
-import { classifyContent, ContentClassification, ContentType } from './content-classifier';
+import { classifyContent, ContentClassification, ContentType } from '@/lib/ai/content-classifier';
 import { clientLogger } from '@/lib/client-logger';
 
 // ============================================================================
@@ -1211,3 +1211,4 @@ export function deleteHarvest(gameId: string): void {
     localStorage.setItem(HARVEST_STORAGE_KEY, JSON.stringify(allHarvests));
   } catch {}
 }
+

@@ -217,3 +217,4 @@ class TranslationHubEngine {
 }
 
 export const translationHub = typeof window !== 'undefined' ? new TranslationHubEngine() : null;
+

@@ -189,3 +189,4 @@ export async function migrateFromLocalStorage(): Promise<number> {
 
   return migrated;
 }
+

@@ -38,7 +38,7 @@ export {
   type QualityOptions,
   type LengthValidation,
   type BatchQualityResult,
-} from '../quality-gates';
+} from '@/lib/quality/quality-gates';
 
 // Content Classification
 export {
@@ -53,7 +53,7 @@ export {
   type TranslationRoute,
   type ContentClassification,
   type BatchClassificationResult,
-} from '../content-classifier';
+} from '@/lib/ai/content-classifier';
 
 // Batch Processing
 export {
@@ -69,7 +69,7 @@ export {
   type BatchProgress,
   type BatchOptions,
   type BatchResults,
-} from '../batch-translator';
+} from '@/lib/batch/batch-translator';
 
 // File Parsers
 export {
@@ -107,7 +107,7 @@ export {
 // ============================================================================
 
 import { parseFile, writeFile, ParseResult, SUPPORTED_FORMATS } from '../file-parsers';
-import { BatchTranslator, BatchOptions, BatchProgress, BatchTranslationJob, BatchTranslationItem } from '../batch-translator';
+import { BatchTranslator, BatchOptions, BatchProgress, BatchTranslationJob, BatchTranslationItem } from '@/lib/batch/batch-translator';
 import { translationMemory } from '../translation-memory';
 import { clientLogger } from '@/lib/client-logger';
 
@@ -223,3 +223,4 @@ export function getSystemStats(): {
     supportedFormats: SUPPORTED_FORMATS
   };
 }
+

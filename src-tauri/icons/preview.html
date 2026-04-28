@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GameStringer - Nuove Icone</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      color: white;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #8b5cf6, #22d3ee);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .subtitle {
+      color: #94a3b8;
+      margin-bottom: 40px;
+    }
+    
+    .icons-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      max-width: 1200px;
+    }
+    
+    @media (max-width: 900px) {
+      .icons-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    @media (max-width: 600px) {
+      .icons-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .icon-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 30px;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .icon-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(139, 92, 246, 0.5);
+      transform: translateY(-5px);
+    }
+    
+    .icon-card.selected {
+      border-color: #8b5cf6;
+      background: rgba(139, 92, 246, 0.1);
+      box-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+    }
+    
+    .icon-wrapper {
+      width: 180px;
+      height: 180px;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(34, 211, 238, 0.1));
+    }
+    
+    .icon-wrapper svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));
+    }
+    
+    .icon-label {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .icon-desc {
+      font-size: 0.9rem;
+      color: #64748b;
+      max-width: 200px;
+    }
+    
+    .sizes-preview {
+      margin-top: 40px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .size-item {
+      text-align: center;
+    }
+    
+    .size-icon {
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    
+    .size-label {
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+    
+    .actions {
+      margin-top: 40px;
+      display: flex;
+      gap: 16px;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+    }
+    
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .selected-badge {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 4px 12px;
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <h1>🎮 Nuove Icone GameStringer</h1>
+  <p class="subtitle">Clicca su un'icona per selezionarla e generare i PNG</p>
+  
+  <div class="icons-grid" id="iconsGrid">
+    <!-- Icons will be loaded here -->
+  </div>
+  
+  <div class="actions">
+    <button class="btn btn-primary" onclick="generateSelected()" id="generateBtn">
+      ✨ Genera PNG dall'icona selezionata
+    </button>
+    <button class="btn btn-secondary" onclick="openInFinder()">
+      📂 Apri cartella icone
+    </button>
+  </div>
+  
+  <p id="selectedText" style="margin-top: 20px; color: #8b5cf6; font-weight: 500;"></p>
+  
+  <script>
+    const icons = [
+      { id: 'detailed', file: 'icon-new.svg', name: 'Dettagliata', desc: 'Gamepad con bottoni, glow effect' },
+      { id: 'minimal', file: 'icon-minimal.svg', name: 'Minimal', desc: 'G stilizzata, design pulito' },
+      { id: '3d', file: 'icon-3d.svg', name: '3D', desc: 'Effetto tridimensionale, realistico' },
+      { id: 'neon', file: 'icon-neon.svg', name: 'Neon', desc: 'Stile cyberpunk, bagliore' },
+      { id: 'flat', file: 'icon-flat.svg', name: 'Flat', desc: 'Material design, colori solidi' },
+      { id: 'glass', file: 'icon-glass.svg', name: 'Glass', desc: 'Effetto vetro, trasparenza' },
+    ];
+    
+    let selectedId = null;
+    
+    async function loadSVGs() {
+      const grid = document.getElementById('iconsGrid');
+      
+      for (const icon of icons) {
+        try {
+          const svg = await fetch(icon.file).then(r => r.text());
+          const card = document.createElement('div');
+          card.className = 'icon-card';
+          card.id = `card-${icon.id}`;
+          card.onclick = () => selectIcon(icon.id);
+          card.innerHTML = `
+            <div class="icon-wrapper">${svg}</div>
+            <div class="icon-label">${icon.name}</div>
+            <div class="icon-desc">${icon.desc}</div>
+            <div class="selected-badge hidden" id="badge-${icon.id}">✓ Selezionata</div>
+          `;
+          grid.appendChild(card);
+        } catch (e) {
+          console.error(`Error loading ${icon.file}:`, e);
+        }
+      }
+    }
+    
+    function selectIcon(id) {
+      // Remove previous selection
+      document.querySelectorAll('.icon-card').forEach(c => c.classList.remove('selected'));
+      document.querySelectorAll('.selected-badge').forEach(b => b.classList.add('hidden'));
+      
+      // Add new selection
+      selectedId = id;
+      document.getElementById(`card-${id}`).classList.add('selected');
+      document.getElementById(`badge-${id}`).classList.remove('hidden');
+      
+      const icon = icons.find(i => i.id === id);
+      document.getElementById('selectedText').textContent = `Selezionata: ${icon.name}`;
+    }
+    
+    function generateSelected() {
+      if (!selectedId) {
+        alert('Seleziona prima un\'icona cliccandola!');
+        return;
+      }
+      const icon = icons.find(i => i.id === selectedId);
+      
+      // Update script to use selected icon
+      alert(`Generazione icone da: ${icon.file}\n\nOra esegui nel terminale:\nnpm run icons:generate\n\nOppure modifica scripts/generate-icons.js\nper usare: ${icon.file}`);
+    }
+    
+    function openInFinder() {
+      // This won't work in browser but shows the intention
+      alert('Cartella: src-tauri/icons/');
+    }
+    
+    loadSVGs();
+  </script>
+</body>
+</html>

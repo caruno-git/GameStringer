@@ -86,7 +86,7 @@ import { TutorialOverlay } from '@/components/tutorial/tutorial-overlay';
 import { TutorialMenu } from '@/components/tutorial/tutorial-menu';
 import { useTranslation } from '@/lib/i18n';
 import { useScreen } from '@/components/providers/screen-provider';
-import { isChatEnabled, autoSyncGSToSupabase } from '@/lib/social/social/community-chat';
+import { isChatEnabled, autoSyncGSToSupabase } from '@/lib/social/community-chat';
 import { clientLogger } from '@/lib/client-logger';
 
 // Lazy-loaded components for code splitting
@@ -101,8 +101,8 @@ const BackgroundJobsWidget = lazy(() => import('@/components/translator/backgrou
 
 // Minimal Suspense fallback
 const LazyFallback = () => null;
-import { initPresence, goOffline } from '@/lib/social/social/presence';
-import { notifyChatMessage, clearTrayNotifications, updateTrayTooltip } from '@/lib/notifications/notifications/tray-notifications';
+import { initPresence, goOffline } from '@/lib/social/presence';
+import { notifyChatMessage, clearTrayNotifications, updateTrayTooltip } from '@/lib/notifications/tray-notifications';
 import { WidgetErrorBoundary } from '@/components/error-boundary';
 import { initNetworkMonitor, stopNetworkMonitor } from '@/lib/network-resilience';
 import { NetworkStatusBar } from '@/components/layout/network-status-bar';
@@ -238,6 +238,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchFocused, setSearchFocused] = useState(false);
+  const [libraryGames, setLibraryGames] = useState<Array<{ id: string; title: string; header_image?: string; platform?: string }>>([]);
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
   const [expandedSubMenus, setExpandedSubMenus] = useState<string[]>([]);
   const [exitDialogOpen, setExitDialogOpen] = useState(false);
@@ -357,6 +358,53 @@ export function MainLayout({ children }: MainLayoutProps) {
       stopNetworkMonitor();
       window.removeEventListener('gs-chat-message', handleChatMessage);
       clearTrayNotifications().catch(() => {});
+    };
+  }, []);
+
+  // Load library games at app startup for global search
+  useEffect(() => {
+    const loadGames = async () => {
+      try {
+        const { get, set } = await import('idb-keyval');
+        const cached = await get<Array<{ id: string; title: string; header_image?: string; platform?: string }>>('gs_library_games');
+        
+        if (cached && Array.isArray(cached) && cached.length > 0) {
+          // Cache found - use it immediately
+          const valid = cached.filter(g => g && g.title && typeof g.title === 'string');
+          setLibraryGames(valid.slice(0, 500));
+          clientLogger.debug(`[MainLayout] ⚡ Libreria caricata da cache: ${valid.length} giochi`);
+        } else {
+          // No cache - scan library in background at startup
+          clientLogger.debug('[MainLayout] 🔄 Nessuna cache libreria, avvio scan in background...');
+          try {
+            const { invoke } = await import('@tauri-apps/api/core');
+            const games = await invoke('scan_all_steam_games_fast') as Array<{ id: string; title: string; header_image?: string; platform?: string }>;
+            if (games && Array.isArray(games) && games.length > 0) {
+              const valid = games.filter(g => g && g.title && typeof g.title === 'string');
+              setLibraryGames(valid.slice(0, 500));
+              // Save to cache for next time
+              await set('gs_library_games', games);
+              await set('lastSteamScan', new Date().toISOString());
+              clientLogger.debug(`[MainLayout] ✅ Libreria scansionata e salvata: ${valid.length} giochi`);
+              // Notify other components
+              window.dispatchEvent(new CustomEvent('gs-library-updated'));
+            }
+          } catch (e) {
+            clientLogger.warn('[MainLayout] Scan libreria fallito:', e);
+          }
+        }
+      } catch {}
+    };
+    
+    // Load immediately at startup
+    loadGames();
+    
+    // Re-check when library updates
+    const handleUpdate = () => loadGames();
+    window.addEventListener('gs-library-updated', handleUpdate);
+    
+    return () => {
+      window.removeEventListener('gs-library-updated', handleUpdate);
     };
   }, []);
 
@@ -832,8 +880,10 @@ export function MainLayout({ children }: MainLayoutProps) {
                   onFocus={() => setSearchFocused(true)}
                   onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' && searchQuery.trim()) {
-                      setSearchOpen(true);
+                    if (e.key === 'Escape') {
+                      setSearchQuery('');
+                      setSearchFocused(false);
+                      (e.target as HTMLInputElement).blur();
                     }
                   }}
                   className="h-10 pl-9 pr-3 bg-slate-900/50 border-slate-700/50 hover:bg-slate-800/50 hover:border-slate-600/80 focus:bg-slate-800/50 focus:border-indigo-500/50 rounded-xl text-sm text-slate-300 placeholder:text-slate-500 transition-all"
@@ -848,11 +898,14 @@ export function MainLayout({ children }: MainLayoutProps) {
                 )}
               </div>
               
-              {/* Dropdown risultati ricerca */}
+              {/* Dropdown risultati ricerca inline */}
               {searchFocused && searchQuery.trim() && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900/95 backdrop-blur-xl border border-slate-700/50 rounded-xl shadow-2xl overflow-hidden z-50">
-                  <ScrollArea className="max-h-[300px]">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900/95 backdrop-blur-xl border border-slate-700/50 rounded-xl shadow-2xl overflow-hidden z-50 w-[400px]">
+                  <ScrollArea className="max-h-[400px]">
                     {(() => {
+                      const q = searchQuery.toLowerCase();
+                      
+                      // Navigation items
                       const navigationItems = [
                         { id: 'dashboard', title: t('nav.dashboard'), description: t('commandPalette.dashboardDesc'), icon: Home, path: '/' },
                         { id: 'library', title: t('nav.library'), description: t('commandPalette.libraryDesc'), icon: Library, path: '/library' },
@@ -870,12 +923,18 @@ export function MainLayout({ children }: MainLayoutProps) {
                         { id: 'settings', title: t('nav.settings'), description: t('commandPalette.settingsDesc'), icon: Settings, path: '/settings' },
                       ];
                       
-                      const filtered = navigationItems.filter(item => 
-                        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        item.description.toLowerCase().includes(searchQuery.toLowerCase())
-                      );
+                      const filteredNav = navigationItems.filter(item => 
+                        item.title.toLowerCase().includes(q) || item.description.toLowerCase().includes(q)
+                      ).slice(0, 5);
                       
-                      if (filtered.length === 0) {
+                      // Games from library (search with 2+ chars)
+                      const filteredGames = q.length >= 2 
+                        ? libraryGames.filter(g => g.title && g.title.toLowerCase().includes(q)).slice(0, 8)
+                        : [];
+                      
+                      const hasResults = filteredNav.length > 0 || filteredGames.length > 0;
+                      
+                      if (!hasResults) {
                         return (
                           <div className="py-6 text-center text-sm text-slate-500">
                             {t('commandPalette.noResults')} &quot;{searchQuery}&quot;
@@ -885,29 +944,72 @@ export function MainLayout({ children }: MainLayoutProps) {
                       
                       return (
                         <div className="p-2">
-                          {filtered.map((item) => {
-                            const Icon = item.icon;
-                            return (
-                              <Link
-                                key={item.id}
-                                href={item.path}
-                                onClick={() => {
-                                  setSearchQuery('');
-                                  setSearchFocused(false);
-                                }}
-                                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/50 transition-colors group"
-                              >
-                                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800/50 group-hover:bg-indigo-500/20">
-                                  <Icon className="h-4 w-4 text-slate-400 group-hover:text-indigo-400" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium text-slate-200 truncate">{item.title}</p>
-                                  <p className="text-xs text-slate-500 truncate">{item.description}</p>
-                                </div>
-                                <ArrowRight className="h-4 w-4 text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity" />
-                              </Link>
-                            );
-                          })}
+                          {/* Pages section */}
+                          {filteredNav.length > 0 && (
+                            <>
+                              <div className="px-3 py-1.5 text-xs font-medium text-slate-500 uppercase tracking-wider">Pagine</div>
+                              {filteredNav.map((item) => {
+                                const Icon = item.icon;
+                                return (
+                                  <Link
+                                    key={item.id}
+                                    href={item.path}
+                                    onClick={() => { setSearchQuery(''); setSearchFocused(false); }}
+                                    className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/50 transition-colors group"
+                                  >
+                                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800/50 group-hover:bg-indigo-500/20">
+                                      <Icon className="h-4 w-4 text-slate-400 group-hover:text-indigo-400" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-sm font-medium text-slate-200 truncate">{item.title}</p>
+                                      <p className="text-xs text-slate-500 truncate">{item.description}</p>
+                                    </div>
+                                  </Link>
+                                );
+                              })}
+                            </>
+                          )}
+                          
+                          {/* Games section */}
+                          {filteredGames.length > 0 && (
+                            <>
+                              <div className="px-3 py-1.5 text-xs font-medium text-emerald-500 uppercase tracking-wider mt-2 flex items-center gap-1.5">
+                                <Gamepad2 className="h-3 w-3" /> Giochi ({filteredGames.length})
+                              </div>
+                              {filteredGames.map((game) => (
+                                <Link
+                                  key={game.id}
+                                  href={`/library/${game.id}`}
+                                  onClick={() => { setSearchQuery(''); setSearchFocused(false); }}
+                                  className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-emerald-500/10 transition-colors group"
+                                >
+                                  {game.header_image ? (
+                                    <img 
+                                      src={game.header_image} 
+                                      alt={game.title}
+                                      className="w-10 h-10 rounded-lg object-cover border border-slate-700/50"
+                                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                    />
+                                  ) : (
+                                    <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-emerald-500/10">
+                                      <Gamepad2 className="h-5 w-5 text-emerald-400" />
+                                    </div>
+                                  )}
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium text-slate-200 truncate">{game.title}</p>
+                                    {game.platform && <p className="text-xs text-slate-500">{game.platform}</p>}
+                                  </div>
+                                </Link>
+                              ))}
+                            </>
+                          )}
+                          
+                          {/* Hint for short queries */}
+                          {q.length < 2 && libraryGames.length > 0 && (
+                            <div className="px-3 py-2 text-xs text-slate-500 italic border-t border-slate-800/50 mt-2">
+                              Scrivi 2+ caratteri per cercare tra {libraryGames.length} giochi...
+                            </div>
+                          )}
                         </div>
                       );
                     })()}
@@ -1176,53 +1278,74 @@ export function MainLayout({ children }: MainLayoutProps) {
         
         {/* Changelog Dialog */}
         <Dialog open={changelogOpen} onOpenChange={setChangelogOpen}>
-          <DialogContent className="max-w-2xl max-h-[80vh]">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <span className="text-2xl">📋</span>
-                Changelog - v{version}
+          <DialogContent className="max-w-2xl max-h-[85vh] p-0 overflow-hidden bg-slate-900/60 backdrop-blur-2xl border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.5)]">
+            <DialogHeader className="p-6 pb-4 border-b border-white/5 bg-white/5 backdrop-blur-md">
+              <DialogTitle className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/20">
+                  <span className="text-xl">📋</span>
+                </div>
+                <div className="flex flex-col items-start gap-1">
+                  <span className="text-xl font-bold tracking-tight text-white">{t('common.changelog')}</span>
+                  <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                    {t('changelog.currentVersion')} v{version}
+                  </span>
+                </div>
               </DialogTitle>
             </DialogHeader>
-            <ScrollArea className="h-[60vh] pr-4">
-              <div className="space-y-6">
+            <ScrollArea className="h-[60vh] px-6 py-4">
+              <div className="space-y-8 relative pb-6">
+                {/* Timeline vertical line */}
+                <div className="absolute top-2 bottom-0 left-[21px] w-px bg-gradient-to-b from-indigo-500/50 via-slate-700 to-transparent" />
+                
                 {allVersions.map((versionEntry, idx) => (
-                  <div key={versionEntry.version} className="space-y-2">
+                  <div key={versionEntry.version} className="relative z-10">
+                    {/* Timeline node */}
+                    <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full border-2 border-slate-950 bg-indigo-400 ring-4 ring-slate-950 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
+                    
                     {/* Version Header */}
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="h-8 w-1 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-full" />
-                      <div>
-                        <h3 className="text-lg font-bold text-white">
-                          {versionEntry.version === '1.6.0' && '🏰 '}
-                          {versionEntry.version === '1.5.0' && '💬 '}
-                          {versionEntry.version === '1.4.2' && '🚀 '}
-                          {versionEntry.version === '1.4.1' && '🌍 '}
-                          {versionEntry.version === '1.4.0' && '🧹 '}
-                          {versionEntry.version === '1.3.0' && '🎮 '}
-                          {versionEntry.version === '1.2.0' && '🛡️ '}
-                          {versionEntry.version === '1.1.0' && '🌐 '}
-                          {versionEntry.version === '1.0.0' && '🎉 '}
+                    <div className="pl-10 mb-4">
+                      <div className="flex items-baseline gap-3 mb-1">
+                        <h3 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
                           v{versionEntry.version}
+                          {idx === 0 && (
+                            <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                              {t('changelog.latest')}
+                            </span>
+                          )}
                         </h3>
-                        <span className="inline-block text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded mt-1">
+                      </div>
+                      <div className="flex items-center gap-2 text-xs">
+                        <span className="text-slate-400 font-mono">
                           {versionEntry.date}
+                        </span>
+                        <span className="w-1 h-1 rounded-full bg-slate-700" />
+                        <span className={`font-medium ${
+                          versionEntry.type === 'feature' ? 'text-purple-400' :
+                          versionEntry.type === 'major' ? 'text-amber-400' :
+                          'text-blue-400'
+                        }`}>
+                          {versionEntry.type === 'feature' ? t('changelog.featureUpdate') :
+                           versionEntry.type === 'major' ? t('changelog.majorRelease') :
+                           t('changelog.patchNotes')}
                         </span>
                       </div>
                     </div>
                     
                     {/* Changes List */}
-                    <div className="space-y-1 ml-4">
-                      {versionEntry.changes.map((change, changeIdx) => (
-                        <div key={changeIdx} className="flex items-start gap-2">
-                          <span className="text-blue-400 mt-1">•</span>
-                          <span className="text-sm text-gray-300">{t(`changelog.v${versionEntry.version.replace(/\./g, '_')}.${changeIdx}` as string) !== `changelog.v${versionEntry.version.replace(/\./g, '_')}.${changeIdx}` ? t(`changelog.v${versionEntry.version.replace(/\./g, '_')}.${changeIdx}` as string) : change}</span>
-                        </div>
-                      ))}
+                    <div className="pl-10 space-y-2.5">
+                      {versionEntry.changes.map((change, changeIdx) => {
+                        const translationKey = `changelog.v${versionEntry.version.replace(/\./g, '_')}.${changeIdx}`;
+                        const translatedChange = t(translationKey as string);
+                        const displayChange = translatedChange !== translationKey ? translatedChange : change;
+                        
+                        return (
+                          <div key={changeIdx} className="flex items-start gap-3 group">
+                            <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-slate-600 group-hover:bg-indigo-400 transition-colors shrink-0" />
+                            <span className="text-sm text-slate-300 leading-relaxed">{displayChange}</span>
+                          </div>
+                        );
+                      })}
                     </div>
-                    
-                    {/* Separator between versions */}
-                    {idx < allVersions.length - 1 && (
-                      <div className="border-t border-gray-700/50 mt-4" />
-                    )}
                   </div>
                 ))}
               </div>
@@ -1275,6 +1398,7 @@ export function MainLayout({ children }: MainLayoutProps) {
     </TutorialProvider>
   );
 }
+
 
 
 

@@ -567,3 +567,4 @@ export function SubtitleTranslator({ onTranslate }: SubtitleTranslatorProps) {
 }
 
 export default SubtitleTranslator;
+

@@ -9,7 +9,7 @@
  * 2. Classificazione AI (opzionale) — classifica i dialoghi per priorità
  */
 
-import { translateSmart } from './ai-translate-direct';
+import { translateSmart } from '@/lib/ai/ai-translate-direct';
 import { clientLogger } from '@/lib/client-logger';
 
 // ============================================================================
@@ -451,3 +451,4 @@ export async function filterDanganronpaDialogues(
   localResult.stats.afterAIFilter = localResult.stats.afterLocalFilter;
   return localResult;
 }
+

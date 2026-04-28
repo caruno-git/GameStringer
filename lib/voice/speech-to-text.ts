@@ -692,3 +692,4 @@ export function getSTTEngine(config?: Partial<STTConfig>): SpeechToTextEngine {
   }
   return sttEngineInstance;
 }
+

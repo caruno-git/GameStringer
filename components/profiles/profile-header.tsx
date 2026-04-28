@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useProfileAuth } from '@/lib/auth/auth/profile-auth';
+import { useProfileAuth } from '@/lib/auth/profile-auth';
 import { useProfiles } from '@/hooks/use-profiles';
 import { useProfileSettings } from '@/hooks/use-profile-settings';
 import { Button } from '@/components/ui/button';
@@ -45,7 +45,7 @@ import { AvatarUpload } from './avatar-upload';
 import { SecurityDialog } from './security-dialog';
 import { ThemeCustomizer } from '@/components/theme/theme-customizer';
 import { cn } from '@/lib/utils';
-import { exportProfile, importProfile } from '@/lib/auth/auth/profile-export';
+import { exportProfile, importProfile } from '@/lib/auth/profile-export';
 import { formatDistanceToNow } from 'date-fns';
 import { enUS, it } from 'date-fns/locale';
 import { useTranslation } from '@/lib/i18n';
@@ -391,8 +391,8 @@ export function ProfileHeader() {
 
       {/* Profile Manager Dialog */}
       <Dialog open={showProfileManager} onOpenChange={setShowProfileManager}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto bg-slate-900/60 backdrop-blur-2xl border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.5)] p-6">
+          <DialogHeader className="mb-4">
             <DialogTitle>{t('profile.profileManagement')}</DialogTitle>
           </DialogHeader>
           <ProfileManager onClose={() => setShowProfileManager(false)} />
@@ -431,5 +431,6 @@ export function ProfileHeader() {
     </>
   );
 }
+
 
 

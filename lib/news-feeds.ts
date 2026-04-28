@@ -368,6 +368,57 @@ class NewsFeedService {
     return `${d.getDate()} ${months_it[d.getMonth()]}`;
   }
 
+  /**
+   * Fetch og:image from article page when RSS doesn't provide an image
+   */
+  private async fetchOgImage(url: string): Promise<string | null> {
+    try {
+      // Try via Tauri backend first (no CORS)
+      try {
+        const { invoke } = await import('@tauri-apps/api/core');
+        const html: string = await invoke('fetch_url_content', { url });
+        if (html) {
+          // Extract og:image
+          const ogMatch = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i) ||
+                          html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
+          if (ogMatch?.[1]) return ogMatch[1];
+          
+          // Fallback: twitter:image
+          const twMatch = html.match(/<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i) ||
+                          html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image["']/i);
+          if (twMatch?.[1]) return twMatch[1];
+          
+          // Fallback: first large image in article
+          const imgMatch = html.match(/<img[^>]+src=["']([^"']+(?:jpg|jpeg|png|webp)[^"']*)["'][^>]*(?:width=["']?(\d+)|class=["'][^"']*(?:featured|hero|main|article)[^"']*["'])/i);
+          if (imgMatch?.[1]) return imgMatch[1];
+        }
+      } catch {
+        // Tauri not available
+      }
+
+      // Try CORS proxy
+      for (const proxy of CORS_PROXIES) {
+        try {
+          const res = await fetch(proxy + encodeURIComponent(url), { 
+            signal: AbortSignal.timeout(5000),
+            headers: { 'Accept': 'text/html' }
+          });
+          if (res.ok) {
+            const html = await res.text();
+            const ogMatch = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i) ||
+                            html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
+            if (ogMatch?.[1]) return ogMatch[1];
+            
+            const twMatch = html.match(/<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i) ||
+                            html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image["']/i);
+            if (twMatch?.[1]) return twMatch[1];
+          }
+        } catch {}
+      }
+    } catch {}
+    return null;
+  }
+
   async fetchNews(forceRefresh = false): Promise<NewsFeedItem[]> {
     // Usa cache se valida
     if (!forceRefresh && this.cache && (Date.now() - this.cache.timestamp) < CACHE_TTL_MS) {
@@ -378,6 +429,7 @@ class NewsFeedService {
     if (enabledSources.length === 0) return [];
 
     const allItems: NewsFeedItem[] = [];
+    const imageCache = this.loadImageCache();
 
     // Fetch in parallelo con timeout per singolo feed
     const results = await Promise.allSettled(
@@ -408,11 +460,58 @@ class NewsFeedService {
       return true;
     });
 
+    // Fetch missing images SYNCHRONOUSLY (first 30 items)
+    const itemsToProcess = deduped.slice(0, 30);
+    await Promise.all(
+      itemsToProcess.map(async (item) => {
+        if (item.image) return; // Already has image
+        
+        // Check cache first
+        if (imageCache[item.link]) {
+          item.image = imageCache[item.link];
+          return;
+        }
+        
+        // Fetch og:image from article page
+        try {
+          const ogImage = await this.fetchOgImage(item.link);
+          if (ogImage) {
+            item.image = ogImage;
+            imageCache[item.link] = ogImage;
+          }
+        } catch {}
+      })
+    );
+    
+    this.saveImageCache(imageCache);
+
     // Salva cache
     this.cache = { items: deduped.slice(0, 100), timestamp: Date.now() };
     this.saveCache();
 
     return this.cache.items;
+  }
+
+  private loadImageCache(): Record<string, string> {
+    if (typeof window === 'undefined') return {};
+    try {
+      const cached = localStorage.getItem('gs_news_image_cache');
+      return cached ? JSON.parse(cached) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  private saveImageCache(cache: Record<string, string>): void {
+    if (typeof window === 'undefined') return;
+    try {
+      // Keep only last 200 entries
+      const entries = Object.entries(cache);
+      if (entries.length > 200) {
+        cache = Object.fromEntries(entries.slice(-200));
+      }
+      localStorage.setItem('gs_news_image_cache', JSON.stringify(cache));
+    } catch {}
   }
 
   getCachedNews(): NewsFeedItem[] {
@@ -429,3 +528,4 @@ class NewsFeedService {
 
 export const newsFeedService = new NewsFeedService();
 export default newsFeedService;
+

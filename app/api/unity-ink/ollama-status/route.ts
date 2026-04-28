@@ -19,3 +19,4 @@ export const GET = withErrorHandler(async function() {
     return NextResponse.json({ online: false, models: [] });
   }
 });
+

@@ -1027,3 +1027,4 @@ export async function findSteamGamePath(gameId: string): Promise<string | null> 
   logger.debug(`[findSteamGamePath] Ricerca completata. Gioco non trovato.`);
   return null;
 }
+

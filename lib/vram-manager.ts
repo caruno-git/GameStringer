@@ -357,3 +357,4 @@ class VramManager {
 
 // ── Singleton ──
 export const vramManager = new VramManager();
+

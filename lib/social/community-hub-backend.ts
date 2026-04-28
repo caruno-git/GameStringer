@@ -1534,3 +1534,4 @@ ON CONFLICT DO NOTHING;
 ALTER PUBLICATION supabase_realtime ADD TABLE chat_messages;
 ALTER PUBLICATION supabase_realtime ADD TABLE user_presence;
 `;
+

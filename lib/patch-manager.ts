@@ -533,3 +533,4 @@ Creato con GameStringer
 }
 
 export const patchManager = new PatchManager();
+

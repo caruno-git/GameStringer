@@ -213,3 +213,4 @@ export function SystemMonitor({ compact = false }: { compact?: boolean }) {
 }
 
 export default SystemMonitor;
+

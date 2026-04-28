@@ -466,3 +466,4 @@ export function getGlossaryStats(entries: GlossaryEntry[]): {
     translationProgress: entries.length > 0 ? translatedCount / entries.length : 0,
   };
 }
+

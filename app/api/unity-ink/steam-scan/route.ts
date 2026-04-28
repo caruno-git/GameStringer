@@ -180,3 +180,4 @@ function formatSize(bytes: number): string {
   if (bytes >= 1e3) return `${(bytes / 1e3).toFixed(0)} KB`;
   return `${bytes} B`;
 }
+

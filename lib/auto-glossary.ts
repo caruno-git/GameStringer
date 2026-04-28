@@ -10,7 +10,7 @@
  * - src-tauri smart_glossary.rs (storage persistente Tauri)
  */
 
-import { translateSmart } from './ai-translate-direct';
+import { translateSmart } from '@/lib/ai/ai-translate-direct';
 import { invoke } from '@/lib/tauri-api';
 import { clientLogger } from '@/lib/client-logger';
 
@@ -925,3 +925,4 @@ function getDefaultTerms(
 
   return common;
 }
+

@@ -43,6 +43,25 @@ fn close_app(app: tauri::AppHandle) {
     app.exit(0);
 }
 
+/// Chiude la splash screen e mostra la finestra principale
+/// Chiamato dal frontend quando è pronto
+#[tauri::command]
+fn close_splash(app: tauri::AppHandle) {
+    // Mostra la finestra principale
+    if let Some(main_window) = app.get_webview_window("main") {
+        let _ = main_window.show();
+        let _ = main_window.maximize();
+        let _ = main_window.set_focus();
+    }
+    
+    // Chiudi la splash
+    if let Some(splash) = app.get_webview_window("splash") {
+        let _ = splash.close();
+    }
+    
+    println!("[SPLASH] ✅ Frontend pronto, splash chiusa");
+}
+
 /// Aggiorna il tooltip del tray icon con conteggio notifiche
 #[tauri::command]
 fn update_tray_tooltip(app: tauri::AppHandle, tooltip: String) {
@@ -150,6 +169,7 @@ fn main() {
         .manage(notification_state)
         .invoke_handler(tauri::generate_handler![
             close_app,
+            close_splash,
             update_tray_tooltip,
             send_native_notification,
             commands::steam::auto_detect_steam_config,
@@ -526,6 +546,7 @@ fn main() {
 
             // RSS proxy (bypass CORS)
             commands::rss_proxy::fetch_rss_feed,
+            commands::rss_proxy::fetch_url_content,
 
             // Godot Engine PCK patcher
             commands::godot_patcher::detect_godot_engine,
@@ -1314,6 +1335,49 @@ fn main() {
             }
 
             println!("[TRAY] ✅ System Tray Completo attivo — 13 voci menu + Chat Popup + Ollama monitor");
+
+            // ═══════════════════════════════════════════════════
+            // SPLASH SCREEN — Usa splash.html da public/
+            // ═══════════════════════════════════════════════════
+            use tauri::WebviewUrl;
+            let splash_window = tauri::WebviewWindowBuilder::new(
+                app,
+                "splash",
+                WebviewUrl::App("/splash.html".into())
+            )
+            .title("GameStringer")
+            .inner_size(420.0, 320.0)
+            .resizable(false)
+            .decorations(false)
+            .center()
+            .always_on_top(true)
+            .skip_taskbar(true)
+            .build();
+
+            if let Ok(_splash) = splash_window {
+                println!("[SPLASH] ✅ Splash creata, attendo segnale frontend...");
+                
+                // FALLBACK: chiudi splash automaticamente dopo 5 secondi
+                let app_handle = app.handle().clone();
+                std::thread::spawn(move || {
+                    std::thread::sleep(std::time::Duration::from_secs(5));
+                    println!("[SPLASH] ⏱️ Timeout 5s raggiunto, chiusura forzata splash...");
+                    
+                    // Mostra finestra principale
+                    if let Some(main_window) = app_handle.get_webview_window("main") {
+                        let _ = main_window.show();
+                        let _ = main_window.set_focus();
+                    }
+                    
+                    // Chiudi splash
+                    if let Some(splash) = app_handle.get_webview_window("splash") {
+                        let _ = splash.close();
+                    }
+                    
+                    println!("[SPLASH] ✅ Splash chiusa via timeout fallback");
+                });
+            }
+
             Ok(())
         })
         .run(tauri::generate_context!())

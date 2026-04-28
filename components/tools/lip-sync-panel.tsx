@@ -404,3 +404,4 @@ export function LipSyncPanel({ audioPath: initialPath, dialogText: initialDialog
     </div>
   );
 }
+

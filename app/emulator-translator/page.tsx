@@ -15,7 +15,7 @@ import { useTranslation } from '@/lib/i18n';
 import { translateSingleSmart } from '@/lib/ai/ai-translate-direct';
 import { rawPixelsToBase64 } from '@/lib/image-utils';
 import Link from 'next/link';
-import { RETRO_PLATFORMS, type RetroPlatform } from '@/lib/social/social/community-hub-service';
+import { RETRO_PLATFORMS, type RetroPlatform } from '@/lib/social/community-hub-service';
 import { clientLogger } from '@/lib/client-logger';
 
 interface WindowInfo {
@@ -604,3 +604,4 @@ export default function EmulatorTranslatorPage() {
     </div>
   );
 }
+

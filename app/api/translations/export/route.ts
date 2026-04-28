@@ -99,3 +99,4 @@ msgstr "${translatedText}"
 
   return header + entries.join('\n');
 }
+

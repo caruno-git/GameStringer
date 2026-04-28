@@ -277,3 +277,4 @@ export function DebugConsole({ defaultExpanded = false }: { defaultExpanded?: bo
 }
 
 export default DebugConsole;
+

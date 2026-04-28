@@ -233,3 +233,4 @@ export function SystemOverlay({ position = 'bottom-right', compact: initialCompa
     </div>
   );
 }
+

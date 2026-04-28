@@ -527,3 +527,4 @@ export function LiveOcrOverlay() {
     </div>
   );
 }
+

@@ -237,3 +237,4 @@ export const GET = withErrorHandler(async function() {
     documentation: 'https://gamestringer.dev/docs/api'
   });
 });
+

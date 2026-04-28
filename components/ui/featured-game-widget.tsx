@@ -373,3 +373,4 @@ export function FeaturedGameWidget({ collapsed = false }: FeaturedGameWidgetProp
 }
 
 export default FeaturedGameWidget;
+

@@ -178,3 +178,4 @@ export function DonationDialog({ open: isOpen, onOpenChange, onUnlocked }: Donat
     </Dialog>
   );
 }
+

@@ -29,3 +29,4 @@ export const GET = withErrorHandler(async function(request: NextRequest) {
 
   return NextResponse.redirect(redirectUrl);
 });
+

@@ -1,4 +1,4 @@
-﻿// Guide page translations — no placeholders, text only.
+// Guide page translations — no placeholders, text only.
 // Links (NavLink) and structural elements (strong, kbd, code) are in JSX.
 // Fallback: if a language is not defined, English is used.
 
@@ -767,3 +767,4 @@ const allGuideTranslations: Record<string, GT> = { it, en, es, fr, de, ja, zh, k
 export function getGuideTranslations(lang: string): GT {
   return allGuideTranslations[lang] || allGuideTranslations.en;
 }
+

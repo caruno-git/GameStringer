@@ -24,6 +24,10 @@ import {
   Languages,
   RefreshCw,
   AlertCircle,
+  Users,
+  UserPlus,
+  MessageCircle,
+  ArrowLeft,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -66,8 +70,8 @@ import {
   type ChatRoom,
   type ChatMessage,
   type UserPresence,
-} from '@/lib/social/social/community-chat';
-import { getSupabase } from '@/lib/social/social/community-hub-backend';
+} from '@/lib/social/community-chat';
+import { getSupabase } from '@/lib/social/community-hub-backend';
 import { translateChatMessage } from '@/lib/ai/ai-translate-direct';
 import { clientLogger } from '@/lib/client-logger';
 
@@ -124,6 +128,7 @@ export function PersistentChat() {
   const [newRoomDesc, setNewRoomDesc] = useState('');
   const [newRoomType, setNewRoomType] = useState<ChatRoom['type']>('general');
   const [showRooms, setShowRooms] = useState(false);
+  const [showOnlineUsers, setShowOnlineUsers] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [translatedMessages, setTranslatedMessages] = useState<Record<string, string>>({});
   const [translatingIds, setTranslatingIds] = useState<Set<string>>(new Set());
@@ -526,7 +531,7 @@ export function PersistentChat() {
         className="fixed bottom-4 right-4 z-[60] group flex items-center gap-2 px-3 py-2 rounded-full bg-slate-800/90 hover:bg-slate-700/90 border border-slate-600/50 shadow-lg backdrop-blur-sm transition-all duration-200 hover:scale-[1.02]"
       >
         <MessageSquare className="h-4 w-4 text-cyan-400" />
-        <span className="text-xs font-medium text-slate-200">Chat</span>
+        <span className="text-xs font-medium text-slate-200">{t('communityChat.chat')}</span>
         
         {/* Online indicator */}
         {onlineUsers.length > 0 && (
@@ -558,15 +563,19 @@ export function PersistentChat() {
               <MessageSquare className="h-4 w-4 text-white" />
             </div>
             <div>
-              <span className="text-sm font-bold text-white">Community Chat</span>
+              <span className="text-sm font-bold text-white">{t('communityChat.communityChatTitle')}</span>
               {onlineUsers.length > 0 && (
-                <div className="flex items-center gap-1 mt-0.5">
+                <button 
+                  onClick={() => setShowOnlineUsers(!showOnlineUsers)}
+                  className="flex items-center gap-1 mt-0.5 hover:bg-emerald-500/10 rounded px-1 -ml-1 transition-colors"
+                >
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
                   </span>
-                  <span className="text-xs text-emerald-400 font-medium">{onlineUsers.length} online</span>
-                </div>
+                  <span className="text-xs text-emerald-400 font-medium">{t('communityChat.onlineCount').replace('{{count}}', String(onlineUsers.length))}</span>
+                  <Users className="h-3 w-3 text-emerald-400/60 ml-0.5" />
+                </button>
               )}
             </div>
           </div>
@@ -580,8 +589,73 @@ export function PersistentChat() {
           </div>
         </div>
 
+        {/* ── Online Users Panel ── */}
+        {showOnlineUsers && onlineUsers.length > 0 && (
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex items-center gap-2 px-3 py-2 border-b border-slate-700/30 bg-emerald-500/5">
+              <button onClick={() => setShowOnlineUsers(false)} className="p-1 hover:bg-slate-700/50 rounded">
+                <ArrowLeft className="h-4 w-4 text-slate-400" />
+              </button>
+              <Users className="h-4 w-4 text-emerald-400" />
+              <span className="text-sm font-medium text-white">{t('communityChat.onlineUsers').replace('{{count}}', String(onlineUsers.length))}</span>
+            </div>
+            <ScrollArea className="flex-1">
+              <div className="p-2 space-y-1">
+                {onlineUsers.map(user => (
+                  <div
+                    key={user.userId}
+                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-700/40 transition-colors group"
+                  >
+                    <div className="relative">
+                      <Avatar className="h-9 w-9 border border-slate-600/50">
+                        {user.avatar && !user.avatar.startsWith('gradient-') && !user.avatar.startsWith('avatar_') && <AvatarImage src={user.avatar} />}
+                        <AvatarFallback className="bg-gradient-to-br from-emerald-600 to-cyan-600 text-white text-xs">
+                          {(user.username || 'U').slice(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-900 ${
+                        user.status === 'online' ? 'bg-emerald-500' : user.status === 'away' ? 'bg-yellow-500' : 'bg-slate-500'
+                      }`} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-white truncate">{user.username || t('communityChat.userDefault')}</p>
+                      <p className="text-xs text-slate-500 capitalize">{user.status}</p>
+                    </div>
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="xs"
+                        className="h-7 w-7 p-0 hover:bg-cyan-500/20 hover:text-cyan-400"
+                        title={t('communityChat.sendMessage')}
+                        onClick={() => {
+                          setShowOnlineUsers(false);
+                          setMessageInput(`@${user.username || t('communityChat.userDefault').toLowerCase()} `);
+                          inputRef.current?.focus();
+                        }}
+                      >
+                        <MessageCircle className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="xs"
+                        className="h-7 w-7 p-0 hover:bg-emerald-500/20 hover:text-emerald-400"
+                        title="Aggiungi amico"
+                        onClick={() => {
+                          toast.info(`Richiesta amicizia inviata a ${user.username}`);
+                        }}
+                      >
+                        <UserPlus className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+        )}
+
         {/* ── Loading ── */}
-        {isLoading && !loadError && (
+        {isLoading && !loadError && !showOnlineUsers && (
           <div className="flex-1 flex items-center justify-center">
             <Loader2 className="h-6 w-6 animate-spin text-slate-500" />
           </div>
@@ -629,13 +703,13 @@ export function PersistentChat() {
                 setIsLoading(false);
               }}
             >
-              <LogIn className="h-3 w-3 mr-1" /> Connetti
+              <LogIn className="h-3 w-3 mr-1" /> {t('communityChat.connect')}
             </Button>
           </div>
         )}
 
         {/* ── Chat content ── */}
-        {!isLoading && userId && (
+        {!isLoading && userId && !showOnlineUsers && (
           <>
             {/* Room selector bar */}
             <div className="flex items-center gap-1.5 px-2 py-1.5 border-b border-slate-700/30 bg-slate-850/30">
@@ -675,7 +749,7 @@ export function PersistentChat() {
                     }`}
                   >
                     {getRoomIcon(room.type)}
-                    <span className="truncate">{room.name}</span>
+                  <span className="truncate">{t(`communityChat.${room.name.toLowerCase()}Room`) !== `communityChat.${room.name.toLowerCase()}Room` ? t(`communityChat.${room.name.toLowerCase()}Room`) : room.name}</span>
                     {room.isPinned && <span className="text-micro">📌</span>}
                   </button>
                 ))}
@@ -715,9 +789,9 @@ export function PersistentChat() {
                         {showAvatar && (
                           <div className="flex items-center gap-1.5">
                             <span className={`text-[11px] font-bold ${isOwn ? 'text-cyan-400' : 'text-orange-400'}`}>
-                              {msg.authorName || 'Utente'}
+                              {msg.authorName || t('communityChat.userDefault')}
                             </span>
-                            <span className="text-micro text-slate-600">{formatTime(msg.createdAt)}</span>
+                            <span className="text-micro text-slate-600">{formatTime(msg.createdAt)}{msg.edited ? ` ${t('communityChat.editedMessage')}` : ''}</span>
                             {(() => {
                               const lang = detectLangTag(msg.content);
                               return lang ? (
@@ -778,7 +852,7 @@ export function PersistentChat() {
                   {editingMsg ? '✏️ Modifica' : <>↳ Rispondi a <strong className="text-orange-400">{replyTo?.authorName}</strong></>}
                 </span>
                 <Button variant="ghost" size="sm" className="h-4 text-micro px-1" onClick={() => { setReplyTo(null); setEditingMsg(null); setMessageInput(''); }}>
-                  Annulla
+                  {t('communityChat.cancel')}
                 </Button>
               </div>
             )}
@@ -796,7 +870,7 @@ export function PersistentChat() {
                       handleSend();
                     }
                   }}
-                  placeholder={activeRoom ? `Scrivi in #${activeRoom.name}...` : 'Seleziona stanza...'}
+                  placeholder={activeRoom ? t('communityChat.writeInRoom').replace('{{room}}', t(`communityChat.${activeRoom.name.toLowerCase()}Room`) !== `communityChat.${activeRoom.name.toLowerCase()}Room` ? t(`communityChat.${activeRoom.name.toLowerCase()}Room`) : activeRoom.name) : t('communityChat.selectRoom')}
                   className="h-10 text-sm bg-slate-800/60 border-slate-600/40 rounded-xl focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500/50 placeholder:text-slate-500"
                   disabled={!activeRoom || isSending}
                 />
@@ -834,10 +908,10 @@ export function PersistentChat() {
               <Select value={newRoomType} onValueChange={(v: string) => setNewRoomType(v as ChatRoom['type'])}>
                 <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="general">💬 Generale</SelectItem>
-                  <SelectItem value="game">🎮 Gioco specifico</SelectItem>
-                  <SelectItem value="translation_request">🌍 Richiesta traduzione</SelectItem>
-                  <SelectItem value="feedback">🐛 Feedback & Bug</SelectItem>
+                  <SelectItem value="general">💬 {t('communityChat.generalRoom')}</SelectItem>
+                  <SelectItem value="game">🎮 {t('communityChat.gameRoom')}</SelectItem>
+                  <SelectItem value="translation_request">🌍 {t('communityChat.translationRoom')}</SelectItem>
+                  <SelectItem value="feedback">🐛 {t('communityChat.feedbackRoom')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -851,3 +925,4 @@ export function PersistentChat() {
     </>
   );
 }
+

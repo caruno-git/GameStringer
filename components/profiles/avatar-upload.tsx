@@ -113,11 +113,11 @@ export function AvatarUpload({ currentAvatar, userName, onAvatarChange, open, on
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-sm border-slate-800 bg-slate-950/95 backdrop-blur-xl p-4">
+      <DialogContent className="sm:max-w-sm border-white/10 bg-slate-900/60 backdrop-blur-2xl shadow-[0_0_40px_rgba(0,0,0,0.5)] p-4">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-1.5 text-sm text-slate-100">
             <Camera className="h-3.5 w-3.5 text-indigo-400" />
-            Cambia Avatar
+            {t('profile.changeAvatar')}
           </DialogTitle>
         </DialogHeader>
         
@@ -219,21 +219,22 @@ export function AvatarUpload({ currentAvatar, userName, onAvatarChange, open, on
         <DialogFooter className="flex gap-1.5 border-t border-slate-800/50 pt-3 mt-1">
           {currentAvatar && (
             <Button variant="ghost" size="sm" onClick={handleRemoveAvatar} className="mr-auto text-red-400 hover:text-red-300 hover:bg-red-500/10 h-8 text-xs">
-              Rimuovi
+              {t('profile.removeAvatar')}
             </Button>
           )}
           <Button variant="outline" size="sm" onClick={() => onOpenChange(false)} className="border-slate-700 bg-slate-900/50 hover:bg-slate-800 text-slate-300 h-8 text-xs">
-            Annulla
+            {t('profile.cancel')}
           </Button>
           <Button size="sm" onClick={handleSave} disabled={!previewUrl || isLoading} className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white border-0 h-8 text-xs">
             <Check className="h-3.5 w-3.5 mr-1" />
-            Salva
+            {t('profile.save')}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
+
 
 
 

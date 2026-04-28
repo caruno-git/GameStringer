@@ -7,3 +7,4 @@ export const GET = withErrorHandler(async function() {
 
   return NextResponse.json(dictionaries);
 });
+

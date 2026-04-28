@@ -352,3 +352,4 @@ export function OllamaSetupWizard({ onComplete }: { onComplete?: () => void }) {
 }
 
 export default OllamaSetupWizard;
+

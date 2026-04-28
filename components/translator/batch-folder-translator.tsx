@@ -547,3 +547,4 @@ export function BatchFolderTranslator() {
 }
 
 export default BatchFolderTranslator;
+

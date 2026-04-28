@@ -80,3 +80,4 @@ export async function prefetchHltb(gameNames: string[]) {
 export function getHltbFromCache(gameName: string): HltbData | undefined {
   return hltbCache.get(gameName);
 }
+

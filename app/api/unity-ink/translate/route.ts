@@ -249,3 +249,4 @@ async function translateInBackground(
     fs.writeFileSync(progressPath, JSON.stringify({ ...progress, currentText: '' }), 'utf-8');
   } catch { /* ignore */ }
 }
+
