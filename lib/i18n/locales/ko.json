@@ -4943,5 +4943,27 @@
     "advancedSettings": "고급 설정",
     "contextSensitivity": "컨텍스트 민감도",
     "creativityLevel": "창의성 수준"
+  },
+  "detailedStatistics": {
+    "achievement": "업적",
+    "perGame": "게임당",
+    "currentStreak": "현재 연속 기록",
+    "consecutiveDays": "연속 일수",
+    "preferences": "설정",
+    "favoriteGenre": "선호 장르",
+    "favoriteStore": "선호 스토어",
+    "averageRating": "평균 평점",
+    "longestSession": "최장 세션",
+    "activity": "활동",
+    "totalSessions": "총 세션",
+    "sessionsPerGame": "게임당 세션",
+    "averageSessionDuration": "평균 세션 시간",
+    "topGamesByPlaytime": "플레이 시간 상위 게임",
+    "gamesYouSpentMostTime": "가장 많은 시간을 보낸 게임",
+    "recentAchievements": "최근 업적",
+    "statisticsByGenre": "장르별 통계",
+    "analysisByGenre": "장르별 플레이 시간 분석",
+    "games": "게임",
+    "consecutiveDaysShort": "일"
   }
 }

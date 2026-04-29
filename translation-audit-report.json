@@ -1,96 +1,6 @@
 {
   "hardcodedStrings": [
     {
-      "file": "components\\context-aware-translation.tsx",
-      "matches": [
-        {
-          "string": "Game Title",
-          "line": 269,
-          "context": " <div className=\"space-y-2\">\r               <Label>Game Title</Label>\r               <input\r                 t"
-        },
-        {
-          "string": "Genre",
-          "line": 279,
-          "context": " <div className=\"space-y-2\">\r               <Label>Genre</Label>\r               <Select \r                "
-        },
-        {
-          "string": "Ambientazione",
-          "line": 296,
-          "context": " <div className=\"space-y-2\">\r               <Label>Ambientazione</Label>\r               <input\r                 t"
-        },
-        {
-          "string": "Text Type",
-          "line": 318,
-          "context": " <div className=\"space-y-2\">\r               <Label>Text Type</Label>\r               <Select \r                "
-        },
-        {
-          "string": "Emotional Tone",
-          "line": 337,
-          "context": " <div className=\"space-y-2\">\r               <Label>Emotional Tone</Label>\r               <Select \r                "
-        },
-        {
-          "string": "Formale",
-          "line": 363,
-          "context": "ent>\r                   <SelectItem value=\"formal\">Formale</SelectItem>\r                   <SelectItem valu"
-        },
-        {
-          "string": "Neutrale",
-          "line": 364,
-          "context": "em>\r                   <SelectItem value=\"neutral\">Neutrale</SelectItem>\r                   <SelectItem valu"
-        },
-        {
-          "string": "Use Game Terminology",
-          "line": 459,
-          "context": "ems-center justify-between\">\r               <Label>Use Game Terminology</Label>\r               <Switch\r                 "
-        },
-        {
-          "string": "Preserve Formatting",
-          "line": 467,
-          "context": "ems-center justify-between\">\r               <Label>Preserve Formatting</Label>\r               <Switch\r                 "
-        },
-        {
-          "string": "Adapt Cultural References",
-          "line": 475,
-          "context": "ems-center justify-between\">\r               <Label>Adapt Cultural References</Label>\r               <Switch\r                 "
-        },
-        {
-          "string": "Maintain Tone",
-          "line": 483,
-          "context": "ems-center justify-between\">\r               <Label>Maintain Tone</Label>\r               <Switch\r                 "
-        },
-        {
-          "string": "Originale",
-          "line": 541,
-          "context": "v>\r                     <Label className=\"text-xs\">Originale</Label>\r                     <p className=\"text-"
-        },
-        {
-          "string": "Alternative",
-          "line": 552,
-          "context": "v>\r                     <Label className=\"text-xs\">Alternative</Label>\r                     <div className=\"fle"
-        },
-        {
-          "string": "Enter text to translate",
-          "line": 204,
-          "context": "sync () => {\r     if (!inputText.trim()) {\r       toast.error('Enter text to translate');\r       return;\r     }\r \r     try "
-        },
-        {
-          "string": "Contextual translation completed",
-          "line": 213,
-          "context": "       onTranslationComplete(translation);\r       toast.success('Contextual translation completed');\r     } catch (error: unknown) {"
-        },
-        {
-          "string": "Translation error",
-          "line": 216,
-          "context": "Logger.error('Translation error:', error);\r       toast.error('Translation error');\r     }\r   };\r \r   const copyText "
-        },
-        {
-          "string": "Text copied",
-          "line": 222,
-          "context": " {\r     navigator.clipboard.writeText(text);\r     toast.success('Text copied');\r   };\r \r   const exportTranslat"
-        }
-      ]
-    },
-    {
       "file": "components\\detailed-statistics.tsx",
       "matches": [
         {
@@ -1742,5 +1652,5 @@
     }
   ],
   "filesAnalyzed": 225,
-  "totalMatches": 267
+  "totalMatches": 250
 }

@@ -4943,5 +4943,27 @@
     "advancedSettings": "Ustawienia Zaawansowane",
     "contextSensitivity": "Czułość Kontekstowa",
     "creativityLevel": "Poziom Kreatywności"
+  },
+  "detailedStatistics": {
+    "achievement": "Osiągnięcie",
+    "perGame": "na grę",
+    "currentStreak": "Aktualna Seria",
+    "consecutiveDays": "dni z rzędu",
+    "preferences": "Preferencje",
+    "favoriteGenre": "Ulubiony Gatunek",
+    "favoriteStore": "Ulubiony Sklep",
+    "averageRating": "Średnia Ocena",
+    "longestSession": "Najdłuższa Sesja",
+    "activity": "Aktywność",
+    "totalSessions": "Całkowita Liczba Sesji",
+    "sessionsPerGame": "Sesji na Grę",
+    "averageSessionDuration": "Średni Czas Sesji",
+    "topGamesByPlaytime": "Top Gry według Czasu",
+    "gamesYouSpentMostTime": "Gry, w których spędziłeś najwięcej czasu",
+    "recentAchievements": "Ostatnie Osiągnięcia",
+    "statisticsByGenre": "Statystyki według Gatunku",
+    "analysisByGenre": "Analiza czasu gry według gatunku",
+    "games": "gier",
+    "consecutiveDaysShort": "dni"
   }
 }

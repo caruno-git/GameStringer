@@ -4837,5 +4837,27 @@
     "advancedSettings": "高级设置",
     "contextSensitivity": "上下文敏感度",
     "creativityLevel": "创意级别"
+  },
+  "detailedStatistics": {
+    "achievement": "成就",
+    "perGame": "每游戏",
+    "currentStreak": "当前连续",
+    "consecutiveDays": "连续天数",
+    "preferences": "偏好设置",
+    "favoriteGenre": " favorite 类型",
+    "favoriteStore": " favorite 商店",
+    "averageRating": "平均评分",
+    "longestSession": "最长会话",
+    "activity": "活动",
+    "totalSessions": "总会话数",
+    "sessionsPerGame": "每游戏会话数",
+    "averageSessionDuration": "平均会话时长",
+    "topGamesByPlaytime": "游戏时长排行榜",
+    "gamesYouSpentMostTime": "你花时间最多的游戏",
+    "recentAchievements": "最近成就",
+    "statisticsByGenre": "按类型统计",
+    "analysisByGenre": "按类型分析游戏时长",
+    "games": "游戏",
+    "consecutiveDaysShort": "天"
   }
 }

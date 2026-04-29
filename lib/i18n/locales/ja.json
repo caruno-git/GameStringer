@@ -4837,5 +4837,27 @@
     "advancedSettings": "詳細設定",
     "contextSensitivity": "コンテキスト感度",
     "creativityLevel": "創造性レベル"
+  },
+  "detailedStatistics": {
+    "achievement": "実績",
+    "perGame": "ゲームあたり",
+    "currentStreak": "現在の連続記録",
+    "consecutiveDays": "連続日数",
+    "preferences": "設定",
+    "favoriteGenre": "お気に入りジャンル",
+    "favoriteStore": "お気に入りストア",
+    "averageRating": "平均評価",
+    "longestSession": "最長セッション",
+    "activity": "アクティビティ",
+    "totalSessions": "総セッション数",
+    "sessionsPerGame": "ゲームあたりのセッション",
+    "averageSessionDuration": "平均セッション時間",
+    "topGamesByPlaytime": "プレイ時間トップゲーム",
+    "gamesYouSpentMostTime": "最も時間を費やしたゲーム",
+    "recentAchievements": "最近の実績",
+    "statisticsByGenre": "ジャンル別統計",
+    "analysisByGenre": "ジャンル別プレイ時間分析",
+    "games": "ゲーム",
+    "consecutiveDaysShort": "日"
   }
 }

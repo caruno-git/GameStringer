@@ -4943,5 +4943,27 @@
     "advancedSettings": "Расширенные настройки",
     "contextSensitivity": "Чувствительность к контексту",
     "creativityLevel": "Уровень Креативности"
+  },
+  "detailedStatistics": {
+    "achievement": "Достижение",
+    "perGame": "на игру",
+    "currentStreak": "Текущая серия",
+    "consecutiveDays": "подряд дней",
+    "preferences": "Настройки",
+    "favoriteGenre": "Любимый жанр",
+    "favoriteStore": "Любимый магазин",
+    "averageRating": "Средний рейтинг",
+    "longestSession": "Самая длинная сессия",
+    "activity": "Активность",
+    "totalSessions": "Всего сессий",
+    "sessionsPerGame": "Сессий на игру",
+    "averageSessionDuration": "Средняя продолжительность сессии",
+    "topGamesByPlaytime": "Топ игр по времени",
+    "gamesYouSpentMostTime": "Игры, на которые вы потратили больше всего времени",
+    "recentAchievements": "Недавние достижения",
+    "statisticsByGenre": "Статистика по жанрам",
+    "analysisByGenre": "Анализ вашего времени игры по жанрам",
+    "games": "игр",
+    "consecutiveDaysShort": "дн"
   }
 }

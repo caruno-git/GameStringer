@@ -292,26 +292,26 @@ const DetailedStatistics: React.FC<DetailedStatisticsProps> = ({
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Achievement</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('detailedStatistics.achievement')}</CardTitle>
                 <Award className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{globalStats.totalAchievements}</div>
                 <p className="text-xs text-muted-foreground">
-                  {Math.round(globalStats.totalAchievements / globalStats.totalGames)} per game
+                  {Math.round(globalStats.totalAchievements / globalStats.totalGames)} {t('detailedStatistics.perGame')}
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Current Streak</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('detailedStatistics.currentStreak')}</CardTitle>
                 <Zap className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{globalStats.currentStreak}</div>
                 <p className="text-xs text-muted-foreground">
-                  consecutive days
+                  {t('detailedStatistics.consecutiveDays')}
                 </p>
               </CardContent>
             </Card>
@@ -323,24 +323,24 @@ const DetailedStatistics: React.FC<DetailedStatisticsProps> = ({
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Star className="h-5 w-5" />
-                  Preferences
+                  {t('detailedStatistics.preferences')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Favorite Genre</span>
+                  <span className="text-sm text-muted-foreground">{t('detailedStatistics.favoriteGenre')}</span>
                   <Badge variant="secondary">{globalStats.favoriteGenre}</Badge>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Favorite Store</span>
+                  <span className="text-sm text-muted-foreground">{t('detailedStatistics.favoriteStore')}</span>
                   <Badge variant="secondary">{globalStats.favoriteStore}</Badge>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Average Rating</span>
+                  <span className="text-sm text-muted-foreground">{t('detailedStatistics.averageRating')}</span>
                   <Badge variant="secondary">{globalStats.averageRating.toFixed(1)}/10</Badge>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Longest Session</span>
+                  <span className="text-sm text-muted-foreground">{t('detailedStatistics.longestSession')}</span>
                   <Badge variant="secondary">{formatTime(globalStats.longestSession)}</Badge>
                 </div>
               </CardContent>
@@ -350,20 +350,20 @@ const DetailedStatistics: React.FC<DetailedStatisticsProps> = ({
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Activity className="h-5 w-5" />
-                  Activity
+                  {t('detailedStatistics.activity')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Total Sessions</span>
+                  <span className="text-sm text-muted-foreground">{t('detailedStatistics.totalSessions')}</span>
                   <Badge variant="outline">{globalStats.totalSessions}</Badge>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Sessions per Game</span>
+                  <span className="text-sm text-muted-foreground">{t('detailedStatistics.sessionsPerGame')}</span>
                   <Badge variant="outline">{Math.round(globalStats.totalSessions / globalStats.totalGames)}</Badge>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Average Session Duration</span>
+                  <span className="text-sm text-muted-foreground">{t('detailedStatistics.averageSessionDuration')}</span>
                   <Badge variant="outline">
                     {formatTime(Math.round(globalStats.totalPlaytime / globalStats.totalSessions))}
                   </Badge>
@@ -377,8 +377,8 @@ const DetailedStatistics: React.FC<DetailedStatisticsProps> = ({
         <TabsContent value="games" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Top Games by Playtime</CardTitle>
-              <CardDescription>The games you&apos;ve spent the most time on</CardDescription>
+              <CardTitle>{t('detailedStatistics.topGamesByPlaytime')}</CardTitle>
+              <CardDescription>{t('detailedStatistics.gamesYouSpentMostTime')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -410,7 +410,7 @@ const DetailedStatistics: React.FC<DetailedStatisticsProps> = ({
         <TabsContent value="achievements" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Achievement Recenti</CardTitle>
+              <CardTitle>{t('detailedStatistics.recentAchievements')}</CardTitle>
               <CardDescription>{t('common.iTuoiUltimiTraguardiSbloccati')}</CardDescription>
             </CardHeader>
             <CardContent>
@@ -454,8 +454,8 @@ const DetailedStatistics: React.FC<DetailedStatisticsProps> = ({
         <TabsContent value="genres" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Statistics by Genre</CardTitle>
-              <CardDescription>Analysis of your playtime by genre</CardDescription>
+              <CardTitle>{t('detailedStatistics.statisticsByGenre')}</CardTitle>
+              <CardDescription>{t('detailedStatistics.analysisByGenre')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -472,8 +472,8 @@ const DetailedStatistics: React.FC<DetailedStatisticsProps> = ({
                       className="h-2"
                     />
                     <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>{genre.games} games</span>
-                      <span>{genre.achievements} achievement</span>
+                      <span>{genre.games} {t('detailedStatistics.games')}</span>
+                      <span>{genre.achievements} {t('detailedStatistics.achievement').toLowerCase()}</span>
                     </div>
                   </div>
                 ))}
