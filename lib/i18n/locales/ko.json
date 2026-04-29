@@ -4919,5 +4919,29 @@
     "toneDark": "다크",
     "toneRomantic": "로맨틱",
     "toneSarcastic": "비꼬는"
+  },
+  "contextAwareTranslation": {
+    "gameContext": "게임 컨텍스트",
+    "gameTitle": "게임 제목",
+    "genre": "장르",
+    "setting": "설정",
+    "translationContext": "번역 컨텍스트",
+    "textType": "텍스트 유형",
+    "emotionalTone": "감정적 톤",
+    "formality": "격식",
+    "formal": "격식적",
+    "neutral": "중립",
+    "useGameTerminology": "게임 용어 사용",
+    "preserveFormatting": "서식 유지",
+    "adaptCulturalReferences": "문화적 참조 적응",
+    "maintainTone": "톤 유지",
+    "original": "원본",
+    "alternative": "대체",
+    "enterTextToTranslate": "번역할 텍스트 입력",
+    "contextualTranslationCompleted": "맥락 번역 완료",
+    "textCopied": "텍스트 복사됨",
+    "advancedSettings": "고급 설정",
+    "contextSensitivity": "컨텍스트 민감도",
+    "creativityLevel": "창의성 수준"
   }
 }

@@ -4813,5 +4813,29 @@
     "toneDark": "暗黑",
     "toneRomantic": "浪漫",
     "toneSarcastic": "讽刺"
+  },
+  "contextAwareTranslation": {
+    "gameContext": "游戏上下文",
+    "gameTitle": "游戏标题",
+    "genre": "类型",
+    "setting": "背景设定",
+    "translationContext": "翻译上下文",
+    "textType": "文本类型",
+    "emotionalTone": "情感基调",
+    "formality": "正式程度",
+    "formal": "正式",
+    "neutral": "中性",
+    "useGameTerminology": "使用游戏术语",
+    "preserveFormatting": "保留格式",
+    "adaptCulturalReferences": "调整文化引用",
+    "maintainTone": "保持基调",
+    "original": "原文",
+    "alternative": "替代",
+    "enterTextToTranslate": "输入要翻译的文本",
+    "contextualTranslationCompleted": "语境翻译完成",
+    "textCopied": "文本已复制",
+    "advancedSettings": "高级设置",
+    "contextSensitivity": "上下文敏感度",
+    "creativityLevel": "创意级别"
   }
 }

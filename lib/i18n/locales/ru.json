@@ -4919,5 +4919,29 @@
     "toneDark": "Тёмный",
     "toneRomantic": "Романтичный",
     "toneSarcastic": "Саркастичный"
+  },
+  "contextAwareTranslation": {
+    "gameContext": "Контекст Игры",
+    "gameTitle": "Название Игры",
+    "genre": "Жанр",
+    "setting": "Сеттинг",
+    "translationContext": "Контекст Перевода",
+    "textType": "Тип Текста",
+    "emotionalTone": "Эмоциональный Тон",
+    "formality": "Формальность",
+    "formal": "Формальный",
+    "neutral": "Нейтральный",
+    "useGameTerminology": "Использовать Игровую Терминологию",
+    "preserveFormatting": "Сохранить Форматирование",
+    "adaptCulturalReferences": "Адаптировать Культурные Ссылки",
+    "maintainTone": "Сохранить Тон",
+    "original": "Оригинал",
+    "alternative": "Альтернатива",
+    "enterTextToTranslate": "Введите текст для перевода",
+    "contextualTranslationCompleted": "Контекстный перевод завершён",
+    "textCopied": "Текст скопирован",
+    "advancedSettings": "Расширенные настройки",
+    "contextSensitivity": "Чувствительность к контексту",
+    "creativityLevel": "Уровень Креативности"
   }
 }

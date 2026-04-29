@@ -4813,5 +4813,29 @@
     "toneDark": "ダーク",
     "toneRomantic": "ロマンチック",
     "toneSarcastic": "皮肉"
+  },
+  "contextAwareTranslation": {
+    "gameContext": "ゲームコンテキスト",
+    "gameTitle": "ゲームタイトル",
+    "genre": "ジャンル",
+    "setting": "設定",
+    "translationContext": "翻訳コンテキスト",
+    "textType": "テキストタイプ",
+    "emotionalTone": "感情的なトーン",
+    "formality": "形式",
+    "formal": "形式的",
+    "neutral": "中立",
+    "useGameTerminology": "ゲーム用語を使用",
+    "preserveFormatting": "書式を保持",
+    "adaptCulturalReferences": "文化的参照を適応",
+    "maintainTone": "トーンを維持",
+    "original": "オリジナル",
+    "alternative": "代替",
+    "enterTextToTranslate": "翻訳するテキストを入力",
+    "contextualTranslationCompleted": "文脈翻訳完了",
+    "textCopied": "テキストをコピー",
+    "advancedSettings": "詳細設定",
+    "contextSensitivity": "コンテキスト感度",
+    "creativityLevel": "創造性レベル"
   }
 }

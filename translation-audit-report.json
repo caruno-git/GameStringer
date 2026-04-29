@@ -996,46 +996,6 @@
       ]
     },
     {
-      "file": "components\\error-boundary.tsx",
-      "matches": [
-        {
-          "string": "Dettagli errore",
-          "line": 70,
-          "context": "   <summary className=\"cursor-pointer font-medium\">Dettagli errore</summary>\r                   <pre className=\"mt-"
-        },
-        {
-          "string": "Errore Critico",
-          "line": 278,
-          "context": "v>\r             <h1 className=\"text-3xl font-bold\">Errore Critico</h1>\r             <p className=\"text-muted-foreg"
-        },
-        {
-          "string": "Dettagli tecnici",
-          "line": 284,
-          "context": "   <summary className=\"cursor-pointer font-medium\">Dettagli tecnici</summary>\r                 <pre className=\"mt-2 "
-        }
-      ]
-    },
-    {
-      "file": "components\\game-detail\\screenshot-lightbox.tsx",
-      "matches": [
-        {
-          "string": "Screenshot",
-          "line": 75,
-          "context": "  <span className=\"text-sm font-medium text-white\">Screenshot</span>\r           <span className=\"px-2 py-0.5 r"
-        },
-        {
-          "string": "Esc",
-          "line": 217,
-          "context": "px-1.5 py-0.5 rounded bg-slate-800 text-slate-400\">Esc</kbd> Chiudi</span>\r         </div>\r       </div"
-        },
-        {
-          "string": "Download",
-          "line": 109,
-          "context": " hover:text-white transition-colors\"\r             title=\"Download\"\r           >\r             <Download class"
-        }
-      ]
-    },
-    {
       "file": "components\\game-detail-client.tsx",
       "matches": [
         {
@@ -1351,6 +1311,21 @@
       ]
     },
     {
+      "file": "components\\error-boundary.tsx",
+      "matches": [
+        {
+          "string": "Errore Critico",
+          "line": 305,
+          "context": "v>\r             <h1 className=\"text-3xl font-bold\">Errore Critico</h1>\r             <p className=\"text-muted-foreg"
+        },
+        {
+          "string": "Dettagli tecnici",
+          "line": 311,
+          "context": "   <summary className=\"cursor-pointer font-medium\">Dettagli tecnici</summary>\r                 <pre className=\"mt-2 "
+        }
+      ]
+    },
+    {
       "file": "components\\forum\\thread-view.tsx",
       "matches": [
         {
@@ -1576,6 +1551,16 @@
       ]
     },
     {
+      "file": "components\\game-detail\\screenshot-lightbox.tsx",
+      "matches": [
+        {
+          "string": "Esc",
+          "line": 219,
+          "context": "px-1.5 py-0.5 rounded bg-slate-800 text-slate-400\">Esc</kbd> Chiudi</span>\r         </div>\r       </div"
+        }
+      ]
+    },
+    {
       "file": "components\\inline-translator.tsx",
       "matches": [
         {
@@ -1757,5 +1742,5 @@
     }
   ],
   "filesAnalyzed": 225,
-  "totalMatches": 270
+  "totalMatches": 267
 }

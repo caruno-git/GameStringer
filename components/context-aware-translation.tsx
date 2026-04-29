@@ -201,7 +201,7 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
 
   const handleTranslate = async () => {
     if (!inputText.trim()) {
-      toast.error('Enter text to translate');
+      toast.error(t('contextAwareTranslation.enterTextToTranslate'));
       return;
     }
 
@@ -210,16 +210,16 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
       setTranslatedText(translation.translatedText);
       setTranslations(prev => [translation, ...prev]);
       onTranslationComplete(translation);
-      toast.success('Contextual translation completed');
+      toast.success(t('contextAwareTranslation.contextualTranslationCompleted'));
     } catch (error: unknown) {
       clientLogger.error('Translation error:', error);
-      toast.error('Translation error');
+      toast.error(t('common.translationError'));
     }
   };
 
   const copyText = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast.success('Text copied');
+    toast.success(t('contextAwareTranslation.textCopied'));
   };
 
   const exportTranslations = () => {
@@ -261,12 +261,12 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Gamepad2 className="h-5 w-5" />
-              Game Context
+              {t('contextAwareTranslation.gameContext')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>Game Title</Label>
+              <Label>{t('contextAwareTranslation.gameTitle')}</Label>
               <input
                 type="text"
                 value={gameContext.gameTitle}
@@ -276,7 +276,7 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label>Genre</Label>
+              <Label>{t('contextAwareTranslation.genre')}</Label>
               <Select 
                 value={gameContext.genre} 
                 onValueChange={(value) => setGameContext(prev => ({ ...prev, genre: value }))}
@@ -293,7 +293,7 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label>Ambientazione</Label>
+              <Label>{t('contextAwareTranslation.setting')}</Label>
               <input
                 type="text"
                 value={gameContext.setting}
@@ -310,12 +310,12 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Target className="h-5 w-5" />
-              Translation Context
+              {t('contextAwareTranslation.translationContext')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>Text Type</Label>
+              <Label>{t('contextAwareTranslation.textType')}</Label>
               <Select 
                 value={translationContext.textType} 
                 onValueChange={(value: string) => setTranslationContext(prev => ({ ...prev, textType: value as typeof prev.textType }))}
@@ -334,7 +334,7 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label>Emotional Tone</Label>
+              <Label>{t('contextAwareTranslation.emotionalTone')}</Label>
               <Select 
                 value={translationContext.emotionalTone || ''} 
                 onValueChange={(value) => setTranslationContext(prev => ({ ...prev, emotionalTone: value }))}
@@ -351,7 +351,7 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label>Formalità</Label>
+              <Label>{t('contextAwareTranslation.formality')}</Label>
               <Select 
                 value={translationContext.formality || 'neutral'} 
                 onValueChange={(value: string) => setTranslationContext(prev => ({ ...prev, formality: value as typeof prev.formality }))}
@@ -360,8 +360,8 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="formal">Formale</SelectItem>
-                  <SelectItem value="neutral">Neutrale</SelectItem>
+                  <SelectItem value="formal">{t('contextAwareTranslation.formal')}</SelectItem>
+                  <SelectItem value="neutral">{t('contextAwareTranslation.neutral')}</SelectItem>
                   <SelectItem value="informal">{t('common.informale')}</SelectItem>
                 </SelectContent>
               </Select>
@@ -450,13 +450,13 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Settings className="h-5 w-5" />
-            Advanced Settings
+            {t('contextAwareTranslation.advancedSettings')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex items-center justify-between">
-              <Label>Use Game Terminology</Label>
+              <Label>{t('contextAwareTranslation.useGameTerminology')}</Label>
               <Switch
                 checked={settings.useGameTerminology}
                 onCheckedChange={(checked) => setSettings(prev => ({ ...prev, useGameTerminology: checked }))}
@@ -464,7 +464,7 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
             </div>
 
             <div className="flex items-center justify-between">
-              <Label>Preserve Formatting</Label>
+              <Label>{t('contextAwareTranslation.preserveFormatting')}</Label>
               <Switch
                 checked={settings.preserveFormatting}
                 onCheckedChange={(checked) => setSettings(prev => ({ ...prev, preserveFormatting: checked }))}
@@ -472,7 +472,7 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
             </div>
 
             <div className="flex items-center justify-between">
-              <Label>Adapt Cultural References</Label>
+              <Label>{t('contextAwareTranslation.adaptCulturalReferences')}</Label>
               <Switch
                 checked={settings.adaptCulturalReferences}
                 onCheckedChange={(checked) => setSettings(prev => ({ ...prev, adaptCulturalReferences: checked }))}
@@ -480,7 +480,7 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
             </div>
 
             <div className="flex items-center justify-between">
-              <Label>Maintain Tone</Label>
+              <Label>{t('contextAwareTranslation.maintainTone')}</Label>
               <Switch
                 checked={settings.maintainTone}
                 onCheckedChange={(checked) => setSettings(prev => ({ ...prev, maintainTone: checked }))}
@@ -490,7 +490,7 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Context Sensitivity: {settings.contextSensitivity}%</Label>
+              <Label>{t('contextAwareTranslation.contextSensitivity')}: {settings.contextSensitivity}%</Label>
               <Slider
                 value={[settings.contextSensitivity]}
                 onValueChange={([value]) => setSettings(prev => ({ ...prev, contextSensitivity: value }))}
@@ -500,7 +500,7 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label>Creativity Level: {settings.creativityLevel}%</Label>
+              <Label>{t('contextAwareTranslation.creativityLevel')}: {settings.creativityLevel}%</Label>
               <Slider
                 value={[settings.creativityLevel]}
                 onValueChange={([value]) => setSettings(prev => ({ ...prev, creativityLevel: value }))}
@@ -538,7 +538,7 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-xs">Originale</Label>
+                    <Label className="text-xs">{t('contextAwareTranslation.original')}</Label>
                     <p className="text-sm bg-muted p-2 rounded">{translation.originalText}</p>
                   </div>
                   <div>
@@ -549,7 +549,7 @@ const ContextAwareTranslation: React.FC<ContextAwareTranslationProps> = ({
 
                 {translation.alternatives.length > 0 && (
                   <div>
-                    <Label className="text-xs">Alternative</Label>
+                    <Label className="text-xs">{t('contextAwareTranslation.alternative')}</Label>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {translation.alternatives.map((alt, idx) => (
                         <Badge key={idx} variant="outline" className="text-xs cursor-pointer" onClick={() => copyText(alt)}>

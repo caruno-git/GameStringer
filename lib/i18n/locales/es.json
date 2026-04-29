@@ -4813,5 +4813,29 @@
     "toneDark": "Oscuro",
     "toneRomantic": "Romántico",
     "toneSarcastic": "Sarcástico"
+  },
+  "contextAwareTranslation": {
+    "gameContext": "Contexto del Juego",
+    "gameTitle": "Título del Juego",
+    "genre": "Género",
+    "setting": "Ambientación",
+    "translationContext": "Contexto de Traducción",
+    "textType": "Tipo de Texto",
+    "emotionalTone": "Tono Emocional",
+    "formality": "Formalidad",
+    "formal": "Formal",
+    "neutral": "Neutral",
+    "useGameTerminology": "Usar Terminología de Juego",
+    "preserveFormatting": "Preservar Formato",
+    "adaptCulturalReferences": "Adaptar Referencias Culturales",
+    "maintainTone": "Mantener Tono",
+    "original": "Original",
+    "alternative": "Alternativa",
+    "enterTextToTranslate": "Ingresa texto para traducir",
+    "contextualTranslationCompleted": "Traducción contextual completada",
+    "textCopied": "Texto copiado",
+    "advancedSettings": "Configuración Avanzada",
+    "contextSensitivity": "Sensibilidad al Contexto",
+    "creativityLevel": "Nivel de Creatividad"
   }
 }
