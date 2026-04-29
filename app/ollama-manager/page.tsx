@@ -24,7 +24,16 @@ import {
   Sparkles,
   ExternalLink,
   TrendingUp,
+  Gauge,
+  BarChart3,
+  Trophy,
+  AlertCircle,
+  ChevronDown,
+  ChevronUp,
+  Wand2,
+  ArrowRight,
 } from 'lucide-react';
+import Link from 'next/link';
 import {
   isOllamaRunning,
   listInstalledModels,
@@ -177,6 +186,15 @@ export default function OllamaManagerPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            {ollamaOnline === true && (
+              <Link href="/ollama-manager/advanced">
+                <Button variant="ghost" size="sm" className="h-8 gap-1.5 text-white/80 hover:text-white hover:bg-white/10 border border-white/20">
+                  <Wand2 className="h-4 w-4" />
+                  <span className="hidden sm:inline">{t('ollamaManagerPage.advancedFeatures')}</span>
+                  <ArrowRight className="h-3 w-3" />
+                </Button>
+              </Link>
+            )}
             <Badge className={cn(
               "text-xs font-medium",
               ollamaOnline === true ? "bg-emerald-900/50 text-emerald-200 border-emerald-400/50" :
