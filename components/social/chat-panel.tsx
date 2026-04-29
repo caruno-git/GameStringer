@@ -176,11 +176,13 @@ interface MessageBubbleProps {
   message: ChatMessage;
   isOwn: boolean;
   senderProfile?: { username: string; display_name: string | null; avatar_url: string | null } | null;
+  ownProfile?: { username: string; display_name: string | null; avatar_url: string | null } | null;
 }
 
-function MessageBubble({ message, isOwn, senderProfile }: MessageBubbleProps) {
+function MessageBubble({ message, isOwn, senderProfile, ownProfile }: MessageBubbleProps) {
   const { t } = useTranslation();
   const displayName = senderProfile?.display_name || senderProfile?.username || t('chat.userNotFound');
+  const ownDisplayName = ownProfile?.display_name || ownProfile?.username || 'Tu';
 
   return (
     <div className={cn(
@@ -192,6 +194,14 @@ function MessageBubble({ message, isOwn, senderProfile }: MessageBubbleProps) {
           <AvatarImage src={senderProfile?.avatar_url || undefined} />
           <AvatarFallback className="bg-gradient-to-br from-slate-700 to-slate-600 text-xs text-white">
             {displayName.slice(0, 2).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+      )}
+      {isOwn && (
+        <Avatar className="h-8 w-8 mt-1 ring-2 ring-violet-500/50">
+          <AvatarImage src={ownProfile?.avatar_url || undefined} />
+          <AvatarFallback className="bg-gradient-to-br from-violet-600 to-indigo-600 text-xs text-white">
+            {ownDisplayName.slice(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
       )}
@@ -233,6 +243,7 @@ function ChatView({ conversation, currentUserId, onBack }: ChatViewProps) {
   const [newMessage, setNewMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [otherProfile, setOtherProfile] = useState<{ username: string; display_name: string | null; avatar_url: string | null } | null>(null);
+  const [ownProfile, setOwnProfile] = useState<{ username: string; display_name: string | null; avatar_url: string | null } | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const senderProfilesRef = useRef<Map<string, { username: string; display_name: string | null; avatar_url: string | null } | null>>(new Map());
 
@@ -243,6 +254,11 @@ function ChatView({ conversation, currentUserId, onBack }: ChatViewProps) {
       if (other) getProfile(other.user_id).then(p => setOtherProfile(p));
     }
   }, [conversation, currentUserId]);
+
+  // Load own profile
+  useEffect(() => {
+    getProfile(currentUserId).then(p => setOwnProfile(p));
+  }, [currentUserId]);
 
   // Load messages
   const loadMessages = useCallback(async () => {
@@ -335,6 +351,7 @@ function ChatView({ conversation, currentUserId, onBack }: ChatViewProps) {
               message={msg}
               isOwn={msg.sender_id === currentUserId}
               senderProfile={senderProfilesRef.current.get(msg.sender_id)}
+              ownProfile={msg.sender_id === currentUserId ? ownProfile : undefined}
             />
           ))
         ) : (
