@@ -4658,5 +4658,27 @@
     "announcementsRoom": "Announcements",
     "userDefault": "User",
     "chat": "聊天"
+  },
+  "statistics": {
+    "detailedStats": "详细统计",
+    "lastWeek": "上周",
+    "lastMonth": "上月",
+    "lastYear": "去年",
+    "allTime": "所有时间",
+    "overview": "概览",
+    "games": "游戏",
+    "achievements": "成就",
+    "genres": "类型",
+    "totalTime": "总时间",
+    "averagePerGame": "平均: {time}/游戏",
+    "completed": "已完成",
+    "totalGames": "游戏总数",
+    "unlocked": "已解锁",
+    "recent": "最近",
+    "favoriteGenre": "最喜欢的类型",
+    "favoriteStore": "最喜欢的商店",
+    "currentStreak": "当前连胜",
+    "longestSession": "最长会话",
+    "totalSessions": "总会话数"
   }
 }

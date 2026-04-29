@@ -4764,5 +4764,27 @@
     "announcementsRoom": "Announcements",
     "userDefault": "User",
     "chat": "Chat"
+  },
+  "statistics": {
+    "detailedStats": "Detailed Statistics",
+    "lastWeek": "Last Week",
+    "lastMonth": "Last Month",
+    "lastYear": "Last Year",
+    "allTime": "All Time",
+    "overview": "Overview",
+    "games": "Games",
+    "achievements": "Achievements",
+    "genres": "Genres",
+    "totalTime": "Total Time",
+    "averagePerGame": "Average: {time} per game",
+    "completed": "Completed",
+    "totalGames": "Total Games",
+    "unlocked": "Unlocked",
+    "recent": "Recent",
+    "favoriteGenre": "Favorite Genre",
+    "favoriteStore": "Favorite Store",
+    "currentStreak": "Current Streak",
+    "longestSession": "Longest Session",
+    "totalSessions": "Total Sessions"
   }
 }

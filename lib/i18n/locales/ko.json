@@ -4764,5 +4764,27 @@
     "announcementsRoom": "Announcements",
     "userDefault": "User",
     "chat": "채팅"
+  },
+  "statistics": {
+    "detailedStats": "상세 통계",
+    "lastWeek": "지난 주",
+    "lastMonth": "지난 달",
+    "lastYear": "작년",
+    "allTime": "전체 기간",
+    "overview": "개요",
+    "games": "게임",
+    "achievements": "업적",
+    "genres": "장르",
+    "totalTime": "총 시간",
+    "averagePerGame": "평균: {time}/게임",
+    "completed": "완료됨",
+    "totalGames": "총 게임 수",
+    "unlocked": "해제됨",
+    "recent": "최근",
+    "favoriteGenre": "좋아하는 장르",
+    "favoriteStore": "좋아하는 스토어",
+    "currentStreak": "현재 연속",
+    "longestSession": "최장 세션",
+    "totalSessions": "총 세션 수"
   }
 }

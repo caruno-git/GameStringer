@@ -237,17 +237,17 @@ const DetailedStatistics: React.FC<DetailedStatisticsProps> = ({
     <div className={`space-y-6 ${className}`}>
       {/* Controlli */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Detailed Statistics</h2>
+        <h2 className="text-2xl font-bold">{t('statistics.detailedStats')}</h2>
         <div className="flex items-center gap-4">
           <Select value={selectedPeriod} onValueChange={(value: string) => setSelectedPeriod(value as "all" | "year" | "month" | "week")}>
             <SelectTrigger className="w-[140px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="week">Last Week</SelectItem>
-              <SelectItem value="month">Last Month</SelectItem>
-              <SelectItem value="year">Last Year</SelectItem>
-              <SelectItem value="all">All Time</SelectItem>
+              <SelectItem value="week">{t('statistics.lastWeek')}</SelectItem>
+              <SelectItem value="month">{t('statistics.lastMonth')}</SelectItem>
+              <SelectItem value="year">{t('statistics.lastYear')}</SelectItem>
+              <SelectItem value="all">{t('statistics.allTime')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -255,10 +255,10 @@ const DetailedStatistics: React.FC<DetailedStatisticsProps> = ({
 
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="games">Games</TabsTrigger>
-          <TabsTrigger value="achievements">Achievement</TabsTrigger>
-          <TabsTrigger value="genres">Genres</TabsTrigger>
+          <TabsTrigger value="overview">{t('statistics.overview')}</TabsTrigger>
+          <TabsTrigger value="games">{t('statistics.games')}</TabsTrigger>
+          <TabsTrigger value="achievements">{t('statistics.achievements')}</TabsTrigger>
+          <TabsTrigger value="genres">{t('statistics.genres')}</TabsTrigger>
         </TabsList>
 
         {/* Panoramica */}
@@ -266,20 +266,20 @@ const DetailedStatistics: React.FC<DetailedStatisticsProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Time</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('statistics.totalTime')}</CardTitle>
                 <Clock className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{formatTime(globalStats.totalPlaytime)}</div>
                 <p className="text-xs text-muted-foreground">
-                  Average: {formatTime(Math.round(globalStats.totalPlaytime / globalStats.totalGames))} per game
+                  {t('statistics.averagePerGame').replace('{time}', formatTime(Math.round(globalStats.totalPlaytime / globalStats.totalGames)))}
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Games Completed</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('statistics.completed')}</CardTitle>
                 <Trophy className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>

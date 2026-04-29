@@ -4658,5 +4658,27 @@
     "announcementsRoom": "Announcements",
     "userDefault": "User",
     "chat": "Chat"
+  },
+  "statistics": {
+    "detailedStats": "Detaillierte Statistiken",
+    "lastWeek": "Letzte Woche",
+    "lastMonth": "Letzter Monat",
+    "lastYear": "Letztes Jahr",
+    "allTime": "Alle Zeit",
+    "overview": "Übersicht",
+    "games": "Spiele",
+    "achievements": "Erfolge",
+    "genres": "Genres",
+    "totalTime": "Gesamtzeit",
+    "averagePerGame": "Durchschnitt: {time} pro Spiel",
+    "completed": "Abgeschlossen",
+    "totalGames": "Spiele Gesamt",
+    "unlocked": "Freigeschaltet",
+    "recent": "Neueste",
+    "favoriteGenre": "Lieblingsgenre",
+    "favoriteStore": "Lieblingsstore",
+    "currentStreak": "Aktuelle Serie",
+    "longestSession": "Längste Sitzung",
+    "totalSessions": "Sitzungen Gesamt"
   }
 }

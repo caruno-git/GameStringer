@@ -4764,5 +4764,27 @@
     "announcementsRoom": "Announcements",
     "userDefault": "User",
     "chat": "Чат"
+  },
+  "statistics": {
+    "detailedStats": "Подробная Статистика",
+    "lastWeek": "Последняя Неделя",
+    "lastMonth": "Последний Месяц",
+    "lastYear": "Последний Год",
+    "allTime": "За Всё Время",
+    "overview": "Обзор",
+    "games": "Игры",
+    "achievements": "Достижения",
+    "genres": "Жанры",
+    "totalTime": "Общее Время",
+    "averagePerGame": "Среднее: {time} за игру",
+    "completed": "Завершено",
+    "totalGames": "Всего Игр",
+    "unlocked": "Разблокировано",
+    "recent": "Недавние",
+    "favoriteGenre": "Любимый Жанр",
+    "favoriteStore": "Любимый Магазин",
+    "currentStreak": "Текущая Серия",
+    "longestSession": "Самая Длинная Сессия",
+    "totalSessions": "Всего Сессий"
   }
 }

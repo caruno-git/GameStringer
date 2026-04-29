@@ -4658,5 +4658,27 @@
     "announcementsRoom": "Announcements",
     "userDefault": "User",
     "chat": "チャット"
+  },
+  "statistics": {
+    "detailedStats": "詳細統計",
+    "lastWeek": "先週",
+    "lastMonth": "先月",
+    "lastYear": "昨年",
+    "allTime": "全期間",
+    "overview": "概要",
+    "games": "ゲーム",
+    "achievements": "実績",
+    "genres": "ジャンル",
+    "totalTime": "総時間",
+    "averagePerGame": "平均: {time}/ゲーム",
+    "completed": "完了",
+    "totalGames": "総ゲーム数",
+    "unlocked": "解除済み",
+    "recent": "最近",
+    "favoriteGenre": "お気に入りジャンル",
+    "favoriteStore": "お気に入りストア",
+    "currentStreak": "現在の連続記録",
+    "longestSession": "最長セッション",
+    "totalSessions": "総セッション数"
   }
 }

@@ -4764,5 +4764,27 @@
     "announcementsRoom": "Announcements",
     "userDefault": "User",
     "chat": "Czat"
+  },
+  "statistics": {
+    "detailedStats": "Szczegółowe Statystyki",
+    "lastWeek": "Ostatni Tydzień",
+    "lastMonth": "Ostatni Miesiąc",
+    "lastYear": "Ostatni Rok",
+    "allTime": "Cały Czas",
+    "overview": "Przegląd",
+    "games": "Gry",
+    "achievements": "Osiągnięcia",
+    "genres": "Gatunki",
+    "totalTime": "Całkowity Czas",
+    "averagePerGame": "Średnio: {time} na grę",
+    "completed": "Ukończone",
+    "totalGames": "Gry Razem",
+    "unlocked": "Odblokowane",
+    "recent": "Ostatnie",
+    "favoriteGenre": "Ulubiony Gatunek",
+    "favoriteStore": "Ulubiony Sklep",
+    "currentStreak": "Aktualna Seria",
+    "longestSession": "Najdłuższa Sesja",
+    "totalSessions": "Sesje Razem"
   }
 }
