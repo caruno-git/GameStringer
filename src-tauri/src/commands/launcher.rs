@@ -748,7 +748,7 @@ pub async fn install_steam_game(app_id: String) -> Result<LaunchResult, String> 
     // Protocollo Steam per installazione
     let steam_url = format!("steam://install/{}", app_id);
     match launch_with_steam_protocol(&steam_url, &app_id).await {
-        Ok(result) => {
+        Ok(_result) => {
             info!("✅ Installazione gioco Steam {} avviata con successo", app_id);
             Ok(LaunchResult {
                 success: true,
@@ -793,7 +793,7 @@ pub async fn install_epic_game(app_name: String, game_title: String) -> Result<L
     // Protocollo Epic Games per aprire la pagina del gioco
     let epic_url = format!("com.epicgames.launcher://apps/{}?action=view", app_name);
     match launch_with_epic_protocol(&epic_url, &app_name).await {
-        Ok(result) => {
+        Ok(_result) => {
             info!("✅ Pagina installazione Epic Games {} aperta con successo", app_name);
             Ok(LaunchResult {
                 success: true,
@@ -838,7 +838,7 @@ pub async fn install_gog_game(game_id: String, game_title: String) -> Result<Lau
     // Protocollo GOG per aprire la pagina del gioco
     let gog_url = format!("goggalaxy://openGameView/{}", game_id);
     match launch_with_gog_protocol(&gog_url, &game_id).await {
-        Ok(result) => {
+        Ok(_result) => {
             info!("✅ Pagina installazione GOG {} aperta con successo", game_id);
             Ok(LaunchResult {
                 success: true,
