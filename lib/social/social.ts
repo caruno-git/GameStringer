@@ -197,11 +197,15 @@ export async function getFriends(userId: string): Promise<UserProfile[]> {
     supabase.from('friendships').select('requester_id, addressee_id').eq('status', 'accepted').or(`requester_id.eq.${userId},addressee_id.eq.${userId}`)
   );
   if (!friendships?.length) return [];
-  
+
   const friendIds = friendships.map(f => f.requester_id === userId ? f.addressee_id : f.requester_id);
-  const profiles = await safeQuery<UserProfile[]>('user_profiles', (supabase) =>
-    supabase.from('user_profiles').select('*').in('user_id', friendIds)
-  );
+  const profiles = await safeQuery<UserProfile[]>('user_profiles', (supabase) => {
+    const query = supabase.from('user_profiles').select('*');
+    if (friendIds.length === 1) {
+      return query.eq('user_id', friendIds[0]);
+    }
+    return query.in('user_id', friendIds);
+  });
   return profiles || [];
 }
 
@@ -342,30 +346,7 @@ export async function getOnlineUsers(limit = 50): Promise<UserPresence[]> {
   }
 }
 
-export async function getOnlineFriends(userId: string): Promise<(UserProfile & { presence: UserPresence })[]> {
-  if (!isSupabaseConfigured()) return [];
-  
-  const friends = await getFriends(userId);
-  if (!friends.length) return [];
-  
-  const supabase = await getSupabase();
-  const friendIds = friends.map(f => f.user_id);
-  
-  const { data: presences } = await supabase
-    .from('user_presence')
-    .select('*')
-    .in('user_id', friendIds)
-    .neq('status', 'offline');
-  
-  if (!presences?.length) return [];
-  
-  const presenceMap = new Map(presences.map(p => [p.user_id, p]));
-  
-  return friends
-    .filter(f => presenceMap.has(f.user_id))
-    .map(f => ({ ...f, presence: presenceMap.get(f.user_id)! }));
-}
-
+// ...
 // ─── NOTIFICATIONS ───────────────────────────────────────────────────────────
 
 export async function getNotifications(userId: string, unreadOnly = false): Promise<Notification[]> {
@@ -486,24 +467,31 @@ export async function getActivityFeed(userId?: string, limit = 20): Promise<Acti
 
 export async function getFriendsActivity(userId: string, limit = 20): Promise<ActivityItem[]> {
   if (!isSupabaseConfigured()) return [];
-  
+
   const friends = await getFriends(userId);
   if (!friends.length) return [];
-  
+
   const supabase = await getSupabase();
   const friendIds = friends.map(f => f.user_id);
-  
-  const { data, error } = await supabase
+
+  const query = supabase
     .from('activity_feed')
     .select(`
       *,
       user:user_profiles!user_id(id, username, display_name, avatar_url)
     `)
-    .in('user_id', friendIds)
     .eq('is_public', true)
     .order('created_at', { ascending: false })
     .limit(limit);
-  
+
+  if (friendIds.length === 1) {
+    query.eq('user_id', friendIds[0]);
+  } else {
+    query.in('user_id', friendIds);
+  }
+
+  const { data, error } = await query;
+
   if (error) return [];
   return data || [];
 }
