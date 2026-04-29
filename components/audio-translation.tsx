@@ -373,9 +373,9 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Audio Translation</h2>
+          <h2 className="text-2xl font-bold">{t('audioTranslation.title')}</h2>
           <p className="text-muted-foreground">
-            Transcribe and translate game audio and dialogues
+            {t('common.transcribeTranslateGameAudio')}
           </p>
         </div>
         
@@ -383,22 +383,22 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
           <DialogTrigger asChild>
             <Button variant="outline">
               <Settings className="h-4 w-4 mr-2" />
-              Settings
+              {t('common.settings')}
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Audio Settings</DialogTitle>
+              <DialogTitle>{t('audioTranslation.audioSettings')}</DialogTitle>
               <DialogDescription>
-                Configure recording and translation options
+                {t('common.configureRecordingTranslation')}
               </DialogDescription>
             </DialogHeader>
             
             <Tabs defaultValue="recording" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="recording">Recording</TabsTrigger>
-                <TabsTrigger value="translation">Translation</TabsTrigger>
-                <TabsTrigger value="voice">Voice</TabsTrigger>
+                <TabsTrigger value="recording">{t('audioTranslation.recording')}</TabsTrigger>
+                <TabsTrigger value="translation">{t('audioTranslation.translation')}</TabsTrigger>
+                <TabsTrigger value="voice">{t('audioTranslation.voice')}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="recording" className="space-y-4">
@@ -412,7 +412,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="default">Default</SelectItem>
+                      <SelectItem value="default">{t('audioTranslation.default')}</SelectItem>
                       {audioDevices.filter(d => d.kind === 'audioinput').map(device => (
                         <SelectItem key={device.deviceId} value={device.deviceId}>
                           {device.label || `Microfono ${device.deviceId.slice(0, 8)}`}
@@ -423,7 +423,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Sample Rate</Label>
+                  <Label>{t('audioTranslation.sampleRate')}</Label>
                   <Select 
                     value={settings.sampleRate.toString()} 
                     onValueChange={(value) => setSettings(prev => ({ ...prev, sampleRate: parseInt(value) }))}
@@ -441,7 +441,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <Label>Riduzione Rumore</Label>
+                    <Label>{t('audioTranslation.noiseReduction')}</Label>
                     <Switch
                       checked={settings.noiseReduction}
                       onCheckedChange={(checked) => setSettings(prev => ({ ...prev, noiseReduction: checked }))}
@@ -457,7 +457,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <Label>Cancellazione Eco</Label>
+                    <Label>{t('audioTranslation.echoCancellation')}</Label>
                     <Switch
                       checked={settings.echoCancellation}
                       onCheckedChange={(checked) => setSettings(prev => ({ ...prev, echoCancellation: checked }))}
@@ -468,7 +468,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
 
               <TabsContent value="translation" className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Lingua Target</Label>
+                  <Label>{t('audioTranslation.targetLanguage')}</Label>
                   <Select 
                     value={settings.targetLanguage} 
                     onValueChange={(value) => setSettings(prev => ({ ...prev, targetLanguage: value }))}
@@ -488,7 +488,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <Label>Real-time Transcription</Label>
+                    <Label>{t('common.realTimeTranscription')}</Label>
                     <Switch
                       checked={settings.realTimeTranscription}
                       onCheckedChange={(checked) => setSettings(prev => ({ ...prev, realTimeTranscription: checked }))}
@@ -496,7 +496,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <Label>Auto Translation</Label>
+                    <Label>{t('audioTranslation.autoTranslation')}</Label>
                     <Switch
                       checked={settings.autoTranslation}
                       onCheckedChange={(checked) => setSettings(prev => ({ ...prev, autoTranslation: checked }))}
@@ -507,7 +507,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
 
               <TabsContent value="voice" className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <Label>Abilita Text-to-Speech</Label>
+                  <Label>{t('common.enableTextToSpeech')}</Label>
                   <Switch
                     checked={settings.enableTTS}
                     onCheckedChange={(checked) => setSettings(prev => ({ ...prev, enableTTS: checked }))}
@@ -517,7 +517,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
                 {settings.enableTTS && (
                   <>
                     <div className="space-y-2">
-                      <Label>Voice Speed: {settings.voiceSpeed.toFixed(1)}x</Label>
+                      <Label>{t('common.voiceSpeed')}: {settings.voiceSpeed.toFixed(1)}x</Label>
                       <Slider
                         value={[settings.voiceSpeed]}
                         onValueChange={([value]) => setSettings(prev => ({ ...prev, voiceSpeed: value }))}
@@ -528,7 +528,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Voice Pitch: {settings.voicePitch.toFixed(1)}</Label>
+                      <Label>{t('common.voicePitch')}: {settings.voicePitch.toFixed(1)}</Label>
                       <Slider
                         value={[settings.voicePitch]}
                         onValueChange={([value]) => setSettings(prev => ({ ...prev, voicePitch: value }))}
@@ -544,7 +544,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
 
             <DialogFooter>
               <Button onClick={() => setIsSettingsOpen(false)}>
-                Save Settings
+                {t('common.saveSettings')}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -556,7 +556,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Headphones className="h-5 w-5" />
-            Audio Controls
+            {t('common.audioControls')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -570,12 +570,12 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
               {isRecording ? (
                 <>
                   <Square className="h-5 w-5 mr-2" />
-                  Stop Recording
+                  {t('audioTranslation.stopRecording')}
                 </>
               ) : (
                 <>
                   <Mic className="h-5 w-5 mr-2" />
-                  Start Recording
+                  {t('audioTranslation.startRecording')}
                 </>
               )}
             </Button>
@@ -586,7 +586,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
               variant="outline"
             >
               <Upload className="h-4 w-4 mr-2" />
-              Upload Audio File
+              {t('common.uploadAudioFile')}
             </Button>
 
             <input
@@ -602,7 +602,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
           {isProcessing && (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Processing...</span>
+                <span className="text-sm font-medium">{t('common.processing')}...</span>
                 <span className="text-sm text-muted-foreground">{progress}%</span>
               </div>
               <Progress value={progress} className="h-2" />
@@ -628,10 +628,10 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
       <Tabs defaultValue="transcriptions" className="w-full">
         <TabsList>
           <TabsTrigger value="transcriptions">
-            Transcriptions ({transcriptions.length})
+            {t('common.transcriptions')} ({transcriptions.length})
           </TabsTrigger>
           <TabsTrigger value="translations">
-            Translations ({translations.length})
+            {t('common.translations')} ({translations.length})
           </TabsTrigger>
         </TabsList>
 
@@ -640,10 +640,10 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
             <Card key={transcription.id}>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base">Trascrizione Audio</CardTitle>
+                  <CardTitle className="text-base">{t('audioTranslation.audioTranscription')}</CardTitle>
                   <div className="flex items-center gap-2">
                     <Badge variant="secondary">
-                      {transcription.confidence.toFixed(1)}% confidenza
+                      {transcription.confidence.toFixed(1)}% {t('audioTranslation.confidence')}
                     </Badge>
                     <Badge variant="outline">
                       {supportedLanguages.find(l => l.code === transcription.language)?.name}
@@ -681,7 +681,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
 
                   <Select onValueChange={(lang) => translateText(transcription.id, lang)}>
                     <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Traduci in..." />
+                      <SelectValue placeholder={t('common.translateTo') + '...'} />
                     </SelectTrigger>
                     <SelectContent>
                       {supportedLanguages.map(lang => (
@@ -702,10 +702,10 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
             <Card key={translation.id}>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base">Translation</CardTitle>
+                  <CardTitle className="text-base">{t('audioTranslation.translation')}</CardTitle>
                   <div className="flex items-center gap-2">
                     <Badge variant="secondary">
-                      {translation.confidence.toFixed(1)}% confidence
+                      {translation.confidence.toFixed(1)}% {t('audioTranslation.confidence')}
                     </Badge>
                     <Badge variant="outline">
                       {supportedLanguages.find(l => l.code === translation.sourceLanguage)?.flag} →{' '}
@@ -720,7 +720,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
               
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Original Text</Label>
+                  <Label>{t('audioTranslation.originalText')}</Label>
                   <Textarea
                     value={translation.originalText}
                     readOnly
@@ -729,7 +729,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Translation</Label>
+                  <Label>{t('audioTranslation.translation')}</Label>
                   <Textarea
                     value={translation.translatedText}
                     readOnly
@@ -745,7 +745,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
                       onClick={() => playAudio(translation.audioUrl!)}
                     >
                       <Play className="h-4 w-4" />
-                      Listen
+                      {t('audioTranslation.play')}
                     </Button>
                   )}
                   
@@ -755,7 +755,7 @@ const AudioTranslation: React.FC<AudioTranslationProps> = ({
                     onClick={() => copyText(translation.translatedText)}
                   >
                     <Copy className="h-4 w-4" />
-                    Copy
+                    {t('audioTranslation.copy')}
                   </Button>
                 </div>
               </CardContent>

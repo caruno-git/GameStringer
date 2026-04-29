@@ -1,266 +1,6 @@
 {
   "hardcodedStrings": [
     {
-      "file": "components\\tools\\unity-ink-translator.tsx",
-      "matches": [
-        {
-          "string": "Riscan",
-          "line": 536,
-          "context": "         <RefreshCw className=\"h-2.5 w-2.5 mr-1\" />Riscan\r                         </Button>\r                       )}\r             "
-        },
-        {
-          "string": "Italiano",
-          "line": 625,
-          "context": "       >\r                       <option value=\"it\">Italiano</option>\r                       <option value=\"e"
-        },
-        {
-          "string": "Espanol",
-          "line": 626,
-          "context": "/option>\r                       <option value=\"es\">Espanol</option>\r                       <option value=\"d"
-        },
-        {
-          "string": "Deutsch",
-          "line": 627,
-          "context": "/option>\r                       <option value=\"de\">Deutsch</option>\r                       <option value=\"f"
-        },
-        {
-          "string": "Francais",
-          "line": 628,
-          "context": "/option>\r                       <option value=\"fr\">Francais</option>\r                       <option value=\"p"
-        },
-        {
-          "string": "Portugues",
-          "line": 629,
-          "context": "/option>\r                       <option value=\"pt\">Portugues</option>\r                       <option value=\"j"
-        },
-        {
-          "string": "Japanese",
-          "line": 630,
-          "context": "/option>\r                       <option value=\"ja\">Japanese</option>\r                       <option value=\"k"
-        },
-        {
-          "string": "Korean",
-          "line": 631,
-          "context": "/option>\r                       <option value=\"ko\">Korean</option>\r                       <option value=\"z"
-        },
-        {
-          "string": "Chinese",
-          "line": 632,
-          "context": "/option>\r                       <option value=\"zh\">Chinese</option>\r                       <option value=\"r"
-        },
-        {
-          "string": "Russian",
-          "line": 633,
-          "context": "/option>\r                       <option value=\"ru\">Russian</option>\r                       <option value=\"p"
-        },
-        {
-          "string": "Polski",
-          "line": 634,
-          "context": "/option>\r                       <option value=\"pl\">Polski</option>\r                     </select>\r        "
-        },
-        {
-          "string": "Riprova",
-          "line": 871,
-          "context": "             <RefreshCw className=\"h-3 w-3 mr-1\" />Riprova\r                     </Button>\r                   </div>\r             "
-        },
-        {
-          "string": "Riprova",
-          "line": 937,
-          "context": "             <RefreshCw className=\"h-3 w-3 mr-1\" />Riprova\r                       </Button>\r                       <Button onClick="
-        },
-        {
-          "string": "Ripristina Originali",
-          "line": 940,
-          "context": "             <RotateCcw className=\"h-3 w-3 mr-1\" />Ripristina Originali\r                       </Button>\r                     </div>\r           "
-        },
-        {
-          "string": "Ripristina Originali",
-          "line": 971,
-          "context": "             <RotateCcw className=\"h-3 w-3 mr-1\" />Ripristina Originali\r                   </Button>\r                   <Button onClick={han"
-        },
-        {
-          "string": "Esporta Pack",
-          "line": 974,
-          "context": "               <Package className=\"h-3 w-3 mr-1\" />Esporta Pack\r                   </Button>\r                   <Button \r           "
-        },
-        {
-          "string": "Nuovo Gioco",
-          "line": 981,
-          "context": "             <RefreshCw className=\"h-3 w-3 mr-1\" />Nuovo Gioco\r                   </Button>\r                 </div>\r               "
-        },
-        {
-          "string": "Export",
-          "line": 1012,
-          "context": "               <Package className=\"h-3 w-3 mr-1\" />Export\r                         </Button>\r                         <Button onClic"
-        },
-        {
-          "string": "Tradotte",
-          "line": 1035,
-          "context": "      <div className=\"text-micro text-blue-400/70\">Tradotte</div>\r                       </div>\r            "
-        },
-        {
-          "string": "Mancanti",
-          "line": 1039,
-          "context": "     <div className=\"text-micro text-amber-400/70\">Mancanti</div>\r                       </div>\r            "
-        },
-        {
-          "string": "English",
-          "line": 1096,
-          "context": "\r                       <div className=\"px-3 py-2\">English</div>\r                       <div className=\"px-"
-        },
-        {
-          "string": "Italiano",
-          "line": 1097,
-          "context": "\r                       <div className=\"px-3 py-2\">Italiano</div>\r                     </div>\r              "
-        },
-        {
-          "string": "Come funziona",
-          "line": 1225,
-          "context": "-semibold text-slate-400 uppercase tracking-wider\">Come funziona</h3>\r               <div className=\"space-y-2 te"
-        },
-        {
-          "string": "Tradotte",
-          "line": 850,
-          "context": "d-cols-3 gap-2\">\r                       <StatCard label=\"Tradotte\" value={translateProgress.done} icon={Chec"
-        },
-        {
-          "string": "Errori",
-          "line": 851,
-          "context": "\"green\" small />\r                       <StatCard label=\"Errori\" value={translateProgress.errors} icon={Al"
-        },
-        {
-          "string": "Sostituzioni",
-          "line": 917,
-          "context": "olor=\"purple\" />\r                       <StatCard label=\"Sostituzioni\" value={injectResult.totalReplacements} ic"
-        }
-      ]
-    },
-    {
-      "file": "components\\detailed-statistics.tsx",
-      "matches": [
-        {
-          "string": "Detailed Statistics",
-          "line": 240,
-          "context": "ween\">\r         <h2 className=\"text-2xl font-bold\">Detailed Statistics</h2>\r         <div className=\"flex items-center "
-        },
-        {
-          "string": "Last Week",
-          "line": 247,
-          "context": "ctContent>\r               <SelectItem value=\"week\">Last Week</SelectItem>\r               <SelectItem value=\"m"
-        },
-        {
-          "string": "Last Month",
-          "line": 248,
-          "context": "lectItem>\r               <SelectItem value=\"month\">Last Month</SelectItem>\r               <SelectItem value=\"y"
-        },
-        {
-          "string": "Last Year",
-          "line": 249,
-          "context": "electItem>\r               <SelectItem value=\"year\">Last Year</SelectItem>\r               <SelectItem value=\"a"
-        },
-        {
-          "string": "All Time",
-          "line": 250,
-          "context": "SelectItem>\r               <SelectItem value=\"all\">All Time</SelectItem>\r             </SelectContent>\r     "
-        },
-        {
-          "string": "Overview",
-          "line": 258,
-          "context": "-cols-4\">\r           <TabsTrigger value=\"overview\">Overview</TabsTrigger>\r           <TabsTrigger value=\"gam"
-        },
-        {
-          "string": "Games",
-          "line": 259,
-          "context": "TabsTrigger>\r           <TabsTrigger value=\"games\">Games</TabsTrigger>\r           <TabsTrigger value=\"ach"
-        },
-        {
-          "string": "Achievement",
-          "line": 260,
-          "context": "gger>\r           <TabsTrigger value=\"achievements\">Achievement</TabsTrigger>\r           <TabsTrigger value=\"gen"
-        },
-        {
-          "string": "Genres",
-          "line": 261,
-          "context": "absTrigger>\r           <TabsTrigger value=\"genres\">Genres</TabsTrigger>\r         </TabsList>\r \r         {/"
-        },
-        {
-          "string": "Total Time",
-          "line": 269,
-          "context": "        <CardTitle className=\"text-sm font-medium\">Total Time</CardTitle>\r                 <Clock className=\"h"
-        },
-        {
-          "string": "Games Completed",
-          "line": 282,
-          "context": "        <CardTitle className=\"text-sm font-medium\">Games Completed</CardTitle>\r                 <Trophy className=\""
-        },
-        {
-          "string": "Achievement",
-          "line": 295,
-          "context": "        <CardTitle className=\"text-sm font-medium\">Achievement</CardTitle>\r                 <Award className=\"h"
-        },
-        {
-          "string": "Current Streak",
-          "line": 308,
-          "context": "        <CardTitle className=\"text-sm font-medium\">Current Streak</CardTitle>\r                 <Zap className=\"h-4"
-        },
-        {
-          "string": "Favorite Genre",
-          "line": 331,
-          "context": "   <span className=\"text-sm text-muted-foreground\">Favorite Genre</span>\r                   <Badge variant=\"second"
-        },
-        {
-          "string": "Favorite Store",
-          "line": 335,
-          "context": "   <span className=\"text-sm text-muted-foreground\">Favorite Store</span>\r                   <Badge variant=\"second"
-        },
-        {
-          "string": "Average Rating",
-          "line": 339,
-          "context": "   <span className=\"text-sm text-muted-foreground\">Average Rating</span>\r                   <Badge variant=\"second"
-        },
-        {
-          "string": "Longest Session",
-          "line": 343,
-          "context": "   <span className=\"text-sm text-muted-foreground\">Longest Session</span>\r                   <Badge variant=\"second"
-        },
-        {
-          "string": "Total Sessions",
-          "line": 358,
-          "context": "   <span className=\"text-sm text-muted-foreground\">Total Sessions</span>\r                   <Badge variant=\"outlin"
-        },
-        {
-          "string": "Sessions per Game",
-          "line": 362,
-          "context": "   <span className=\"text-sm text-muted-foreground\">Sessions per Game</span>\r                   <Badge variant=\"outlin"
-        },
-        {
-          "string": "Average Session Duration",
-          "line": 366,
-          "context": "   <span className=\"text-sm text-muted-foreground\">Average Session Duration</span>\r                   <Badge variant=\"outlin"
-        },
-        {
-          "string": "Top Games by Playtime",
-          "line": 380,
-          "context": "            <CardHeader>\r               <CardTitle>Top Games by Playtime</CardTitle>\r               <CardDescription>The "
-        },
-        {
-          "string": "Achievement Recenti",
-          "line": 413,
-          "context": "            <CardHeader>\r               <CardTitle>Achievement Recenti</CardTitle>\r               <CardDescription>{t('"
-        },
-        {
-          "string": "Statistics by Genre",
-          "line": 457,
-          "context": "            <CardHeader>\r               <CardTitle>Statistics by Genre</CardTitle>\r               <CardDescription>Anal"
-        },
-        {
-          "string": "Analysis of your playtime by genre",
-          "line": 458,
-          "context": " Genre</CardTitle>\r               <CardDescription>Analysis of your playtime by genre</CardDescription>\r             </CardHeader>\r   "
-        }
-      ]
-    },
-    {
       "file": "components\\audio-translation.tsx",
       "matches": [
         {
@@ -557,6 +297,76 @@
           "string": "Text copied",
           "line": 222,
           "context": " {\r     navigator.clipboard.writeText(text);\r     toast.success('Text copied');\r   };\r \r   const exportTranslat"
+        }
+      ]
+    },
+    {
+      "file": "components\\detailed-statistics.tsx",
+      "matches": [
+        {
+          "string": "Achievement",
+          "line": 295,
+          "context": "        <CardTitle className=\"text-sm font-medium\">Achievement</CardTitle>\r                 <Award className=\"h"
+        },
+        {
+          "string": "Current Streak",
+          "line": 308,
+          "context": "        <CardTitle className=\"text-sm font-medium\">Current Streak</CardTitle>\r                 <Zap className=\"h-4"
+        },
+        {
+          "string": "Favorite Genre",
+          "line": 331,
+          "context": "   <span className=\"text-sm text-muted-foreground\">Favorite Genre</span>\r                   <Badge variant=\"second"
+        },
+        {
+          "string": "Favorite Store",
+          "line": 335,
+          "context": "   <span className=\"text-sm text-muted-foreground\">Favorite Store</span>\r                   <Badge variant=\"second"
+        },
+        {
+          "string": "Average Rating",
+          "line": 339,
+          "context": "   <span className=\"text-sm text-muted-foreground\">Average Rating</span>\r                   <Badge variant=\"second"
+        },
+        {
+          "string": "Longest Session",
+          "line": 343,
+          "context": "   <span className=\"text-sm text-muted-foreground\">Longest Session</span>\r                   <Badge variant=\"second"
+        },
+        {
+          "string": "Total Sessions",
+          "line": 358,
+          "context": "   <span className=\"text-sm text-muted-foreground\">Total Sessions</span>\r                   <Badge variant=\"outlin"
+        },
+        {
+          "string": "Sessions per Game",
+          "line": 362,
+          "context": "   <span className=\"text-sm text-muted-foreground\">Sessions per Game</span>\r                   <Badge variant=\"outlin"
+        },
+        {
+          "string": "Average Session Duration",
+          "line": 366,
+          "context": "   <span className=\"text-sm text-muted-foreground\">Average Session Duration</span>\r                   <Badge variant=\"outlin"
+        },
+        {
+          "string": "Top Games by Playtime",
+          "line": 380,
+          "context": "            <CardHeader>\r               <CardTitle>Top Games by Playtime</CardTitle>\r               <CardDescription>The "
+        },
+        {
+          "string": "Achievement Recenti",
+          "line": 413,
+          "context": "            <CardHeader>\r               <CardTitle>Achievement Recenti</CardTitle>\r               <CardDescription>{t('"
+        },
+        {
+          "string": "Statistics by Genre",
+          "line": 457,
+          "context": "            <CardHeader>\r               <CardTitle>Statistics by Genre</CardTitle>\r               <CardDescription>Anal"
+        },
+        {
+          "string": "Analysis of your playtime by genre",
+          "line": 458,
+          "context": " Genre</CardTitle>\r               <CardDescription>Analysis of your playtime by genre</CardDescription>\r             </CardHeader>\r   "
         }
       ]
     },
@@ -1087,6 +897,36 @@
           "string": "Solo correzioni approvate",
           "line": 147,
           "context": "Only} />\r               <Label className=\"text-xs\">Solo correzioni approvate</Label>\r             </div>\r             <Button"
+        }
+      ]
+    },
+    {
+      "file": "components\\tools\\unity-ink-translator.tsx",
+      "matches": [
+        {
+          "string": "English",
+          "line": 1095,
+          "context": "\r                       <div className=\"px-3 py-2\">English</div>\r                       <div className=\"px-"
+        },
+        {
+          "string": "Italiano",
+          "line": 1096,
+          "context": "\r                       <div className=\"px-3 py-2\">Italiano</div>\r                     </div>\r              "
+        },
+        {
+          "string": "Tradotte",
+          "line": 850,
+          "context": "d-cols-3 gap-2\">\r                       <StatCard label=\"Tradotte\" value={translateProgress.done} icon={Chec"
+        },
+        {
+          "string": "Errori",
+          "line": 851,
+          "context": "\"green\" small />\r                       <StatCard label=\"Errori\" value={translateProgress.errors} icon={Al"
+        },
+        {
+          "string": "Sostituzioni",
+          "line": 917,
+          "context": "olor=\"purple\" />\r                       <StatCard label=\"Sostituzioni\" value={injectResult.totalReplacements} ic"
         }
       ]
     },
@@ -2092,5 +1932,5 @@
     }
   ],
   "filesAnalyzed": 225,
-  "totalMatches": 336
+  "totalMatches": 304
 }
