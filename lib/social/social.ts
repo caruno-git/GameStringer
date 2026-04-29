@@ -209,6 +209,22 @@ export async function getFriends(userId: string): Promise<UserProfile[]> {
   return profiles || [];
 }
 
+// Get friends with online presence info
+export async function getOnlineFriends(userId: string): Promise<(UserProfile & { isOnline?: boolean; lastSeen?: string })[]> {
+  const friends = await getFriends(userId);
+  if (!friends.length) return [];
+  
+  // Get online status from unified presence system
+  const onlineUsers = unifiedGetOnline();
+  const onlineMap = new Map(onlineUsers.map(u => [u.userId, u]));
+  
+  return friends.map(f => ({
+    ...f,
+    isOnline: onlineMap.has(f.user_id),
+    lastSeen: onlineMap.get(f.user_id)?.lastHeartbeat || undefined
+  }));
+}
+
 export async function getPendingFriendRequests(userId: string): Promise<Friendship[]> {
   const data = await safeQuery<Friendship[]>('friendships', (supabase) =>
     supabase.from('friendships').select('*').eq('addressee_id', userId).eq('status', 'pending')
