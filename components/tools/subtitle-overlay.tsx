@@ -428,9 +428,9 @@ export function SubtitleOverlay() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="top">Top</SelectItem>
-                      <SelectItem value="center">Center</SelectItem>
-                      <SelectItem value="bottom">Bottom</SelectItem>
+                      <SelectItem value="top">{t('subtitleOverlay.positionTop')}</SelectItem>
+                      <SelectItem value="center">{t('subtitleOverlay.positionCenter')}</SelectItem>
+                      <SelectItem value="bottom">{t('subtitleOverlay.positionBottom')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -456,9 +456,9 @@ export function SubtitleOverlay() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="above">Above</SelectItem>
-                        <SelectItem value="below">Below</SelectItem>
-                        <SelectItem value="inline">Inline</SelectItem>
+                        <SelectItem value="above">{t('subtitleOverlay.positionAbove')}</SelectItem>
+                        <SelectItem value="below">{t('subtitleOverlay.positionBelow')}</SelectItem>
+                        <SelectItem value="inline">{t('subtitleOverlay.positionInline')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

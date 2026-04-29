@@ -2443,7 +2443,13 @@
     "none": "无",
     "fade": "淡入淡出",
     "slide": "滑动",
-    "typewriter": "打字机"
+    "typewriter": "打字机",
+    "positionTop": "顶部",
+    "positionCenter": "居中",
+    "positionBottom": "底部",
+    "positionAbove": "上方",
+    "positionBelow": "下方",
+    "positionInline": "内联"
   },
   "translationFixer": {
     "title": "Translation Fixer",

@@ -2612,7 +2612,13 @@
     "none": "Keine",
     "fade": "Einblenden",
     "slide": "Schieben",
-    "typewriter": "Schreibmaschine"
+    "typewriter": "Schreibmaschine",
+    "positionTop": "Oben",
+    "positionCenter": "Mitte",
+    "positionBottom": "Unten",
+    "positionAbove": "Darüber",
+    "positionBelow": "Darunter",
+    "positionInline": "Inline"
   },
   "translationFixer": {
     "title": "Translation Fixer",

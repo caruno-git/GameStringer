@@ -2656,7 +2656,13 @@
     "none": "Nenhuma",
     "fade": "Fade",
     "slide": "Deslizar",
-    "typewriter": "Máquina de escrever"
+    "typewriter": "Máquina de escrever",
+    "positionTop": "Topo",
+    "positionCenter": "Centro",
+    "positionBottom": "Fundo",
+    "positionAbove": "Acima",
+    "positionBelow": "Abaixo",
+    "positionInline": "Em linha"
   },
   "translationFixer": {
     "title": "Corretor de Tradução",

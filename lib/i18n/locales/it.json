@@ -3421,7 +3421,13 @@
     "none": "Nessuna",
     "fade": "Dissolvenza",
     "slide": "Scorrimento",
-    "typewriter": "Macchina da scrivere"
+    "typewriter": "Macchina da scrivere",
+    "positionTop": "Alto",
+    "positionCenter": "Centro",
+    "positionBottom": "Basso",
+    "positionAbove": "Sopra",
+    "positionBelow": "Sotto",
+    "positionInline": "In linea"
   },
   "translationFixer": {
     "title": "Translation Fixer",

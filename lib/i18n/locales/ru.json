@@ -2656,7 +2656,13 @@
     "none": "Нет",
     "fade": "Растворение",
     "slide": "Скольжение",
-    "typewriter": "Печатная машинка"
+    "typewriter": "Печатная машинка",
+    "positionTop": "Верх",
+    "positionCenter": "Центр",
+    "positionBottom": "Низ",
+    "positionAbove": "Над",
+    "positionBelow": "Под",
+    "positionInline": "В строке"
   },
   "translationFixer": {
     "title": "Исправитель переводов",

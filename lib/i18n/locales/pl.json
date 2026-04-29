@@ -2656,7 +2656,13 @@
     "none": "Brak",
     "fade": "Zanikanie",
     "slide": "Przesuwanie",
-    "typewriter": "Maszyna do pisania"
+    "typewriter": "Maszyna do pisania",
+    "positionTop": "Góra",
+    "positionCenter": "Środek",
+    "positionBottom": "Dół",
+    "positionAbove": "Powyżej",
+    "positionBelow": "Poniżej",
+    "positionInline": "W linii"
   },
   "translationFixer": {
     "title": "Korektor tłumaczeń",

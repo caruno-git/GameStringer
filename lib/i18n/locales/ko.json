@@ -2656,7 +2656,13 @@
     "none": "없음",
     "fade": "페이드",
     "slide": "슬라이드",
-    "typewriter": "타자기"
+    "typewriter": "타자기",
+    "positionTop": "상단",
+    "positionCenter": "중앙",
+    "positionBottom": "하단",
+    "positionAbove": "위",
+    "positionBelow": "아래",
+    "positionInline": "인라인"
   },
   "translationFixer": {
     "title": "번역 수정기",

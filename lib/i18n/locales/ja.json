@@ -2443,7 +2443,13 @@
     "none": "なし",
     "fade": "フェード",
     "slide": "スライド",
-    "typewriter": "タイプライター"
+    "typewriter": "タイプライター",
+    "positionTop": "上",
+    "positionCenter": "中央",
+    "positionBottom": "下",
+    "positionAbove": "上に",
+    "positionBelow": "下に",
+    "positionInline": "インライン"
   },
   "translationFixer": {
     "title": "Translation Fixer",
