@@ -333,10 +333,17 @@ async function fetchProfilesMap(userIds: string[]): Promise<Map<string, { userna
     if (!session?.user) return map;
 
     // Try user_profiles with user_id column
-    const { data, error } = await supabase
+    const query = supabase
       .from('user_profiles')
-      .select('user_id, username, avatar_url')
-      .in('user_id', userIds);
+      .select('user_id, username, avatar_url');
+    
+    if (userIds.length === 1) {
+      query.eq('user_id', userIds[0]);
+    } else {
+      query.in('user_id', userIds);
+    }
+    
+    const { data, error } = await query;
 
     if (error) {
       // Mark as failed to avoid repeated queries
@@ -356,10 +363,17 @@ async function fetchProfilesMap(userIds: string[]): Promise<Map<string, { userna
 
     // Also try by id column (some tables use id instead of user_id)
     if (map.size === 0) {
-      const { data: data2 } = await supabase
+      const query2 = supabase
         .from('user_profiles')
-        .select('id, username, avatar_url')
-        .in('id', userIds);
+        .select('id, username, avatar_url');
+      
+      if (userIds.length === 1) {
+        query2.eq('id', userIds[0]);
+      } else {
+        query2.in('id', userIds);
+      }
+      
+      const { data: data2 } = await query2;
 
       if (data2) {
         for (const p of data2) {

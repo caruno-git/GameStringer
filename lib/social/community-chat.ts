@@ -364,10 +364,17 @@ async function fetchProfilesMap(userIds: string[]): Promise<Map<string, { userna
   
   try {
     const supabase = await getSupabase();
-    const { data, error } = await supabase
+    const query = supabase
       .from('user_profiles')
-      .select('user_id, username, avatar_url')
-      .in('user_id', userIds);
+      .select('user_id, username, avatar_url');
+    
+    if (userIds.length === 1) {
+      query.eq('user_id', userIds[0]);
+    } else {
+      query.in('user_id', userIds);
+    }
+    
+    const { data, error } = await query;
     
     if (error) {
       _chatProfileQueryFailed = true;
