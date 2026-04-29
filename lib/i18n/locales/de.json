@@ -3353,7 +3353,8 @@
     "cancel": "Abbrechen",
     "save": "Speichern",
     "provider": "Anbieter",
-    "presetApplied": "Preset \"{name}\" angewendet"
+    "presetApplied": "Preset \"{name}\" angewendet",
+    "apiKeys": "API-Schlüssel"
   },
   "vrOverlay": {
     "title": "VR Text Overlay",

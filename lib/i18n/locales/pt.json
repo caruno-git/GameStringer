@@ -3434,7 +3434,8 @@
     "cancel": "Cancelar",
     "save": "Salvar",
     "provider": "Provedor",
-    "presetApplied": "Preset \"{name}\" aplicado"
+    "presetApplied": "Preset \"{name}\" aplicado",
+    "apiKeys": "Chaves API"
   },
   "vrOverlay": {
     "title": "VR Overlay",

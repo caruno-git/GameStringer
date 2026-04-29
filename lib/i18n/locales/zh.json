@@ -3062,7 +3062,8 @@
     "cancel": "取消",
     "save": "保存",
     "provider": "提供商",
-    "presetApplied": "预设「{name}」已应用"
+    "presetApplied": "预设「{name}」已应用",
+    "apiKeys": "API密钥"
   },
   "vrOverlay": {
     "title": "VR Text Overlay",

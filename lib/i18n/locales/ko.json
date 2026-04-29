@@ -3434,7 +3434,8 @@
     "cancel": "취소",
     "save": "저장",
     "provider": "제공자",
-    "presetApplied": "프리셋 \"{name}\"이(가) 적용되었습니다"
+    "presetApplied": "프리셋 \"{name}\"이(가) 적용되었습니다",
+    "apiKeys": "API 키"
   },
   "vrOverlay": {
     "title": "VR 오버레이",

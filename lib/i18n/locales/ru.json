@@ -3434,7 +3434,8 @@
     "cancel": "Отмена",
     "save": "Сохранить",
     "provider": "Провайдер",
-    "presetApplied": "Пресет \"{name}\" применён"
+    "presetApplied": "Пресет \"{name}\" применён",
+    "apiKeys": "API-ключи"
   },
   "vrOverlay": {
     "title": "VR Оверлей",

@@ -3062,7 +3062,8 @@
     "cancel": "キャンセル",
     "save": "保存",
     "provider": "プロバイダー",
-    "presetApplied": "プリセット「{name}」を適用"
+    "presetApplied": "プリセット「{name}」を適用",
+    "apiKeys": "APIキー"
   },
   "vrOverlay": {
     "title": "VR Text Overlay",

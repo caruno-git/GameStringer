@@ -3959,7 +3959,8 @@
     "cancel": "Annuler",
     "save": "Enregistrer",
     "provider": "Fournisseur",
-    "presetApplied": "Préréglage \"{name}\" appliqué"
+    "presetApplied": "Préréglage \"{name}\" appliqué",
+    "apiKeys": "Clés API"
   },
   "vrOverlay": {
     "title": "Overlay Texte VR",

@@ -3434,7 +3434,8 @@
     "cancel": "Anuluj",
     "save": "Zapisz",
     "provider": "Dostawca",
-    "presetApplied": "Zastosowano preset \"{name}\""
+    "presetApplied": "Zastosowano preset \"{name}\"",
+    "apiKeys": "Klucze API"
   },
   "vrOverlay": {
     "title": "Nakładka VR",

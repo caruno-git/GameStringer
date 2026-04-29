@@ -542,7 +542,7 @@ export function VoiceCloneStudio() {
       <Dialog open={showApiDialog} onOpenChange={setShowApiDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>API Keys</DialogTitle>
+            <DialogTitle>{t('voiceClone.apiKeys')}</DialogTitle>
             <DialogDescription>
               {t('voiceClone.apiKeysDesc')}
             </DialogDescription>

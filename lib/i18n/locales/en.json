@@ -2663,7 +2663,8 @@
     "cancel": "Cancel",
     "save": "Save",
     "provider": "Provider",
-    "presetApplied": "Preset \"{name}\" applied"
+    "presetApplied": "Preset \"{name}\" applied",
+    "apiKeys": "API Keys"
   },
   "vrOverlay": {
     "title": "VR Text Overlay",
