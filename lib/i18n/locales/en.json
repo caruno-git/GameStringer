@@ -2076,7 +2076,11 @@
     "uploadAudioFile": "Upload Audio File",
     "processing": "Processing",
     "transcriptions": "Transcriptions",
-    "translations": "Translations"
+    "translations": "Translations",
+    "screenshot": "Screenshot",
+    "zoomOut": "Zoom out",
+    "zoomIn": "Zoom in",
+    "fitToScreen": "Fit to screen"
   },
   "languages": {
     "it": "Italiano",

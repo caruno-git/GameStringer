@@ -1876,7 +1876,7 @@
     "verificaFallitaLaPatchNonSiApplicaCorrettamente": "Verify fallita: la patch non si applica correttamente",
     "mostrati": "Showti",
     "steamNonConfigurato": "Steam non configurato",
-    "download": "Download",
+    "download": "다운로드",
     "nessunaGpuNvidiaRilevata": "Noa GPU NVIDIA rilevata",
     "errorSelectingFolder": "Error selecting folder",
     "selectGameFolderFirst": "Select game folder first",
@@ -1999,7 +1999,11 @@
     "uploadAudioFile": "오디오 파일 업로드",
     "processing": "처리 중",
     "transcriptions": "전사",
-    "translations": "번역"
+    "translations": "번역",
+    "screenshot": "스크린샷",
+    "zoomOut": "축소",
+    "zoomIn": "확대",
+    "fitToScreen": "화면에 맞춤"
   },
   "languages": {
     "it": "Italiano",

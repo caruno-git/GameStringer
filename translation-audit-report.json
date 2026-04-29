@@ -1,216 +1,6 @@
 {
   "hardcodedStrings": [
     {
-      "file": "components\\audio-translation.tsx",
-      "matches": [
-        {
-          "string": "Audio Translation",
-          "line": 376,
-          "context": "div>\r           <h2 className=\"text-2xl font-bold\">Audio Translation</h2>\r           <p className=\"text-muted-foregro"
-        },
-        {
-          "string": "Audio Settings",
-          "line": 391,
-          "context": "        <DialogHeader>\r               <DialogTitle>Audio Settings</DialogTitle>\r               <DialogDescription>"
-        },
-        {
-          "string": "Recording",
-          "line": 399,
-          "context": "\">\r                 <TabsTrigger value=\"recording\">Recording</TabsTrigger>\r                 <TabsTrigger valu"
-        },
-        {
-          "string": "Translation",
-          "line": 400,
-          "context": "\r                 <TabsTrigger value=\"translation\">Translation</TabsTrigger>\r                 <TabsTrigger valu"
-        },
-        {
-          "string": "Voice",
-          "line": 401,
-          "context": "igger>\r                 <TabsTrigger value=\"voice\">Voice</TabsTrigger>\r               </TabsList>\r \r     "
-        },
-        {
-          "string": "Default",
-          "line": 415,
-          "context": "                       <SelectItem value=\"default\">Default</SelectItem>\r                       {audioDevice"
-        },
-        {
-          "string": "Sample Rate",
-          "line": 426,
-          "context": "v className=\"space-y-2\">\r                   <Label>Sample Rate</Label>\r                   <Select \r            "
-        },
-        {
-          "string": "Riduzione Rumore",
-          "line": 444,
-          "context": "nter justify-between\">\r                     <Label>Riduzione Rumore</Label>\r                     <Switch\r           "
-        },
-        {
-          "string": "Cancellazione Eco",
-          "line": 460,
-          "context": "nter justify-between\">\r                     <Label>Cancellazione Eco</Label>\r                     <Switch\r           "
-        },
-        {
-          "string": "Lingua Target",
-          "line": 471,
-          "context": "v className=\"space-y-2\">\r                   <Label>Lingua Target</Label>\r                   <Select \r            "
-        },
-        {
-          "string": "Auto Translation",
-          "line": 499,
-          "context": "nter justify-between\">\r                     <Label>Auto Translation</Label>\r                     <Switch\r           "
-        },
-        {
-          "string": "Trascrizione Audio",
-          "line": 643,
-          "context": "                  <CardTitle className=\"text-base\">Trascrizione Audio</CardTitle>\r                   <div className=\"f"
-        },
-        {
-          "string": "Translation",
-          "line": 705,
-          "context": "                  <CardTitle className=\"text-base\">Translation</CardTitle>\r                   <div className=\"f"
-        },
-        {
-          "string": "Original Text",
-          "line": 723,
-          "context": "v className=\"space-y-2\">\r                   <Label>Original Text</Label>\r                   <Textarea\r           "
-        },
-        {
-          "string": "Translation",
-          "line": 732,
-          "context": "v className=\"space-y-2\">\r                   <Label>Translation</Label>\r                   <Textarea\r           "
-        },
-        {
-          "string": "Recording started",
-          "line": 264,
-          "context": "rent.start();\r       setIsRecording(true);\r       toast.success('Recording started');\r     } catch (error: unknown) {"
-        },
-        {
-          "string": "Cannot start recording",
-          "line": 267,
-          "context": "error('Error starting recording:', error);\r       toast.error('Cannot start recording');\r     }\r   };\r \r   // Stop recordi"
-        },
-        {
-          "string": "Recording completed",
-          "line": 277,
-          "context": "ack.stop());\r       setIsRecording(false);\r       toast.success('Recording completed');\r     }\r   };\r \r   // Processa a"
-        },
-        {
-          "string": "Translation completed",
-          "line": 332,
-          "context": "       onTranslationComplete(translation);\r       toast.success('Translation completed');\r     } catch (error: unknown) {"
-        },
-        {
-          "string": "Translation error",
-          "line": 335,
-          "context": "Logger.error('Translation error:', error);\r       toast.error('Translation error');\r     } finally {\r       setIsProc"
-        },
-        {
-          "string": "Text copied to clipboard",
-          "line": 353,
-          "context": " {\r     navigator.clipboard.writeText(text);\r     toast.success('Text copied to clipboard');\r   };\r \r   // Download audio\r  "
-        }
-      ]
-    },
-    {
-      "file": "components\\translation-recommendation.tsx",
-      "matches": [
-        {
-          "string": "Opzioni Avanzate",
-          "line": 1529,
-          "context": "pan className=\"text-sm font-medium text-slate-200\">Opzioni Avanzate</span>\r                 {(quickPersona || quickT"
-        },
-        {
-          "string": "Default",
-          "line": 1553,
-          "context": "ent>\r                         <SelectItem value=\"\">Default</SelectItem>\r                         <SelectIte"
-        },
-        {
-          "string": "Mago saggio",
-          "line": 1554,
-          "context": "             <SelectItem value=\"a wise old wizard\">Mago saggio</SelectItem>\r                         <SelectIte"
-        },
-        {
-          "string": "Cavaliere",
-          "line": 1555,
-          "context": "             <SelectItem value=\"a medieval knight\">Cavaliere</SelectItem>\r                         <SelectIte"
-        },
-        {
-          "string": "Pirata",
-          "line": 1556,
-          "context": "              <SelectItem value=\"a pirate captain\">Pirata</SelectItem>\r                         <SelectIte"
-        },
-        {
-          "string": "Narratore horror",
-          "line": 1558,
-          "context": "             <SelectItem value=\"a horror narrator\">Narratore horror</SelectItem>\r                         <SelectIte"
-        },
-        {
-          "string": "Dama nobile",
-          "line": 1559,
-          "context": "                  <SelectItem value=\"a noble lady\">Dama nobile</SelectItem>\r                         <SelectIte"
-        },
-        {
-          "string": "Ragazzo di strada",
-          "line": 1560,
-          "context": "            <SelectItem value=\"a street-smart kid\">Ragazzo di strada</SelectItem>\r                       </SelectCont"
-        },
-        {
-          "string": "Default",
-          "line": 1575,
-          "context": "ent>\r                         <SelectItem value=\"\">Default</SelectItem>\r                         <SelectIte"
-        },
-        {
-          "string": "Formale",
-          "line": 1576,
-          "context": "                        <SelectItem value=\"formal\">Formale</SelectItem>\r                         <SelectIte"
-        },
-        {
-          "string": "Casuale",
-          "line": 1577,
-          "context": "                        <SelectItem value=\"casual\">Casuale</SelectItem>\r                         <SelectIte"
-        },
-        {
-          "string": "Umoristico",
-          "line": 1578,
-          "context": "                      <SelectItem value=\"humorous\">Umoristico</SelectItem>\r                         <SelectIte"
-        },
-        {
-          "string": "Misterioso",
-          "line": 1579,
-          "context": "                    <SelectItem value=\"mysterious\">Misterioso</SelectItem>\r                         <SelectIte"
-        },
-        {
-          "string": "Dark",
-          "line": 1581,
-          "context": "\r                         <SelectItem value=\"dark\">Dark</SelectItem>\r                         <SelectIte"
-        },
-        {
-          "string": "Romantico",
-          "line": 1582,
-          "context": "                      <SelectItem value=\"romantic\">Romantico</SelectItem>\r                         <SelectIte"
-        },
-        {
-          "string": "Sarcastico",
-          "line": 1583,
-          "context": "                     <SelectItem value=\"sarcastic\">Sarcastico</SelectItem>\r                       </SelectCont"
-        },
-        {
-          "string": "Voice Output",
-          "line": 1594,
-          "context": "pan className=\"text-xs font-medium text-slate-200\">Voice Output</span>\r                       <p className=\"text"
-        },
-        {
-          "string": "Default",
-          "line": 1550,
-          "context": "xt-xs h-8\">\r                         <SelectValue placeholder=\"Default\" />\r                       </SelectT"
-        },
-        {
-          "string": "Default",
-          "line": 1572,
-          "context": "xt-xs h-8\">\r                         <SelectValue placeholder=\"Default\" />\r                       </SelectT"
-        }
-      ]
-    },
-    {
       "file": "components\\context-aware-translation.tsx",
       "matches": [
         {
@@ -672,6 +462,41 @@
           "string": "Search",
           "line": 259,
           "context": "      </Label>\r             <Input\r               aria-label=\"Search\" placeholder=\"Search games, stores, g"
+        }
+      ]
+    },
+    {
+      "file": "components\\audio-translation.tsx",
+      "matches": [
+        {
+          "string": "Recording started",
+          "line": 264,
+          "context": "rent.start();\r       setIsRecording(true);\r       toast.success('Recording started');\r     } catch (error: unknown) {"
+        },
+        {
+          "string": "Cannot start recording",
+          "line": 267,
+          "context": "error('Error starting recording:', error);\r       toast.error('Cannot start recording');\r     }\r   };\r \r   // Stop recordi"
+        },
+        {
+          "string": "Recording completed",
+          "line": 277,
+          "context": "ack.stop());\r       setIsRecording(false);\r       toast.success('Recording completed');\r     }\r   };\r \r   // Processa a"
+        },
+        {
+          "string": "Translation completed",
+          "line": 332,
+          "context": "       onTranslationComplete(translation);\r       toast.success('Translation completed');\r     } catch (error: unknown) {"
+        },
+        {
+          "string": "Translation error",
+          "line": 335,
+          "context": "Logger.error('Translation error:', error);\r       toast.error('Translation error');\r     } finally {\r       setIsProc"
+        },
+        {
+          "string": "Text copied to clipboard",
+          "line": 353,
+          "context": " {\r     navigator.clipboard.writeText(text);\r     toast.success('Text copied to clipboard');\r   };\r \r   // Download audio\r  "
         }
       ]
     },
@@ -1932,5 +1757,5 @@
     }
   ],
   "filesAnalyzed": 225,
-  "totalMatches": 304
+  "totalMatches": 270
 }

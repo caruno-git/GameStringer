@@ -1876,7 +1876,7 @@
     "verificaFallitaLaPatchNonSiApplicaCorrettamente": "Verify fallita: la patch non si applica correttamente",
     "mostrati": "Showti",
     "steamNonConfigurato": "Steam non configurato",
-    "download": "Download",
+    "download": "Pobierz",
     "nessunaGpuNvidiaRilevata": "Noa GPU NVIDIA rilevata",
     "errorSelectingFolder": "Error selecting folder",
     "selectGameFolderFirst": "Select game folder first",
@@ -1999,7 +1999,11 @@
     "uploadAudioFile": "Prześlij plik audio",
     "processing": "Przetwarzanie",
     "transcriptions": "Transkrypcje",
-    "translations": "Tłumaczenia"
+    "translations": "Tłumaczenia",
+    "screenshot": "Zrzut ekranu",
+    "zoomOut": "Pomniejsz",
+    "zoomIn": "Powiększ",
+    "fitToScreen": "Dopasuj do ekranu"
   },
   "languages": {
     "it": "Italiano",

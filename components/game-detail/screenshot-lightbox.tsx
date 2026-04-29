@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut, Download, Maximize2 } from 'lucide-react';
 import { useState, useCallback, useEffect } from 'react';
+import { useTranslation } from '@/lib/i18n';
 
 interface Screenshot {
   id?: number;
@@ -19,6 +20,7 @@ interface ScreenshotLightboxProps {
 }
 
 export function ScreenshotLightbox({ screenshots, selectedIndex, onClose, onNavigate }: ScreenshotLightboxProps) {
+  const { t } = useTranslation();
   const [zoom, setZoom] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   
@@ -72,7 +74,7 @@ export function ScreenshotLightbox({ screenshots, selectedIndex, onClose, onNavi
       {/* Top bar */}
       <div className="relative z-10 flex items-center justify-between px-4 py-3 bg-slate-900/80 backdrop-blur-sm border-b border-slate-800/50">
         <div className="flex items-center gap-3">
-          <span className="text-sm font-medium text-white">Screenshot</span>
+          <span className="text-sm font-medium text-white">{t('common.screenshot')}</span>
           <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-medium">
             {selectedIndex + 1} / {screenshots.length}
           </span>
@@ -83,7 +85,7 @@ export function ScreenshotLightbox({ screenshots, selectedIndex, onClose, onNavi
           <button
             onClick={handleZoomOut}
             className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
-            title="Zoom out (-)"
+            title={t('common.zoomOut') + ' (-)'}
           >
             <ZoomOut className="w-4 h-4" />
           </button>
@@ -91,7 +93,7 @@ export function ScreenshotLightbox({ screenshots, selectedIndex, onClose, onNavi
           <button
             onClick={handleZoomIn}
             className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
-            title="Zoom in (+)"
+            title={t('common.zoomIn') + ' (+)'}
           >
             <ZoomIn className="w-4 h-4" />
           </button>
@@ -99,14 +101,14 @@ export function ScreenshotLightbox({ screenshots, selectedIndex, onClose, onNavi
           <button
             onClick={handleZoomReset}
             className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
-            title="Fit to screen (0)"
+            title={t('common.fitToScreen') + ' (0)'}
           >
             <Maximize2 className="w-4 h-4" />
           </button>
           <button
             onClick={handleDownload}
             className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
-            title="Download"
+            title={t('common.download')}
           >
             <Download className="w-4 h-4" />
           </button>
@@ -114,7 +116,7 @@ export function ScreenshotLightbox({ screenshots, selectedIndex, onClose, onNavi
           <button
             onClick={onClose}
             className="p-2 rounded-lg hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-colors"
-            title="Close (Esc)"
+            title={t('common.close') + ' (Esc)'}
           >
             <X className="w-4 h-4" />
           </button>
