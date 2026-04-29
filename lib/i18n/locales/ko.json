@@ -4882,5 +4882,31 @@
     "transcribing": "전사 중...",
     "translatedText": "번역된 텍스트",
     "confidence": "신뢰도"
+  },
+  "translationRecommendation": {
+    "advancedOptions": "고급 옵션",
+    "active": "활성",
+    "persona": "페르소나",
+    "tone": "톤",
+    "voiceOutput": "음성 출력",
+    "deeplVoiceApi": "DeepL Voice API (40+ 언어)",
+    "preview": "미리보기",
+    "personaDefault": "기본",
+    "personaWizard": "현명한 마법사",
+    "personaKnight": "기사",
+    "personaPirate": "해적",
+    "personaSciFiCaptain": "SF 선장",
+    "personaHorror": "공포 내레이터",
+    "personaNoble": "귀부인",
+    "personaStreetKid": "street-smart 아이",
+    "toneDefault": "기본",
+    "toneFormal": "격식",
+    "toneCasual": "캐주얼",
+    "toneHumorous": "유머러스",
+    "toneMysterious": "신비로운",
+    "toneEpic": "서사시적",
+    "toneDark": "다크",
+    "toneRomantic": "로맨틱",
+    "toneSarcastic": "비꼬는"
   }
 }

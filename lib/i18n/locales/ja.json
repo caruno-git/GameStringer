@@ -4776,5 +4776,31 @@
     "transcribing": "文字起こし中...",
     "translatedText": "翻訳されたテキスト",
     "confidence": "信頼度"
+  },
+  "translationRecommendation": {
+    "advancedOptions": "詳細オプション",
+    "active": "有効",
+    "persona": "ペルソナ",
+    "tone": "トーン",
+    "voiceOutput": "音声出力",
+    "deeplVoiceApi": "DeepL Voice API (40+ 言語)",
+    "preview": "プレビュー",
+    "personaDefault": "デフォルト",
+    "personaWizard": "賢い魔法使い",
+    "personaKnight": "騎士",
+    "personaPirate": "海賊",
+    "personaSciFiCaptain": "SF艦長",
+    "personaHorror": "ホラーナレーター",
+    "personaNoble": "貴婦人",
+    "personaStreetKid": " street-smart な子供",
+    "toneDefault": "デフォルト",
+    "toneFormal": "フォーマル",
+    "toneCasual": "カジュアル",
+    "toneHumorous": "ユーモラス",
+    "toneMysterious": "神秘的",
+    "toneEpic": "壮大",
+    "toneDark": "ダーク",
+    "toneRomantic": "ロマンチック",
+    "toneSarcastic": "皮肉"
   }
 }

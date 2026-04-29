@@ -4882,5 +4882,31 @@
     "transcribing": "Trascrizione in corso...",
     "translatedText": "Testo Tradotto",
     "confidence": "Confidenza"
+  },
+  "translationRecommendation": {
+    "advancedOptions": "Opzioni Avanzate",
+    "active": "Attivo",
+    "persona": "Persona",
+    "tone": "Tono",
+    "voiceOutput": "Voice Output",
+    "deeplVoiceApi": "DeepL Voice API (40+ lingue)",
+    "preview": "Anteprima",
+    "personaDefault": "Default",
+    "personaWizard": "Mago saggio",
+    "personaKnight": "Cavaliere",
+    "personaPirate": "Pirata",
+    "personaSciFiCaptain": "Capitano sci-fi",
+    "personaHorror": "Narratore horror",
+    "personaNoble": "Dama nobile",
+    "personaStreetKid": "Ragazzo di strada",
+    "toneDefault": "Default",
+    "toneFormal": "Formale",
+    "toneCasual": "Casuale",
+    "toneHumorous": "Umoristico",
+    "toneMysterious": "Misterioso",
+    "toneEpic": "Epico",
+    "toneDark": "Dark",
+    "toneRomantic": "Romantico",
+    "toneSarcastic": "Sarcastico"
   }
 }

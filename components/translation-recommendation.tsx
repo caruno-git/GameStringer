@@ -1526,10 +1526,10 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
             >
               <div className="flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-purple-400" />
-                <span className="text-sm font-medium text-slate-200">Opzioni Avanzate</span>
+                <span className="text-sm font-medium text-slate-200">{t('translationRecommendation.advancedOptions')}</span>
                 {(quickPersona || quickTone || enableVoiceOutput) && (
                   <Badge variant="outline" className="text-xs bg-purple-500/10 border-purple-500/30 text-purple-300">
-                    Attivo
+                    {t('translationRecommendation.active')}
                   </Badge>
                 )}
               </div>
@@ -1543,21 +1543,21 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
                   <div className="space-y-1.5">
                     <Label className="text-xs text-slate-400 flex items-center gap-1">
                       <UserCircle className="h-3 w-3" />
-                      Persona
+                      {t('translationRecommendation.persona')}
                     </Label>
                     <Select value={quickPersona} onValueChange={setQuickPersona}>
                       <SelectTrigger className="text-xs h-8">
-                        <SelectValue placeholder="Default" />
+                        <SelectValue placeholder={t('translationRecommendation.personaDefault')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Default</SelectItem>
-                        <SelectItem value="a wise old wizard">Mago saggio</SelectItem>
-                        <SelectItem value="a medieval knight">Cavaliere</SelectItem>
-                        <SelectItem value="a pirate captain">Pirata</SelectItem>
-                        <SelectItem value="a sci-fi captain">Capitano sci-fi</SelectItem>
-                        <SelectItem value="a horror narrator">Narratore horror</SelectItem>
-                        <SelectItem value="a noble lady">Dama nobile</SelectItem>
-                        <SelectItem value="a street-smart kid">Ragazzo di strada</SelectItem>
+                        <SelectItem value="">{t('translationRecommendation.personaDefault')}</SelectItem>
+                        <SelectItem value="a wise old wizard">{t('translationRecommendation.personaWizard')}</SelectItem>
+                        <SelectItem value="a medieval knight">{t('translationRecommendation.personaKnight')}</SelectItem>
+                        <SelectItem value="a pirate captain">{t('translationRecommendation.personaPirate')}</SelectItem>
+                        <SelectItem value="a sci-fi captain">{t('translationRecommendation.personaSciFiCaptain')}</SelectItem>
+                        <SelectItem value="a horror narrator">{t('translationRecommendation.personaHorror')}</SelectItem>
+                        <SelectItem value="a noble lady">{t('translationRecommendation.personaNoble')}</SelectItem>
+                        <SelectItem value="a street-smart kid">{t('translationRecommendation.personaStreetKid')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -1565,22 +1565,22 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
                   <div className="space-y-1.5">
                     <Label className="text-xs text-slate-400 flex items-center gap-1">
                       <MessageSquare className="h-3 w-3" />
-                      Tono
+                      {t('translationRecommendation.tone')}
                     </Label>
                     <Select value={quickTone} onValueChange={setQuickTone}>
                       <SelectTrigger className="text-xs h-8">
-                        <SelectValue placeholder="Default" />
+                        <SelectValue placeholder={t('translationRecommendation.personaDefault')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Default</SelectItem>
-                        <SelectItem value="formal">Formale</SelectItem>
-                        <SelectItem value="casual">Casuale</SelectItem>
-                        <SelectItem value="humorous">Umoristico</SelectItem>
-                        <SelectItem value="mysterious">Misterioso</SelectItem>
-                        <SelectItem value="epic">Epico</SelectItem>
-                        <SelectItem value="dark">Dark</SelectItem>
-                        <SelectItem value="romantic">Romantico</SelectItem>
-                        <SelectItem value="sarcastic">Sarcastico</SelectItem>
+                        <SelectItem value="">{t('translationRecommendation.toneDefault')}</SelectItem>
+                        <SelectItem value="formal">{t('translationRecommendation.toneFormal')}</SelectItem>
+                        <SelectItem value="casual">{t('translationRecommendation.toneCasual')}</SelectItem>
+                        <SelectItem value="humorous">{t('translationRecommendation.toneHumorous')}</SelectItem>
+                        <SelectItem value="mysterious">{t('translationRecommendation.toneMysterious')}</SelectItem>
+                        <SelectItem value="epic">{t('translationRecommendation.toneEpic')}</SelectItem>
+                        <SelectItem value="dark">{t('translationRecommendation.toneDark')}</SelectItem>
+                        <SelectItem value="romantic">{t('translationRecommendation.toneRomantic')}</SelectItem>
+                        <SelectItem value="sarcastic">{t('translationRecommendation.toneSarcastic')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -1591,8 +1591,8 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
                   <div className="flex items-center gap-2">
                     <Volume2 className="h-4 w-4 text-emerald-400" />
                     <div>
-                      <span className="text-xs font-medium text-slate-200">Voice Output</span>
-                      <p className="text-2xs text-slate-500">DeepL Voice API (40+ lingue)</p>
+                      <span className="text-xs font-medium text-slate-200">{t('translationRecommendation.voiceOutput')}</span>
+                      <p className="text-2xs text-slate-500">{t('translationRecommendation.deeplVoiceApi')}</p>
                     </div>
                   </div>
                   <Switch
@@ -1604,10 +1604,10 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
                 {(quickPersona || quickTone) && (
                   <div className="p-2 rounded bg-purple-500/10 border border-purple-500/20">
                     <p className="text-2xs text-purple-300">
-                      <span className="font-medium">Anteprima:</span>{' '}
-                      {quickPersona && `Persona: "${quickPersona}"`}
+                      <span className="font-medium">{t('translationRecommendation.preview')}:</span>{' '}
+                      {quickPersona && `${t('translationRecommendation.persona')}: "${quickPersona}"`}
                       {quickPersona && quickTone && ' · '}
-                      {quickTone && `Tono: "${quickTone}"`}
+                      {quickTone && `${t('translationRecommendation.tone')}: "${quickTone}"`}
                     </p>
                   </div>
                 )}

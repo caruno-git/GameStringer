@@ -4776,5 +4776,31 @@
     "transcribing": "正在转录...",
     "translatedText": "翻译后的文本",
     "confidence": "置信度"
+  },
+  "translationRecommendation": {
+    "advancedOptions": "高级选项",
+    "active": "启用",
+    "persona": "角色",
+    "tone": "语调",
+    "voiceOutput": "语音输出",
+    "deeplVoiceApi": "DeepL Voice API (40+ 语言)",
+    "preview": "预览",
+    "personaDefault": "默认",
+    "personaWizard": "睿智的巫师",
+    "personaKnight": "骑士",
+    "personaPirate": "海盗",
+    "personaSciFiCaptain": "科幻舰长",
+    "personaHorror": "恐怖旁白",
+    "personaNoble": "贵妇",
+    "personaStreetKid": "街头聪明的小孩",
+    "toneDefault": "默认",
+    "toneFormal": "正式",
+    "toneCasual": "随意",
+    "toneHumorous": "幽默",
+    "toneMysterious": "神秘",
+    "toneEpic": "史诗",
+    "toneDark": "暗黑",
+    "toneRomantic": "浪漫",
+    "toneSarcastic": "讽刺"
   }
 }

@@ -4882,5 +4882,31 @@
     "transcribing": "Транскрибирую...",
     "translatedText": "Переведённый текст",
     "confidence": "Уверенность"
+  },
+  "translationRecommendation": {
+    "advancedOptions": "Расширенные настройки",
+    "active": "Активно",
+    "persona": "Персона",
+    "tone": "Тон",
+    "voiceOutput": "Голосовой вывод",
+    "deeplVoiceApi": "DeepL Voice API (40+ языков)",
+    "preview": "Предпросмотр",
+    "personaDefault": "По умолчанию",
+    "personaWizard": "Мудрый волшебник",
+    "personaKnight": "Рыцарь",
+    "personaPirate": "Пират",
+    "personaSciFiCaptain": "Капитан sci-fi",
+    "personaHorror": "Рассказчик ужасов",
+    "personaNoble": "Благородная дама",
+    "personaStreetKid": "Уличный ребёнок",
+    "toneDefault": "По умолчанию",
+    "toneFormal": "Официальный",
+    "toneCasual": "Повседневный",
+    "toneHumorous": "Юмористический",
+    "toneMysterious": "Загадочный",
+    "toneEpic": "Эпический",
+    "toneDark": "Тёмный",
+    "toneRomantic": "Романтичный",
+    "toneSarcastic": "Саркастичный"
   }
 }
