@@ -2003,7 +2003,13 @@
     "screenshot": "截图",
     "zoomOut": "缩小",
     "zoomIn": "放大",
-    "fitToScreen": "适应屏幕"
+    "fitToScreen": "适应屏幕",
+    "somethingWentWrong": "出了点问题",
+    "unexpectedErrorReload": "发生意外错误。请尝试重新加载页面。",
+    "errorDetails": "错误详情",
+    "retry": "重试",
+    "pageError": "页面错误",
+    "cannotLoadPage": "无法加载此页面。"
   },
   "languages": {
     "it": "Italiano",

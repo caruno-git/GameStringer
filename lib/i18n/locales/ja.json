@@ -2003,7 +2003,13 @@
     "screenshot": "スクリーンショット",
     "zoomOut": "縮小",
     "zoomIn": "拡大",
-    "fitToScreen": "画面に合わせる"
+    "fitToScreen": "画面に合わせる",
+    "somethingWentWrong": "問題が発生しました",
+    "unexpectedErrorReload": "予期しないエラーが発生しました。ページを再読み込みしてみてください。",
+    "errorDetails": "エラーの詳細",
+    "retry": "再試行",
+    "pageError": "ページエラー",
+    "cannotLoadPage": "このページを読み込むことができません。"
   },
   "languages": {
     "it": "Italiano",

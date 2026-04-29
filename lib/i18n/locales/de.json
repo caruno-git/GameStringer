@@ -2003,7 +2003,13 @@
     "screenshot": "Screenshot",
     "zoomOut": "Rauszoomen",
     "zoomIn": "Reinzoomen",
-    "fitToScreen": "An Bildschirm anpassen"
+    "fitToScreen": "An Bildschirm anpassen",
+    "somethingWentWrong": "Etwas ist schiefgelaufen",
+    "unexpectedErrorReload": "Ein unerwarteter Fehler ist aufgetreten. Versuchen Sie, die Seite neu zu laden.",
+    "errorDetails": "Fehlerdetails",
+    "retry": "Wiederholen",
+    "pageError": "Seitenfehler",
+    "cannotLoadPage": "Diese Seite kann nicht geladen werden."
   },
   "languages": {
     "it": "Italiano",

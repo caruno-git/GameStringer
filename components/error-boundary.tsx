@@ -5,6 +5,63 @@ import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { clientLogger } from '@/lib/client-logger';
+import { useTranslation } from '@/lib/i18n';
+
+// Error Fallback Component with translations
+function ErrorFallback({ 
+  error, 
+  errorInfo, 
+  onReset, 
+  onGoHome 
+}: { 
+  error: Error | null; 
+  errorInfo: ErrorInfo | null;
+  onReset: () => void;
+  onGoHome: () => void;
+}) {
+  const { t } = useTranslation();
+  
+  return (
+    <div className="flex items-center justify-center min-h-[400px] p-4">
+      <Card className="w-full max-w-md border-destructive/50">
+        <CardHeader className="text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
+            <AlertTriangle className="h-6 w-6 text-destructive" />
+          </div>
+          <CardTitle>{t('common.somethingWentWrong')}</CardTitle>
+          <CardDescription>
+            {t('common.unexpectedErrorReload')}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {process.env.NODE_ENV === 'development' && error && (
+            <details className="mt-4 rounded-lg bg-muted p-3 text-xs">
+              <summary className="cursor-pointer font-medium">{t('common.errorDetails')}</summary>
+              <pre className="mt-2 whitespace-pre-wrap text-destructive">
+                {error.message}
+              </pre>
+              {errorInfo && (
+                <pre className="mt-2 whitespace-pre-wrap text-muted-foreground">
+                  {errorInfo.componentStack}
+                </pre>
+              )}
+            </details>
+          )}
+        </CardContent>
+        <CardFooter className="flex gap-2 justify-center">
+          <Button variant="outline" onClick={onGoHome}>
+            <Home className="mr-2 h-4 w-4" />
+            {t('common.home')}
+          </Button>
+          <Button onClick={onReset}>
+            <RefreshCw className="mr-2 h-4 w-4" />
+            {t('common.retry')}
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
+  );
+}
 
 interface Props {
   children: ReactNode;
@@ -53,44 +110,12 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="flex items-center justify-center min-h-[400px] p-4">
-          <Card className="w-full max-w-md border-destructive/50">
-            <CardHeader className="text-center">
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
-                <AlertTriangle className="h-6 w-6 text-destructive" />
-              </div>
-              <CardTitle>Qualcosa è andato storto</CardTitle>
-              <CardDescription>
-                Si è verificato un errore imprevisto. Prova a ricaricare la pagina.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {process.env.NODE_ENV === 'development' && this.state.error && (
-                <details className="mt-4 rounded-lg bg-muted p-3 text-xs">
-                  <summary className="cursor-pointer font-medium">Dettagli errore</summary>
-                  <pre className="mt-2 whitespace-pre-wrap text-destructive">
-                    {this.state.error.message}
-                  </pre>
-                  {this.state.errorInfo && (
-                    <pre className="mt-2 whitespace-pre-wrap text-muted-foreground">
-                      {this.state.errorInfo.componentStack}
-                    </pre>
-                  )}
-                </details>
-              )}
-            </CardContent>
-            <CardFooter className="flex gap-2 justify-center">
-              <Button variant="outline" onClick={this.handleGoHome}>
-                <Home className="mr-2 h-4 w-4" />
-                Home
-              </Button>
-              <Button onClick={this.handleReset}>
-                <RefreshCw className="mr-2 h-4 w-4" />
-                Riprova
-              </Button>
-            </CardFooter>
-          </Card>
-        </div>
+        <ErrorFallback 
+          error={this.state.error}
+          errorInfo={this.state.errorInfo}
+          onReset={this.handleReset}
+          onGoHome={this.handleGoHome}
+        />
       );
     }
 
@@ -114,28 +139,30 @@ export function withErrorBoundary<P extends object>(
 
 // Componente per errori specifici delle pagine
 export function PageErrorFallback({ 
-  title = 'Errore Pagina',
-  message = 'Impossibile caricare questa pagina.',
+  title,
+  message,
   onRetry 
 }: { 
   title?: string; 
   message?: string; 
   onRetry?: () => void;
 }) {
+  const { t } = useTranslation();
+  
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] p-8 text-center">
       <AlertTriangle className="h-16 w-16 text-destructive mb-4" />
-      <h2 className="text-2xl font-bold mb-2">{title}</h2>
-      <p className="text-muted-foreground mb-6 max-w-md">{message}</p>
+      <h2 className="text-2xl font-bold mb-2">{title || t('common.pageError')}</h2>
+      <p className="text-muted-foreground mb-6 max-w-md">{message || t('common.cannotLoadPage')}</p>
       <div className="flex gap-3">
         <Button variant="outline" onClick={() => window.location.href = '/'}>
           <Home className="mr-2 h-4 w-4" />
-          Home
+          {t('common.home')}
         </Button>
         {onRetry && (
           <Button onClick={onRetry}>
             <RefreshCw className="mr-2 h-4 w-4" />
-            Riprova
+            {t('common.retry')}
           </Button>
         )}
       </div>

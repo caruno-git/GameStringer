@@ -2003,7 +2003,13 @@
     "screenshot": "Zrzut ekranu",
     "zoomOut": "Pomniejsz",
     "zoomIn": "Powiększ",
-    "fitToScreen": "Dopasuj do ekranu"
+    "fitToScreen": "Dopasuj do ekranu",
+    "somethingWentWrong": "Coś poszło nie tak",
+    "unexpectedErrorReload": "Wystąpił nieoczekiwany błąd. Spróbuj odświeżyć stronę.",
+    "errorDetails": "Szczegóły błędu",
+    "retry": "Spróbuj ponownie",
+    "pageError": "Błąd strony",
+    "cannotLoadPage": "Nie można załadować tej strony."
   },
   "languages": {
     "it": "Italiano",

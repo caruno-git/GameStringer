@@ -2003,7 +2003,13 @@
     "screenshot": "Скриншот",
     "zoomOut": "Отдалить",
     "zoomIn": "Приблизить",
-    "fitToScreen": "По размеру экрана"
+    "fitToScreen": "По размеру экрана",
+    "somethingWentWrong": "Что-то пошло не так",
+    "unexpectedErrorReload": "Произошла непредвиденная ошибка. Попробуйте перезагрузить страницу.",
+    "errorDetails": "Детали ошибки",
+    "retry": "Повторить",
+    "pageError": "Ошибка страницы",
+    "cannotLoadPage": "Невозможно загрузить эту страницу."
   },
   "languages": {
     "it": "Italiano",

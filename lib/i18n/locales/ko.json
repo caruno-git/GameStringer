@@ -2003,7 +2003,13 @@
     "screenshot": "스크린샷",
     "zoomOut": "축소",
     "zoomIn": "확대",
-    "fitToScreen": "화면에 맞춤"
+    "fitToScreen": "화면에 맞춤",
+    "somethingWentWrong": "문제가 발생했습니다",
+    "unexpectedErrorReload": "예상치 못한 오류가 발생했습니다. 페이지를 새로고침해 보세요.",
+    "errorDetails": "오류 세부정보",
+    "retry": "다시 시도",
+    "pageError": "페이지 오류",
+    "cannotLoadPage": "이 페이지를 로드할 수 없습니다."
   },
   "languages": {
     "it": "Italiano",

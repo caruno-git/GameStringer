@@ -2080,7 +2080,13 @@
     "screenshot": "Screenshot",
     "zoomOut": "Zoom out",
     "zoomIn": "Zoom in",
-    "fitToScreen": "Fit to screen"
+    "fitToScreen": "Fit to screen",
+    "somethingWentWrong": "Something went wrong",
+    "unexpectedErrorReload": "An unexpected error occurred. Try reloading the page.",
+    "errorDetails": "Error details",
+    "retry": "Retry",
+    "pageError": "Page Error",
+    "cannotLoadPage": "Unable to load this page."
   },
   "languages": {
     "it": "Italiano",

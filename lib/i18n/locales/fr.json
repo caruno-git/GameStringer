@@ -2003,7 +2003,13 @@
     "screenshot": "Capture",
     "zoomOut": "Dézoomer",
     "zoomIn": "Zoomer",
-    "fitToScreen": "Ajuster à l'écran"
+    "fitToScreen": "Ajuster à l'écran",
+    "somethingWentWrong": "Quelque chose s'est mal passé",
+    "unexpectedErrorReload": "Une erreur inattendue s'est produite. Essayez de recharger la page.",
+    "errorDetails": "Détails de l'erreur",
+    "retry": "Réessayer",
+    "pageError": "Erreur de page",
+    "cannotLoadPage": "Impossible de charger cette page."
   },
   "languages": {
     "it": "Italiano",
