@@ -2178,11 +2178,14 @@ export default function GameDetailPage() {
               )}
             </div>
             {game.platform === 'Steam' && (game.appid ?? 0) > 0 && (
-              <button className="h-8 flex items-center justify-center gap-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 hover:text-white text-micro font-bold uppercase tracking-wider transition-all"
-                onClick={() => window.open(`steam://nav/games/details/${game.appid}`)}
+              <a
+                href={`https://store.steampowered.com/app/${game.appid}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-8 flex items-center justify-center gap-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 hover:text-white text-micro font-bold uppercase tracking-wider transition-all no-underline"
               >
                 <Globe className="h-3 w-3" /> Steam Store
-              </button>
+              </a>
             )}
             {game.isInstalled && game.installPath && (
               <Link href={`/prediction-tool?name=${encodeURIComponent(game.title || game.name || '')}&installDir=${encodeURIComponent(game.installPath)}&engine=${encodeURIComponent(engineInfo?.engine || '')}&headerImage=${encodeURIComponent(game.headerImage || game.coverImage || '')}`}

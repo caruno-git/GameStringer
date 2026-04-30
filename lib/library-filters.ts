@@ -70,35 +70,43 @@ export function resetLibraryFilters(): void {
 export function fuzzyMatch(text: string, query: string): boolean {
   if (!query) return true;
   if (!text) return false;
-  
-  const textLower = text.toLowerCase();
-  const queryLower = query.toLowerCase();
-  
-  // Match esatto
+
+  const textLower = text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const queryLower = query.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+  // Match esatto o sottostringa
   if (textLower.includes(queryLower)) return true;
-  
-  // Match parole separate
-  const queryWords = queryLower.split(/\s+/);
-  const allWordsMatch = queryWords.every(word => textLower.includes(word));
-  if (allWordsMatch) return true;
-  
+
+  // Match parole separate (ogni parola della query deve essere in qualche parola del testo)
+  const queryWords = queryLower.split(/\s+/).filter(w => w.length > 0);
+  const textWords = textLower.split(/\s+/).filter(w => w.length > 0);
+
+  // Ogni parola della query deve matchare l'inizio di qualche parola del testo
+  const allQueryWordsMatch = queryWords.every(qWord =>
+    textWords.some(tWord =>
+      tWord.startsWith(qWord) ||
+      tWord.includes(qWord) ||
+      qWord.startsWith(tWord)
+    )
+  );
+  if (allQueryWordsMatch) return true;
+
   // Fuzzy match con tolleranza errori
-  // Cerca corrispondenza con 1-2 caratteri di differenza
   if (query.length >= 3) {
     // Genera varianti con 1 carattere mancante
     for (let i = 0; i < queryLower.length; i++) {
       const variant = queryLower.slice(0, i) + queryLower.slice(i + 1);
       if (textLower.includes(variant)) return true;
     }
-    
-    // Cerca sottostringhe consecutive
+
+    // Cerca sottostringhe consecutive (70% dei caratteri)
     const minMatch = Math.max(3, Math.floor(queryLower.length * 0.7));
     for (let i = 0; i <= queryLower.length - minMatch; i++) {
       const substring = queryLower.slice(i, i + minMatch);
       if (textLower.includes(substring)) return true;
     }
   }
-  
+
   return false;
 }
 
