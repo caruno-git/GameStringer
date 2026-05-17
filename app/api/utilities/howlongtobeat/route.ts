@@ -1,27 +1,15 @@
+// Route stub per build statico Tauri.
+// In modalità desktop l app non chiama mai /api/* (usa Tauri invoke()).
+// Il codice originale è preservato in cronologia git (commit prima di questo).
 import { NextResponse } from 'next/server';
-import { withErrorHandler } from '@/lib/error-handler';
 
-export const GET = withErrorHandler(async function() {
-  return NextResponse.json({ connected: true, service: 'howlongtobeat' });
-});
+export const dynamic = 'force-static';
 
-export const POST = withErrorHandler(async function() {
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
+export async function GET() {
+  return NextResponse.json({ error: 'not_available_in_desktop' }, { status: 501 });
+}
 
-    const response = await fetch('https://howlongtobeat.com', {
-      signal: controller.signal,
-    });
-    clearTimeout(timeout);
-
-    return NextResponse.json({
-      connected: response.ok,
-      status: response.status,
-    });
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return NextResponse.json({ connected: false, error: message }, { status: 200 });
-  }
-});
+export async function POST() {
+  return NextResponse.json({ error: 'not_available_in_desktop' }, { status: 501 });
+}
 

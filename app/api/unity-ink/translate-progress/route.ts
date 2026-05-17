@@ -1,33 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { withErrorHandler } from '@/lib/error-handler';
-import fs from 'fs';
-import path from 'path';
-import { getProgressMap } from '../translate/route';
+// Route stub per build statico Tauri.
+// In modalità desktop l app non chiama mai /api/* (usa Tauri invoke()).
+// Il codice originale è preservato in cronologia git (commit prima di questo).
+import { NextResponse } from 'next/server';
 
-export const GET = withErrorHandler(async function(req: NextRequest) {
-  const gameDir = req.nextUrl.searchParams.get('gameDir');
+export const dynamic = 'force-static';
 
-  if (!gameDir) {
-    return NextResponse.json({ error: 'gameDir richiesto' }, { status: 400 });
-  }
+export async function GET() {
+  return NextResponse.json({ error: 'not_available_in_desktop' }, { status: 501 });
+}
 
-  // Check in-memory progress first
-  const memProgress = getProgressMap().get(gameDir);
-  if (memProgress) {
-    return NextResponse.json(memProgress);
-  }
-
-  // Fallback to file-based progress
-  const progressPath = path.join(gameDir, '_gamestringer', 'translate_progress.json');
-  if (fs.existsSync(progressPath)) {
-    try {
-      const data = JSON.parse(fs.readFileSync(progressPath, 'utf-8'));
-      return NextResponse.json(data);
-    } catch {
-      return NextResponse.json({ status: 'idle', done: 0, total: 0, errors: 0, rate: 0, eta: 0 });
-    }
-  }
-
-  return NextResponse.json({ status: 'idle', done: 0, total: 0, errors: 0, rate: 0, eta: 0 });
-});
+export async function POST() {
+  return NextResponse.json({ error: 'not_available_in_desktop' }, { status: 501 });
+}
 

@@ -1,47 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { withErrorHandler } from '@/lib/error-handler';
+// Route stub per build statico Tauri.
+// In modalità desktop l app non chiama mai /api/* (usa Tauri invoke()).
+// Il codice originale è preservato in cronologia git (commit prima di questo).
+import { NextResponse } from 'next/server';
 
-/**
- * RSS Proxy — bypass CORS per feed RSS in dev mode.
- * In produzione (Tauri) il frontend usa invoke('fetch_rss_feed') dal backend Rust.
- * Questo endpoint serve solo come fallback in dev mode (browser puro).
- */
-export const GET = withErrorHandler(async function(request: NextRequest) {
-  const url = request.nextUrl.searchParams.get('url');
+export const dynamic = 'force-static';
 
-  if (!url) {
-    return NextResponse.json({ error: 'Missing url parameter' }, { status: 400 });
-  }
+export async function GET() {
+  return NextResponse.json({ error: 'not_available_in_desktop' }, { status: 501 });
+}
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 12000);
-
-  const res = await fetch(url, {
-    signal: controller.signal,
-    headers: {
-      'Accept': 'application/rss+xml, application/atom+xml, application/xml, text/xml, */*',
-      'User-Agent': 'GameStringer/1.5 RSS Reader',
-    },
-    redirect: 'follow',
-  });
-
-  clearTimeout(timeout);
-
-  if (!res.ok) {
-    return NextResponse.json(
-      { error: `HTTP ${res.status} for ${url}` },
-      { status: res.status }
-    );
-  }
-
-  const text = await res.text();
-
-  return new NextResponse(text, {
-    status: 200,
-    headers: {
-      'Content-Type': 'application/xml; charset=utf-8',
-      'Cache-Control': 'public, max-age=900', // 15 min cache
-    },
-  });
-});
+export async function POST() {
+  return NextResponse.json({ error: 'not_available_in_desktop' }, { status: 501 });
+}
 

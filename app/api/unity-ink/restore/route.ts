@@ -1,41 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { withErrorHandler } from '@/lib/error-handler';
-import fs from 'fs';
-import path from 'path';
-import { clientLogger } from '@/lib/client-logger';
+// Route stub per build statico Tauri.
+// In modalità desktop l app non chiama mai /api/* (usa Tauri invoke()).
+// Il codice originale è preservato in cronologia git (commit prima di questo).
+import { NextResponse } from 'next/server';
 
-export const POST = withErrorHandler(async function(req: NextRequest) {
-  const { gameDir } = await req.json();
+export const dynamic = 'force-static';
 
-  if (!gameDir || !fs.existsSync(gameDir)) {
-    return NextResponse.json({ error: 'Cartella gioco non trovata' }, { status: 400 });
-  }
+export async function GET() {
+  return NextResponse.json({ error: 'not_available_in_desktop' }, { status: 501 });
+}
 
-  const files = fs.readdirSync(gameDir);
-  const backups = files.filter(f => f.endsWith('.backup'));
-
-  if (backups.length === 0) {
-    return NextResponse.json({ message: 'Nessun backup trovato da ripristinare.' });
-  }
-
-  let restored = 0;
-  for (const backup of backups) {
-    const original = backup.replace('.backup', '');
-    const backupPath = path.join(gameDir, backup);
-    const originalPath = path.join(gameDir, original);
-
-    try {
-      fs.copyFileSync(backupPath, originalPath);
-      restored++;
-    } catch (e: unknown) {
-      clientLogger.error(`Errore ripristino ${backup}: ${e instanceof Error ? e.message : String(e)}`, 'UNITY_INK');
-    }
-  }
-
-  return NextResponse.json({
-    message: `Ripristinati ${restored}/${backups.length} file originali.`,
-    restored,
-    total: backups.length
-  });
-});
+export async function POST() {
+  return NextResponse.json({ error: 'not_available_in_desktop' }, { status: 501 });
+}
 

@@ -1,41 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { addTranslationToDictionary } from '@/lib/game-dictionaries';
-import { withErrorHandler } from '@/lib/error-handler';
-import { dictionaryAddSchema, validateBody } from '@/lib/api-schemas';
+// Route stub per build statico Tauri.
+// In modalità desktop l app non chiama mai /api/* (usa Tauri invoke()).
+// Il codice originale è preservato in cronologia git (commit prima di questo).
+import { NextResponse } from 'next/server';
 
-export const POST = withErrorHandler(async function(request: NextRequest) {
-  const rawBody = await request.json();
-  const validated = validateBody(dictionaryAddSchema, rawBody);
-  if (!validated.success) {
-    return NextResponse.json(
-      { error: validated.error },
-      { status: 400 }
-    );
-  }
+export const dynamic = 'force-static';
 
-  const { gameId, targetLanguage, original, translated } = validated.data;
-  const dictionaryId = (gameId ?? 'default') as string;
-  const targetLang = (targetLanguage ?? 'it') as string;
+export async function GET() {
+  return NextResponse.json({ error: 'not_available_in_desktop' }, { status: 501 });
+}
 
-  const result = await addTranslationToDictionary(
-    dictionaryId,
-    targetLang,
-    original,
-    translated
-  );
-
-  if (result.success) {
-    return NextResponse.json({
-      success: true,
-      message: 'Translation added to dictionary',
-      dictionaryId,
-      targetLanguage: targetLang
-    });
-  } else {
-    return NextResponse.json(
-      { error: 'Failed to add translation', message: result.message },
-      { status: 500 }
-    );
-  }
-});
+export async function POST() {
+  return NextResponse.json({ error: 'not_available_in_desktop' }, { status: 501 });
+}
 

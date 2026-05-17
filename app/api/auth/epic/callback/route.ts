@@ -1,32 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { withErrorHandler } from '@/lib/error-handler';
-import { clientLogger } from '@/lib/client-logger';
+// Route stub per build statico Tauri.
+// In modalità desktop l app non chiama mai /api/* (usa Tauri invoke()).
+// Il codice originale è preservato in cronologia git (commit prima di questo).
+import { NextResponse } from 'next/server';
 
-export const GET = withErrorHandler(async function(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const code = searchParams.get('code');
-  const error = searchParams.get('error');
-  const errorDescription = searchParams.get('error_description');
+export const dynamic = 'force-static';
 
-  clientLogger.debug('[EPIC OAUTH] Callback ricevuto', 'EPIC_OAUTH', { code: code ?? undefined, error: error ?? undefined, errorDescription: errorDescription ?? undefined });
+export async function GET() {
+  return NextResponse.json({ error: 'not_available_in_desktop' }, { status: 501 });
+}
 
-  if (error) {
-    clientLogger.error('[EPIC OAUTH] Errore OAuth', 'EPIC_OAUTH', { error, errorDescription });
-    return NextResponse.redirect(new URL('/store-manager?epic_error=' + encodeURIComponent(error), request.url));
-  }
-
-  if (!code) {
-    clientLogger.error('[EPIC OAUTH] Authorization code mancante');
-    return NextResponse.redirect(new URL('/store-manager?epic_error=no_code', request.url));
-  }
-
-  // Qui dovremmo scambiare il code con un access token
-  // Per ora, reindirizziamo alla store manager con il code
-  const redirectUrl = new URL('/store-manager', request.url);
-  redirectUrl.searchParams.set('epic_code', code);
-
-  clientLogger.debug(`[EPIC OAUTH] Reindirizzamento a: ${redirectUrl.toString()}`, 'EPIC_OAUTH');
-
-  return NextResponse.redirect(redirectUrl);
-});
+export async function POST() {
+  return NextResponse.json({ error: 'not_available_in_desktop' }, { status: 501 });
+}
 

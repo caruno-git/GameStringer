@@ -1,7 +1,8 @@
-// Generate static params for export (empty = dynamic at runtime)
+// Placeholder per Next 15 + output: 'export' (richiede almeno un param).
 export function generateStaticParams() {
-  return [];
+  return [{ id: '_' }];
 }
+export const dynamicParams = false;
 
 export default function GameLayout({
   children,
