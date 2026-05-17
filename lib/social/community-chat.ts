@@ -223,6 +223,9 @@ export async function autoSyncGSToSupabase(): Promise<string | null> {
   // 4. Ensure user_profiles row exists (prevents FK errors on presence/membership)
   if (authenticatedUserId) {
     try {
+      // Lo schema reale di `user_profiles` (vedi docs/supabase-schema.sql) ha
+      // `id UUID PRIMARY KEY REFERENCES auth.users(id)`: la chiave è proprio
+      // l'ID di Supabase Auth. Usiamo `id` come chiave di lookup e di insert.
       const { data: existingProfile } = await supabase
         .from('user_profiles')
         .select('id')
@@ -243,7 +246,8 @@ export async function autoSyncGSToSupabase(): Promise<string | null> {
 
         if (rpcErr) {
           clientLogger.warn(`[Chat Bridge] RPC ensure_user_profile fallita: ${rpcErr.message} - provo INSERT diretto`);
-          // Fallback: direct insert
+          // Fallback: direct insert. `id` deve combaciare con l'auth user id
+          // (è una FK verso auth.users), e lo schema include `email`.
           const { error: insertErr } = await supabase.from('user_profiles').insert({
             id: authenticatedUserId,
             username,
@@ -364,29 +368,38 @@ async function fetchProfilesMap(userIds: string[]): Promise<Map<string, { userna
   
   try {
     const supabase = await getSupabase();
-    const query = supabase
+    // Lo schema reale di `user_profiles` (vedi docs/supabase-schema.sql) usa
+    // `id UUID PRIMARY KEY REFERENCES auth.users(id)`: la chiave è proprio
+    // l'ID di Supabase Auth, non una colonna `user_id` separata. I metodi di
+    // filtro di Supabase (.eq, .in) ritornano una nuova query e non mutano
+    // in place: dobbiamo riassegnare, altrimenti la query parte senza filtro
+    // e Supabase risponde 400.
+    let query = supabase
       .from('user_profiles')
-      .select('user_id, username, avatar_url');
-    
+      .select('id, username, avatar_url');
+
     if (userIds.length === 1) {
-      query.eq('user_id', userIds[0]);
+      query = query.eq('id', userIds[0]);
     } else {
-      query.in('user_id', userIds);
+      query = query.in('id', userIds);
     }
-    
+
     const { data, error } = await query;
-    
+
     if (error) {
+      clientLogger.error(
+        `[Chat Bridge] fetchProfilesMap error — code: ${error.code} | message: ${error.message} | details: ${error.details} | hint: ${error.hint}`
+      );
       _chatProfileQueryFailed = true;
       _chatProfileQueryFailedAt = Date.now();
       return map;
     }
-    
+
     _chatProfileQueryFailed = false;
-    
+
     if (data) {
       data.forEach(p => {
-        if (p.user_id) map.set(p.user_id as string, { username: p.username as string, avatar_url: p.avatar_url as string | null });
+        if (p.id) map.set(p.id as string, { username: p.username as string, avatar_url: p.avatar_url as string | null });
       });
     }
   } catch {

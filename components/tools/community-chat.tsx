@@ -288,7 +288,12 @@ export function CommunityChat() {
         msg.content,
         targetLang,
       );
-      setTranslatedMessages(prev => ({ ...prev, [msg.id]: translated }));
+      // Se la "traduzione" coincide con l'originale (detect heuristico sbagliato,
+      // API che ha rinunciato, o lingua sorgente == target) non la salviamo:
+      // altrimenti il render mostra due <p> identici uno sotto l'altro.
+      if (translated && translated.trim() && translated.trim() !== msg.content.trim()) {
+        setTranslatedMessages(prev => ({ ...prev, [msg.id]: translated }));
+      }
     } catch (e: unknown) {
       const errMsg = e instanceof Error ? e.message : 'Errore traduzione';
       toast.error(errMsg);

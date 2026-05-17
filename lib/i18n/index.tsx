@@ -111,8 +111,10 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       if (value && typeof value === 'object' && k in value) {
         value = (value as Record<string, unknown>)[k];
       } else {
-        // Fallback to Italian if key not found
-        value = translations['it'];
+        // Fallback all'inglese se la chiave manca nella lingua corrente.
+        // Mai all'italiano hardcoded: un utente che ha selezionato EN deve
+        // vedere EN (o la key cruda) anche quando il bundle scelto è incompleto.
+        value = translations['en'];
         for (const fallbackKey of keys) {
           if (value && typeof value === 'object' && fallbackKey in value) {
             value = (value as Record<string, unknown>)[fallbackKey];
