@@ -771,10 +771,19 @@ pub async fn load_origin_credentials() -> Result<serde_json::Value, String> {
     
     let credentials: OriginCredentials = serde_json::from_str(&json_data)
         .map_err(|e| format!("Errore parsing JSON: {}", e))?;
-    
-    // Decripta le credenziali
-    let (email, password) = decrypt_credentials(&credentials.email_encrypted, &credentials.password_encrypted, &credentials.nonce)?;
-    
+
+    // Decripta le credenziali. Se la chiave AEAD non corrisponde più (tipicamente
+    // dopo un upgrade della toolchain Rust che cambia DefaultHasher), il file è
+    // di fatto inutilizzabile: lo cancelliamo e segnaliamo come "nessuna credenziale".
+    let (email, password) = match decrypt_credentials(&credentials.email_encrypted, &credentials.password_encrypted, &credentials.nonce) {
+        Ok(creds) => creds,
+        Err(e) if e.contains("decryption failed") => {
+            let _ = fs::remove_file(&credentials_path);
+            return Err("Nessuna credenziale Origin/EA salvata".to_string());
+        }
+        Err(e) => return Err(e),
+    };
+
     Ok(serde_json::json!({
         "email": email,
         "password": password,

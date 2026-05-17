@@ -755,10 +755,19 @@ pub async fn load_itchio_credentials() -> Result<serde_json::Value, String> {
     
     let credentials: ItchioCredentials = serde_json::from_str(&json_data)
         .map_err(|e| format!("Errore parsing JSON: {}", e))?;
-    
-    // Decripta l'API key
-    let api_key = decrypt_api_key(&credentials.api_key_encrypted, &credentials.nonce)?;
-    
+
+    // Decripta l'API key. Se la chiave AEAD non corrisponde più (tipicamente
+    // dopo un upgrade della toolchain Rust che cambia DefaultHasher), il file è
+    // di fatto inutilizzabile: lo cancelliamo e segnaliamo come "nessuna credenziale".
+    let api_key = match decrypt_api_key(&credentials.api_key_encrypted, &credentials.nonce) {
+        Ok(k) => k,
+        Err(e) if e.to_lowercase().contains("decryption failed") => {
+            let _ = fs::remove_file(&credentials_path);
+            return Err("Nessuna credenziale itch.io salvata".to_string());
+        }
+        Err(e) => return Err(e),
+    };
+
     Ok(serde_json::json!({
         "username": credentials.username,
         "api_key": api_key,
