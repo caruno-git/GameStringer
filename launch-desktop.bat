@@ -9,6 +9,7 @@ echo.
 echo Avvio applicazione desktop...
 cd src-tauri
 set RUST_BACKTRACE=1
-cargo run --release --jobs 1
+REM --jobs 1 rimosso 2026-05-20: usa tutti i core (build ~4 min invece di ~25)
+cargo run --release
 
 pause

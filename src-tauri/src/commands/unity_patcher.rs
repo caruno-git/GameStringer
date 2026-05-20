@@ -17,8 +17,8 @@ const BEPINEX_LEGACY_X86_URL: &str = "https://github.com/BepInEx/BepInEx/release
 // URL per IPA (Illusion Plugin Architecture) - Per Unity 5.0-5.5 molto vecchie
 const IPA_URL: &str = "https://github.com/Eusth/IPA/releases/download/3.4.1/IPA-3.4.1.zip";
 
-// XUnity per IPA (versione IPA-compatible)
-const XUNITY_IPA_URL: &str = "https://github.com/bbepis/XUnity.AutoTranslator/releases/download/v5.5.0/XUnity.AutoTranslator-IPA-5.5.0.zip";
+// XUnity per IPA (versione IPA-compatible) — aggiornato a v5.6.1 (rilascio 2026-04-19)
+const XUNITY_IPA_URL: &str = "https://github.com/bbepis/XUnity.AutoTranslator/releases/download/v5.6.1/XUnity.AutoTranslator-IPA-5.6.1.zip";
 
 // URL per BepInEx 6.x Mono (Unity 2021+) - Pre-release ufficiale v6.0.0-pre.2
 #[allow(dead_code)]
@@ -30,11 +30,12 @@ const BEPINEX6_MONO_X86_URL: &str = "https://github.com/BepInEx/BepInEx/releases
 const BEPINEX6_IL2CPP_X64_URL: &str = "https://github.com/BepInEx/BepInEx/releases/download/v6.0.0-pre.2/BepInEx-Unity.IL2CPP-win-x64-6.0.0-pre.2.zip";
 const BEPINEX6_IL2CPP_X86_URL: &str = "https://github.com/BepInEx/BepInEx/releases/download/v6.0.0-pre.2/BepInEx-Unity.IL2CPP-win-x86-6.0.0-pre.2.zip";
 
-// XUnity AutoTranslator - Aggiornato a v5.5.0
-const XUNITY_URL: &str = "https://github.com/bbepis/XUnity.AutoTranslator/releases/download/v5.5.0/XUnity.AutoTranslator-BepInEx-5.5.0.zip";
+// XUnity AutoTranslator — aggiornato a v5.6.1 (rilascio 2026-04-19)
+// Novità 5.6.x: UIElements, tag XUAIGNORETREE, fix Papago, Yandex API v2, PluginInitializationCompleted event
+const XUNITY_URL: &str = "https://github.com/bbepis/XUnity.AutoTranslator/releases/download/v5.6.1/XUnity.AutoTranslator-BepInEx-5.6.1.zip";
 
-// XUnity per BepInEx IL2CPP (versione speciale per IL2CPP)
-const XUNITY_IL2CPP_URL: &str = "https://github.com/bbepis/XUnity.AutoTranslator/releases/download/v5.5.0/XUnity.AutoTranslator-BepInEx-IL2CPP-5.5.0.zip";
+// XUnity per BepInEx IL2CPP (versione speciale per IL2CPP) — aggiornato a v5.6.1
+const XUNITY_IL2CPP_URL: &str = "https://github.com/bbepis/XUnity.AutoTranslator/releases/download/v5.6.1/XUnity.AutoTranslator-BepInEx-IL2CPP-5.6.1.zip";
 
 #[derive(serde::Serialize, serde::Deserialize, Clone)]
 pub struct PatchStatus {
