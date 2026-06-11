@@ -12,13 +12,21 @@ vi.mock('@/hooks/use-notifications', () => ({
   useNotifications: vi.fn()
 }));
 
+// Il focusManager DEVE avere identità stabile tra i render: l'hook vero la
+// garantisce con useRef(singleton), e l'effect del componente lo tiene nelle
+// dependency facendo setState. Un oggetto nuovo a ogni render qui causava un
+// loop di render infinito dentro act() → OOM del worker vitest (8GB).
+const { stableFocusManager } = vi.hoisted(() => ({
+  stableFocusManager: {
+    focusNotificationCenter: vi.fn(),
+    restoreFocus: vi.fn(),
+    focusSearch: vi.fn()
+  }
+}));
+
 vi.mock('@/hooks/use-keyboard-navigation', () => ({
   useKeyboardNavigation: vi.fn(() => ({
-    focusManager: {
-      focusNotificationCenter: vi.fn(),
-      restoreFocus: vi.fn(),
-      focusSearch: vi.fn()
-    }
+    focusManager: stableFocusManager
   })),
   useNotificationListNavigation: vi.fn()
 }));
@@ -29,7 +37,7 @@ vi.mock('@/lib/notification-accessibility', () => ({
   announceBatchOperation: vi.fn()
 }));
 
-vi.mock('./keyboard-shortcuts-help', () => ({
+vi.mock('@/components/notifications/keyboard-shortcuts-help', () => ({
   KeyboardShortcutsHelp: ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => 
     isOpen ? <div data-testid="keyboard-help" onClick={onClose}>Keyboard Help</div> : null
 }));
