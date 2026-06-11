@@ -63,6 +63,9 @@ config/secrets.json
 # Research / cloni di repo terzi per reverse engineering (non sono codice nostro)
 /research/
 
+# Documenti privati (bozze email, note di strategia) — mai nel repo pubblico
+/private/
+
 # Log files
 /logs/
 yarn-error.log
