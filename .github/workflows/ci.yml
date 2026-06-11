@@ -22,6 +22,12 @@ jobs:
           node-version: 20
           cache: npm
 
+      # Il lockfile è generato da npm 11 in locale: npm 10 (bundled con
+      # Node 20) valida i peer di @swc/* in modo diverso e npm ci fallisce
+      # con "Missing @swc/helpers". Allineare la versione di npm.
+      - name: Align npm version
+        run: npm install -g npm@11
+
       - name: Install dependencies
         run: npm ci
         env:
