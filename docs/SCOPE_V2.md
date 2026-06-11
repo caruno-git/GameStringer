@@ -50,7 +50,7 @@ translator pro, ai-translator, batch-translation, voice/vision/ocr/manga/texture
 - [ ] Revert pulito: disinstallando la patch il gioco torna esattamente com'era
 
 **Qualità**
-- [ ] 3 gate CI verdi e bloccanti (tsc ✅ · ESLint ✅ · test — in corso oggi)
+- [x] 3 gate CI verdi e bloccanti (tsc · ESLint · test — tutti attivi dall'11/06/2026)
 - [ ] Zero `BYPASS_AUTH_FOR_DEBUG`: bypass solo via env dev (`NEXT_PUBLIC_SKIP_AUTH`)
 - [ ] Directory profili consolidata (oggi 3 path → 1 canonico + migrazione) — *unico punto dell'audit promosso a blocker: perde dati utente*
 

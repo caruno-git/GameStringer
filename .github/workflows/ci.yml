@@ -43,13 +43,10 @@ jobs:
       - name: ESLint
         run: npm run lint
 
-      # Non bloccante: OOM risolto l'11/06/2026 (mock instabile in
-      # notification-center.test → render-loop infinito). Baseline reale:
-      # 322 passed / 78 failed su 400 (34 file, ~14s). Bonificare i rossi
-      # e poi rimuovere continue-on-error.
+      # Gate BLOCCANTE dal 2026-06-11 (suite bonificata: 464 passed,
+      # 0 failed, 37 skip documentati — vedi i TODO nei singoli file).
       - name: Unit tests
         run: npm run test:run
-        continue-on-error: true
 
       - name: Security audit
         run: npm audit --audit-level=high || true
