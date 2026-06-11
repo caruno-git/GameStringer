@@ -39,6 +39,9 @@ jobs:
         run: npm run lint
         continue-on-error: true
 
+      # Non bloccante: baseline 2026-06-11 — la suite va in OOM (heap JS
+      # esaurito anche con --max-old-space-size=8192, leak nel worker pool
+      # vitest/tinypool). Fixare l'OOM prima di attivare il gate.
       - name: Unit tests
         run: npm run test:run
         continue-on-error: true
