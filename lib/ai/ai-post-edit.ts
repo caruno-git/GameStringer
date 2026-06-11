@@ -123,12 +123,15 @@ export async function suggestImprovement(req: PostEditRequest): Promise<PostEdit
     clientLogger.warn('[PostEdit] Ollama non disponibile:', e);
   }
 
-  // Fallback: Gemini API
+  // Fallback: Gemini API (default gemini-3.5-flash, override via NEXT_PUBLIC_GEMINI_MODEL)
   try {
     const geminiKey = getGeminiKey();
     if (geminiKey) {
+      const geminiModel =
+        (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_GEMINI_MODEL) ||
+        'gemini-3.5-flash';
       const resp = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiKey}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

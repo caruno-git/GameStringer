@@ -125,7 +125,13 @@ export function getApiKeys() {
 }
 
 
-/** Traduzione con Gemini API - Default gemini-2.0-flash */
+/** Traduzione con Gemini API - Default gemini-3.5-flash (frontier, I/O 2026).
+ *  Modello parametrizzabile via NEXT_PUBLIC_GEMINI_MODEL (es. `gemini-3.5-flash`,
+ *  `gemini-2.0-flash`, `gemini-3.1-flash-lite`). Stesso pattern di ANTHROPIC_MODEL. */
+const GEMINI_MODEL =
+  (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_GEMINI_MODEL) ||
+  'gemini-3.5-flash';
+
 async function translateWithGemini(
   apiKey: string,
   opts: TranslateOptions
@@ -133,7 +139,7 @@ async function translateWithGemini(
   const prompt = buildTranslationPrompt(opts);
 
   const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -384,10 +390,27 @@ async function translateWithOpenAI(
     .filter((line: string) => line.length > 0);
 }
 
-/** Traduzione con Anthropic Claude API - Claude 3.5/4 Sonnet per creative/narrative */
+/** Traduzione con Anthropic Claude API - Claude Sonnet 4.6 (default) per creative/narrative.
+ *  Modello parametrizzabile via NEXT_PUBLIC_ANTHROPIC_MODEL (es. `claude-opus-4-6`,
+ *  `claude-sonnet-4-6`, `claude-haiku-4-5-20251001`). */
+const ANTHROPIC_MODEL =
+  (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_ANTHROPIC_MODEL) ||
+  'claude-sonnet-4-6';
+
+/** Variante "premium" — Claude Opus 4.8 (frontier, 28/05/2026) per asset complessi,
+ *  Lore Assistant e OCR/Vision dove serve la massima qualità. Stesso pattern env di
+ *  ANTHROPIC_MODEL: override via NEXT_PUBLIC_ANTHROPIC_MODEL_PREMIUM. */
+const ANTHROPIC_MODEL_PREMIUM =
+  (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_ANTHROPIC_MODEL_PREMIUM) ||
+  'claude-opus-4-8';
+
+const ANTHROPIC_TRANSLATION_SYSTEM =
+  'You are a translation API. Output ONLY a JSON array of translated strings, in the same order as the input. No prose, no preamble, no markdown code fences, no surrounding tags.';
+
 async function translateWithAnthropic(
   apiKey: string,
-  opts: TranslateOptions
+  opts: TranslateOptions,
+  model: string = ANTHROPIC_MODEL
 ): Promise<string[]> {
   const prompt = buildTranslationPrompt(opts);
 
@@ -400,9 +423,9 @@ async function translateWithAnthropic(
       'anthropic-dangerous-direct-browser-access': 'true',
     },
     body: JSON.stringify({
-      // Claude 3.5/4 Sonnet: migliore per traduzioni creative, narrativa, sfumature emotive
-      model: 'claude-3-5-sonnet-20241022',
+      model,
       max_tokens: 8192,
+      system: ANTHROPIC_TRANSLATION_SYSTEM,
       messages: [{ role: 'user', content: prompt }],
     }),
   });
@@ -413,7 +436,9 @@ async function translateWithAnthropic(
   }
 
   const data = await res.json();
-  const responseText = data?.content?.[0]?.text || '';
+  const rawText = data?.content?.[0]?.text || '';
+  // Strip eventuali markdown code fences (``` o ```json) prima del parse JSON.
+  const responseText = rawText.replace(/```(?:json)?\s*|\s*```/g, '');
 
   try {
     const jsonMatch = responseText.match(/\[[\s\S]*\]/);
@@ -424,6 +449,15 @@ async function translateWithAnthropic(
     .split('\n')
     .map((line: string) => line.replace(/^\d+\.\s*/, '').trim())
     .filter((line: string) => line.length > 0);
+}
+
+/** Variante premium di Anthropic: usa Claude Opus 4.8 (ANTHROPIC_MODEL_PREMIUM).
+ *  Riusa interamente translateWithAnthropic, cambiando solo il modello. */
+async function translateWithAnthropicPremium(
+  apiKey: string,
+  opts: TranslateOptions
+): Promise<string[]> {
+  return translateWithAnthropic(apiKey, opts, ANTHROPIC_MODEL_PREMIUM);
 }
 
 /** Funzione generica per API OpenAI-compatible */
@@ -1607,6 +1641,7 @@ const PROVIDER_MAP: Record<string, {
   openai: { getKey: (k) => k.openai, fn: translateWithOpenAI, isBlocked: () => isProviderBlocked('openai'), needsKey: true },
   anthropic: { getKey: (k) => k.anthropic, fn: translateWithAnthropic, isBlocked: () => isProviderBlocked('anthropic'), needsKey: true },
   'anthropic-claude4': { getKey: (k) => k.anthropic, fn: translateWithAnthropic, isBlocked: () => isProviderBlocked('anthropic'), needsKey: true },
+  'anthropic-premium': { getKey: (k) => k.anthropic, fn: translateWithAnthropicPremium, isBlocked: () => isProviderBlocked('anthropic'), needsKey: true },
   mistral: { getKey: (k) => k.mistral, fn: translateWithMistral, isBlocked: () => isProviderBlocked('mistral'), needsKey: true },
   cohere: { getKey: (k) => k.cohere, fn: translateWithCohere, isBlocked: () => isProviderBlocked('cohere'), needsKey: true },
   together: { getKey: (k) => k.together, fn: translateWithTogether, isBlocked: () => isProviderBlocked('together'), needsKey: true },
