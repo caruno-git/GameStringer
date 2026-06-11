@@ -11,7 +11,7 @@ import {
   normalizeLangCode,
 } from './language-mappings';
 import { resetProviderBlocks } from './provider-blocking';
-import type { GameGenre } from '../genre-prompts';
+import type { GameGenre } from '../ai/genre-prompts';
 
 /** Preset di chain selezionabili per costo/qualita */
 export type ChainPreset = 'free' | 'privacy' | 'economy' | 'balanced' | 'quality' | 'max_quality' | 'creative' | 'long_context' | 'voice' | 'auto';

@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { NotificationPriority } from '@/types/notifications';
-import OptimalPositioningAlgorithm, { PositionCandidate, ToastDimensions } from './optimal-positioning-algorithm';
-import { UIInterference } from './ui-interference-detector';
+import OptimalPositioningAlgorithm, { PositionCandidate, ToastDimensions } from '../optimal-positioning-algorithm';
+import { UIInterference } from '../ui-interference-detector';
 import { clientLogger } from '@/lib/client-logger';
 
 /**

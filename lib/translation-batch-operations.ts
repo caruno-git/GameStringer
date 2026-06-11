@@ -1,5 +1,5 @@
 import { BatchOperation, BatchResult } from '@/lib/types/batch-operations';
-import { BatchItem } from './batch-processor';
+import { BatchItem } from './batch/batch-processor';
 import { prisma } from './prisma';
 import {
   Languages,

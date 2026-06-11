@@ -1,6 +1,6 @@
 import { BatchProcessor, BatchItem, createBatchProcessor } from './batch-processor';
 import { BatchResult, BatchOperationType, BatchOperationStatus } from '@/lib/types/batch-operations';
-import { prisma } from './prisma';
+import { prisma } from '../prisma';
 import { clientLogger } from '@/lib/client-logger';
 
 export interface BatchOperationManagerOptions {

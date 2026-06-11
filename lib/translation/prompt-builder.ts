@@ -16,7 +16,7 @@ import { findVoiceProfileForString, buildVoicePromptInjection } from '@/lib/voic
 import { clientLogger } from '@/lib/client-logger';
 // Import the interface type to avoid circular dependency
 // TranslateOptions is defined in ai-translate-direct.ts which imports from this file
-import type { TranslateOptions } from '../ai-translate-direct';
+import type { TranslateOptions } from '../ai/ai-translate-direct';
 
 /** Costruisce il prompt di traduzione con RAG/glossario opzionale + Custom Prompt System */
 export function buildTranslationPrompt(opts: TranslateOptions): string {

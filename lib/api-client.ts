@@ -3,7 +3,7 @@
  * Gestisce tutte le chiamate API con retry, error handling, caching
  */
 
-import { notifications } from './notifications';
+import { notifications } from './notifications/notifications';
 
 /**
  * Secure fetch wrapper that adds CSRF protection headers for local API calls.

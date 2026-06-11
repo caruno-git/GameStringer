@@ -3,7 +3,7 @@
  * Analizza il contenuto e suggerisce/sceglie automaticamente le impostazioni ottimali
  */
 
-import { clientLogger } from './client-logger';
+import { clientLogger } from '../client-logger';
 
 export type ContentType = 
   | 'ui'           // UI elements, menu, buttons

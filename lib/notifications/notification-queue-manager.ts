@@ -1,7 +1,7 @@
 'use client';
 
 import { Notification, NotificationPriority } from '@/types/notifications';
-import UIInterferenceDetector, { UIInterference } from './ui-interference-detector';
+import UIInterferenceDetector, { UIInterference } from '../ui-interference-detector';
 import { clientLogger } from '@/lib/client-logger';
 
 import React from 'react';

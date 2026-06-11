@@ -523,7 +523,7 @@ export class SpeechToTextEngine {
     }
 
     try {
-      const { translateSingleWithFallback } = await import('./ai-translate-direct');
+      const { translateSingleWithFallback } = await import('../ai/ai-translate-direct');
       const result = await translateSingleWithFallback(
         segment.originalText,
         tgtLang,

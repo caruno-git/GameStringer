@@ -227,7 +227,8 @@ export function FriendsSidebar({
           getPendingFriendRequests(userId),
         ]);
         
-        // Transform UserProfile & { presence: UserPresence } to FriendWithPresence
+        // Transform UserProfile & { isOnline, lastSeen } to FriendWithPresence,
+        // sintetizzando la UserPresence dallo stato del presence system unificato
         const transformedFriends = friendsData.map(f => ({
           id: f.id,
           requester_id: userId,
@@ -235,7 +236,15 @@ export function FriendsSidebar({
           status: 'accepted' as const,
           created_at: new Date().toISOString(),
           profile: f,
-          presence: f.presence,
+          presence: f.isOnline
+            ? {
+                user_id: f.user_id,
+                status: 'online' as const,
+                current_activity: null,
+                current_game: null,
+                last_heartbeat: f.lastSeen || new Date().toISOString(),
+              }
+            : null,
         }));
         
         setFriends(transformedFriends);
