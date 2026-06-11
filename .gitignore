@@ -56,6 +56,13 @@ config/secrets.json
 # GameStringer data directory (profiles, settings, etc.)
 /gamestringer_data/
 
+# User profiles (runtime data — mai committare dati utente, anche se cifrati)
+/profiles/
+/src-tauri/profiles/
+
+# Research / cloni di repo terzi per reverse engineering (non sono codice nostro)
+/research/
+
 # Log files
 /logs/
 yarn-error.log
