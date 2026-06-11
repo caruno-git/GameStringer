@@ -120,7 +120,7 @@ export const DEFAULT_FEED_SOURCES: NewsFeedSource[] = [
 ];
 
 const FEEDS_STORAGE_KEY = 'gamestringer_news_feeds_config';
-const FEEDS_CACHE_KEY = 'gamestringer_news_feeds_cache';
+const FEEDS_CACHE_KEY = 'gamestringer_news_feeds_cache_v2';
 const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minuti
 
 // CORS proxy per RSS (necessario in ambiente browser/Tauri webview)
@@ -284,10 +284,16 @@ class NewsFeedService {
             const imgMatch = desc.match(/<img[^>]+src=["']([^"']+)["']/);
             if (imgMatch) image = imgMatch[1];
           }
-          // Cerca URL immagine diretto nel content
+          // Cerca URL immagine diretto nel content (estesi anche webp, avif, svg)
           if (!image) {
-            const urlMatch = desc.match(/(https?:\/\/[^\s"'<>]+\.(?:jpg|jpeg|png|gif|webp))/i);
+            const urlMatch = desc.match(/(https?:\/\/[^\s"'<>]+\.(?:jpg|jpeg|png|gif|webp|avif|svg))/i);
             if (urlMatch) image = urlMatch[1];
+          }
+
+          // Fallback FINALE: favicon ad alta risoluzione del sito sorgente
+          // Garantisce che ci sia SEMPRE un'immagine visibile
+          if (!image) {
+            image = this.getFallbackImage(source, link);
           }
 
           // Pulisci HTML dal description
@@ -338,10 +344,16 @@ class NewsFeedService {
           const imgMatch = desc.match(/<img[^>]+src=["']([^"']+)["']/);
           if (imgMatch) image = imgMatch[1];
         }
-        // Cerca URL immagine diretto nel content
+        // Cerca URL immagine diretto nel content (estesi anche webp, avif, svg)
         if (!image) {
-          const urlMatch = desc.match(/(https?:\/\/[^\s"'<>]+\.(?:jpg|jpeg|png|gif|webp))/i);
+          const urlMatch = desc.match(/(https?:\/\/[^\s"'<>]+\.(?:jpg|jpeg|png|gif|webp|avif|svg))/i);
           if (urlMatch) image = urlMatch[1];
+        }
+
+        // Fallback FINALE: favicon ad alta risoluzione del sito sorgente
+        // Garantisce che ci sia SEMPRE un'immagine visibile
+        if (!image) {
+          image = this.getFallbackImage(source, link);
         }
 
         const cleanDesc = desc.replace(/<[^>]+>/g, '').substring(0, 300);
@@ -365,6 +377,24 @@ class NewsFeedService {
       clientLogger.warn(`Parse error for ${source.name}:`, e);
     }
     return items;
+  }
+
+  /**
+   * Restituisce un'immagine di fallback ad alta risoluzione basata sul favicon del sito.
+   * Garantisce che ogni news abbia SEMPRE un'immagine visibile.
+   * Usa il servizio Google s2 favicons che funziona senza CORS e ad alta risoluzione.
+   */
+  private getFallbackImage(source: NewsFeedSource, link?: string): string {
+    try {
+      // Preferisci l'hostname dell'articolo (più specifico), fallback all'URL del sorgente
+      const targetUrl = link && link.startsWith('http') ? link : source.url;
+      const hostname = new URL(targetUrl).hostname;
+      // Google s2 favicons supporta dimensioni fino a 256px, sempre disponibile senza CORS
+      return `https://www.google.com/s2/favicons?sz=256&domain=${hostname}`;
+    } catch {
+      // Ultimo fallback: favicon generico
+      return `https://www.google.com/s2/favicons?sz=256&domain=${source.url.replace(/^https?:\/\//, '').split('/')[0]}`;
+    }
   }
 
   private formatDate(ts: number): string {
@@ -466,18 +496,21 @@ class NewsFeedService {
       return true;
     });
 
-    // Fetch missing images SYNCHRONOUSLY (first 30 items)
-    const itemsToProcess = deduped.slice(0, 30);
+    // Fetch missing images SYNCHRONOUSLY (first 50 items — coerente con UI che ne mostra 50)
+    // Trattiamo come "mancanti" anche le immagini di fallback (favicon Google)
+    // perché abbiamo ancora la chance di trovare una og:image più ricca scaricando l'articolo.
+    const itemsToProcess = deduped.slice(0, 50);
     await Promise.all(
       itemsToProcess.map(async (item) => {
-        if (item.image) return; // Already has image
-        
+        const isFallback = item.image?.includes('google.com/s2/favicons');
+        if (item.image && !isFallback) return; // ha già un'immagine "vera"
+
         // Check cache first
         if (imageCache[item.link]) {
           item.image = imageCache[item.link];
           return;
         }
-        
+
         // Fetch og:image from article page
         try {
           const ogImage = await this.fetchOgImage(item.link);
@@ -485,11 +518,24 @@ class NewsFeedService {
             item.image = ogImage;
             imageCache[item.link] = ogImage;
           }
+          // Se og:image non trovato, manteniamo il fallback favicon già impostato dal parser
         } catch {}
       })
     );
-    
+
     this.saveImageCache(imageCache);
+
+    // GARANZIA FINALE: ogni item DEVE avere un'immagine.
+    // Se per qualche ragione resta senza, applica il fallback favicon.
+    const sourceMap = new Map(this.sources.map(s => [s.id, s]));
+    for (const item of deduped) {
+      if (!item.image) {
+        const src = sourceMap.get(item.sourceId) || DEFAULT_FEED_SOURCES.find(s => s.id === item.sourceId);
+        if (src) {
+          item.image = this.getFallbackImage(src, item.link);
+        }
+      }
+    }
 
     // Salva cache
     this.cache = { items: deduped.slice(0, 100), timestamp: Date.now() };
@@ -501,7 +547,7 @@ class NewsFeedService {
   private loadImageCache(): Record<string, string> {
     if (typeof window === 'undefined') return {};
     try {
-      const cached = localStorage.getItem('gs_news_image_cache');
+      const cached = localStorage.getItem('gs_news_image_cache_v2');
       return cached ? JSON.parse(cached) : {};
     } catch {
       return {};
@@ -516,7 +562,7 @@ class NewsFeedService {
       if (entries.length > 200) {
         cache = Object.fromEntries(entries.slice(-200));
       }
-      localStorage.setItem('gs_news_image_cache', JSON.stringify(cache));
+      localStorage.setItem('gs_news_image_cache_v2', JSON.stringify(cache));
     } catch {}
   }
 
@@ -534,4 +580,3 @@ class NewsFeedService {
 
 export const newsFeedService = new NewsFeedService();
 export default newsFeedService;
-

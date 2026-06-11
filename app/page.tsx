@@ -30,6 +30,18 @@ import { storageManager } from '@/lib/storage-manager';
 import { get } from 'idb-keyval';
 import { newsFeedService, type NewsFeedItem, FEED_CATEGORIES } from '@/lib/news-feeds';
 import { clientLogger } from '@/lib/client-logger';
+import { ImageWithFallback } from '@/components/ui/image-with-fallback';
+
+// Helper: ritorna un'immagine di fallback (favicon ad alta risoluzione) dato un URL
+function getFaviconFallback(url: string): string {
+  let host = 'gamestringer.app';
+  try {
+    host = new URL(url).hostname;
+  } catch {
+    // url non valido, usa default
+  }
+  return 'https://www.google.com/s2/favicons?sz=256&domain=' + host;
+}
 
 interface RecentActivityProps {
   color: string;
@@ -582,13 +594,21 @@ export default function Dashboard() {
                     
                     <div className="relative flex gap-3.5 p-3 rounded-lg bg-[#1b2838] hover:bg-[#1e2d3d] border border-[#2a475e]/40 hover:border-[#3d6a8e] transition-all cursor-pointer mb-1.5 overflow-hidden group-hover:shadow-[0_4px_16px_rgba(0,0,0,0.4)]">
                       
-                      {item.image ? (
-                        <img src={item.image} alt={item.title} className="relative w-[180px] h-[100px] rounded-md object-cover flex-shrink-0 border border-black/20 shadow-lg group-hover:shadow-xl transition-shadow" />
-                      ) : (
-                        <div className="relative w-[80px] h-[80px] mt-1 rounded-md flex-shrink-0 border border-[#2a475e]/60 flex flex-col items-center justify-center bg-gradient-to-br from-[#243447] to-[#1b2838] shadow-sm">
-                          <span className="text-3xl opacity-80 drop-shadow-md">{item.sourceIcon}</span>
-                        </div>
-                      )}
+                      {/* Immagine SEMPRE visibile: item.image → favicon ad alta risoluzione → icona sorgente */}
+                      <div className="relative w-[180px] h-[100px] rounded-md flex-shrink-0 border border-black/20 shadow-lg group-hover:shadow-xl transition-shadow overflow-hidden bg-gradient-to-br from-[#243447] to-[#1b2838]">
+                        <ImageWithFallback
+                          src={item.image || getFaviconFallback(item.link)}
+                          fallbackSrc={getFaviconFallback(item.link)}
+                          alt={item.title}
+                          className="w-full h-full object-cover"
+                          fallbackClassName="w-12 h-12 object-contain m-auto absolute inset-0 opacity-80"
+                          placeholder={
+                            <span className="text-4xl opacity-80 drop-shadow-md absolute inset-0 flex items-center justify-center">
+                              {item.sourceIcon}
+                            </span>
+                          }
+                        />
+                      </div>
 
                       <div className="relative flex-1 min-w-0 flex flex-col py-0.5">
                         <div className="flex items-center gap-2 mb-1.5">
@@ -598,7 +618,7 @@ export default function Dashboard() {
                         <h3 className="text-[13px] font-bold text-[#e5e9ed] group-hover:text-white leading-snug transition-colors line-clamp-2">
                           {decode(item.title)}
                         </h3>
-                        <p className={`text-[11px] text-[#8f98a0] leading-relaxed mt-1.5 ${item.image ? 'line-clamp-2' : 'line-clamp-3'}`}>
+                        <p className="text-[11px] text-[#8f98a0] leading-relaxed mt-1.5 line-clamp-2">
                           {decode(item.description)}
                         </p>
                         <div className="flex items-center gap-2 mt-auto pt-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -662,18 +682,24 @@ export default function Dashboard() {
                     )}
                     
                     <div className="relative flex gap-3.5 p-3 rounded-lg bg-[#1b2838] hover:bg-[#1e2d3d] border border-[#2a475e]/40 hover:border-[#3d6a8e] transition-all cursor-pointer mb-1.5 overflow-hidden group-hover:shadow-[0_4px_16px_rgba(0,0,0,0.4)]">
-                      {post.image ? (
-                        <img src={post.image} alt={post.title} className="w-[200px] h-[110px] rounded-md object-cover flex-shrink-0 border border-black/20 shadow-lg" />
-                      ) : (
-                        <div className="w-[200px] h-[110px] rounded-md flex-shrink-0 border border-[#2a475e]/30 flex items-center justify-center"
-                          style={{ background: 'linear-gradient(145deg, #1b2838 0%, #243447 50%, #1b2838 100%)' }}>
-                          {post.gameName ? (
-                            <span className="text-[11px] font-bold text-[#67c1f5]/50 text-center px-3">{post.gameName}</span>
-                          ) : (
-                            <Newspaper className="h-8 w-8 text-[#67c1f5]/15" />
-                          )}
-                        </div>
-                      )}
+                      {/* Immagine SEMPRE visibile per i blog post: post.image → icona app → placeholder grafico */}
+                      <div className="relative w-[200px] h-[110px] rounded-md flex-shrink-0 border border-black/20 shadow-lg overflow-hidden"
+                        style={{ background: 'linear-gradient(145deg, #1b2838 0%, #243447 50%, #1b2838 100%)' }}>
+                        <ImageWithFallback
+                          src={post.image || '/icon.png'}
+                          alt={post.title}
+                          className="w-full h-full object-cover"
+                          placeholder={
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              {post.gameName ? (
+                                <span className="text-[11px] font-bold text-[#67c1f5]/70 text-center px-3">{post.gameName}</span>
+                              ) : (
+                                <Newspaper className="h-8 w-8 text-[#67c1f5]/25" />
+                              )}
+                            </div>
+                          }
+                        />
+                      </div>
                       <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                         <div>
                           <span className="text-micro font-bold text-[#8f98a0] uppercase tracking-widest">{post.tag || (t('common.news'))}</span>
@@ -726,7 +752,24 @@ export default function Dashboard() {
                 <div className="group relative rounded-xl overflow-hidden border border-[#2a475e]/40 hover:border-[#67c1f5]/50 transition-all cursor-pointer hover:shadow-[0_4px_24px_rgba(0,0,0,0.4)] hover:-translate-y-0.5">
                   {lastGame.image ? (
                     <div className="relative h-36">
-                      <img src={lastGame.image} alt={lastGame.title} className="w-full h-full object-cover" />
+                      <img
+                        src={lastGame.image}
+                        alt={lastGame.title}
+                        loading="lazy"
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const img = e.currentTarget;
+                          img.style.display = 'none';
+                          const parent = img.parentElement;
+                          if (parent && !parent.querySelector('.cover-fallback')) {
+                            const div = document.createElement('div');
+                            div.className = 'cover-fallback absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#243447] to-[#1b2838]';
+                            div.innerHTML = '<span class="text-2xl">&#x1F3AE;</span>';
+                            parent.appendChild(div);
+                          }
+                        }}
+                      />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#0e1419] via-[#0e1419]/60 to-transparent opacity-90" />
                       <div className="absolute inset-0 bg-gradient-to-r from-[#0e1419]/80 via-transparent to-transparent opacity-80" />
                       <div className="absolute bottom-0 left-0 right-0 p-3.5">
