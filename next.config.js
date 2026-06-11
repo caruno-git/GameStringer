@@ -18,9 +18,9 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   typescript: {
-    // TODO: impostare a false quando gli errori TS saranno risolti
-    // CI esegue tsc --noEmit separatamente come quality gate
-    ignoreBuildErrors: true,
+    // Errori TS azzerati il 2026-06-11 — il build ora blocca su errori di tipo
+    // (tsc --noEmit gira anche in CI come gate bloccante)
+    ignoreBuildErrors: false,
   },
   // Bundle size optimizations
   compiler: {

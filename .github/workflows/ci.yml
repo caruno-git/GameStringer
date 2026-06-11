@@ -27,10 +27,14 @@ jobs:
         env:
           DATABASE_URL: "file:./dev.db"
 
+      # Gate BLOCCANTE dal 2026-06-11 (baseline portata a 0 errori).
+      # Niente pipe a tail: in pwsh maschererebbe l'exit code di tsc.
       - name: TypeScript type check
-        run: npx tsc --noEmit 2>&1 | tail -5
-        continue-on-error: true
+        run: npx tsc --noEmit
 
+      # Non bloccante: baseline 2026-06-11 ≈ 80 errori (no-unused-vars,
+      # prefer-const, no-unescaped-entities). Bonificare e poi rimuovere
+      # continue-on-error.
       - name: ESLint
         run: npm run lint
         continue-on-error: true
