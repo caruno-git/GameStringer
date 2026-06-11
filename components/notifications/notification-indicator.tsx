@@ -45,7 +45,8 @@ export const NotificationIndicator: React.FC<NotificationIndicatorProps> = ({
   }, [unreadCount, prevCount, animate, lastAnnouncedCount]);
 
   const helpText = createHelpText('indicator');
-  const _displayCount = unreadCount > maxCount ? `${maxCount}+` : unreadCount.toString();
+  // unreadCount può essere undefined (stato degradato dell'hook): trattalo come 0
+  const _displayCount = unreadCount > maxCount ? `${maxCount}+` : `${unreadCount ?? 0}`;
   const hasNotifications = unreadCount > 0;
 
   const getAriaLabel = () => {

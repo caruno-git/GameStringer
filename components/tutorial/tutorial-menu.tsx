@@ -97,6 +97,7 @@ export function TutorialMenu({ userId: _userId }: TutorialMenuProps) {
         <Button
           variant="ghost"
           size="sm"
+          aria-label={t('nav.tutorialAndGuide')}
           className={cn(
             "h-8 w-8 p-0 transition-all",
             open ? "text-violet-400 bg-violet-500/10" : "text-slate-500 hover:text-violet-400 hover:bg-violet-500/10"

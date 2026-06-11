@@ -650,7 +650,13 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
               </DropdownMenu>
             )}
             
-            <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="h-8 w-8"
+              aria-label="Close notification center"
+            >
               <X className="h-4 w-4" />
             </Button>
           </div>
@@ -703,7 +709,11 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
         >
           {isLoading ? (
             <div className="flex items-center justify-center p-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+              <div
+                className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"
+                role="progressbar"
+                aria-label="Loading notifications"
+              />
             </div>
           ) : processedNotifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center p-12 text-center">
