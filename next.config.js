@@ -13,9 +13,9 @@ const nextConfig = {
     distDir: 'out',
   }),
   eslint: {
-    // TODO: impostare a false quando gli errori ESLint saranno risolti
-    // CI esegue lint separatamente come quality gate
-    ignoreDuringBuilds: true,
+    // Errori ESLint azzerati il 2026-06-11 — la build ora blocca sugli errori
+    // (i warning non bloccano; il lint gira anche in CI come gate bloccante)
+    ignoreDuringBuilds: false,
   },
   typescript: {
     // Errori TS azzerati il 2026-06-11 — il build ora blocca su errori di tipo

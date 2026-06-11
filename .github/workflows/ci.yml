@@ -32,12 +32,10 @@ jobs:
       - name: TypeScript type check
         run: npx tsc --noEmit
 
-      # Non bloccante: baseline 2026-06-11 ≈ 80 errori (no-unused-vars,
-      # prefer-const, no-unescaped-entities). Bonificare e poi rimuovere
-      # continue-on-error.
+      # Gate BLOCCANTE dal 2026-06-11 (78 errori bonificati a 0; i warning
+      # non bloccano — next lint esce 0 con soli warning).
       - name: ESLint
         run: npm run lint
-        continue-on-error: true
 
       # Non bloccante: baseline 2026-06-11 — la suite va in OOM (heap JS
       # esaurito anche con --max-old-space-size=8192, leak nel worker pool
