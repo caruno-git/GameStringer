@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import EditorPage from '@/app/editor/page';
 
 // Mock dependencies
@@ -30,8 +30,10 @@ describe('EditorPage', () => {
   });
 
   it('renders editor page without crashing', () => {
-    render(<EditorPage />);
-    expect(screen.getByRole('main') || document.body).toBeTruthy();
+    // La pagina non espone un landmark <main> (layout a div):
+    // si verifica che il render produca contenuto senza lanciare.
+    const { container } = render(<EditorPage />);
+    expect(container.firstChild).toBeTruthy();
   });
 
   it('displays translation list area', async () => {

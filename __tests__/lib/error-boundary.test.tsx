@@ -30,7 +30,8 @@ describe('ErrorBoundary', () => {
         <ThrowingComponent />
       </ErrorBoundary>
     );
-    expect(screen.getByText(/qualcosa è andato storto/i)).toBeTruthy();
+    // Il componente usa useTranslation(): nel setup di test t(key) restituisce la key.
+    expect(screen.getByText('common.somethingWentWrong')).toBeTruthy();
   });
 
   it('renders custom fallback when provided', () => {
@@ -59,7 +60,7 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>
     );
     
-    const retryButton = screen.getByText(/riprova/i);
+    const retryButton = screen.getByText('common.retry');
     expect(retryButton).toBeTruthy();
   });
 });
@@ -67,7 +68,8 @@ describe('ErrorBoundary', () => {
 describe('PageErrorFallback', () => {
   it('renders with default props', () => {
     render(<PageErrorFallback />);
-    expect(screen.getByText(/errore nella pagina/i)).toBeTruthy();
+    // Titolo di default: t('common.pageError') → la key nel setup di test.
+    expect(screen.getByText('common.pageError')).toBeTruthy();
   });
 
   it('renders with custom title and message', () => {
@@ -84,8 +86,8 @@ describe('PageErrorFallback', () => {
   it('shows retry button when onRetry is provided', () => {
     const onRetry = vi.fn();
     render(<PageErrorFallback onRetry={onRetry} />);
-    
-    const retryButton = screen.getByText(/riprova/i);
+
+    const retryButton = screen.getByText('common.retry');
     fireEvent.click(retryButton);
     expect(onRetry).toHaveBeenCalled();
   });

@@ -1,24 +1,17 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { TutorialProvider, useTutorial } from '@/components/tutorial/tutorial-provider';
 import { TutorialConfig } from '@/lib/types/tutorial';
-import { TutorialDatabase } from '@/lib/utils/database';
 
-// Mock dependencies
-vi.mock('@/lib/utils/database', () => ({
-  TutorialDatabase: {
-    updateProgress: vi.fn(),
-    markTutorialSkipped: vi.fn(),
-    getUserProgress: vi.fn()
-  }
-}));
+// NOTA: il provider attuale non usa più TutorialDatabase né i toast:
+// la persistenza è su localStorage ('gamestringer_completed_tutorials',
+// 'tutorialSkipped'). I vecchi test su updateProgress/markTutorialSkipped/
+// getUserProgress sono stati sostituiti dagli equivalenti localStorage.
+// localStorage è mockato globalmente in src/test/setup.ts con vi.fn() che
+// NON memorizzano: le assertion verificano le chiamate a setItem.
 
-vi.mock('@/components/ui/use-toast', () => ({
-  useToast: () => ({
-    toast: vi.fn()
-  })
-}));
+const COMPLETED_KEY = 'gamestringer_completed_tutorials';
 
 // Test tutorial configuration
 const mockTutorial: TutorialConfig = {
@@ -54,39 +47,47 @@ const mockTutorial: TutorialConfig = {
   ]
 };
 
-// Test component that uses the tutorial context
+// Test component that uses the tutorial context (API attuale del provider:
+// campi flat + alias `state`, niente steps/completed/canSkip nel context).
 function TestComponent() {
   const {
-    state,
+    isActive,
+    currentStep,
+    totalSteps,
+    currentTutorial,
+    currentStepData,
     startTutorial,
     nextStep,
-    previousStep,
+    prevStep,
+    endTutorial,
     skipTutorial,
-    skipStep,
-    completeTutorial,
-    restartTutorial,
-    setCurrentStep,
-    isStepValid
+    goToStep,
+    state
   } = useTutorial();
 
   return (
     <div>
-      <div data-testid="tutorial-active">{state.isActive.toString()}</div>
-      <div data-testid="current-step">{state.currentStep}</div>
-      <div data-testid="total-steps">{state.steps.length}</div>
-      <div data-testid="completed">{state.completed.toString()}</div>
-      <div data-testid="can-skip">{state.canSkip.toString()}</div>
-      <div data-testid="tutorial-id">{state.tutorialId}</div>
-      <div data-testid="step-valid">{isStepValid().toString()}</div>
-      
+      {/* Target degli step: nextStep() salta gli step opzionali il cui
+          target non esiste nel DOM, quindi li rendiamo presenti. */}
+      <div id="test-element" />
+      <div id="test-element-2" />
+      <div id="test-element-3" />
+
+      <div data-testid="tutorial-active">{isActive.toString()}</div>
+      <div data-testid="current-step">{currentStep}</div>
+      <div data-testid="total-steps">{totalSteps}</div>
+      <div data-testid="state-active">{state.isActive.toString()}</div>
+      <div data-testid="tutorial-id">{currentTutorial?.id ?? 'none'}</div>
+      <div data-testid="step-id">{currentStepData?.id ?? 'none'}</div>
+
       <button onClick={() => startTutorial(mockTutorial)}>Start Tutorial</button>
+      <button onClick={() => startTutorial()}>Start Without Config</button>
       <button onClick={nextStep}>Next Step</button>
-      <button onClick={previousStep}>Previous Step</button>
+      <button onClick={prevStep}>Previous Step</button>
       <button onClick={skipTutorial}>Skip Tutorial</button>
-      <button onClick={skipStep}>Skip Step</button>
-      <button onClick={completeTutorial}>Complete Tutorial</button>
-      <button onClick={restartTutorial}>Restart Tutorial</button>
-      <button onClick={() => setCurrentStep(1)}>Set Step 1</button>
+      <button onClick={endTutorial}>End Tutorial</button>
+      <button onClick={() => goToStep(1)}>Set Step 1</button>
+      <button onClick={() => goToStep(99)}>Set Invalid Step</button>
     </div>
   );
 }
@@ -110,9 +111,8 @@ describe('TutorialProvider', () => {
     expect(screen.getByTestId('tutorial-active')).toHaveTextContent('false');
     expect(screen.getByTestId('current-step')).toHaveTextContent('0');
     expect(screen.getByTestId('total-steps')).toHaveTextContent('0');
-    expect(screen.getByTestId('completed')).toHaveTextContent('false');
-    expect(screen.getByTestId('can-skip')).toHaveTextContent('true');
-    expect(screen.getByTestId('tutorial-id')).toHaveTextContent('');
+    expect(screen.getByTestId('tutorial-id')).toHaveTextContent('none');
+    expect(screen.getByTestId('step-id')).toHaveTextContent('none');
   });
 
   it('should start tutorial correctly', () => {
@@ -128,7 +128,20 @@ describe('TutorialProvider', () => {
     expect(screen.getByTestId('current-step')).toHaveTextContent('0');
     expect(screen.getByTestId('total-steps')).toHaveTextContent('3');
     expect(screen.getByTestId('tutorial-id')).toHaveTextContent('test-tutorial');
-    expect(screen.getByTestId('can-skip')).toHaveTextContent('true');
+    expect(screen.getByTestId('step-id')).toHaveTextContent('step-1');
+  });
+
+  it('should not start tutorial when no config is provided', () => {
+    render(
+      <TutorialProvider>
+        <TestComponent />
+      </TutorialProvider>
+    );
+
+    fireEvent.click(screen.getByText('Start Without Config'));
+
+    expect(screen.getByTestId('tutorial-active')).toHaveTextContent('false');
+    expect(screen.getByTestId('tutorial-id')).toHaveTextContent('none');
   });
 
   it('should navigate through tutorial steps', () => {
@@ -142,7 +155,7 @@ describe('TutorialProvider', () => {
     fireEvent.click(screen.getByText('Start Tutorial'));
     expect(screen.getByTestId('current-step')).toHaveTextContent('0');
 
-    // Next step
+    // Next step (lo step 2 è opzionale ma il suo target esiste, non viene saltato)
     fireEvent.click(screen.getByText('Next Step'));
     expect(screen.getByTestId('current-step')).toHaveTextContent('1');
 
@@ -153,6 +166,19 @@ describe('TutorialProvider', () => {
     // Set specific step
     fireEvent.click(screen.getByText('Set Step 1'));
     expect(screen.getByTestId('current-step')).toHaveTextContent('1');
+  });
+
+  it('should ignore goToStep with out-of-range index', () => {
+    render(
+      <TutorialProvider>
+        <TestComponent />
+      </TutorialProvider>
+    );
+
+    fireEvent.click(screen.getByText('Start Tutorial'));
+    fireEvent.click(screen.getByText('Set Invalid Step'));
+
+    expect(screen.getByTestId('current-step')).toHaveTextContent('0');
   });
 
   it('should complete tutorial on last step', () => {
@@ -166,15 +192,36 @@ describe('TutorialProvider', () => {
     fireEvent.click(screen.getByText('Start Tutorial'));
     fireEvent.click(screen.getByText('Set Step 1'));
     fireEvent.click(screen.getByText('Next Step')); // Go to step 2 (last step)
-    
+
     expect(screen.getByTestId('current-step')).toHaveTextContent('2');
-    expect(screen.getByTestId('completed')).toHaveTextContent('false');
+    expect(screen.getByTestId('tutorial-active')).toHaveTextContent('true');
 
     // Complete tutorial by going to next step from last step
     fireEvent.click(screen.getByText('Next Step'));
-    
-    expect(screen.getByTestId('completed')).toHaveTextContent('true');
+
     expect(screen.getByTestId('tutorial-active')).toHaveTextContent('false');
+    expect(screen.getByTestId('tutorial-id')).toHaveTextContent('none');
+    expect(localStorage.setItem).toHaveBeenCalledWith(
+      COMPLETED_KEY,
+      JSON.stringify(['test-tutorial'])
+    );
+  });
+
+  it('should end tutorial and mark it completed', () => {
+    render(
+      <TutorialProvider>
+        <TestComponent />
+      </TutorialProvider>
+    );
+
+    fireEvent.click(screen.getByText('Start Tutorial'));
+    fireEvent.click(screen.getByText('End Tutorial'));
+
+    expect(screen.getByTestId('tutorial-active')).toHaveTextContent('false');
+    expect(localStorage.setItem).toHaveBeenCalledWith(
+      COMPLETED_KEY,
+      JSON.stringify(['test-tutorial'])
+    );
   });
 
   it('should skip tutorial', () => {
@@ -191,27 +238,28 @@ describe('TutorialProvider', () => {
     // Skip tutorial
     fireEvent.click(screen.getByText('Skip Tutorial'));
     expect(screen.getByTestId('tutorial-active')).toHaveTextContent('false');
-    expect(screen.getByTestId('completed')).toHaveTextContent('false');
+    expect(screen.getByTestId('tutorial-id')).toHaveTextContent('none');
   });
 
-  it('should skip optional steps', () => {
+  it('should skip optional steps when their target is missing', () => {
     render(
       <TutorialProvider>
         <TestComponent />
       </TutorialProvider>
     );
 
-    // Start tutorial and go to optional step (step 1)
     fireEvent.click(screen.getByText('Start Tutorial'));
-    fireEvent.click(screen.getByText('Next Step'));
-    expect(screen.getByTestId('current-step')).toHaveTextContent('1');
+    expect(screen.getByTestId('current-step')).toHaveTextContent('0');
 
-    // Skip optional step
-    fireEvent.click(screen.getByText('Skip Step'));
+    // Rimuovi il target dello step opzionale: nextStep() deve saltarlo
+    document.getElementById('test-element-2')?.remove();
+
+    fireEvent.click(screen.getByText('Next Step'));
     expect(screen.getByTestId('current-step')).toHaveTextContent('2');
+    expect(screen.getByTestId('step-id')).toHaveTextContent('step-3');
   });
 
-  it('should restart tutorial', () => {
+  it('should restart tutorial when started again', () => {
     render(
       <TutorialProvider>
         <TestComponent />
@@ -223,62 +271,31 @@ describe('TutorialProvider', () => {
     fireEvent.click(screen.getByText('Next Step'));
     expect(screen.getByTestId('current-step')).toHaveTextContent('1');
 
-    // Restart tutorial
-    fireEvent.click(screen.getByText('Restart Tutorial'));
+    // Restart: startTutorial() riparte dallo step 0
+    fireEvent.click(screen.getByText('Start Tutorial'));
     expect(screen.getByTestId('current-step')).toHaveTextContent('0');
     expect(screen.getByTestId('tutorial-active')).toHaveTextContent('true');
-    expect(screen.getByTestId('completed')).toHaveTextContent('false');
   });
 
-  it('should validate steps correctly', () => {
+  it('should persist completed tutorial to localStorage', () => {
     render(
       <TutorialProvider>
         <TestComponent />
       </TutorialProvider>
     );
 
-    // Start tutorial
     fireEvent.click(screen.getByText('Start Tutorial'));
-    
-    // Steps without validation should be valid
-    expect(screen.getByTestId('step-valid')).toHaveTextContent('true');
+    fireEvent.click(screen.getByText('End Tutorial'));
 
-    // Go to step with validation (step 2)
-    fireEvent.click(screen.getByText('Set Step 1'));
-    fireEvent.click(screen.getByText('Next Step'));
-    expect(screen.getByTestId('step-valid')).toHaveTextContent('true');
-  });
-
-  it('should save progress to database when userId provided', async () => {
-    const mockUpdateProgress = vi.mocked(TutorialDatabase.updateProgress);
-    
-    render(
-      <TutorialProvider userId="test-user">
-        <TestComponent />
-      </TutorialProvider>
+    expect(localStorage.setItem).toHaveBeenCalledWith(
+      COMPLETED_KEY,
+      JSON.stringify(['test-tutorial'])
     );
-
-    // Start tutorial
-    fireEvent.click(screen.getByText('Start Tutorial'));
-    
-    // Advance step
-    fireEvent.click(screen.getByText('Next Step'));
-
-    await waitFor(() => {
-      expect(mockUpdateProgress).toHaveBeenCalledWith(
-        'test-user',
-        'test-tutorial',
-        1,
-        false
-      );
-    });
   });
 
-  it('should mark tutorial as skipped in database', async () => {
-    const mockMarkSkipped = vi.mocked(TutorialDatabase.markTutorialSkipped);
-    
+  it('should mark tutorial as skipped in localStorage', () => {
     render(
-      <TutorialProvider userId="test-user">
+      <TutorialProvider>
         <TestComponent />
       </TutorialProvider>
     );
@@ -287,9 +304,11 @@ describe('TutorialProvider', () => {
     fireEvent.click(screen.getByText('Start Tutorial'));
     fireEvent.click(screen.getByText('Skip Tutorial'));
 
-    await waitFor(() => {
-      expect(mockMarkSkipped).toHaveBeenCalledWith('test-user', 'test-tutorial');
-    });
+    expect(localStorage.setItem).toHaveBeenCalledWith('tutorialSkipped', 'true');
+    expect(localStorage.setItem).toHaveBeenCalledWith(
+      COMPLETED_KEY,
+      JSON.stringify(['test-tutorial'])
+    );
   });
 
   it('should handle keyboard navigation', () => {
@@ -320,37 +339,19 @@ describe('TutorialProvider', () => {
     expect(screen.getByTestId('tutorial-active')).toHaveTextContent('false');
   });
 
-  it('should load user progress on mount', async () => {
-    const mockGetUserProgress = vi.mocked(TutorialDatabase.getUserProgress);
-    mockGetUserProgress.mockResolvedValue({
-      userId: 'test-user',
-      completedTutorials: ['other-tutorial'],
-      preferences: {
-        showHints: true,
-        autoAdvance: false,
-        skipAnimations: true
-      }
-    });
+  it('should return an inert fallback when used outside provider', () => {
+    // Comportamento ATTUALE e intenzionale dell'hook: fuori dal provider
+    // useTutorial() NON lancia, ma restituisce un fallback no-op completo
+    // (vedi components/tutorial/tutorial-provider.tsx). Serve ai componenti
+    // renderizzati fuori dal MainLayout per non esplodere.
+    render(<TestComponent />);
 
-    render(
-      <TutorialProvider userId="test-user">
-        <TestComponent />
-      </TutorialProvider>
-    );
+    expect(screen.getByTestId('tutorial-active')).toHaveTextContent('false');
+    expect(screen.getByTestId('total-steps')).toHaveTextContent('0');
+    expect(screen.getByTestId('state-active')).toHaveTextContent('false');
 
-    await waitFor(() => {
-      expect(mockGetUserProgress).toHaveBeenCalledWith('test-user');
-    });
-  });
-
-  it('should throw error when used outside provider', () => {
-    // Suppress console.error for this test
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
-    expect(() => {
-      render(<TestComponent />);
-    }).toThrow('useTutorial must be used within a TutorialProvider');
-
-    consoleSpy.mockRestore();
+    // Le azioni sono no-op: startTutorial non attiva nulla
+    fireEvent.click(screen.getByText('Start Tutorial'));
+    expect(screen.getByTestId('tutorial-active')).toHaveTextContent('false');
   });
 });

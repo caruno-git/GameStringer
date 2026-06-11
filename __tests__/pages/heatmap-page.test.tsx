@@ -35,10 +35,12 @@ describe('HeatmapPage', () => {
 
   it('handles demo data loading', async () => {
     render(<HeatmapPage />);
-    // Should handle demo mode without errors
-    const demoButton = screen.queryByText(/demo/i);
-    if (demoButton) {
-      fireEvent.click(demoButton);
+    // Should handle demo mode without errors.
+    // La pagina contiene più elementi con testo /demo/i (tab "heatmap.demo" e
+    // bottone "heatmap.analyzeDemo"): queryByText lancerebbe con match multipli.
+    const demoButtons = screen.queryAllByText(/demo/i);
+    if (demoButtons.length > 0) {
+      fireEvent.click(demoButtons[0]);
       await waitFor(() => {
         expect(document.body).toBeTruthy();
       });

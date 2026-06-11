@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { ProgressBatchProcessor, createProgressBatchProcessor } from '@/lib/progress-batch-processor';
-import type { BatchItem } from '@/lib/batch-processor';
+import { ProgressBatchProcessor, createProgressBatchProcessor } from '@/lib/batch/progress-batch-processor';
+import type { BatchItem } from '@/lib/batch/batch-processor';
 import type { ProgressState } from '@/lib/types/progress';
 
 // Mock del BatchProcessor
-vi.mock('@/lib/batch-processor', () => ({
+vi.mock('@/lib/batch/batch-processor', () => ({
   BatchProcessor: vi.fn().mockImplementation((options, callbacks) => ({
     processBatch: vi.fn().mockImplementation(async (items, processor, operationType) => {
       // Simula elaborazione batch

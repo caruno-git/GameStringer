@@ -1,12 +1,21 @@
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useNotifications } from '@/hooks/use-notifications';
-import { useProfileAuth } from '@/lib/profile-auth';
+import { useProfileAuth } from '@/lib/auth/profile-auth';
 
 // Mock delle dipendenze
-vi.mock('@/lib/profile-auth', () => ({
+vi.mock('@/lib/auth/profile-auth', () => ({
   useProfileAuth: vi.fn()
 }));
+
+// L'API Tauri è già mockata (non-configurabile) in src/test/setup.ts:
+// riusiamo le sue vi.fn() invece di ridefinire la property su window.
+const tauriApi = (window as unknown as {
+  __TAURI__: {
+    tauri: { invoke: ReturnType<typeof vi.fn> };
+    event: { listen: ReturnType<typeof vi.fn>; emit: ReturnType<typeof vi.fn> };
+  };
+}).__TAURI__;
 
 // Mock localStorage
 const localStorageMock = {
@@ -38,6 +47,11 @@ describe('useNotifications - Simple Tests', () => {
 
     // Mock localStorage
     localStorageMock.getItem.mockReturnValue(JSON.stringify([]));
+
+    // Backend Tauri: risposta vuota di default e unlisten valido,
+    // altrimenti il cleanup dell'hook esplode allo smontaggio.
+    tauriApi.tauri.invoke.mockResolvedValue({ success: true, data: [] });
+    tauriApi.event.listen.mockImplementation(() => Promise.resolve(() => {}));
   });
 
   it('should initialize with empty state when no profile', () => {

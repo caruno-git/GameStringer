@@ -1,17 +1,18 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import '@testing-library/jest-dom';
 import { NotificationIndicator } from '@/components/notifications/notification-indicator';
 import { useNotifications } from '@/hooks/use-notifications';
+import { announceNotificationCount } from '@/lib/notifications/notification-accessibility';
 
 // Mock delle dipendenze
 vi.mock('@/hooks/use-notifications', () => ({
   useNotifications: vi.fn()
 }));
 
-vi.mock('@/lib/notification-accessibility', () => ({
+vi.mock('@/lib/notifications/notification-accessibility', () => ({
   announceNotificationCount: vi.fn(),
   createHelpText: vi.fn(() => 'Help text for notification indicator')
 }));
@@ -38,9 +39,9 @@ describe('NotificationIndicator', () => {
 
     it('should show bell icon when no notifications', () => {
       render(<NotificationIndicator />);
-      
+
       const button = screen.getByRole('button');
-      expect(button).toHaveAttribute('aria-label', 'Nessuna notifica non letta. Clicca per aprire il centro notifiche.');
+      expect(button).toHaveAttribute('aria-label', 'No unread notifications. Click to open notification center.');
     });
 
     it('should show bell ring icon when has notifications', () => {
@@ -50,9 +51,9 @@ describe('NotificationIndicator', () => {
       });
 
       render(<NotificationIndicator />);
-      
+
       const button = screen.getByRole('button');
-      expect(button).toHaveAttribute('aria-label', '3 notifiche non lette. Clicca per aprire il centro notifiche.');
+      expect(button).toHaveAttribute('aria-label', '3 unread notifications. Click to open notification center.');
     });
 
     it('should show loading state', () => {
@@ -62,34 +63,41 @@ describe('NotificationIndicator', () => {
       });
 
       render(<NotificationIndicator />);
-      
+
       const button = screen.getByRole('button');
       expect(button).toBeDisabled();
-      expect(button).toHaveAttribute('aria-label', 'Caricamento notifiche...');
+      expect(button).toHaveAttribute('aria-label', 'Loading notifications...');
     });
   });
 
   describe('Badge Display', () => {
-    it('should show badge with count when has notifications', () => {
+    // Il badge attuale è un marker di alert ('!', aria-hidden): il conteggio
+    // è esposto via aria-label e descrizione sr-only, non come testo visibile.
+    it('should show alert badge when has notifications', () => {
       vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
         unreadCount: 5
       });
 
       render(<NotificationIndicator showBadge={true} />);
-      
-      expect(screen.getByText('5')).toBeInTheDocument();
+
+      expect(screen.getByText('!')).toBeInTheDocument();
+      expect(screen.getByText('You have 5 unread notifications')).toBeInTheDocument();
     });
 
-    it('should show 99+ when count exceeds maxCount', () => {
+    it('should expose the full count via aria-label when count exceeds maxCount', () => {
       vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
         unreadCount: 150
       });
 
       render(<NotificationIndicator showBadge={true} maxCount={99} />);
-      
-      expect(screen.getByText('99+')).toBeInTheDocument();
+
+      expect(screen.getByText('!')).toBeInTheDocument();
+      expect(screen.getByRole('button')).toHaveAttribute(
+        'aria-label',
+        '150 unread notifications. Click to open notification center.'
+      );
     });
 
     it('should not show badge when showBadge is false', () => {
@@ -167,9 +175,11 @@ describe('NotificationIndicator', () => {
       vi.useRealTimers();
     });
 
+    // L'animazione attuale è 'animate-bounce' sull'icona BellRing
+    // (più 'scale-110' sul badge), non 'animate-pulse' sul bottone.
     it('should animate when new notifications arrive', () => {
       const { rerender } = render(<NotificationIndicator animate={true} />);
-      
+
       // Update with new notifications
       vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
@@ -177,18 +187,20 @@ describe('NotificationIndicator', () => {
       });
 
       rerender(<NotificationIndicator animate={true} />);
-      
-      const button = screen.getByRole('button');
-      expect(button).toHaveClass('animate-pulse');
-      
+
+      const icon = screen.getByRole('button').querySelector('svg');
+      expect(icon).toHaveClass('animate-bounce');
+
       // Animation should stop after timeout
-      vi.advanceTimersByTime(1000);
-      expect(button).not.toHaveClass('animate-pulse');
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+      expect(screen.getByRole('button').querySelector('svg')).not.toHaveClass('animate-bounce');
     });
 
     it('should not animate when animate is false', () => {
       const { rerender } = render(<NotificationIndicator animate={false} />);
-      
+
       // Update with new notifications
       vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
@@ -196,14 +208,14 @@ describe('NotificationIndicator', () => {
       });
 
       rerender(<NotificationIndicator animate={false} />);
-      
-      const button = screen.getByRole('button');
-      expect(button).not.toHaveClass('animate-pulse');
+
+      const icon = screen.getByRole('button').querySelector('svg');
+      expect(icon).not.toHaveClass('animate-bounce');
     });
 
     it('should show animated indicator for new notifications', () => {
       const { rerender } = render(<NotificationIndicator animate={true} />);
-      
+
       // Update with new notifications
       vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
@@ -211,10 +223,10 @@ describe('NotificationIndicator', () => {
       });
 
       rerender(<NotificationIndicator animate={true} />);
-      
-      // Should show animated ping indicator
-      const animatedIndicator = screen.getByRole('button').querySelector('.animate-ping');
-      expect(animatedIndicator).toBeInTheDocument();
+
+      // Il badge di alert viene ingrandito durante l'animazione
+      const badge = screen.getByText('!');
+      expect(badge).toHaveClass('scale-110');
     });
   });
 
@@ -245,8 +257,8 @@ describe('NotificationIndicator', () => {
       });
 
       render(<NotificationIndicator />);
-      
-      expect(screen.getByText('Hai 1 notifica non letta')).toHaveClass('sr-only');
+
+      expect(screen.getByText('You have 1 unread notification')).toHaveClass('sr-only');
     });
 
     it('should have plural description for multiple notifications', () => {
@@ -256,14 +268,13 @@ describe('NotificationIndicator', () => {
       });
 
       render(<NotificationIndicator />);
-      
-      expect(screen.getByText('Hai 5 notifiche non lette')).toHaveClass('sr-only');
+
+      expect(screen.getByText('You have 5 unread notifications')).toHaveClass('sr-only');
     });
 
     it('should announce new notifications to screen readers', () => {
-      const { announceNotificationCount } = require('@/lib/notification-accessibility');
       const { rerender } = render(<NotificationIndicator />);
-      
+
       // Update with new notifications
       vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
@@ -271,15 +282,15 @@ describe('NotificationIndicator', () => {
       });
 
       rerender(<NotificationIndicator />);
-      
-      expect(announceNotificationCount).toHaveBeenCalledWith(2, 0);
+
+      expect(vi.mocked(announceNotificationCount)).toHaveBeenCalledWith(2, 0);
     });
 
     it('should have focus styles', () => {
       render(<NotificationIndicator />);
-      
+
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('focus:outline-none', 'focus:ring-2', 'focus:ring-primary', 'focus:ring-offset-2');
+      expect(button).toHaveClass('focus:outline-none', 'focus:ring-2', 'focus:ring-primary/50');
     });
   });
 
@@ -296,21 +307,21 @@ describe('NotificationIndicator', () => {
       
       const button = screen.getByRole('button');
       expect(button).toHaveClass('custom-class');
-      expect(button).toHaveClass('relative', 'h-10', 'w-10', 'rounded-full');
+      expect(button).toHaveClass('relative', 'h-8', 'w-8', 'rounded-full');
     });
   });
 
   describe('Badge Variants', () => {
-    it('should show destructive badge by default', () => {
+    it('should show red alert badge by default', () => {
       vi.mocked(useNotifications).mockReturnValue({
         ...mockUseNotifications,
         unreadCount: 1
       });
 
       render(<NotificationIndicator />);
-      
-      const badge = screen.getByText('1');
-      expect(badge.closest('.bg-destructive')).toBeInTheDocument();
+
+      const badge = screen.getByText('!');
+      expect(badge).toHaveClass('bg-red-500');
     });
 
     it('should handle zero count correctly', () => {
@@ -345,10 +356,10 @@ describe('NotificationIndicator', () => {
       });
 
       render(<NotificationIndicator />);
-      
+
       // Should treat negative as zero
       const button = screen.getByRole('button');
-      expect(button).toHaveAttribute('aria-label', 'Nessuna notifica non letta. Clicca per aprire il centro notifiche.');
+      expect(button).toHaveAttribute('aria-label', 'No unread notifications. Click to open notification center.');
     });
 
     it('should handle very large unread count', () => {
@@ -358,8 +369,13 @@ describe('NotificationIndicator', () => {
       });
 
       render(<NotificationIndicator maxCount={999} />);
-      
-      expect(screen.getByText('999+')).toBeInTheDocument();
+
+      // Il badge è un marker '!': il conteggio completo resta nell'aria-label
+      expect(screen.getByText('!')).toBeInTheDocument();
+      expect(screen.getByRole('button')).toHaveAttribute(
+        'aria-label',
+        '999999 unread notifications. Click to open notification center.'
+      );
     });
 
     it('should handle undefined unread count', () => {
@@ -369,10 +385,10 @@ describe('NotificationIndicator', () => {
       });
 
       render(<NotificationIndicator />);
-      
+
       // Should treat undefined as zero
       const button = screen.getByRole('button');
-      expect(button).toHaveAttribute('aria-label', 'Nessuna notifica non letta. Clicca per aprire il centro notifiche.');
+      expect(button).toHaveAttribute('aria-label', 'No unread notifications. Click to open notification center.');
     });
   });
 });

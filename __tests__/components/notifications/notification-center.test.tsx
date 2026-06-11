@@ -31,7 +31,7 @@ vi.mock('@/hooks/use-keyboard-navigation', () => ({
   useNotificationListNavigation: vi.fn()
 }));
 
-vi.mock('@/lib/notification-accessibility', () => ({
+vi.mock('@/lib/notifications/notification-accessibility', () => ({
   announceFilterChange: vi.fn(),
   announceSearchResults: vi.fn(),
   announceBatchOperation: vi.fn()
@@ -100,10 +100,11 @@ describe('NotificationCenter', () => {
   describe('Rendering', () => {
     it('should render notification center when open', () => {
       render(<NotificationCenter isOpen={true} onClose={vi.fn()} />);
-      
+
       expect(screen.getByRole('dialog')).toBeInTheDocument();
-      expect(screen.getByText('Notifiche')).toBeInTheDocument();
-      expect(screen.getByText('2 nuove')).toBeInTheDocument();
+      // Il mock globale di i18n (src/test/setup.ts) restituisce la key stessa
+      expect(screen.getByText('common.notifications')).toBeInTheDocument();
+      expect(screen.getByText('2 new')).toBeInTheDocument();
     });
 
     it('should not render when closed', () => {
@@ -140,9 +141,9 @@ describe('NotificationCenter', () => {
       });
 
       render(<NotificationCenter isOpen={true} onClose={vi.fn()} />);
-      
-      expect(screen.getByText('Nessuna notifica')).toBeInTheDocument();
-      expect(screen.getByText('Le tue notifiche appariranno qui')).toBeInTheDocument();
+
+      expect(screen.getByText('No notifications')).toBeInTheDocument();
+      expect(screen.getByText('Your notifications will appear here')).toBeInTheDocument();
     });
   });
 
@@ -152,10 +153,12 @@ describe('NotificationCenter', () => {
       const user = userEvent.setup();
 
       render(<NotificationCenter isOpen={true} onClose={mockOnClose} />);
-      
-      const backdrop = screen.getByRole('dialog').parentElement;
-      await user.click(backdrop!);
-      
+
+      // L'elemento con role="dialog" è l'overlay/backdrop stesso:
+      // il click fuori dal pannello interno chiude il centro notifiche.
+      const backdrop = screen.getByRole('dialog');
+      await user.click(backdrop);
+
       expect(mockOnClose).toHaveBeenCalled();
     });
 
@@ -178,19 +181,20 @@ describe('NotificationCenter', () => {
       
       const dialog = screen.getByRole('dialog');
       expect(dialog).toHaveAttribute('aria-modal', 'true');
-      expect(dialog).toHaveAttribute('aria-label', 'Centro notifiche');
+      // Il mock globale di i18n (src/test/setup.ts) restituisce la key stessa
+      expect(dialog).toHaveAttribute('aria-label', 'common.notificationCenter');
     });
 
     it('should have proper heading structure', () => {
       render(<NotificationCenter isOpen={true} onClose={vi.fn()} />);
       
-      expect(screen.getByRole('heading', { name: 'Notifiche' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'common.notifications' })).toBeInTheDocument();
     });
 
     it('should have accessible search input', () => {
       render(<NotificationCenter isOpen={true} onClose={vi.fn()} />);
       
-      const searchInput = screen.getByRole('textbox', { name: /cerca nelle notifiche/i });
+      const searchInput = screen.getByRole('textbox', { name: /search notifications/i });
       expect(searchInput).toHaveAttribute('aria-describedby', 'search-help');
     });
   });

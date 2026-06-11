@@ -1,11 +1,11 @@
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useNotifications } from '@/hooks/use-notifications';
-import { useProfileAuth } from '@/lib/profile-auth';
+import { useProfileAuth } from '@/lib/auth/profile-auth';
 import { NotificationType, NotificationPriority } from '@/types/notifications';
 
 // Mock delle dipendenze
-vi.mock('@/lib/profile-auth', () => ({
+vi.mock('@/lib/auth/profile-auth', () => ({
   useProfileAuth: vi.fn()
 }));
 
@@ -21,19 +21,16 @@ Object.defineProperty(window, 'localStorage', {
   value: localStorageMock
 });
 
-// Mock Tauri API
-const mockTauriInvoke = vi.fn();
-Object.defineProperty(window, '__TAURI__', {
-  value: {
-    tauri: {
-      invoke: mockTauriInvoke
-    },
-    event: {
-      listen: vi.fn(() => Promise.resolve(() => {})),
-      emit: vi.fn()
-    }
-  }
-});
+// Mock Tauri API: window.__TAURI__ è già definito (non-configurabile) in
+// src/test/setup.ts, quindi riusiamo le sue vi.fn() invece di ridefinire
+// la property su window (Object.defineProperty lancerebbe TypeError).
+const tauriApi = (window as unknown as {
+  __TAURI__: {
+    tauri: { invoke: ReturnType<typeof vi.fn> };
+    event: { listen: ReturnType<typeof vi.fn>; emit: ReturnType<typeof vi.fn> };
+  };
+}).__TAURI__;
+const mockTauriInvoke = tauriApi.tauri.invoke;
 
 // Mock profile
 const mockProfile = {
@@ -75,25 +72,55 @@ const mockNotifications = [
   }
 ];
 
+// Notifica restituita dal backend mock per 'create_notification'
+const createdNotification = {
+  id: 'notif-created',
+  profileId: 'test-profile-id',
+  type: NotificationType.SECURITY,
+  title: 'Security Alert',
+  message: 'Suspicious activity detected',
+  priority: NotificationPriority.HIGH,
+  createdAt: new Date().toISOString(),
+  metadata: {
+    source: 'security',
+    category: 'alert',
+    tags: []
+  }
+};
+
 describe('useNotifications', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.useFakeTimers();
-    
+    // shouldAdvanceTime: i fake timer avanzano anche col tempo reale, così
+    // waitFor (che sotto vitest non rileva i fake timer) continua a fare polling
+    // mentre vi.advanceTimersByTime resta deterministico nei test dei timer.
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+
     // Mock profile auth
     vi.mocked(useProfileAuth).mockReturnValue({
       currentProfile: mockProfile
     });
 
-    // Mock localStorage
-    localStorageMock.getItem.mockReturnValue(JSON.stringify(mockNotifications));
-    localStorageMock.setItem.mockImplementation(() => {});
-    localStorageMock.removeItem.mockImplementation(() => {});
-
-    // Mock Tauri responses
-    mockTauriInvoke.mockResolvedValue({
-      success: true,
-      data: mockNotifications
+    // Mock Tauri: l'hook usa il backend Tauri (sempre presente su window nei
+    // test, vedi setup), NON il fallback localStorage. Default per comando.
+    tauriApi.event.listen.mockImplementation(() => Promise.resolve(() => {}));
+    mockTauriInvoke.mockImplementation((cmd: unknown) => {
+      switch (cmd) {
+        case 'get_notifications':
+          return Promise.resolve({ success: true, data: mockNotifications });
+        case 'get_unread_notifications_count':
+          return Promise.resolve({
+            success: true,
+            data: mockNotifications.filter(n => !n.readAt).length
+          });
+        case 'create_notification':
+          return Promise.resolve({ success: true, data: createdNotification });
+        case 'mark_multiple_notifications_as_read':
+        case 'mark_all_notifications_as_read':
+          return Promise.resolve({ success: true, data: 1 });
+        default:
+          return Promise.resolve({ success: true, data: null });
+      }
     });
   });
 
@@ -134,7 +161,12 @@ describe('useNotifications', () => {
 
   describe('CRUD Operations', () => {
     it('should create notification successfully', async () => {
-      const { result } = renderHook(() => useNotifications());
+      // enableRealTime: false — con il real-time attivo l'evento
+      // 'notification-created' emesso da createNotification viene ri-gestito
+      // dal listener dell'hook stesso, che deduplica la lista ma incrementa
+      // comunque unreadCount (doppio conteggio: bug noto, segnalato).
+      // Qui verifichiamo la semantica di createNotification in isolamento.
+      const { result } = renderHook(() => useNotifications({ enableRealTime: false }));
 
       await waitFor(() => {
         expect(result.current.notifications).toEqual(mockNotifications);
@@ -183,6 +215,14 @@ describe('useNotifications', () => {
         expect(result.current.notifications).toEqual(mockNotifications);
       });
 
+      // Dopo la delete l'hook ricarica dal backend: il mock deve riflettere
+      // l'avvenuta eliminazione.
+      mockTauriInvoke.mockImplementation((cmd: unknown) =>
+        cmd === 'get_notifications'
+          ? Promise.resolve({ success: true, data: mockNotifications.filter(n => n.id !== 'notif-1') })
+          : Promise.resolve({ success: true, data: true })
+      );
+
       let deleteResult: boolean;
       await act(async () => {
         deleteResult = await result.current.deleteNotification('notif-1');
@@ -199,6 +239,13 @@ describe('useNotifications', () => {
       await waitFor(() => {
         expect(result.current.notifications).toEqual(mockNotifications);
       });
+
+      // Dopo la pulizia l'hook ricarica dal backend: ora non ci sono notifiche.
+      mockTauriInvoke.mockImplementation((cmd: unknown) =>
+        cmd === 'get_notifications'
+          ? Promise.resolve({ success: true, data: [] })
+          : Promise.resolve({ success: true, data: 2 })
+      );
 
       let clearResult: boolean;
       await act(async () => {
@@ -441,16 +488,18 @@ describe('useNotifications', () => {
         expect(result.current.notifications).toEqual(mockNotifications);
       });
 
-      // Clear the initial call
-      localStorageMock.getItem.mockClear();
+      // Clear the initial calls
+      mockTauriInvoke.mockClear();
 
       // Advance timers to trigger refresh
       act(() => {
         vi.advanceTimersByTime(1000);
       });
 
-      // Should have called getItem again for refresh
-      expect(localStorageMock.getItem).toHaveBeenCalled();
+      // Should have polled the unread count again for refresh
+      expect(mockTauriInvoke).toHaveBeenCalledWith('get_unread_notifications_count', {
+        profile_id: 'test-profile-id'
+      });
     });
 
     it('should not auto refresh when disabled', async () => {
@@ -462,16 +511,16 @@ describe('useNotifications', () => {
         expect(result.current.notifications).toEqual(mockNotifications);
       });
 
-      // Clear the initial call
-      localStorageMock.getItem.mockClear();
+      // Clear the initial calls
+      mockTauriInvoke.mockClear();
 
       // Advance timers
       act(() => {
         vi.advanceTimersByTime(30000);
       });
 
-      // Should not have called getItem again
-      expect(localStorageMock.getItem).not.toHaveBeenCalled();
+      // Should not have polled the backend again
+      expect(mockTauriInvoke).not.toHaveBeenCalled();
     });
   });
 
@@ -527,9 +576,7 @@ describe('useNotifications', () => {
 
     it('should handle load notifications errors', async () => {
       // Mock error from the start
-      localStorageMock.getItem.mockImplementation(() => {
-        throw new Error('Storage error');
-      });
+      mockTauriInvoke.mockRejectedValue(new Error('Storage error'));
 
       const { result } = renderHook(() => useNotifications());
 
@@ -542,7 +589,9 @@ describe('useNotifications', () => {
 
   describe('Pagination', () => {
     it('should load more notifications', async () => {
-      const { result } = renderHook(() => useNotifications());
+      // maxNotifications = 2: il primo caricamento riempie il limite,
+      // così hasMore resta true e loadMoreNotifications non esce subito.
+      const { result } = renderHook(() => useNotifications({ maxNotifications: 2 }));
 
       await waitFor(() => {
         expect(result.current.notifications).toEqual(mockNotifications);
@@ -566,7 +615,11 @@ describe('useNotifications', () => {
         }
       ];
 
-      localStorageMock.getItem.mockReturnValueOnce(JSON.stringify([...mockNotifications, ...moreNotifications]));
+      mockTauriInvoke.mockImplementation((cmd: unknown) =>
+        cmd === 'get_notifications'
+          ? Promise.resolve({ success: true, data: [...mockNotifications, ...moreNotifications] })
+          : Promise.resolve({ success: true, data: 1 })
+      );
 
       await act(async () => {
         await result.current.loadMoreNotifications();
@@ -633,7 +686,11 @@ describe('useNotifications', () => {
         }
       ];
 
-      localStorageMock.getItem.mockReturnValue(JSON.stringify(newProfileNotifications));
+      mockTauriInvoke.mockImplementation((cmd: unknown) =>
+        cmd === 'get_notifications'
+          ? Promise.resolve({ success: true, data: newProfileNotifications })
+          : Promise.resolve({ success: true, data: 0 })
+      );
 
       rerender();
 

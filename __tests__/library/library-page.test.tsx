@@ -9,6 +9,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ensureArray, validateArray, safeMap } from '@/lib/array-utils';
+import { clientLogger } from '@/lib/client-logger';
 
 describe('LibraryPage - Test Caricamento Libreria', () => {
   describe('Protezioni Array', () => {
@@ -62,15 +63,17 @@ describe('LibraryPage - Test Caricamento Libreria', () => {
     });
 
     it('dovrebbe rilevare non-array', () => {
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => { });
+      // validateArray logga tramite clientLogger.warn (non più console.warn diretto);
+      // in test enableConsole è false, quindi si spia il logger, non la console.
+      const warnSpy = vi.spyOn(clientLogger, 'warn').mockImplementation(() => { });
 
       expect(validateArray(null, 'test')).toBe(false);
       expect(validateArray(undefined, 'test')).toBe(false);
       expect(validateArray({}, 'test')).toBe(false);
       expect(validateArray('string', 'test')).toBe(false);
 
-      expect(consoleSpy).toHaveBeenCalled();
-      consoleSpy.mockRestore();
+      expect(warnSpy).toHaveBeenCalled();
+      warnSpy.mockRestore();
     });
   });
 

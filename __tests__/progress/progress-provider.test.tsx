@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { render, screen, act, waitFor } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import { ProgressProvider, useProgress } from '@/components/progress/progress-provider';
-import type { ProgressConfig } from '@/lib/types/progress';
 
 // Mock del sistema di persistenza
 vi.mock('@/lib/progress-persistence', () => ({
@@ -191,9 +190,10 @@ describe('ProgressProvider', () => {
     // Suppress console.error per questo test
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
+    // Messaggio attuale del guard in components/progress/progress-provider.tsx
     expect(() => {
       render(<TestComponent />);
-    }).toThrow('useProgress deve essere utilizzato all\'interno di un ProgressProvider');
+    }).toThrow('useProgress must be used within a ProgressProvider');
 
     consoleSpy.mockRestore();
   });

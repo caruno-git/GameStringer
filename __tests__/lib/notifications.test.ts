@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { initNotifications, notify, notifications } from '@/lib/notifications';
+import { initNotifications, notify, notifications } from '@/lib/notifications/notifications';
 
 describe('notifications', () => {
   let mockToast: ReturnType<typeof vi.fn>;

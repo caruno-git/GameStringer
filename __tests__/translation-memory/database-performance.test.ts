@@ -6,8 +6,13 @@ import {
 } from '@/lib/utils/database';
 import type { TranslationMemoryEntry, GlossaryEntry } from '@/lib/types/translation-memory';
 
-// Mock Prisma client
-const mockPrisma = {
+// Mock Prisma client.
+// `vi.hoisted` perché `vi.mock` viene hoistato sopra le `const` del modulo:
+// senza, il factory accederebbe a `mockPrisma` prima dell'inizializzazione (TDZ).
+// Si mocka `@prisma/client` (il costruttore) e NON `@/lib/utils/database`:
+// le classi reali usano il client `db` module-local, quindi l'unico punto di
+// intercettazione corretto è `new PrismaClient()`.
+const mockPrisma = vi.hoisted(() => ({
   translationMemoryEntry: {
     create: vi.fn(),
     findFirst: vi.fn(),
@@ -28,15 +33,11 @@ const mockPrisma = {
     update: vi.fn(),
     deleteMany: vi.fn()
   }
-};
+}));
 
-vi.mock('@/lib/utils/database', async () => {
-  const actual = await vi.importActual('@/lib/utils/database');
-  return {
-    ...actual,
-    prisma: mockPrisma
-  };
-});
+vi.mock('@prisma/client', () => ({
+  PrismaClient: vi.fn(() => mockPrisma)
+}));
 
 describe('Translation Memory Database Performance', () => {
   beforeEach(() => {

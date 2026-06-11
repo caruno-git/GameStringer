@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { ProgressBar, CircularProgress, IndeterminateProgress } from '@/components/progress/progress-bar';
 import { ProgressModal } from '@/components/progress/progress-modal';
 import { ProgressNotificationComponent } from '@/components/progress/progress-notification';
@@ -25,8 +25,11 @@ describe('Progress UI Components', () => {
 
   describe('ProgressBar', () => {
     it('should render progress bar with correct percentage', () => {
-      render(<ProgressBar progress={75} />);
-      
+      // animated={false}: con animated (default) il valore parte da 0 e
+      // converge via requestAnimationFrame, quindi subito dopo il render
+      // mostrerebbe "0.0%".
+      render(<ProgressBar progress={75} animated={false} />);
+
       expect(screen.getByText('75.0%')).toBeInTheDocument();
     });
 
@@ -65,13 +68,14 @@ describe('Progress UI Components', () => {
     });
 
     it('should clamp progress values to valid range', () => {
-      const { rerender } = render(<ProgressBar progress={150} />);
-      
+      // animated={false} per avere il valore finale subito (vedi sopra)
+      const { rerender } = render(<ProgressBar progress={150} animated={false} />);
+
       // Progress dovrebbe essere limitato a 100%
       expect(screen.getByText('100.0%')).toBeInTheDocument();
-      
-      rerender(<ProgressBar progress={-10} />);
-      
+
+      rerender(<ProgressBar progress={-10} animated={false} />);
+
       // Progress dovrebbe essere limitato a 0%
       expect(screen.getByText('0.0%')).toBeInTheDocument();
     });
@@ -162,10 +166,11 @@ describe('Progress UI Components', () => {
     it('should show minimize button when canMinimize is true', () => {
       const onMinimize = vi.fn();
       render(<ProgressModal operation={mockOperation} onMinimize={onMinimize} />);
-      
-      const minimizeButton = screen.getByTitle('Minimizza');
+
+      // Title attuale del bottone (hard-coded in progress-modal.tsx)
+      const minimizeButton = screen.getByTitle('Minimize');
       expect(minimizeButton).toBeInTheDocument();
-      
+
       fireEvent.click(minimizeButton);
       expect(onMinimize).toHaveBeenCalled();
     });
@@ -174,18 +179,21 @@ describe('Progress UI Components', () => {
       const onCancel = vi.fn();
       render(<ProgressModal operation={mockOperation} onCancel={onCancel} />);
       
-      const cancelButton = screen.getByText('Annulla');
+      // Testo attuale del bottone (hard-coded in progress-modal.tsx)
+      const cancelButton = screen.getByText('Cancel');
       expect(cancelButton).toBeInTheDocument();
-      
+
       fireEvent.click(cancelButton);
       expect(onCancel).toHaveBeenCalled();
     });
 
     it('should render minimized version when isMinimized is true', () => {
       render(<ProgressModal operation={mockOperation} isMinimized={true} />);
-      
-      // In versione minimizzata dovrebbe mostrare progresso circolare
-      const expandButton = screen.getByTitle('Espandi');
+
+      // In versione minimizzata dovrebbe mostrare progresso circolare.
+      // Il title usa t('common.expand'): il mock globale di useTranslation
+      // (src/test/setup.ts) restituisce la chiave stessa.
+      const expandButton = screen.getByTitle('common.expand');
       expect(expandButton).toBeInTheDocument();
     });
 
@@ -211,9 +219,10 @@ describe('Progress UI Components', () => {
       };
       
       render(<ProgressModal operation={completedOperation} />);
-      
+
       expect(screen.getByText('Completato')).toBeInTheDocument();
-      expect(screen.getByText('Completato con successo')).toBeInTheDocument();
+      // Testo attuale del box risultato (hard-coded in progress-modal.tsx)
+      expect(screen.getByText('Completed successfully')).toBeInTheDocument();
     });
 
     it('should auto-close completed operations after timeout', async () => {
@@ -227,14 +236,17 @@ describe('Progress UI Components', () => {
       
       const onClose = vi.fn();
       render(<ProgressModal operation={completedOperation} onClose={onClose} />);
-      
-      // Avanza il tempo di 3 secondi
-      vi.advanceTimersByTime(3000);
-      
-      await waitFor(() => {
-        expect(onClose).toHaveBeenCalled();
+
+      // Avanza il tempo di 3 secondi. NB: niente waitFor con i fake timer
+      // attivi (i timer interni di waitFor sarebbero anch'essi fake e non
+      // scatterebbero mai): advanceTimersByTime esegue il callback in modo
+      // sincrono.
+      act(() => {
+        vi.advanceTimersByTime(3000);
       });
-      
+
+      expect(onClose).toHaveBeenCalled();
+
       vi.useRealTimers();
     });
   });
@@ -256,11 +268,29 @@ describe('Progress UI Components', () => {
     });
 
     it('should show progress bar when progress is provided', () => {
-      render(<ProgressNotificationComponent notification={mockNotification} />);
-      
-      // Dovrebbe esserci una progress bar
-      const progressBar = document.querySelector('[style*="width: 75%"]');
-      expect(progressBar).toBeInTheDocument();
+      // La ProgressBar interna è sempre animated (hard-coded): il valore
+      // parte da 0 e converge a 75 via requestAnimationFrame, quindi la
+      // larghezza finale non è assertabile in modo deterministico in jsdom.
+      // Si verifica il comportamento condizionale: barra presente (track +
+      // fill + etichetta percentuale) con progress, assente senza.
+      const { rerender } = render(
+        <ProgressNotificationComponent notification={mockNotification} />
+      );
+
+      // Etichetta percentuale della barra (formatProgress mockato => "N.N%")
+      expect(screen.getByText(/^\d+(\.\d+)?%$/)).toBeInTheDocument();
+      // Track (size="sm" => h-2) e fill con larghezza inline
+      expect(document.querySelector('.h-2')).toBeInTheDocument();
+      expect(document.querySelector('.h-2 [style*="width"]')).toBeInTheDocument();
+
+      // Senza progress la barra non viene renderizzata
+      rerender(
+        <ProgressNotificationComponent
+          notification={{ ...mockNotification, progress: undefined }}
+        />
+      );
+      expect(screen.queryByText(/^\d+(\.\d+)?%$/)).not.toBeInTheDocument();
+      expect(document.querySelector('.h-2')).not.toBeInTheDocument();
     });
 
     it('should handle different notification types', () => {
@@ -324,32 +354,42 @@ describe('Progress UI Components', () => {
         />
       );
       
-      // Avanza il tempo
-      vi.advanceTimersByTime(2300); // 2000ms + 300ms per animazione
-      
-      await waitFor(() => {
-        expect(onClose).toHaveBeenCalled();
+      // Avanza il tempo: 2000ms (autoHide) + 300ms (animazione di uscita).
+      // Niente waitFor con i fake timer attivi (vedi nota nel test del modal).
+      act(() => {
+        vi.advanceTimersByTime(2300);
       });
-      
+
+      expect(onClose).toHaveBeenCalled();
+
       vi.useRealTimers();
     });
 
     it('should handle close button click', () => {
+      vi.useFakeTimers();
+
       const onClose = vi.fn();
       render(
-        <ProgressNotificationComponent 
-          notification={mockNotification} 
+        <ProgressNotificationComponent
+          notification={mockNotification}
           onClose={onClose}
         />
       );
-      
-      const closeButton = screen.getByTitle('Chiudi notifica');
+
+      // Il title usa t('common.closeNotification'): il mock globale di
+      // useTranslation restituisce la chiave stessa.
+      const closeButton = screen.getByTitle('common.closeNotification');
       fireEvent.click(closeButton);
-      
-      // Dovrebbe chiamare onClose dopo l'animazione
-      setTimeout(() => {
-        expect(onClose).toHaveBeenCalled();
-      }, 300);
+
+      // onClose viene chiamato dopo i 300ms dell'animazione di uscita
+      // (il vecchio setTimeout non assertava mai prima della fine del test)
+      expect(onClose).not.toHaveBeenCalled();
+      act(() => {
+        vi.advanceTimersByTime(300);
+      });
+      expect(onClose).toHaveBeenCalled();
+
+      vi.useRealTimers();
     });
   });
 });
