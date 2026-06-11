@@ -1,8 +1,19 @@
-# GameStringer - Architettura del Progetto (v1.8.1)
+# GameStringer - Architettura del Progetto (v1.9.1)
 
 ## Visione
 
 Software desktop professionale per la localizzazione di videogiochi che analizza automaticamente i giochi installati e suggerisce il metodo di traduzione migliore. Include traduzione live overlay, dubbing AI, marketplace community, e sistema plugin estensibile.
+
+---
+
+## Aggiornamenti v1.9.x
+
+- **Build statico Tauri**: Next.js con `output: export`, frontend servito da `../out` (niente server Node in produzione)
+- **Modelli AI parametrizzabili**: default Gemini 3.5 Flash / Claude Sonnet 4.6, override via `NEXT_PUBLIC_GEMINI_MODEL` / `NEXT_PUBLIC_ANTHROPIC_MODEL`; nuovo provider `anthropic-premium` (Opus 4.8) nelle chain creative
+- **Tool patcher aggiornati**: XUnity.AutoTranslator 5.6.1, BepInEx 5.4.23.5; 5 nuovi feed RSS di traduzioni ITA
+- **Digest quotidiani**: monitoraggio automatico version-drift e traduzioni amatoriali in `docs/digests/`
+- **Quality gate**: typecheck TypeScript bloccante in CI (0 errori), rimosse dipendenze morte (`sqlx`, `zustand`, `yup`), eliminati file orfani
+- **Igiene repo**: dati profilo utente e cloni di studio (`research/`) fuori dal tracking git
 
 ---
 
