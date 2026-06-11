@@ -1210,6 +1210,31 @@ pub fn find_game_install_path(install_dir: String) -> Result<String, String> {
                 }
             }
             
+            // 🔧 FALLBACK: Cerca in percorsi comuni manualmente (D:\, E:\, etc.)
+            let mut fallback_paths = vec![
+                format!("D:\\SteamLibrary\\steamapps\\common\\{}", install_dir),
+                format!("D:\\Steam\\steamapps\\common\\{}", install_dir),
+                format!("E:\\SteamLibrary\\steamapps\\common\\{}", install_dir),
+                format!("E:\\Steam\\steamapps\\common\\{}", install_dir),
+            ];
+            
+            // Prova anche varianti senza spazi (Foolish Mortals -> FoolishMortals)
+            let install_dir_no_spaces = install_dir.replace(" ", "");
+            if install_dir_no_spaces != install_dir {
+                fallback_paths.push(format!("D:\\SteamLibrary\\steamapps\\common\\{}", install_dir_no_spaces));
+                fallback_paths.push(format!("D:\\Steam\\steamapps\\common\\{}", install_dir_no_spaces));
+                fallback_paths.push(format!("E:\\SteamLibrary\\steamapps\\common\\{}", install_dir_no_spaces));
+                fallback_paths.push(format!("E:\\Steam\\steamapps\\common\\{}", install_dir_no_spaces));
+            }
+            
+            for path_str in &fallback_paths {
+                let path = std::path::Path::new(path_str);
+                if path.exists() {
+                    info!("✅ Gioco trovato in fallback: {}", path_str);
+                    return Ok(path_str.clone());
+                }
+            }
+            
             warn!("❌ Gioco non trovato in nessuna libreria: {}", install_dir);
             Err(format!("Gioco '{}' non trovato in nessuna libreria Steam", install_dir))
         },

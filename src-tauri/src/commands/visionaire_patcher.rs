@@ -389,9 +389,9 @@ fn is_translatable_vis_string(s: &str) -> bool {
     let letter_count = s.chars().filter(|c| c.is_alphabetic()).count();
     if letter_count < 4 { return false; }
     
-    // Skip if mostly non-ASCII (binary leftovers)
+    // Skip if mostly non-ASCII (binary leftovers) - lowered to 0.5 for accented languages (Italian, French, etc.)
     let ascii_ratio = s.chars().filter(|c| c.is_ascii()).count() as f32 / s.len() as f32;
-    if ascii_ratio < 0.8 { return false; }
+    if ascii_ratio < 0.5 { return false; }
     
     // Skip paths and filenames
     if s.contains('/') || s.contains('\\') { return false; }

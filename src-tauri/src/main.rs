@@ -50,8 +50,17 @@ fn close_splash(app: tauri::AppHandle) {
     // Mostra la finestra principale
     if let Some(main_window) = app.get_webview_window("main") {
         let _ = main_window.show();
-        let _ = main_window.maximize();
         let _ = main_window.set_focus();
+        
+        // Massimizza con ritardo per assicurare render completo
+        let main_window_clone = main_window.clone();
+        std::thread::spawn(move || {
+            std::thread::sleep(std::time::Duration::from_millis(100));
+            let _ = main_window_clone.maximize();
+            // Secondo tentativo dopo ulteriore ritardo
+            std::thread::sleep(std::time::Duration::from_millis(200));
+            let _ = main_window_clone.maximize();
+        });
     }
     
     // Chiudi la splash

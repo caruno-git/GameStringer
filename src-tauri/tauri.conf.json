@@ -3,9 +3,9 @@
   "version": "1.9.1",
   "identifier": "com.gamestringer.app",
   "build": {
-    "beforeDevCommand": "",
+    "beforeDevCommand": "npm run dev -- --port 3106 --hostname 127.0.0.1",
     "beforeBuildCommand": "node scripts/build-tauri-cross.js",
-    "devUrl": "http://127.0.0.1:3105",
+    "devUrl": "http://127.0.0.1:3106",
     "frontendDist": "../out"
   },
   "app": {

@@ -6,9 +6,9 @@ use reqwest::Client;
 use zip::ZipArchive;
 use super::process_util::no_window_command;
 
-// URL per BepInEx 5.x (Unity 2017+) - Aggiornato a v5.4.23.4
-const BEPINEX5_X64_URL: &str = "https://github.com/BepInEx/BepInEx/releases/download/v5.4.23.4/BepInEx_win_x64_5.4.23.4.zip";
-const BEPINEX5_X86_URL: &str = "https://github.com/BepInEx/BepInEx/releases/download/v5.4.23.4/BepInEx_win_x86_5.4.23.4.zip";
+// URL per BepInEx 5.x (Unity 2017+) - Aggiornato a v5.4.23.5
+const BEPINEX5_X64_URL: &str = "https://github.com/BepInEx/BepInEx/releases/download/v5.4.23.5/BepInEx_win_x64_5.4.23.5.zip";
+const BEPINEX5_X86_URL: &str = "https://github.com/BepInEx/BepInEx/releases/download/v5.4.23.5/BepInEx_win_x86_5.4.23.5.zip";
 
 // URL per BepInEx Legacy (Unity 5.6+) - v5.4.11 più compatibile con Unity vecchie
 const BEPINEX_LEGACY_X64_URL: &str = "https://github.com/BepInEx/BepInEx/releases/download/v5.4.11/BepInEx_x64_5.4.11.0.zip";
