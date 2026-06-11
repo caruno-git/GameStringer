@@ -103,7 +103,7 @@ export default function Dashboard() {
     timeSavedMinutes: 0,
     estimatedSavings: 0
   });
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
   const [activities, setActivities] = useState<RecentActivityProps[]>([]);
   const [activitiesLoading, setActivitiesLoading] = useState(true);

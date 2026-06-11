@@ -24,12 +24,6 @@ import {
   Sparkles,
   ExternalLink,
   TrendingUp,
-  Gauge,
-  BarChart3,
-  Trophy,
-  AlertCircle,
-  ChevronDown,
-  ChevronUp,
   Wand2,
   ArrowRight,
 } from 'lucide-react';

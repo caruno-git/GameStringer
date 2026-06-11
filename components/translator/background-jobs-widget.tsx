@@ -16,7 +16,6 @@ import { cn } from '@/lib/utils';
 import {
   getBackgroundTranslationManager,
   type BGTranslationJob,
-  type BGJobEvent,
 } from '@/lib/batch/background-translation';
 
 // ============================================================================
@@ -209,7 +208,7 @@ export function BackgroundJobsWidget() {
 // JOB CARD — Active job with controls
 // ============================================================================
 
-function JobCard({ job, onPause, onResume, onCancel, onOpenResults }: {
+function JobCard({ job, onPause, onResume, onCancel }: {
   job: BGTranslationJob;
   onPause: () => void;
   onResume: () => void;
@@ -282,8 +281,8 @@ function JobCard({ job, onPause, onResume, onCancel, onOpenResults }: {
       {/* Last translated preview */}
       {job.lastTranslated && isRunning && (
         <div className="text-2xs bg-slate-900/50 rounded px-2 py-1 space-y-0.5">
-          <p className="text-slate-500 truncate">"{job.lastTranslated.original}"</p>
-          <p className="text-emerald-400/80 truncate">→ "{job.lastTranslated.translation}"</p>
+          <p className="text-slate-500 truncate">&quot;{job.lastTranslated.original}&quot;</p>
+          <p className="text-emerald-400/80 truncate">→ &quot;{job.lastTranslated.translation}&quot;</p>
         </div>
       )}
 

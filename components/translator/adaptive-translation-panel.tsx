@@ -5,7 +5,6 @@ import {
   analyzeContent, 
   analyzeBatch, 
   suggestTranslationSettings,
-  autoAdaptSettings,
   type ContentAnalysis,
   type ContentType,
 } from '@/lib/ai/adaptive-translation';
@@ -93,7 +92,7 @@ export function AdaptiveTranslationPanel({
 }: AdaptiveTranslationPanelProps) {
   const [analysis, setAnalysis] = useState<ContentAnalysis | null>(null);
   const [distribution, setDistribution] = useState<Record<ContentType, number> | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [, setIsAnalyzing] = useState(false);
   const [autoAdapt, setAutoAdapt] = useState(false);
   const [adapted, setAdapted] = useState(false);
 

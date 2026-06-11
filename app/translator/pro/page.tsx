@@ -837,7 +837,6 @@ export default function TranslatorProPage() {
     let currentProject = null;
     if (selectedGame?.id) {
       try {
-        const totalStrings = filesToTranslate.reduce((sum, f) => sum + (f.parseResult?.strings?.length || 0), 0);
         currentProject = await projectService.createOrGetProject({
           gameId: selectedGame.id,
           gameName: selectedGame.name || 'Unknown Game',

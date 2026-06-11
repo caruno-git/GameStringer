@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Brain, Download, Trash2, Database, Cpu, CheckCircle, XCircle, Clock, Loader2, BarChart3, FileJson } from 'lucide-react';
+import { Brain, Download, Trash2, Database, Cpu, CheckCircle, XCircle, Clock, Loader2, FileJson } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -27,8 +27,6 @@ import {
   downloadDataset,
   type FineTuningDataset,
   type FineTuningModel,
-  type FineTuningConfig,
-  DEFAULT_CONFIG,
 } from '@/lib/ai/fine-tuning';
 
 export function FineTuningManager({ gameId }: { gameId?: string }) {

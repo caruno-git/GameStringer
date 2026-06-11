@@ -7,7 +7,6 @@ import {
   MessageCircle,
   Package,
   Download,
-  Sparkles,
   Flame,
 } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';

@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { Zap, PinOff, GripVertical, MessageCircle } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
@@ -112,7 +111,7 @@ interface QuickAccessSectionProps {
   onReorder: (newOrder: QuickAccessItem[]) => void;
 }
 
-export function QuickAccessSection({ items, onRemove, onClick, onReorder }: QuickAccessSectionProps) {
+export function QuickAccessSection({ items, onRemove, onClick }: QuickAccessSectionProps) {
   if (items.length === 0) return null;
 
   return (

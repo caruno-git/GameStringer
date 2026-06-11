@@ -752,28 +752,6 @@ function ThreadRow({ thread, locale, onClick }: ThreadRowProps) {
   );
 }
 
-function Stat({
-  icon: Icon,
-  value,
-  label,
-  accent = 'text-slate-300',
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  value: number;
-  label: string;
-  accent?: string;
-}) {
-  return (
-    <div className="text-center min-w-[38px]">
-      <div className={cn('font-bold flex items-center justify-center gap-0.5', accent)}>
-        <Icon className="h-3 w-3" />
-        {value}
-      </div>
-      <div className="text-slate-500 text-[10px] uppercase tracking-wider">{label}</div>
-    </div>
-  );
-}
-
 // ─── EMPTY STATE ────────────────────────────────────────────────────────────
 
 function EmptyState({ hasAnyThreads, onNewThread }: { hasAnyThreads: boolean; onNewThread: () => void }) {

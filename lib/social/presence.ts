@@ -13,7 +13,7 @@
  * - community-chat.ts → Realtime channel (istananeo ma non persistente)
  */
 
-import { SupabaseClient, RealtimeChannel } from '@supabase/supabase-js';
+import { RealtimeChannel } from '@supabase/supabase-js';
 import { getSupabase, isSupabaseConfigured } from './community-hub-backend';
 import { clientLogger } from '@/lib/client-logger';
 import { withRetry } from '@/lib/network-resilience';
@@ -42,7 +42,7 @@ export type PresenceListener = (users: OnlineUser[]) => void;
 // ============================================================================
 
 let _channel: RealtimeChannel | null = null;
-let _listeners: Set<PresenceListener> = new Set();
+const _listeners: Set<PresenceListener> = new Set();
 let _onlineUsers: OnlineUser[] = [];
 let _heartbeatInterval: ReturnType<typeof setInterval> | null = null;
 let _myUserId: string | null = null;

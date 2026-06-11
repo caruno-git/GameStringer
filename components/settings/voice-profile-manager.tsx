@@ -6,9 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import {
   Select,
   SelectContent,
@@ -22,7 +20,6 @@ import {
   VoiceFormality,
   VoiceAgeGroup,
   loadVoiceProfiles,
-  saveVoiceProfiles,
   upsertVoiceProfile,
   deleteVoiceProfile,
   setDefaultVoiceProfile,
@@ -315,7 +312,7 @@ export function VoiceProfileManager({ gameId, gameStrings }: VoiceProfileManager
                 </div>
                 
                 {profile.personality && (
-                  <p className="text-xs text-muted-foreground italic">"{profile.personality}"</p>
+                  <p className="text-xs text-muted-foreground italic">&quot;{profile.personality}&quot;</p>
                 )}
                 
                 {profile.speechPatterns.length > 0 && (
@@ -336,7 +333,7 @@ export function VoiceProfileManager({ gameId, gameStrings }: VoiceProfileManager
                   <div className="text-xs space-y-0.5">
                     <span className="text-muted-foreground">Dialoghi di esempio:</span>
                     {profile.sampleDialogues.slice(0, 3).map((d, i) => (
-                      <div key={i} className="pl-3 text-muted-foreground">• "{d}"</div>
+                      <div key={i} className="pl-3 text-muted-foreground">• &quot;{d}&quot;</div>
                     ))}
                   </div>
                 )}

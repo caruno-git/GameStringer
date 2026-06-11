@@ -53,7 +53,7 @@ let _status: NetworkStatus = {
   offlineSince: null,
 };
 
-let _listeners: Set<NetworkListener> = new Set();
+const _listeners: Set<NetworkListener> = new Set();
 let _supabaseCheckInterval: ReturnType<typeof setInterval> | null = null;
 let _offlineQueue: QueuedOperation[] = [];
 let _isProcessingQueue = false;

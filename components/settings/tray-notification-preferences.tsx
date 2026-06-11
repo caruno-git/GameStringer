@@ -91,7 +91,7 @@ export function TrayNotificationPreferences() {
         {/* Per-type toggles */}
         <div className="space-y-3">
           <h3 className="text-sm font-semibold text-muted-foreground">Tipi di Notifica</h3>
-          {NOTIFICATION_TYPES.map(({ key, type, label, description, icon: Icon }) => (
+          {NOTIFICATION_TYPES.map(({ key, type: _type, label, description, icon: Icon }) => (
             <div
               key={key}
               className={`flex items-center justify-between rounded-lg border p-3 transition-colors ${

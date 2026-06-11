@@ -6,7 +6,6 @@ import {
   MessageSquare,
   Send,
   Hash,
-  Circle,
   Plus,
   Reply,
   Edit3,
@@ -33,7 +32,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
   DialogContent,
@@ -103,7 +101,7 @@ function formatTime(iso: string): string {
 
 export function PersistentChat() {
   const { t } = useTranslation();
-  const pathname = usePathname();
+  const _pathname = usePathname();
   const [open, setOpen] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('gs_chat_open') === 'true';

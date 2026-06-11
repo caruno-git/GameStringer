@@ -94,7 +94,7 @@ let _unreadCounts: Record<TrayNotificationType, number> = {
 };
 let _totalUnread = 0;
 let _isWindowFocused = true;
-let _listeners: Set<(counts: Record<TrayNotificationType, number>, total: number) => void> = new Set();
+const _listeners: Set<(counts: Record<TrayNotificationType, number>, total: number) => void> = new Set();
 
 // ============================================================================
 // PREFERENCES
@@ -410,7 +410,7 @@ if (typeof window !== 'undefined') {
   }) as EventListener);
   
   // Presence events (friend online)
-  window.addEventListener('gs-presence-update', ((e: CustomEvent) => {
+  window.addEventListener('gs-presence-update', ((_e: CustomEvent) => {
     // Only notify for new users, not every sync — handled by the presence module
     // This is a lightweight hook; the presence module itself tracks joins/leaves
   }) as EventListener);

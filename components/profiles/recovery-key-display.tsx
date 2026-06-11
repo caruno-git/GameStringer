@@ -7,7 +7,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -40,7 +39,7 @@ export function RecoveryKeyDisplay({
 }: RecoveryKeyDisplayProps) {
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
-  const [confirmed, setConfirmed] = useState(false);
+  const [, setConfirmed] = useState(false);
 
   const formattedGroups = formatRecoveryKeyForDisplay(recoveryKey);
   const keyString = recoveryKeyToString(recoveryKey);

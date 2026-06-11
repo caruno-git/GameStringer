@@ -736,7 +736,6 @@ async function translateWithDeepLVoice(
 
     const sessionData = await initRes.json();
     const wsUrl = sessionData.streaming_url;
-    const token = sessionData.token;
 
     if (!wsUrl) {
       // Fallback a text

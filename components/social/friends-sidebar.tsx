@@ -9,9 +9,6 @@ import {
   Search,
   ChevronDown,
   ChevronUp,
-  Gamepad2,
-  Zap,
-  MoreVertical,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -35,10 +32,8 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
-  DragOverlay,
   DragStartEvent,
   useDraggable,
-  useDroppable,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -47,17 +42,15 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 
 import {
-  getFriends,
   getOnlineFriends,
   getPendingFriendRequests,
   acceptFriendRequest,
   rejectFriendRequest,
-  removeFriend,
   type UserProfile,
   type UserPresence,
   type Friendship,
 } from '@/lib/social/social';
-import { useQuickAccess, type QuickAccessItem } from '@/hooks/use-drag-drop';
+import { useQuickAccess } from '@/hooks/use-drag-drop';
 import { QuickAccessSection, QuickAccessDropZone as QuickAccessEmptyZone } from './quick-access';
 
 // =============================================================================
@@ -84,9 +77,6 @@ interface FriendWithPresence extends Friendship {
 function FriendCard({
   friend,
   onStartChat,
-  onOpenProfile,
-  isQuickAccess,
-  onAddToQuickAccess,
 }: {
   friend: FriendWithPresence;
   onStartChat: (friend: FriendWithPresence) => void;
@@ -120,13 +110,6 @@ function FriendCard({
     away: 'bg-amber-500',
     busy: 'bg-rose-500',
     offline: 'bg-slate-500',
-  };
-
-  const statusGlow = {
-    online: 'shadow-[0_0_8px_rgba(16,185,129,0.5)]',
-    away: 'shadow-[0_0_8px_rgba(245,158,11,0.5)]',
-    busy: 'shadow-[0_0_8px_rgba(244,63,94,0.5)]',
-    offline: '',
   };
 
   return (
@@ -198,7 +181,7 @@ export function FriendsSidebar({
   onOpenProfile,
   onStartChat,
 }: FriendsSidebarProps) {
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
   const [friends, setFriends] = useState<FriendWithPresence[]>([]);
   const [pendingRequests, setPendingRequests] = useState<Friendship[]>([]);
   const [loading, setLoading] = useState(true);

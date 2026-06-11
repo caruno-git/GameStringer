@@ -350,7 +350,7 @@ export async function translateWithEnsemble(
         translation: result,
         time: performance.now() - start,
       };
-    } catch (e) {
+    } catch {
       return {
         model,
         translation: '',
@@ -361,7 +361,7 @@ export async function translateWithEnsemble(
   
   const settled = await Promise.allSettled(promises);
   
-  settled.forEach((result, i) => {
+  settled.forEach((result, _i) => {
     if (result.status === 'fulfilled') {
       results.push(result.value);
     }

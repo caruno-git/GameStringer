@@ -1,6 +1,6 @@
 'use client';
 
-import { MessageCircle, Users, Plus, Search, Hash, ArrowRight } from 'lucide-react';
+import { MessageCircle, Users, Search, Hash, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 

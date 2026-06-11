@@ -40,7 +40,6 @@ import {
   Heart,
   Rocket,
   Edit3,
-  ArrowRight,
   Library,
   Languages,
   Shield,

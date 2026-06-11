@@ -10,7 +10,7 @@ import {
   Users
 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n';
-import { ChatEmptyState, ChatDropZone } from './chat-empty-state';
+import { ChatEmptyState } from './chat-empty-state';
 import {
   DndContext,
   useDroppable,
@@ -458,11 +458,6 @@ export function ChatPanel({ userId, initialUserId }: ChatPanelProps) {
 
   // Expose startDirectChat
   (ChatPanel as any).startDirectChat = startDirectChat;
-
-  // Handle back - return to conversation list
-  const handleBack = () => {
-    setActiveConversation(null);
-  };
 
   if (activeConversation) {
     return (

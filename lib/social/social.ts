@@ -4,7 +4,7 @@
  */
 
 import { getSupabase, isSupabaseConfigured } from './community-hub-backend';
-import { initPresence as unifiedInit, setPresenceStatus as unifiedSetStatus, goOffline as unifiedGoOffline, getOnlineUsers as unifiedGetOnline, onPresenceUpdate, type OnlineUser, type PresenceStatus } from './presence';
+import { setPresenceStatus as unifiedSetStatus, getOnlineUsers as unifiedGetOnline, type PresenceStatus } from './presence';
 
 // Cache per ricordare quali tabelle esistono ed evitare ripetuti 404
 const _tableExists: Record<string, boolean> = {};

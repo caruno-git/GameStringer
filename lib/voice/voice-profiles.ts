@@ -289,8 +289,8 @@ export function buildVoicePromptInjection(
     very_informal: 'very informal, slang acceptable',
   };
 
-  let persona = `${profile.characterName}, a character who speaks in a ${toneMap[profile.tone]} manner`;
-  let tone = `${formalityMap[profile.formality]}, ${toneMap[profile.tone]} tone`;
+  const persona = `${profile.characterName}, a character who speaks in a ${toneMap[profile.tone]} manner`;
+  const tone = `${formalityMap[profile.formality]}, ${toneMap[profile.tone]} tone`;
 
   let customPrompt = `You are translating dialogue for the character "${profile.characterName}".`;
   
@@ -378,7 +378,6 @@ function detectFormality(dialogues: string[]): VoiceFormality {
   let informalScore = 0;
 
   for (const d of dialogues) {
-    const lower = d.toLowerCase();
     // Formal indicators
     if (/\b(shall|would|mighth|therefore|hence|whom|upon)\b/i.test(d)) formalScore++;
     if (/\b(sir|madam|lord|lady)\b/i.test(d)) formalScore++;
@@ -398,8 +397,6 @@ function detectFormality(dialogues: string[]): VoiceFormality {
 }
 
 function detectAgeGroup(dialogues: string[], speakerName: string): VoiceAgeGroup {
-  const lower = speakerName.toLowerCase();
-  
   // Name-based heuristics
   if (/\b(kid|child|boy|girl|little|young|baby|tot)\b/i.test(speakerName)) return 'child';
   if (/\b(elder|old|grand|ancient|sage|master|chief)\b/i.test(speakerName)) return 'elder';

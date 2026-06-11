@@ -44,7 +44,7 @@ const initialState: StreamState = {
 export function useStreamingTranslation(): UseStreamingTranslationReturn {
   const [streamState, setStreamState] = useState<StreamState>(initialState);
   const unlistenersRef = useRef<UnlistenFn[]>([]);
-  const abortControllerRef = useRef<AbortController | null>(null);
+  const _abortControllerRef = useRef<AbortController | null>(null);
 
   // Cleanup listeners on unmount
   useEffect(() => {
@@ -214,7 +214,7 @@ export function useBatchStreamingTranslation() {
         setProgress(event.payload as typeof progress);
       });
 
-      unlistenComplete = await listen('ollama-batch-complete', (event) => {
+      unlistenComplete = await listen('ollama-batch-complete', (_event) => {
         setIsProcessing(false);
         setIsComplete(true);
       });

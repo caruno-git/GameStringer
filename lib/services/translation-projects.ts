@@ -1,7 +1,7 @@
 'use client';
 
 import { get, set } from 'idb-keyval';
-import { getSupabase, isSupabaseConfigured } from '@/lib/social/community-hub-backend';
+import { getSupabase } from '@/lib/social/community-hub-backend';
 import { clientLogger } from '@/lib/client-logger';
 
 export interface TranslationProject {

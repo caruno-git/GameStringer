@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Wifi, WifiOff, CloudOff, RefreshCw } from 'lucide-react';
+import { Wifi, WifiOff, CloudOff } from 'lucide-react';
 import { getNetworkStatus, onNetworkStatusChange, getOfflineQueueLength } from '@/lib/network-resilience';
 
 /**

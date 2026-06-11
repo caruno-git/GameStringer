@@ -38,7 +38,7 @@ import { ensureArray } from '@/lib/array-utils';
 import { clientLogger } from '@/lib/client-logger';
 import { useTranslation } from '@/lib/i18n';
 import { qualityScoringService, type TranslationProject } from '@/lib/quality/quality-scoring';
-import { projectService, type TranslationProject as ActiveProject } from '@/lib/services/translation-projects';
+import { projectService } from '@/lib/services/translation-projects';
 import { toast } from 'sonner';
 
 // ─── Types ──────────────────────────────────────────────────

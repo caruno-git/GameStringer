@@ -8,7 +8,6 @@ import { ProtectedRoute } from '@/components/auth/protected-route';
 import { MainLayout } from '@/components/layout/main-layout';
 import { sessionPersistence } from '@/lib/auth/session-persistence';
 import { isProtectedRoute } from '@/lib/route-config';
-import { Loader2 } from 'lucide-react';
 import { clientLogger } from '@/lib/client-logger';
 
 interface ProfileWrapperProps {

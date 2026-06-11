@@ -14,7 +14,7 @@
 import { SupabaseClient, RealtimeChannel } from '@supabase/supabase-js';
 import { clientLogger } from '@/lib/client-logger';
 import { getSupabase as getSharedSupabase } from './community-hub-backend';
-import { initPresence, setPresenceStatus, goOffline, getOnlineUsers as getUnifiedOnline, onPresenceUpdate, type OnlineUser, type PresenceStatus } from './presence';
+import { initPresence, setPresenceStatus, getOnlineUsers as getUnifiedOnline, onPresenceUpdate, type OnlineUser, type PresenceStatus } from './presence';
 
 // ─── TYPES ──────────────────────────────────────────────────────
 
@@ -480,7 +480,7 @@ export type MessageCallback = (message: ChatMessage) => void;
 export type PresenceCallback = (presence: UserPresence[]) => void;
 
 let _messageSubscription: RealtimeChannel | null = null;
-let _presenceSubscription: RealtimeChannel | null = null;
+const _presenceSubscription: RealtimeChannel | null = null;
 
 export async function subscribeToRoom(roomId: string, onMessage: MessageCallback): Promise<() => void> {
   const supabase = await getSupabase();
