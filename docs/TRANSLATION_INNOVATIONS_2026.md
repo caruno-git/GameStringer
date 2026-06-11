@@ -1,77 +1,112 @@
 # Translation Innovations 2026
 
-Guida completa alle nuove funzionalità di traduzione AI integrate in GameStringer (Aprile 2026).
+Guida completa alle nuove funzionalità di traduzione AI integrate in GameStringer (Aprile–Maggio 2026).
+
+> **Aggiornamento 23/05/2026**: bump del default Google da `gemini-2.0-flash` a **`gemini-3.5-flash`** (frontier model annunciato al Google I/O 2026, GA dal 19/05/2026). Il modello è parametrizzabile via `NEXT_PUBLIC_GEMINI_MODEL` (stesso pattern di `NEXT_PUBLIC_ANTHROPIC_MODEL`).
+>
+> **Verifica 27/05/2026**: pricing `gemini-3.5-flash` confermato a **$1.50 / $9.00 per MTok (input / output)**, ~40% più economico di Gemini 3.1 Pro e ~4× più veloce sui benchmark coding/agentic (Google I/O 2026). Nessuna nuova release Gemini nelle ultime 24h.
+>
+> ⚠️ **Doc vs. codice**: questo documento descrive lo stato target. Il bump effettivo nei sorgenti (`lib/ai/ai-translate-direct.ts`, `lib/ai/ai-post-edit.ts`, `lib/ocr/vision-translate.ts`, `lib/lore-assistant.ts`, `lib/ai/smart-content-router.ts`) è ancora pendente al 27/05/2026: questi file referenziano ancora `gemini-2.0-flash` come stringa hard-coded. Una volta introdotta la lettura di `NEXT_PUBLIC_GEMINI_MODEL`, rimuovere questo blocco.
 
 ## Indice
 
-1. [Gemini 3.1 Flash-Lite](#gemini-31-flash-lite)
-2. [Claude 3.5/4 Sonnet](#claude-354-sonnet)
-3. [DeepL Voice API](#deepl-voice-api)
-4. [Custom Prompt System](#custom-prompt-system)
-5. [Best Practices](#best-practices)
+1. [Gemini 3.5 Flash (default 2026)](#gemini-35-flash-default-2026)
+2. [Gemini 3.1 Flash-Lite (low-cost long-context)](#gemini-31-flash-lite-low-cost-long-context)
+3. [Claude Sonnet 4.6 (creative/narrative)](#claude-sonnet-46)
+4. [DeepL Voice API](#deepl-voice-api)
+5. [Custom Prompt System](#custom-prompt-system)
+6. [Best Practices](#best-practices)
 
 ---
 
-## Gemini 3.1 Flash-Lite
+## Gemini 3.5 Flash (default 2026)
 
 ### Cos'è
 
-Gemini 3.1 Flash-Lite è il nuovo modello Google ottimizzato per contesti lunghi e costi ridotti.
+**Gemini 3.5 Flash** è il nuovo frontier model di Google, annunciato al Google I/O 2026 (19/05/2026) e GA via Gemini API / AI Studio / Antigravity / Gemini Enterprise. È il **default Google** di GameStringer dal 23/05/2026 (provider key `gemini` nel codice e nei chain preset).
 
 ### Specifiche Tecniche
 
-| Caratteristica | Gemini 2.0 Flash | Gemini 3.1 Flash-Lite |
-|----------------|------------------|----------------------|
-| Context Window | 1M token | 1M token |
-| Max Output | 8,192 token | 32,768 token |
-| Costo | $0.075 / 1M token | ~$0.035 / 1M token |
-| Velocità | Molto veloce | Veloce |
-| Lingue | 100+ | 100+ |
+| Caratteristica | Gemini 2.0 Flash (vecchio default) | **Gemini 3.5 Flash (nuovo default)** | Gemini 3.1 Flash-Lite |
+|----------------|------------------------------------|--------------------------------------|----------------------|
+| Context Window | 1M token | **1M token (1.048.576)** | 1M token |
+| Max Output | 8.192 token | **65.536 token (8×)** | 32.768 token |
+| Costo input | $0.075 / 1M token | **$1.50 / 1M token** | ~$0.035 / 1M token |
+| Costo output | $0.30 / 1M token | **$9.00 / 1M token** | ~$0.14 / 1M token |
+| Velocità | Molto veloce | Veloce (frontier intelligence) | Veloce |
+| Lingue | 100+ | **100+** | 100+ |
+
+> 📌 **Note pricing**: 3.5 Flash è ~20× più caro di 3.1 Flash-Lite in input. Per batch RPG molto grandi vale ancora la pena restare su `gemini-3.1` nel preset `long_context`. La leva forte di 3.5 è il **max output 8×** che riduce meccanicamente il numero di chiamate API.
 
 ### Quando Usarlo
 
 ✅ **Ideale per:**
-- Script completi di giochi RPG
-- Documentazione tecnica estesa
-- File di localizzazione con migliaia di stringhe
-- Traduzione batch di multipli file simultaneamente
+- Traduzioni creative dove serve un default solido e moderno
+- Pipeline OCR vision (`lib/ocr/vision-translate.ts`) — multimodale potenziato
+- Post-edit (`lib/ai/ai-post-edit.ts`) — instruction-following più obbediente di 2.0
+- Lore assistant — comprensione contestuale migliorata
 
-❌ **Non consigliato per:**
-- Singole stringhe corte (UI elements)
-- Traduzioni che richiedono creatività elevata
-- Dialoghi con sfumature emotive complesse
+❌ **Quando preferire `gemini-3.1`:**
+- Batch grandi (decine di migliaia di stringhe) → 3.1 costa ~20× meno in input
+- Documenti molto lunghi dove la qualità "frontier" non aggiunge valore percepibile
 
 ### Come Attivarlo
 
 ```typescript
-// Via Chain Preset
-setChainPreset('long_context');
+// Già attivo di default (provider key 'gemini' → gemini-3.5-flash).
+// Override globale via env var:
+//   NEXT_PUBLIC_GEMINI_MODEL=gemini-2.0-flash npm run dev   ← rollback al vecchio default
+//   NEXT_PUBLIC_GEMINI_MODEL=gemini-3.5-flash               ← esplicito nuovo default
 
 // Via codice
-import { translateWithFallback } from '@/lib/ai-translate-direct';
+import { translateWithFallback } from '@/lib/ai/ai-translate-direct';
 
 const result = await translateWithFallback({
-  texts: longScript,
+  texts,
   targetLanguage: 'it',
   sourceLanguage: 'en',
 });
 ```
 
+### Smoke test consigliato
+
+Prima di promuovere oltre dev, fare un round-trip su 50 stringhe e verificare che il regex parser
+`responseText.match(/\[[\s\S]*\]/)` di `ai-translate-direct.ts` regga (3.5 dovrebbe rispettare il JSON-only system prompt anche meglio di 2.0, ma vale lo step di QA).
+
+---
+
+## Gemini 3.1 Flash-Lite (low-cost long-context)
+
+### Cos'è
+
+Gemini 3.1 Flash-Lite resta il modello Google ottimizzato per **contesti lunghi a basso costo**. Continua a essere disponibile come provider esplicito (`gemini-3.1`), separato dal default `gemini` che ora punta a 3.5 Flash.
+
+### Quando Usarlo
+
+✅ **Ideale per:**
+- Script completi di giochi RPG con migliaia di stringhe
+- Documentazione tecnica estesa
+- Traduzione batch di multipli file simultaneamente quando il costo conta più della qualità "frontier"
+
+❌ **Non consigliato per:**
+- Singole stringhe corte (UI elements)
+- Traduzioni che richiedono creatività elevata o sfumature narrative
+
 ### Chain Preset "📚 Long Context"
 
 Ordine provider:
-1. `gemini-3.1` (prima scelta)
-2. `gemini` (fallback)
+1. `gemini-3.1` (prima scelta — low-cost, 32k output)
+2. `gemini` (= gemini-3.5-flash — fallback frontier, 65k output)
 3. `anthropic-claude4` (fallback creativo)
 4. `openai` (fallback finale)
 
 ---
 
-## Claude 3.5/4 Sonnet
+## Claude Sonnet 4.6
 
 ### Cos'è
 
-Claude 3.5 Sonnet (2024-10-22) è il modello Anthropic specializzato in traduzioni narrative e creative.
+Claude Sonnet 4.6 (Anthropic, 17/02/2026) è il modello Anthropic specializzato in traduzioni narrative e creative, default dal 22/05/2026 in GameStringer. Parametrizzabile via `NEXT_PUBLIC_ANTHROPIC_MODEL` (es. `claude-opus-4-6` come opzione premium, `claude-haiku-4-5-20251001` come opzione veloce).
 
 ### Vantaggi
 
@@ -352,15 +387,15 @@ const result = await translateWithFallback({
 
 ## Troubleshooting
 
-### Gemini 3.1 non disponibile
+### Gemini 3.5 / 3.1 non disponibile
 
 **Sintomo**: Rate limit o errore 429
-**Soluzione**: Fallback automatico a Gemini 2.0
+**Soluzione**: Fallback automatico nella chain — default `gemini` (3.5 Flash) → `gemini-3.1` (Flash-Lite, low-cost). `gemini-2.0-flash` resta utilizzabile come override via `NEXT_PUBLIC_GEMINI_MODEL=gemini-2.0-flash` per rollback.
 
-### Claude 3.5 troppo lento
+### Claude troppo lento
 
 **Sintomo**: Timeout su traduzioni lunghe
-**Soluzione**: Usa Gemini 3.1 per contesti >100KB
+**Soluzione**: Usa `gemini-3.1` (Flash-Lite, preset `long_context`) per contesti >100KB. In alternativa, `claude-haiku-4-5-20251001` come scelta veloce in chain creativi.
 
 ### DeepL Voice non funziona
 
@@ -406,10 +441,12 @@ interface TranslateOptions {
 ### Provider Keys
 
 ```typescript
-// Nuovi provider
-'gemini-3.1'           // Gemini 3.1 Flash-Lite
-'anthropic-claude4'     // Claude 3.5/4 Sonnet  
-'deepl-voice'           // DeepL Voice API
+// Provider keys
+'gemini'               // Default Google → gemini-3.5-flash (override: NEXT_PUBLIC_GEMINI_MODEL)
+'gemini-3.1'           // Gemini 3.1 Flash-Lite (low-cost long-context)
+'anthropic-claude4'    // Claude Sonnet 4.6 (default) — override: NEXT_PUBLIC_ANTHROPIC_MODEL
+                       // Opzioni: claude-opus-4-7 (premium $5/$25 MTok), claude-haiku-4-5-20251001 (veloce)
+'deepl-voice'          // DeepL Voice API (GA 15/04/2026)
 ```
 
 ### Chain Preset IDs
