@@ -2479,7 +2479,7 @@ async fn enrich_game_details(app_id: u32) -> Result<SteamGame, String> {
 
 #[tauri::command]
 pub async fn fix_steam_id(_session: State<'_, SessionState>, _new_steam_id: String) -> Result<(), String> {
-    // TODO: Implement logic using sqlx
+    // TODO: implementare la correzione dello SteamID persistito (storage rusqlite)
     log::info!("🔧 fix_steam_id chiamato");
     Err("Not yet implemented".to_string())
 }
