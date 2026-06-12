@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { listen } from '@tauri-apps/api/event';
+import { translateWithFallback } from '@/lib/ai/ai-translate-direct';
 
 // Riga estratta inoltrata dalla DLL via overlay_ipc (evento "gs-overlay-text").
 interface OverlayText {
@@ -10,19 +11,54 @@ interface OverlayText {
   translated: string;
 }
 
+interface OverlayLine {
+  original: string;
+  translated: string;
+  pending: boolean; // traduzione vera ancora in corso
+}
+
 export default function GsOverlayPage() {
-  const [line, setLine] = useState<OverlayText | null>(null);
+  const [line, setLine] = useState<OverlayLine | null>(null);
   const [visible, setVisible] = useState(false);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const reqId = useRef(0); // guardia contro risposte di traduzione stantie
 
   useEffect(() => {
-    const unlisten = listen<OverlayText>('gs-overlay-text', (event) => {
-      setLine(event.payload);
-      setVisible(true);
+    const unlisten = listen<OverlayText>('gs-overlay-text', async (event) => {
+      const msg = event.payload;
+      const myReq = ++reqId.current;
 
-      // Auto-hide dopo 6s di silenzio (nessuna nuova riga).
+      // La DLL traduce solo da cache: se ha già una traduzione (≠ originale)
+      // usala subito; altrimenti mostra l'originale e traduci con lo stack app.
+      const dllTranslated = msg.translated && msg.translated !== msg.original;
+      setLine({
+        original: msg.original,
+        translated: dllTranslated ? msg.translated : msg.original,
+        pending: !dllTranslated,
+      });
+      setVisible(true);
       if (hideTimer.current) clearTimeout(hideTimer.current);
-      hideTimer.current = setTimeout(() => setVisible(false), 6000);
+      hideTimer.current = setTimeout(() => setVisible(false), 8000);
+
+      if (dllTranslated) return; // niente da tradurre, già pronto
+
+      // Traduzione vera (provider configurati + fallback gratuiti senza chiave).
+      try {
+        const res = await translateWithFallback(
+          {
+            texts: [msg.original],
+            targetLanguage: 'it',
+            sourceLanguage: 'auto',
+          },
+          true, // preferWebApis: provider gratuiti senza chiave (overlay affidabile)
+        );
+        if (myReq !== reqId.current) return; // arrivata una riga più recente
+        const t = res.success && res.translations[0] ? res.translations[0] : msg.original;
+        setLine({ original: msg.original, translated: t, pending: false });
+      } catch {
+        if (myReq !== reqId.current) return;
+        setLine({ original: msg.original, translated: msg.original, pending: false });
+      }
     });
 
     return () => {
@@ -46,8 +82,10 @@ export default function GsOverlayPage() {
       >
         <p className="text-sky-400/60 text-sm leading-snug">{line.original}</p>
         <p
-          className="text-white font-semibold text-xl leading-snug mt-1"
-          style={{ textShadow: '0 0 10px rgba(56,189,248,0.35)' }}
+          className={`font-semibold text-xl leading-snug mt-1 ${
+            line.pending ? 'text-white/50 italic' : 'text-white'
+          }`}
+          style={{ textShadow: line.pending ? undefined : '0 0 10px rgba(56,189,248,0.35)' }}
         >
           {line.translated}
         </p>
