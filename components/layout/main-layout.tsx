@@ -1091,6 +1091,15 @@ export function MainLayout({ children }: MainLayoutProps) {
                         <span className="h-1/2 bg-red-500" />
                       </span>
                     )}
+                    {language === 'el' && (
+                      <span className="w-5 h-3.5 rounded-[2px] overflow-hidden flex-shrink-0 border border-white/20 shadow-sm flex flex-col">
+                        <span className="h-1/5 bg-blue-700" />
+                        <span className="h-1/5 bg-white" />
+                        <span className="h-1/5 bg-blue-700" />
+                        <span className="h-1/5 bg-white" />
+                        <span className="h-1/5 bg-blue-700" />
+                      </span>
+                    )}
                     <span className="text-[11px] font-bold tracking-widest">{language.toUpperCase()}</span>
                     <ChevronDown className="h-3.5 w-3.5 text-slate-500 group-hover:text-slate-300 transition-colors" />
                   </Button>
@@ -1186,6 +1195,17 @@ export function MainLayout({ children }: MainLayoutProps) {
                     </span>
                     <span className="flex-1">Polski</span>
                     {language === 'pl' && <Check className="h-4 w-4 text-blue-400" />}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setLanguage('el')} className="gap-3">
+                    <span className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 border border-white/20 shadow-sm flex flex-col">
+                      <span className="h-1/5 bg-blue-700" />
+                      <span className="h-1/5 bg-white" />
+                      <span className="h-1/5 bg-blue-700" />
+                      <span className="h-1/5 bg-white" />
+                      <span className="h-1/5 bg-blue-700" />
+                    </span>
+                    <span className="flex-1">Ελληνικά</span>
+                    {language === 'el' && <Check className="h-4 w-4 text-blue-400" />}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

@@ -4,7 +4,7 @@
  * Le traduzioni sono ora in file JSON separati per lingua in ./locales/
  * Questo elimina i falsi errori IDE causati dal file monolitico da 31K righe.
  * 
- * Lingue supportate: it, en, es, fr, de, ja, zh, ko, pt, ru, pl
+ * Lingue supportate: it, en, es, fr, de, ja, zh, ko, pt, ru, pl, el
  */
 
 import it from './locales/it.json';
@@ -18,6 +18,7 @@ import ko from './locales/ko.json';
 import pt from './locales/pt.json';
 import ru from './locales/ru.json';
 import pl from './locales/pl.json';
+import el from './locales/el.json';
 
 export const translations = {
   it,
@@ -30,7 +31,8 @@ export const translations = {
   ko,
   pt,
   ru,
-  pl
+  pl,
+  el
 } as const;
 
 export type Language = keyof typeof translations;
