@@ -48,7 +48,20 @@ DWORD WINAPI MainThread(LPVOID) {
     GSTranslator::TranslatorConfig cfg;
     cfg.targetLanguage = L"it";
     cfg.sourceLanguage = L"en";
+    // Override da env per test SENZA backend: GS_HOOK_CACHE = path di un file
+    // cache GSTC pre-seedato (formato di cache.cpp). In produzione il path
+    // arriva da GameStringer via IPC/config; speculare a GS_HOOK_LOG.
+    wchar_t cacheEnv[MAX_PATH] = {};
+    if (GetEnvironmentVariableW(L"GS_HOOK_CACHE", cacheEnv, MAX_PATH) > 0) {
+        cfg.cachePath = cacheEnv;
+    }
     GSTranslator::InitializeTranslator(cfg);
+    if (!cfg.cachePath.empty()) {
+        char buf[320];
+        sprintf_s(buf, "[gs-hook] cache pre-seedata da GS_HOOK_CACHE: %ls\n",
+                  cfg.cachePath.c_str());
+        LogA(buf);
+    }
 
     auto sources = gs::SourceRegistry::Instance().CreateAllSorted();
 

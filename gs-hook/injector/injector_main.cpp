@@ -26,6 +26,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <cwchar>  // std::fwprintf, std::wprintf, std::wcslen (I/O e string wide)
 
 int wmain(int argc, wchar_t* argv[]) {
     if (argc < 3) {

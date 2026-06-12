@@ -26,11 +26,20 @@
 #include <vector>
 #include <mutex>
 #include <chrono>
+#include <cwctype>
 
 namespace gs {
 namespace {
 
 TranslateFn g_translate = nullptr;
+
+// Guardia di rientranza: DrawTextW (user32) rende il testo chiamando ExtTextOutW
+// UNA VOLTA PER RIGA VISIVA del word-wrap. Senza questa guardia, il contenuto di
+// DrawText verrebbe catturato due volte: intero dal hook DrawTextW e a pezzi
+// (spezzato per riga) dal hook ExtTextOutW. Mentre siamo dentro DrawTextW
+// ignoriamo le ExtTextOutW interne. È thread_local perché DrawText rende in modo
+// sincrono sul thread chiamante.
+thread_local int g_inDrawText = 0;
 
 // ─── Coalescer di frammenti di testo ─────────────────────────────────────────
 // Bufferizza i frammenti che sembrano appartenere alla stessa riga logica.
@@ -46,21 +55,50 @@ public:
 
         bool closedPrev = false;
         if (!m_buf.empty()) {
+            const long ageMs =
+                (long)std::chrono::duration_cast<std::chrono::milliseconds>(now - m_lastTime).count();
+            const bool tooOld = ageMs > kMaxGapMs;
+            const bool sameDc = (dc == m_dc);
+
+            // (a) stessa riga: frammento che continua orizzontalmente a destra.
             const bool sameLine =
-                dc == m_dc &&
+                sameDc &&
                 std::abs(y - m_y) <= kYTolerancePx &&            // stessa altezza
                 x >= m_lastRight - kXOverlapPx &&                 // continua a destra
                 x <= m_lastRight + kXGapPx;                       // senza salti grandi
-            const bool tooOld =
-                std::chrono::duration_cast<std::chrono::milliseconds>(now - m_lastTime).count()
-                > kMaxGapMs;
-            if (!sameLine || tooOld) {
-                flushed = TakeBuffer();
-                closedPrev = !flushed.empty();
+
+            // (b) riga successiva dello STESSO paragrafo: il word-wrap manda la riga
+            //     dopo a Y maggiore di ~una riga, ripartendo dallo stesso margine
+            //     sinistro. La uniamo con uno spazio invece di chiudere la frase.
+            const int dy = y - m_y;
+            const bool nextLineSameParagraph =
+                kMergeWrappedLines && sameDc && !tooOld &&
+                dy > kYTolerancePx &&
+                dy <= kLineHeightMaxPx &&
+                std::abs(x - m_startX) <= kXLeftMarginTolPx;
+
+            if (sameLine && !tooOld) {
+                m_buf += fragment;                                // continua la riga
+                m_lastRight = x + EstimateWidthPx(dc, fragment);
+                m_lastTime  = now;
+                return false;
             }
+            if (nextLineSameParagraph) {
+                if (!m_buf.empty() && m_buf.back() != L' ') m_buf += L' ';
+                m_buf += fragment;                                // unisci riga wrappata
+                m_y = y; m_startX = x;
+                m_lastRight = x + EstimateWidthPx(dc, fragment);
+                m_lastTime  = now;
+                return false;
+            }
+
+            // Altrimenti: la frase precedente è chiusa.
+            flushed = TakeBuffer();
+            closedPrev = !flushed.empty();
         }
 
-        if (m_buf.empty()) { m_dc = dc; m_y = y; m_startX = x; }
+        // Nuova frase (buffer vuoto o appena flushato).
+        m_dc = dc; m_y = y; m_startX = x;
         m_buf += fragment;
         m_lastRight = x + EstimateWidthPx(dc, fragment);
         m_lastTime  = now;
@@ -77,10 +115,14 @@ private:
     using Clock = std::chrono::steady_clock;
 
     // Parametri da TARARE nello spike (sono il cuore dell'esperimento):
-    static constexpr int  kYTolerancePx = 3;    // glifi sulla stessa riga
-    static constexpr int  kXOverlapPx   = 4;    // tolleranza kerning/overlap
-    static constexpr int  kXGapPx       = 24;   // gap max prima di "nuova parola/colonna"
-    static constexpr long kMaxGapMs     = 80;   // gap temporale → riga diversa
+    static constexpr int  kYTolerancePx     = 3;    // glifi sulla stessa riga
+    static constexpr int  kXOverlapPx       = 4;    // tolleranza kerning/overlap
+    static constexpr int  kXGapPx           = 24;   // gap max prima di "nuova parola/colonna"
+    static constexpr long kMaxGapMs         = 80;   // gap temporale → riga diversa
+    // Merge verticale (righe wrappate dello stesso paragrafo):
+    static constexpr bool kMergeWrappedLines = true; // unisci righe wrappate in 1 frase
+    static constexpr int  kLineHeightMaxPx   = 28;   // dy max tra riga e riga successiva
+    static constexpr int  kXLeftMarginTolPx  = 12;   // la riga dopo riparte ~stesso margine X
 
     std::wstring TakeBuffer() {
         std::wstring out;
@@ -107,11 +149,31 @@ private:
 
 LineCoalescer g_coalescer;
 
-// MODALITÀ SPIKE: se true, NON sostituiamo il testo nel gioco — logghiamo solo
-// le frasi ricostruite su OutputDebugString. È il primo, sicuro esperimento.
-// Quando il coalescer è validato, si passa a sostituzione reale.
-constexpr bool kSpikeLogOnly = true;
+// MODALITÀ:
+//   true  → log-only: NON sostituisce, logga solo le frasi ricostruite
+//           (l'esperimento sicuro iniziale, usato per tarare il coalescer).
+//   false → SOSTITUZIONE REALE: traduce e ridisegna in-place (più log delle
+//           sostituzioni effettuate, così il comportamento resta osservabile).
+// Validato il coalescer, siamo passati a false.
+constexpr bool kSpikeLogOnly = false;
 
+// Euristica: vale la pena tradurre questa stringa? Evita di mandare al
+// translator singoli glifi, numeri puri o punteggiatura (che il word-render
+// emette spessissimo). Richiede ≥2 caratteri e almeno una lettera.
+bool LooksSubstitutable(const std::wstring& s) {
+    if (s.size() < 2) return false;
+    for (wchar_t c : s) {
+        if (iswalpha(c)) return true;
+    }
+    return false;
+}
+
+// Path di sola DIAGNOSTICA (coalescer): ricostruisce la frase dai frammenti e
+// la logga. In modalità sostituzione la riscrittura in-place avviene per-chiamata
+// negli hook (caso "stringa intera per chiamata"); qui restano i casi
+// FRAMMENTATI (glifo-per-glifo) che non possiamo ancora riscrivere in-place
+// perché i glifi originali sono già stati disegnati nelle singole ExtTextOutW.
+// TODO: suppress-and-redraw per il caso glifo-per-glifo.
 void OnFragment(HDC dc, int x, int y, const std::wstring& fragment) {
     if (fragment.empty()) return;
     std::wstring closedLine;
@@ -120,7 +182,10 @@ void OnFragment(HDC dc, int x, int y, const std::wstring& fragment) {
             LogLineW(L"[gs-hook/GDI] FRASE: " + closedLine + L"\n");
         } else if (g_translate) {
             std::wstring t = g_translate(closedLine);
-            (void)t; // TODO(post-spike): sostituzione in-place del testo disegnato
+            if (!t.empty() && t != closedLine) {
+                LogLineW(L"[gs-hook/GDI] (frammentata, non sostituita) " +
+                         closedLine + L" -> " + t + L"\n");
+            }
         }
     }
 }
@@ -132,8 +197,25 @@ ExtTextOutW_t Original_ExtTextOutW = nullptr;
 
 BOOL WINAPI Hook_ExtTextOutW(HDC hdc, int x, int y, UINT options, const RECT* rect,
                              LPCWSTR str, UINT count, const INT* dx) {
-    if (str && count > 0) {
-        OnFragment(hdc, x, y, std::wstring(str, count));
+    // ETO_GLYPH_INDEX: `str` contiene indici di glifo, NON caratteri → non toccare.
+    if (str && count > 0 && g_inDrawText == 0 && !(options & ETO_GLYPH_INDEX)) {
+        std::wstring s(str, count);
+
+        // Sostituzione per-chiamata: caso "stringa intera per chiamata".
+        if (!kSpikeLogOnly && g_translate && LooksSubstitutable(s)) {
+            std::wstring t = g_translate(s);
+            if (!t.empty() && t != s) {
+                LogLineW(L"[gs-hook/GDI] SUBST(ExtTextOut): " + s + L" -> " + t + L"\n");
+                // L'array `dx` (avanzamenti per-glifo) vale per la stringa
+                // ORIGINALE: con un testo di lunghezza diversa non è più valido
+                // → passiamo nullptr (e togliamo ETO_PDY, che lo presuppone).
+                return Original_ExtTextOutW(hdc, x, y, options & ~ETO_PDY, rect,
+                                            t.c_str(), (UINT)t.size(), nullptr);
+            }
+        }
+
+        // Altrimenti: diagnostica/coalescer (log-only o frammenti non sostituibili).
+        OnFragment(hdc, x, y, s);
     }
     return Original_ExtTextOutW(hdc, x, y, options, rect, str, count, dx);
 }
@@ -146,14 +228,32 @@ int WINAPI Hook_DrawTextW(HDC hdc, LPCWSTR str, int count, LPRECT rect, UINT for
     if (str) {
         int len = (count < 0) ? (int)wcslen(str) : count;
         if (len > 0) {
-            // DrawText passa spesso una frase intera → flush immediato.
+            // DrawText passa di solito una frase/paragrafo intero → caso ideale.
             std::wstring whole(str, len);
             if (kSpikeLogOnly) {
                 LogLineW(L"[gs-hook/GDI] DRAWTEXT: " + whole + L"\n");
+            } else if (g_translate && LooksSubstitutable(whole)) {
+                std::wstring t = g_translate(whole);
+                if (!t.empty() && t != whole) {
+                    LogLineW(L"[gs-hook/GDI] SUBST(DrawText): " + whole + L" -> " + t + L"\n");
+                    // Disegna il testo TRADOTTO. `g_translate` è deterministico,
+                    // quindi anche l'eventuale chiamata con DT_CALCRECT (misura)
+                    // riceve la stessa stringa → layout coerente col disegno.
+                    // La guardia sopprime le ExtTextOutW interne del word-wrap,
+                    // evitando che il nostro hook ritraduca il già-tradotto.
+                    ++g_inDrawText;
+                    int r = Original_DrawTextW(hdc, t.c_str(), (int)t.size(), rect, format);
+                    --g_inDrawText;
+                    return r;
+                }
             }
         }
     }
-    return Original_DrawTextW(hdc, str, count, rect, format);
+    // Guardia: sopprime le ExtTextOutW interne generate dal word-wrap di DrawText.
+    ++g_inDrawText;
+    int result = Original_DrawTextW(hdc, str, count, rect, format);
+    --g_inDrawText;
+    return result;
 }
 
 class GdiSource : public ITextSource {

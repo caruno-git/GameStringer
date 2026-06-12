@@ -121,3 +121,5 @@ gs-hook/build-x64/
 gs-hook/build-x86/
 src-tauri/resources/gs-hook/**/*.dll
 src-tauri/resources/gs-hook/**/*.exe
+gs-hook/testapp/build-x64/
+gs-hook/testapp/build-x86/

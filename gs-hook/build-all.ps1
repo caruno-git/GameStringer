@@ -1,4 +1,4 @@
-# build-all.ps1 — builda gs-hook.dll + gs-injector.exe per x64 e x86 (Win32)
+﻿# build-all.ps1 — builda gs-hook.dll + gs-injector.exe per x64 e x86 (Win32)
 # e copia gli artefatti nelle resources Tauri per il bundling.
 #
 # Prerequisiti:
