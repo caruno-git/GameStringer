@@ -17,6 +17,7 @@
 //
 #include "text_source.h"
 #include "gs_log.h"
+#include "gs_overlay_ipc.h"
 #include "translator.h"   // core generico riusato: namespace GSTranslator
 #include <Windows.h>
 #include <MinHook.h>
@@ -101,6 +102,7 @@ DWORD WINAPI CleanupThread(LPVOID) {
     MH_DisableHook(MH_ALL_HOOKS);
     MH_Uninitialize();
     GSTranslator::ShutdownTranslator();
+    gs::overlay::Shutdown();
     return 0;
 }
 

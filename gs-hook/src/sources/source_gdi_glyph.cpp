@@ -25,6 +25,7 @@
 //
 #include "text_source.h"
 #include "gs_log.h"
+#include "gs_overlay_ipc.h"
 #include <Windows.h>
 #include <MinHook.h>
 #include <string>
@@ -93,16 +94,23 @@ private:
 
 GlyphCoalescer g_coalescer;
 
-// Emette una riga ricostruita: log + (se possibile) traduzione per il log.
+// Emette una riga ricostruita: log + traduzione + inoltro all'overlay (IPC).
 void EmitClosedLine(const std::wstring& line) {
     if (line.empty()) return;
     LogLineW(L"[gs-hook/GLYPH] LINEA: " + line + L"\n");
+    std::wstring translated = line;
     if (g_translate) {
         std::wstring t = g_translate(line);
-        if (!t.empty() && t != line) {
-            LogLineW(L"[gs-hook/GLYPH] TRAD: " + line + L" -> " + t + L"\n");
+        if (!t.empty()) {
+            translated = t;
+            if (t != line) {
+                LogLineW(L"[gs-hook/GLYPH] TRAD: " + line + L" -> " + t + L"\n");
+            }
         }
     }
+    // Inoltro fire-and-forget a GameStringer per l'overlay in tempo reale.
+    // Se l'app non è in ascolto, viene scartato senza bloccare il render thread.
+    overlay::Send(line, translated);
 }
 
 // ─── Hook su GetGlyphOutlineW ────────────────────────────────────────────────

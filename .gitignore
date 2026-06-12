@@ -123,3 +123,4 @@ src-tauri/resources/gs-hook/**/*.dll
 src-tauri/resources/gs-hook/**/*.exe
 gs-hook/testapp/build-x64/
 gs-hook/testapp/build-x86/
+gs-hook/testapp/overlay_test_server.ps1
