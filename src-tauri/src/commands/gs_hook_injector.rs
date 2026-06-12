@@ -29,7 +29,10 @@ pub struct InjectionResult {
 
 /// Inietta `gs-hook.dll` (arch corretta) nel processo `process_name`.
 #[command]
-pub async fn inject_gs_hook(process_name: String) -> Result<InjectionResult, String> {
+pub async fn inject_gs_hook(
+    app: tauri::AppHandle,
+    process_name: String,
+) -> Result<InjectionResult, String> {
     log::info!("🎯 Injection gs-hook in: {}", process_name);
 
     #[cfg(target_os = "windows")]
@@ -87,6 +90,12 @@ pub async fn inject_gs_hook(process_name: String) -> Result<InjectionResult, Str
 
         if status.success() {
             log::info!("✅ gs-hook ({}) iniettata in {} (PID {})", arch, process_name, pid);
+            // Apri l'overlay PRIMA che il testo cominci a fluire (modalità "in
+            // tempo reale": le sorgenti di estrazione inoltrano qui). Non blocca
+            // né fa fallire l'injection se la finestra non si crea.
+            if let Err(e) = crate::overlay_ipc::ensure_overlay_window(&app) {
+                log::warn!("Overlay non aperto: {}", e);
+            }
             Ok(InjectionResult {
                 success: true,
                 message: format!("gs-hook ({}) iniettata in {} (PID {})", arch, process_name, pid),

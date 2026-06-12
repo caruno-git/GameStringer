@@ -97,10 +97,12 @@ async fn handle_connection(
     }
 }
 
-/// Apre (o mostra) la finestra overlay del traduttore in tempo reale.
+/// Crea la finestra overlay se non esiste già (o la mostra). Sincrona, così può
+/// essere chiamata sia dal comando sia dal flusso di injection — l'overlay DEVE
+/// esistere PRIMA che la DLL inizi a inoltrare testo: la DLL fa dedup e manda
+/// ogni riga una sola volta, quindi una finestra non ancora pronta la perderebbe.
 /// Modellata sull'overlay OCR già esistente.
-#[tauri::command]
-pub async fn open_gs_overlay(app: AppHandle) -> Result<(), String> {
+pub fn ensure_overlay_window(app: &AppHandle) -> Result<(), String> {
     use tauri::Manager;
 
     if let Some(window) = app.get_webview_window("gs-overlay") {
@@ -110,7 +112,7 @@ pub async fn open_gs_overlay(app: AppHandle) -> Result<(), String> {
     }
 
     tauri::WebviewWindowBuilder::new(
-        &app,
+        app,
         "gs-overlay",
         tauri::WebviewUrl::App("/gs-overlay".into()),
     )
@@ -127,6 +129,12 @@ pub async fn open_gs_overlay(app: AppHandle) -> Result<(), String> {
 
     log::info!("🪟 Overlay gs-hook creato");
     Ok(())
+}
+
+/// Apre (o mostra) la finestra overlay del traduttore in tempo reale.
+#[tauri::command]
+pub async fn open_gs_overlay(app: AppHandle) -> Result<(), String> {
+    ensure_overlay_window(&app)
 }
 
 /// Chiude la finestra overlay.
