@@ -40,6 +40,20 @@ export const useNotifications = (options?: {
   const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const eventListenersRef = useRef<Array<() => void>>([]);
 
+  // Mirror sincrono della lista notifiche. I listener real-time devono decidere
+  // "questo evento cambia davvero la lista?" prima di toccare unreadCount, ma
+  // gli updater di setNotifications non girano subito: un check lì dentro non
+  // può pilotare il badge senza side effect. Chi modifica la lista e poi emette
+  // un evento aggiorna prima questo ref, così l'eco sincrona del proprio evento
+  // viene riconosciuta come duplicato e non altera di nuovo il conteggio.
+  const notificationsRef = useRef<Notification[]>([]);
+
+  useEffect(() => {
+    // Riallinea il mirror per i percorsi che passano solo dallo stato
+    // (caricamenti dal backend, batch ottimistici, reset profilo)
+    notificationsRef.current = notifications;
+  }, [notifications]);
+
   // Opzioni con valori predefiniti
   const {
     autoRefresh = true,
@@ -247,14 +261,17 @@ export const useNotifications = (options?: {
         }) as NotificationResponse<Notification>;
 
         if (result.success && result.data) {
+          const created = result.data;
           // Aggiorna lo stato locale immediatamente per UX migliore
-          setNotifications(prev => [result.data!, ...prev.slice(0, maxNotifications - 1)]);
+          notificationsRef.current = [created, ...notificationsRef.current.slice(0, maxNotifications - 1)];
+          setNotifications(prev => [created, ...prev.slice(0, maxNotifications - 1)]);
           setUnreadCount(prev => prev + 1);
           setLastUpdated(new Date());
 
-          // Emetti evento per altri componenti
+          // Emetti evento per altri componenti: il listener di questa istanza
+          // lo riconosce come eco (id già nel mirror) e non riconta il badge
           window.dispatchEvent(new CustomEvent('notification-created', {
-            detail: result.data
+            detail: created
           }));
 
           return true;
@@ -292,6 +309,7 @@ export const useNotifications = (options?: {
         localStorage.setItem(storageKey, JSON.stringify(storedNotifications));
 
         // Aggiorna stato locale
+        notificationsRef.current = [newNotification, ...notificationsRef.current.slice(0, maxNotifications - 1)];
         setNotifications(prev => [newNotification, ...prev.slice(0, maxNotifications - 1)]);
         setUnreadCount(prev => prev + 1);
         setLastUpdated(new Date());
@@ -314,9 +332,15 @@ export const useNotifications = (options?: {
   const markAsRead = useCallback(async (notificationId: string): Promise<boolean> => {
     if (!currentProfile) return false;
 
-    // Aggiornamento ottimistico
-    const wasUnread = notifications.find(n => n.id === notificationId && !n.readAt);
+    // Aggiornamento ottimistico, anche sul mirror: l'eco di 'notification-read'
+    // emessa sotto deve trovare la notifica già letta e non decrementare ancora
+    const wasUnread = notificationsRef.current.find(n => n.id === notificationId && !n.readAt);
     if (wasUnread) {
+      notificationsRef.current = notificationsRef.current.map(n =>
+        n.id === notificationId
+          ? { ...n, readAt: new Date().toISOString() }
+          : n
+      );
       setNotifications(prev => prev.map(n =>
         n.id === notificationId
           ? { ...n, readAt: new Date().toISOString() }
@@ -341,15 +365,7 @@ export const useNotifications = (options?: {
           }));
           return true;
         } else {
-          // Rollback in caso di errore
-          if (wasUnread) {
-            setNotifications(prev => prev.map(n =>
-              n.id === notificationId
-                ? { ...n, readAt: undefined }
-                : n
-            ));
-            setUnreadCount(prev => prev + 1);
-          }
+          // Il rollback avviene una sola volta, nel catch
           throw new Error(result.error || 'Errore nel marcare notifica come letta');
         }
       } else {
@@ -379,6 +395,11 @@ export const useNotifications = (options?: {
 
       // Rollback in caso di errore
       if (wasUnread) {
+        notificationsRef.current = notificationsRef.current.map(n =>
+          n.id === notificationId
+            ? { ...n, readAt: undefined }
+            : n
+        );
         setNotifications(prev => prev.map(n =>
           n.id === notificationId
             ? { ...n, readAt: undefined }
@@ -389,7 +410,7 @@ export const useNotifications = (options?: {
 
       return false;
     }
-  }, [currentProfile, notifications]);
+  }, [currentProfile]);
 
   // Elimina notifica
   const deleteNotification = useCallback(async (notificationId: string): Promise<boolean> => {
@@ -650,45 +671,60 @@ export const useNotifications = (options?: {
     // Handler per nuove notifiche
     const handleNewNotification = (event: CustomEvent) => {
       const notification = event.detail;
-      if (notification && notification.profileId === currentProfile.id) {
-        setNotifications(prev => {
-          // Evita duplicati
-          if (prev.find(n => n.id === notification.id)) return prev;
-          return [notification, ...prev.slice(0, maxNotifications - 1)];
-        });
-        setUnreadCount(prev => prev + 1);
-        setLastUpdated(new Date());
-      }
+      if (!notification || notification.profileId !== currentProfile.id) return;
+
+      // Eco del proprio createNotification o evento duplicato: la lista non
+      // cambierebbe, quindi non deve cambiare nemmeno unreadCount
+      if (notificationsRef.current.find(n => n.id === notification.id)) return;
+
+      notificationsRef.current = [notification, ...notificationsRef.current.slice(0, maxNotifications - 1)];
+      setNotifications(prev => {
+        // Evita duplicati
+        if (prev.find(n => n.id === notification.id)) return prev;
+        return [notification, ...prev.slice(0, maxNotifications - 1)];
+      });
+      setUnreadCount(prev => prev + 1);
+      setLastUpdated(new Date());
     };
 
     // Handler per notifiche lette
     const handleNotificationRead = (event: CustomEvent) => {
       const { notificationId, profileId } = event.detail;
-      if (profileId === currentProfile.id) {
-        setNotifications(prev => prev.map(n =>
-          n.id === notificationId
-            ? { ...n, readAt: new Date().toISOString() }
-            : n
-        ));
-        setUnreadCount(prev => Math.max(0, prev - 1));
-      }
+      if (profileId !== currentProfile.id) return;
+
+      // Decrementa solo se la notifica è in lista ed è ancora non letta:
+      // l'eco di markAsRead arriva con l'update ottimistico già applicato
+      const target = notificationsRef.current.find(n => n.id === notificationId);
+      if (!target || target.readAt) return;
+
+      notificationsRef.current = notificationsRef.current.map(n =>
+        n.id === notificationId
+          ? { ...n, readAt: new Date().toISOString() }
+          : n
+      );
+      setNotifications(prev => prev.map(n =>
+        n.id === notificationId
+          ? { ...n, readAt: new Date().toISOString() }
+          : n
+      ));
+      setUnreadCount(prev => Math.max(0, prev - 1));
     };
 
     // Handler per notifiche eliminate
     const handleNotificationDeleted = (event: CustomEvent) => {
       const { notificationId, profileId } = event.detail;
-      if (profileId === currentProfile.id) {
-        setNotifications(prev => {
-          const notification = prev.find(n => n.id === notificationId);
-          const newNotifications = prev.filter(n => n.id !== notificationId);
+      if (profileId !== currentProfile.id) return;
 
-          // Aggiorna conteggio non lette se necessario
-          if (notification && !notification.readAt) {
-            setUnreadCount(prevCount => Math.max(0, prevCount - 1));
-          }
+      const target = notificationsRef.current.find(n => n.id === notificationId);
+      if (!target) return;
 
-          return newNotifications;
-        });
+      notificationsRef.current = notificationsRef.current.filter(n => n.id !== notificationId);
+      setNotifications(prev => prev.filter(n => n.id !== notificationId));
+
+      // Il badge scende solo se la notifica eliminata era non letta; il check
+      // sta fuori dall'updater di setNotifications, che deve restare puro
+      if (!target.readAt) {
+        setUnreadCount(prev => Math.max(0, prev - 1));
       }
     };
 

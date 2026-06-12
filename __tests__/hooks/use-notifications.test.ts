@@ -161,12 +161,11 @@ describe('useNotifications', () => {
 
   describe('CRUD Operations', () => {
     it('should create notification successfully', async () => {
-      // enableRealTime: false — con il real-time attivo l'evento
-      // 'notification-created' emesso da createNotification viene ri-gestito
-      // dal listener dell'hook stesso, che deduplica la lista ma incrementa
-      // comunque unreadCount (doppio conteggio: bug noto, segnalato).
-      // Qui verifichiamo la semantica di createNotification in isolamento.
-      const { result } = renderHook(() => useNotifications({ enableRealTime: false }));
+      // Real-time attivo (default): l'eco dell'evento 'notification-created'
+      // emesso da createNotification viene riconosciuta come duplicato dal
+      // listener dell'hook, quindi il badge sale di 1, non di 2
+      // (regressione: doppio conteggio di unreadCount).
+      const { result } = renderHook(() => useNotifications());
 
       await waitFor(() => {
         expect(result.current.notifications).toEqual(mockNotifications);
@@ -186,6 +185,7 @@ describe('useNotifications', () => {
 
       expect(createResult!).toBe(true);
       expect(result.current.notifications.length).toBe(3);
+      expect(result.current.notifications.filter(n => n.id === createdNotification.id)).toHaveLength(1);
       expect(result.current.unreadCount).toBe(2);
     });
 
@@ -439,6 +439,57 @@ describe('useNotifications', () => {
 
       expect(result.current.notifications).toHaveLength(3);
       expect(result.current.unreadCount).toBe(2);
+    });
+
+    it('should ignore duplicate notification-created events', async () => {
+      const { result } = renderHook(() => useNotifications({ enableRealTime: true }));
+
+      await waitFor(() => {
+        expect(result.current.notifications).toEqual(mockNotifications);
+      });
+
+      // Stesso evento due volte nello stesso tick: il secondo arriva prima che
+      // React abbia processato gli updater del primo, quindi la dedup deve
+      // essere sincrona e coprire anche unreadCount, non solo la lista
+      act(() => {
+        window.dispatchEvent(new CustomEvent('notification-created', {
+          detail: createdNotification
+        }));
+        window.dispatchEvent(new CustomEvent('notification-created', {
+          detail: createdNotification
+        }));
+      });
+
+      expect(result.current.notifications).toHaveLength(3);
+      expect(result.current.unreadCount).toBe(2);
+    });
+
+    it('should not double-decrement unreadCount on the markAsRead echo', async () => {
+      const { result } = renderHook(() => useNotifications({ enableRealTime: true }));
+
+      await waitFor(() => {
+        expect(result.current.notifications).toEqual(mockNotifications);
+      });
+
+      // Porta unreadCount a 2: con una sola non letta un eventuale doppio
+      // decremento verrebbe mascherato dal clamp Math.max(0, ...)
+      act(() => {
+        window.dispatchEvent(new CustomEvent('notification-created', {
+          detail: createdNotification
+        }));
+      });
+      expect(result.current.unreadCount).toBe(2);
+
+      // markAsRead applica l'update ottimistico E emette 'notification-read':
+      // l'eco ri-processata dal listener non deve decrementare una seconda volta
+      let markResult: boolean;
+      await act(async () => {
+        markResult = await result.current.markAsRead('notif-1');
+      });
+
+      expect(markResult!).toBe(true);
+      expect(result.current.unreadCount).toBe(1);
+      expect(result.current.notifications.find(n => n.id === 'notif-1')?.readAt).toBeDefined();
     });
 
     it('should handle notification read events', async () => {

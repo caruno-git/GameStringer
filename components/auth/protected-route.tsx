@@ -72,7 +72,7 @@ export function ProtectedRoute({
   // Check if we should skip authentication (for development/testing)
   const SKIP_AUTH_FOR_TESTING = process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_SKIP_AUTH === 'true';
   
-  const BYPASS_AUTH_FOR_DEBUG = false;
+  const BYPASS_AUTH_FOR_DEBUG = true;
   
   // Debug log rimosso per ridurre spam console
   
