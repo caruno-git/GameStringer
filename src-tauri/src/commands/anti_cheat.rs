@@ -34,6 +34,26 @@ pub async fn detect_anti_cheat_systems(pid: u32) -> Result<serde_json::Value, St
     }
 }
 
+/// Pre-flight UI: valuta il gate anti-cheat per un processo SENZA iniettare.
+/// Permette al frontend di mostrare lo stato "bloccato" prima di tentare l'injection.
+/// È lo stesso gate rigido applicato dal backend prima di ogni injection.
+#[tauri::command]
+pub async fn check_injection_gate(pid: u32) -> Result<serde_json::Value, String> {
+    log::info!("🛡️ Pre-flight gate anti-cheat per PID: {}", pid);
+
+    let manager = AntiCheatManager::new();
+    let gate = manager.evaluate_injection_gate(pid);
+
+    Ok(serde_json::json!({
+        "pid": pid,
+        "allowed": gate.allowed,
+        "detected_systems": gate.detected_systems,
+        "risk_level": gate.risk_level,
+        "reason": gate.reason,
+        "timestamp": chrono::Utc::now().to_rfc3339()
+    }))
+}
+
 #[tauri::command]
 pub async fn get_anti_cheat_compatibility_strategies(anti_cheat_name: String) -> Result<serde_json::Value, String> {
     log::info!("🛡️ Recupero strategie compatibilità per: {}", anti_cheat_name);

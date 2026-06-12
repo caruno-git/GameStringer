@@ -95,6 +95,8 @@ pub mod anti_cheat;
 #[cfg(windows)]
 pub mod unity_injector;
 #[cfg(windows)]
+pub mod gs_hook_injector;
+#[cfg(windows)]
 pub mod ue_translator;
 #[cfg(windows)]
 pub mod screen_capture;
@@ -134,6 +136,8 @@ pub mod injekt { pub use super::platform_stubs::*; }
 pub mod anti_cheat { pub use super::platform_stubs::*; }
 #[cfg(not(windows))]
 pub mod unity_injector { pub use super::platform_stubs::*; }
+#[cfg(not(windows))]
+pub mod gs_hook_injector { pub use super::platform_stubs::*; }
 #[cfg(not(windows))]
 pub mod ue_translator { pub use super::platform_stubs::*; }
 #[cfg(not(windows))]

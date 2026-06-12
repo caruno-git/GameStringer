@@ -16,18 +16,17 @@
 // generici translator.cpp / cache.cpp / ipc.cpp riusati da unreal-translator.
 //
 #include "text_source.h"
+#include "gs_log.h"
+#include "translator.h"   // core generico riusato: namespace GSTranslator
 #include <Windows.h>
 #include <MinHook.h>
 #include <vector>
 #include <string>
 
-// Dichiarazioni del core generico (definite in translator.cpp/ipc.cpp riusati).
-// Adattare i namespace a quelli reali del core in fase di build.
-namespace gscore {
-    bool InitCore(const wchar_t* targetLang, const wchar_t* sourceLang);
-    void ShutdownCore();
-    std::wstring Translate(const std::wstring& original); // cache + IPC
-}
+// Richiesto dal core riusato (utils.cpp fa `extern HMODULE g_hModule` in
+// GSTranslator::Utils per ricavare la directory della DLL). In unreal-translator
+// è definito nel suo dllmain; qui lo definiamo noi.
+namespace GSTranslator { namespace Utils { HMODULE g_hModule = nullptr; } }
 
 namespace {
 
@@ -35,10 +34,10 @@ std::vector<std::unique_ptr<gs::ITextSource>> g_active;
 
 // Bridge passato a ogni sorgente: punto unico verso cache/IPC del core.
 std::wstring TranslateBridge(const std::wstring& original) {
-    return gscore::Translate(original);
+    return GSTranslator::Translate(original);
 }
 
-void LogA(const char* msg) { OutputDebugStringA(msg); }
+void LogA(const char* msg) { gs::LogLineA(msg); }
 
 DWORD WINAPI MainThread(LPVOID) {
     Sleep(3000); // attendi il caricamento del gioco
@@ -46,7 +45,10 @@ DWORD WINAPI MainThread(LPVOID) {
     if (MH_Initialize() != MH_OK) { LogA("[gs-hook] MinHook init FAILED\n"); return 1; }
 
     // Lingue: in produzione arrivano da GameStringer via IPC/config. Default qui.
-    gscore::InitCore(L"it", L"en");
+    GSTranslator::TranslatorConfig cfg;
+    cfg.targetLanguage = L"it";
+    cfg.sourceLanguage = L"en";
+    GSTranslator::InitializeTranslator(cfg);
 
     auto sources = gs::SourceRegistry::Instance().CreateAllSorted();
 
@@ -85,7 +87,7 @@ DWORD WINAPI CleanupThread(LPVOID) {
     g_active.clear();
     MH_DisableHook(MH_ALL_HOOKS);
     MH_Uninitialize();
-    gscore::ShutdownCore();
+    GSTranslator::ShutdownTranslator();
     return 0;
 }
 
@@ -94,6 +96,7 @@ DWORD WINAPI CleanupThread(LPVOID) {
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID) {
     switch (reason) {
         case DLL_PROCESS_ATTACH:
+            GSTranslator::Utils::g_hModule = hModule;
             DisableThreadLibraryCalls(hModule);
             CreateThread(nullptr, 0, MainThread, nullptr, 0, nullptr);
             break;

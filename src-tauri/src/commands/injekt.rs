@@ -145,7 +145,10 @@ fn check_admin_privileges() -> bool {
 #[tauri::command]
 pub async fn start_injection(process_id: u32, process_name: String, config: serde_json::Value) -> Result<serde_json::Value, String> {
     log::info!("🚀 Avvio iniezione per processo: {} (PID: {})", process_name, process_id);
-    
+
+    // 🛡️ GATE ANTI-CHEAT — blocco rigido prima di avviare qualsiasi sessione di injection.
+    crate::anti_cheat::assert_injection_allowed(process_id)?;
+
     let session_id = format!("session_{}_{}", process_id, chrono::Utc::now().timestamp_millis());
     let session = serde_json::json!({
         "process_id": process_id,
@@ -587,7 +590,10 @@ pub async fn get_multi_process_active_processes(game_name: String) -> Result<ser
 #[tauri::command]
 pub async fn force_inject_process(game_name: String, process_id: u32) -> Result<serde_json::Value, String> {
     log::info!("🔧 Forzatura injection per processo PID: {} (gioco: {})", process_id, game_name);
-    
+
+    // 🛡️ GATE ANTI-CHEAT — la forzatura non scavalca il gate: blocco rigido qui in cima.
+    crate::anti_cheat::assert_injection_allowed(process_id)?;
+
     if let Ok(mut instances) = MULTI_PROCESS_INSTANCES.lock() {
         if let Some(multi_injekt) = instances.get_mut(&game_name) {
             match multi_injekt.force_inject_process(process_id) {

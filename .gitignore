@@ -114,3 +114,10 @@ __tr.json
 # AI tools
 .claude/
 .kiro/
+
+# gs-hook build artifacts (prodotti da build-all.ps1)
+gs-hook/build/
+gs-hook/build-x64/
+gs-hook/build-x86/
+src-tauri/resources/gs-hook/**/*.dll
+src-tauri/resources/gs-hook/**/*.exe

@@ -146,6 +146,15 @@ pub async fn stop_unity_translation_server() -> Result<String, String> {
 }
 
 // ═══════════════════════════════════════════════════════════════════
+// commands::gs_hook_injector stubs
+// ═══════════════════════════════════════════════════════════════════
+
+#[tauri::command]
+pub async fn inject_gs_hook(_process_name: String) -> Result<InjectionResult, String> {
+    Err(PLATFORM_ERR.into())
+}
+
+// ═══════════════════════════════════════════════════════════════════
 // commands::ue_translator stubs
 // ═══════════════════════════════════════════════════════════════════
 

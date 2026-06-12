@@ -1,6 +1,7 @@
 #include "utils.h"
 #include <cstdarg>
 #include <cstdio>
+#include <vector>
 #include <Psapi.h>
 
 namespace GSTranslator {

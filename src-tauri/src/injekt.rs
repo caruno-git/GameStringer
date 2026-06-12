@@ -203,26 +203,17 @@ impl InjektTranslator {
             self.process_handle = Some(Arc::new(SafeHandle::new(handle)));
         }
         
-        // Verifica compatibilità anti-cheat con sistema avanzato
-        let anti_cheat_detection = self.anti_cheat_manager.detect_anti_cheat(target.pid)?;
-        
-        if !self.anti_cheat_manager.is_injection_safe(&anti_cheat_detection) {
-            let detected_systems = anti_cheat_detection.detected_systems.join(", ");
-            return Err(format!("🚨 Sistemi anti-cheat rilevati: {}. Injection non sicura (Risk: {:?})", 
-                detected_systems, anti_cheat_detection.risk_assessment).into());
-        }
-        
-        // Applica delay se necessario per compatibilità
-        if let Some(delay_ms) = self.anti_cheat_manager.get_injection_delay(&anti_cheat_detection) {
-            log::info!("⏱️ Applicazione delay di {}ms per compatibilità anti-cheat", delay_ms);
-            thread::sleep(Duration::from_millis(delay_ms));
-        }
-        
-        // Log informazioni anti-cheat
-        if !anti_cheat_detection.detected_systems.is_empty() {
-            log::warn!("⚠️ Sistemi anti-cheat rilevati: {} (Modalità: {:?})", 
-                anti_cheat_detection.detected_systems.join(", "), 
-                anti_cheat_detection.recommended_mode);
+        // 🛡️ GATE ANTI-CHEAT — blocco rigido: se viene rilevato QUALSIASI anti-cheat
+        // l'injection viene negata. Nessuna strategia di bypass/stealth/delay: la
+        // presenza di un anti-cheat equivale a injection negata.
+        let gate = self.anti_cheat_manager.evaluate_injection_gate(target.pid);
+        if !gate.allowed {
+            return Err(format!(
+                "🛡️ Injection bloccata dal gate anti-cheat: {} (rischio {:?}). \
+                 L'injection ha la firma di un cheat: su un multiplayer competitivo \
+                 significherebbe un ban.",
+                gate.reason, gate.risk_level
+            ).into());
         }
         
         // Aggiorna stats

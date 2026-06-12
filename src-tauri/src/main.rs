@@ -397,6 +397,7 @@ fn main() {
             commands::injekt::force_inject_process,
             commands::injekt::list_multi_process_games,
             // Anti-Cheat System
+            commands::anti_cheat::check_injection_gate,
             commands::anti_cheat::detect_anti_cheat_systems,
             commands::anti_cheat::get_anti_cheat_compatibility_strategies,
             commands::anti_cheat::get_anti_cheat_cache_stats,
@@ -639,6 +640,9 @@ fn main() {
             commands::unity_injector::inject_unity_translator,
             commands::unity_injector::start_unity_translation_server,
             commands::unity_injector::stop_unity_translation_server,
+
+            // gs-hook Direct Injection (dual-arch: GDI/Unity/Unreal universale)
+            commands::gs_hook_injector::inject_gs_hook,
 
             // OCR Translator (Universal - funziona su qualsiasi gioco)
             ocr_translator::start_ocr_translator,

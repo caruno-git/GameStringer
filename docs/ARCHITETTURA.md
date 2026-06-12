@@ -17,6 +17,19 @@ Software desktop professionale per la localizzazione di videogiochi che analizza
 
 ---
 
+## Sicurezza: Gate Anti-Cheat (INVARIANTE)
+
+**Regola vincolante:** ogni path che inietta a runtime in un processo di gioco (DLL injection, hook in memoria, `WriteProcessMemory`/`CreateRemoteThread`) **deve** passare dal choke-point unico `anti_cheat::assert_injection_allowed(pid)` **prima** di toccare il processo. Non esistono eccezioni né strategie di bypass: se viene rilevato un qualsiasi anti-cheat (EAC/BattlEye/VAC, ecc.) l'injection è **negata** (blocco rigido). La detection fallita è **fail-closed** (blocca).
+
+Motivo: l'injection ha la firma di un cheat; su un multiplayer competitivo significa ban per l'utente.
+
+- **Gate centralizzato**: `src-tauri/src/anti_cheat.rs` → `assert_injection_allowed()`, `AntiCheatManager::evaluate_injection_gate()`, `gate_decision()` (logica pura, unit-tested).
+- **Pre-flight UI**: comando Tauri `check_injection_gate(pid)` per mostrare lo stato bloccato senza tentare l'injection.
+- **Path già agganciati**: `ue_translator::injector::inject_translator_dll`, `commands::unity_injector::inject_dll`, `commands::injekt::{start_injection, force_inject_process}`, `injekt::InjektTranslator::start`.
+- **Per ogni nuovo injector/engine**: aggiungere `crate::anti_cheat::assert_injection_allowed(pid)?` come prima istruzione, prima di `OpenProcess`/alloc/scrittura. (Vedi anche la regola su `startAutoTranslate()` per l'orchestrazione frontend.)
+
+---
+
 ## Nuovi Moduli v1.8.1
 
 ### LIVE TRANSLATION OVERLAY

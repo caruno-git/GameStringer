@@ -19,6 +19,7 @@
 // frasi pulite da un gioco reale?". Se sì → idea #1 confermata.
 //
 #include "text_source.h"
+#include "gs_log.h"
 #include <Windows.h>
 #include <MinHook.h>
 #include <string>
@@ -116,8 +117,7 @@ void OnFragment(HDC dc, int x, int y, const std::wstring& fragment) {
     std::wstring closedLine;
     if (g_coalescer.Add(dc, x, y, fragment, closedLine) && !closedLine.empty()) {
         if (kSpikeLogOnly) {
-            std::wstring dbg = L"[gs-hook/GDI] FRASE: " + closedLine + L"\n";
-            OutputDebugStringW(dbg.c_str());
+            LogLineW(L"[gs-hook/GDI] FRASE: " + closedLine + L"\n");
         } else if (g_translate) {
             std::wstring t = g_translate(closedLine);
             (void)t; // TODO(post-spike): sostituzione in-place del testo disegnato
@@ -149,7 +149,7 @@ int WINAPI Hook_DrawTextW(HDC hdc, LPCWSTR str, int count, LPRECT rect, UINT for
             // DrawText passa spesso una frase intera → flush immediato.
             std::wstring whole(str, len);
             if (kSpikeLogOnly) {
-                OutputDebugStringW((L"[gs-hook/GDI] DRAWTEXT: " + whole + L"\n").c_str());
+                LogLineW(L"[gs-hook/GDI] DRAWTEXT: " + whole + L"\n");
             }
         }
     }

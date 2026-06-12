@@ -24,7 +24,11 @@ pub fn inject_translator_dll(process_id: u32, dll_path: &Path) -> Result<Injecti
     if !dll_path.exists() {
         return Err(format!("DLL non trovata: {}", dll_path.display()));
     }
-    
+
+    // 🛡️ GATE ANTI-CHEAT — choke-point obbligatorio prima di CreateRemoteThread/LoadLibraryW.
+    // Se viene rilevato un anti-cheat, l'injection è negata (blocco rigido, niente bypass).
+    crate::anti_cheat::assert_injection_allowed(process_id)?;
+
     log::info!("🔧 Tentativo injection DLL in processo {}", process_id);
     log::info!("📁 DLL path: {}", dll_path.display());
     

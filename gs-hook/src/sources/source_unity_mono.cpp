@@ -12,6 +12,7 @@
 #include <Windows.h>
 #include <MinHook.h>
 #include <mutex>
+#include <cstring>   // strlen / strchr
 
 namespace gs {
 namespace {

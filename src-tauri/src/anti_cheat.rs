@@ -70,6 +70,21 @@ pub struct AntiCheatDetection {
     pub details: HashMap<String, String>,
 }
 
+/// Esito del gate anti-cheat applicato prima di qualsiasi injection.
+///
+/// È un blocco RIGIDO: se viene rilevato un qualsiasi sistema anti-cheat,
+/// `allowed` è `false` e l'injection non deve partire. Non esistono strategie
+/// di bypass — la presenza di anti-cheat equivale a injection negata, perché
+/// l'injection ha la firma di un cheat e su un multiplayer competitivo
+/// significherebbe un ban per l'utente.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InjectionGateResult {
+    pub allowed: bool,
+    pub detected_systems: Vec<String>,
+    pub risk_level: RiskLevel,
+    pub reason: String,
+}
+
 #[derive(Debug)]
 pub struct AntiCheatManager {
     known_systems: HashMap<String, AntiCheatInfo>,
@@ -243,6 +258,48 @@ impl AntiCheatManager {
     pub fn is_injection_safe(&self, detection: &AntiCheatDetection) -> bool {
         matches!(detection.risk_assessment, RiskLevel::Low) &&
         !matches!(detection.recommended_mode, CompatibilityMode::Disabled)
+    }
+
+    /// Gate anti-cheat: valuta se l'injection sul processo `pid` può partire.
+    ///
+    /// Esegue la detection e applica un blocco RIGIDO. Se la detection fallisce,
+    /// il gate è fail-closed (blocca) perché non possiamo garantire la sicurezza.
+    pub fn evaluate_injection_gate(&self, pid: u32) -> InjectionGateResult {
+        match self.detect_anti_cheat(pid) {
+            Ok(detection) => Self::gate_decision(&detection),
+            Err(e) => InjectionGateResult {
+                allowed: false,
+                detected_systems: Vec::new(),
+                risk_level: RiskLevel::Critical,
+                reason: format!(
+                    "Detection anti-cheat fallita: {}. Injection bloccata per sicurezza (fail-closed).",
+                    e
+                ),
+            },
+        }
+    }
+
+    /// Logica pura di decisione del gate (testabile senza processi reali):
+    /// qualsiasi anti-cheat rilevato ⇒ injection negata.
+    fn gate_decision(detection: &AntiCheatDetection) -> InjectionGateResult {
+        if detection.detected_systems.is_empty() {
+            InjectionGateResult {
+                allowed: true,
+                detected_systems: Vec::new(),
+                risk_level: RiskLevel::Low,
+                reason: "Nessun sistema anti-cheat rilevato".to_string(),
+            }
+        } else {
+            InjectionGateResult {
+                allowed: false,
+                detected_systems: detection.detected_systems.clone(),
+                risk_level: detection.risk_assessment.clone(),
+                reason: format!(
+                    "Sistemi anti-cheat rilevati: {}",
+                    detection.detected_systems.join(", ")
+                ),
+            }
+        }
     }
 
     #[allow(dead_code)] // Calcolo delay injection - essenziale per timing sicuro
@@ -420,5 +477,73 @@ impl AntiCheatState {
             manager: Arc::new(Mutex::new(AntiCheatManager::new())),
             last_detection: Arc::new(Mutex::new(None)),
         }
+    }
+}
+
+// === GATE DI INJECTION (CHOKE-POINT UNICO) ===
+
+/// Choke-point obbligatorio da chiamare PRIMA di qualsiasi injection o caricamento
+/// di DLL nel processo target. Ritorna `Err(messaggio)` se l'injection va bloccata.
+///
+/// Ogni nuovo engine/injector DEVE passare da qui: è l'unico punto autorevole che
+/// garantisce che GameStringer non inietti in processi protetti da anti-cheat.
+pub fn assert_injection_allowed(pid: u32) -> Result<(), String> {
+    let manager = AntiCheatManager::new();
+    let gate = manager.evaluate_injection_gate(pid);
+
+    if gate.allowed {
+        log::info!("🛡️ Gate anti-cheat OK per PID {}: {}", pid, gate.reason);
+        Ok(())
+    } else {
+        log::warn!("🛡️ Gate anti-cheat BLOCCA PID {}: {}", pid, gate.reason);
+        Err(format!(
+            "🛡️ Injection bloccata dal gate anti-cheat. {} (rischio {:?}). \
+             L'injection ha la firma di un cheat: su un multiplayer competitivo \
+             significherebbe un ban. GameStringer non inietta in processi protetti \
+             da anti-cheat.",
+            gate.reason, gate.risk_level
+        ))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn detection_with(systems: Vec<&str>, risk: RiskLevel) -> AntiCheatDetection {
+        AntiCheatDetection {
+            detected_systems: systems.into_iter().map(|s| s.to_string()).collect(),
+            risk_assessment: risk,
+            recommended_mode: CompatibilityMode::Direct,
+            detection_time: Utc::now(),
+            process_id: 1234,
+            details: HashMap::new(),
+        }
+    }
+
+    #[test]
+    fn gate_allows_when_no_anti_cheat() {
+        let detection = detection_with(vec![], RiskLevel::Low);
+        let gate = AntiCheatManager::gate_decision(&detection);
+        assert!(gate.allowed);
+        assert!(gate.detected_systems.is_empty());
+    }
+
+    #[test]
+    fn gate_blocks_on_any_detected_system() {
+        // Anche un anti-cheat a basso rischio deve bloccare: è una blocklist.
+        let detection = detection_with(vec!["PunkBuster"], RiskLevel::Low);
+        let gate = AntiCheatManager::gate_decision(&detection);
+        assert!(!gate.allowed);
+        assert_eq!(gate.detected_systems, vec!["PunkBuster".to_string()]);
+    }
+
+    #[test]
+    fn gate_blocks_on_high_risk_competitive_anti_cheat() {
+        let detection = detection_with(vec!["Easy Anti-Cheat", "BattlEye"], RiskLevel::High);
+        let gate = AntiCheatManager::gate_decision(&detection);
+        assert!(!gate.allowed);
+        assert_eq!(gate.detected_systems.len(), 2);
+        assert!(matches!(gate.risk_level, RiskLevel::High));
     }
 }

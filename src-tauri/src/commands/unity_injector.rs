@@ -143,12 +143,16 @@ fn inject_dll(pid: u32, dll_path: &Path) -> Result<(), String> {
         fn GetProcAddress(module: *mut std::ffi::c_void, name: *const i8) -> *mut std::ffi::c_void;
     }
     
+    // 🛡️ GATE ANTI-CHEAT — choke-point obbligatorio prima di CreateRemoteThread/LoadLibrary.
+    // Blocco rigido: se viene rilevato un anti-cheat, l'injection è negata.
+    crate::anti_cheat::assert_injection_allowed(pid)?;
+
     const PROCESS_ALL_ACCESS: u32 = 0x1F0FFF;
     const MEM_COMMIT: u32 = 0x1000;
     const MEM_RESERVE: u32 = 0x2000;
     const MEM_RELEASE: u32 = 0x8000;
     const PAGE_READWRITE: u32 = 0x04;
-    
+
     let dll_str = dll_path.to_string_lossy().to_string();
     let dll_cstr = CString::new(dll_str.clone()).map_err(|e| e.to_string())?;
     

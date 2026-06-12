@@ -5,7 +5,7 @@
   "build": {
     "beforeDevCommand": "npm run dev -- --port 3106 --hostname 127.0.0.1",
     "beforeBuildCommand": "node scripts/build-tauri-cross.js",
-    "devUrl": "http://127.0.0.1:3106",
+    "devUrl": "http://127.0.0.1:3222",
     "frontendDist": "../out"
   },
   "app": {
@@ -71,6 +71,10 @@
     "active": true,
     "createUpdaterArtifacts": "v1Compatible",
     "targets": "all",
+    "resources": [
+      "resources/gs-hook/x64/*",
+      "resources/gs-hook/x86/*"
+    ],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

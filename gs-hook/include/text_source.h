@@ -88,12 +88,17 @@ struct AutoRegister {
     }
 };
 
-// Macro da usare in fondo a ogni file source_*.cpp:
-//   GS_REGISTER_SOURCE(UnityMonoSource);
+} // namespace gs
+
+// Macro da usare in fondo a ogni file source_*.cpp (a scope globale, una sola
+// volta per file). Accetta anche nomi qualificati (es. gs::GdiSource): per
+// questo i simboli generati hanno nome fisso dentro un namespace anonimo,
+// invece di derivare dal nome della classe via token-pasting.
+//   GS_REGISTER_SOURCE(gs::GdiSource);
 #define GS_REGISTER_SOURCE(ClassName)                                          \
-    static std::unique_ptr<::gs::ITextSource> ClassName##_factory() {          \
+    namespace {                                                                \
+    std::unique_ptr<::gs::ITextSource> gs_source_factory_() {                  \
         return std::make_unique<ClassName>();                                  \
     }                                                                          \
-    static ::gs::AutoRegister ClassName##_autoreg(&ClassName##_factory)
-
-} // namespace gs
+    ::gs::AutoRegister gs_source_autoreg_(&gs_source_factory_);                \
+    }

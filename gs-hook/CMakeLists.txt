@@ -53,3 +53,12 @@ endif()
 
 # Nome di output: gs-hook.dll
 set_target_properties(gs_hook PROPERTIES OUTPUT_NAME "gs-hook")
+
+# ── gs-injector: helper di injection per-architettura ────────────────────────
+#
+# Exe console minimale (pid, percorso-dll) che esegue la LoadLibraryW remota.
+# Va compilato nella stessa arch del target: il build dual-arch (build-all.ps1)
+# configura due build dir, -A Win32 e -A x64, e produce gs-injector.exe per
+# entrambe. NON dipende da MinHook né dal core: solo Win32 API.
+add_executable(gs-injector injector/injector_main.cpp)
+set_target_properties(gs-injector PROPERTIES OUTPUT_NAME "gs-injector")
