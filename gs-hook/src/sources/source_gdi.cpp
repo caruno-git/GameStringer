@@ -20,6 +20,7 @@
 //
 #include "text_source.h"
 #include "gs_log.h"
+#include "gs_overlay_ipc.h"
 #include <Windows.h>
 #include <MinHook.h>
 #include <string>
@@ -76,7 +77,11 @@ public:
         if (!m_buf.empty()) {
             const long ageMs =
                 (long)std::chrono::duration_cast<std::chrono::milliseconds>(now - m_lastTime).count();
-            const bool tooOld = ageMs > kMaxGapMs;
+            // Tolleranza ALTA per i typewriter (RPG Maker disegna ~1 char per
+            // frame, con pause ben oltre kMaxGapMs): finché la geometria dice
+            // "stessa riga / riga successiva del paragrafo" NON chiudiamo per il
+            // solo tempo. La chiusura per fine-frase la fa l'idle-flush (EndPaint).
+            const bool tooOld = ageMs > kSameLineMaxGapMs;
             const bool sameDc = (ctx.dc == m_ctx.dc);
 
             // (a) stessa riga: frammento che continua orizzontalmente a destra.
@@ -137,6 +142,23 @@ public:
         return true;
     }
 
+    // Flush SOLO se la riga è ferma da almeno idleMs (typewriter finito / box in
+    // attesa di input). Usato come "tick" da EndPaint per chiudere la FRASE
+    // COMPLETA senza spezzarla a ogni frame: durante la digitazione ogni nuovo
+    // char aggiorna m_lastTime → età < idle → niente flush; alla pausa di fine
+    // messaggio l'età supera idle → flush una volta sola.
+    bool FlushIfIdle(long idleMs, std::wstring& closedText) {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        if (m_buf.empty()) return false;
+        const long ageMs = (long)std::chrono::duration_cast<std::chrono::milliseconds>(
+            Clock::now() - m_lastTime).count();
+        if (ageMs < idleMs) return false;
+        closedText = m_buf;
+        m_buf.clear();
+        m_lastRight = 0;
+        return true;
+    }
+
 private:
     using Clock = std::chrono::steady_clock;
 
@@ -144,7 +166,8 @@ private:
     static constexpr int  kYTolerancePx     = 3;    // glifi sulla stessa riga
     static constexpr int  kXOverlapPx       = 4;    // tolleranza kerning/overlap
     static constexpr int  kXGapPx           = 24;   // gap max prima di "nuova parola/colonna"
-    static constexpr long kMaxGapMs         = 80;   // gap temporale → riga diversa
+    static constexpr long kMaxGapMs         = 80;   // (legacy, modalità suppress)
+    static constexpr long kSameLineMaxGapMs = 1500; // typewriter: pausa max same-line
     // Merge verticale (righe wrappate dello stesso paragrafo):
     static constexpr bool kMergeWrappedLines = true; // unisci righe wrappate in 1 frase
     static constexpr int  kLineHeightMaxPx   = 28;   // dy max tra riga e riga successiva
@@ -188,6 +211,21 @@ constexpr bool kGlyphSuppressRedraw = true;
 // niente soppressione inutile, blast radius minimo.
 constexpr UINT kMaxSuppressFragmentChars = 2;
 
+// MODALITÀ PASSIVA (estrazione → overlay). Scoperta sul campo (Ib, RPG Maker
+// 2000): RPG_RT disegna i dialoghi via ExtTextOutW in modo INCREMENTALE (~1 char
+// per frame, effetto macchina-da-scrivere). Sopprimere-e-ridisegnare sgrana il
+// testo a schermo, e la sostituzione in-place di una traduzione di lunghezza
+// diversa è impossibile a metà digitazione. In modalità passiva NON tocchiamo
+// MAI il disegno del gioco: osserviamo, coalesciamo la frase intera (gate
+// temporale rilassato + idle-flush) e la inoltriamo all'overlay in tempo reale.
+// La sostituzione in-place (suppress-redraw) resta per i casi "stringa intera
+// per chiamata" quando kPassiveOverlayMode è false.
+constexpr bool kPassiveOverlayMode = true;
+
+// Idle (ms) dopo l'ultimo frammento oltre cui consideriamo la frase COMPLETA e
+// la inoltriamo (typewriter in pausa / box in attesa). < kSameLineMaxGapMs.
+constexpr long kLineIdleMs = 350;
+
 // Euristica: vale la pena tradurre questa stringa? Evita di mandare al
 // translator singoli glifi, numeri puri o punteggiatura (che il word-render
 // emette spessissimo). Richiede ≥2 caratteri e almeno una lettera.
@@ -197,6 +235,21 @@ bool LooksSubstitutable(const std::wstring& s) {
         if (iswalpha(c)) return true;
     }
     return false;
+}
+
+// MODALITÀ PASSIVA: inoltra una riga COALESCITA all'overlay. Traduce via cache
+// (per il campo `translated`); la traduzione vera la fa il frontend dell'overlay.
+// Non tocca il rendering del gioco. Filtra glifi/punteggiatura isolati (es. la
+// freccia "▼" di continua) con LooksSubstitutable.
+void ForwardToOverlay(const std::wstring& line) {
+    if (!LooksSubstitutable(line)) return;
+    std::wstring translated = line;
+    if (g_translate) {
+        std::wstring t = g_translate(line);
+        if (!t.empty()) translated = t;
+    }
+    LogLineW(L"[gs-hook/GDI] OVERLAY: " + line + L"\n");
+    gs::overlay::Send(line, translated);
 }
 
 // ─── Tipi e puntatori agli originali (servono già a RedrawClosedLine) ────────
@@ -283,29 +336,37 @@ BOOL WINAPI Hook_ExtTextOutW(HDC hdc, int x, int y, UINT options, const RECT* re
     if (str && count > 0 && g_inDrawText == 0 && !(options & ETO_GLYPH_INDEX)) {
         std::wstring s(str, count);
 
-        // (1) Sostituzione per-chiamata: caso "stringa intera per chiamata".
-        if (!kSpikeLogOnly && g_translate && LooksSubstitutable(s)) {
-            std::wstring t = g_translate(s);
-            if (!t.empty() && t != s) {
-                LogLineW(L"[gs-hook/GDI] SUBST(ExtTextOut): " + s + L" -> " + t + L"\n");
-                // L'array `dx` (avanzamenti per-glifo) vale per la stringa
-                // ORIGINALE: con un testo di lunghezza diversa non è più valido
-                // → passiamo nullptr (e togliamo ETO_PDY, che lo presuppone).
-                return Original_ExtTextOutW(hdc, x, y, options & ~ETO_PDY, rect,
-                                            t.c_str(), (UINT)t.size(), nullptr);
+        // MODALITÀ PASSIVA (default, real-time/overlay): osserva + coalesce +
+        // inoltra all'overlay SENZA mai sopprimere/ridisegnare. Il gioco disegna
+        // normalmente (nessuno sgranamento su renderer incrementali tipo RPG_RT).
+        if (kPassiveOverlayMode) {
+            DrawCtx ctx = CaptureCtx(hdc, x, y, options);
+            std::wstring closedText;
+            DrawCtx      closedCtx;
+            if (g_coalescer.Add(ctx, s, closedText, closedCtx) && !closedText.empty()) {
+                ForwardToOverlay(closedText);
+            }
+            // niente return: si cade nel disegno normale del gioco, sotto.
+        } else if (kSpikeLogOnly) {
+            DrawCtx ctx = CaptureCtx(hdc, x, y, options);
+            OnFragmentDiag(ctx, s);
+        } else {
+            // (1) Sostituzione in-place per-chiamata: "stringa intera per chiamata".
+            if (g_translate && LooksSubstitutable(s)) {
+                std::wstring t = g_translate(s);
+                if (!t.empty() && t != s) {
+                    LogLineW(L"[gs-hook/GDI] SUBST(ExtTextOut): " + s + L" -> " + t + L"\n");
+                    // `dx` (avanzamenti) vale per la stringa ORIGINALE → nullptr.
+                    return Original_ExtTextOutW(hdc, x, y, options & ~ETO_PDY, rect,
+                                                t.c_str(), (UINT)t.size(), nullptr);
+                }
+            }
+            // (2) Frammenti corti (glifo-per-glifo): soppressione + redraw a chiusura.
+            DrawCtx ctx = CaptureCtx(hdc, x, y, options);
+            if (g_translate && kGlyphSuppressRedraw && count <= kMaxSuppressFragmentChars) {
+                return CoalesceAndSuppress(ctx, s);
             }
         }
-
-        // (2) Frammenti corti (glifo-per-glifo): soppressione + redraw a chiusura.
-        DrawCtx ctx = CaptureCtx(hdc, x, y, options);
-        if (!kSpikeLogOnly && g_translate && kGlyphSuppressRedraw &&
-            count <= kMaxSuppressFragmentChars) {
-            return CoalesceAndSuppress(ctx, s);
-        }
-        // (3) Diagnostica del coalescer (solo in modalità log-only). In modalità
-        //     sostituzione le stringhe intere senza hit in cache cadono qui e si
-        //     disegnano normalmente sotto.
-        if (kSpikeLogOnly) OnFragmentDiag(ctx, s);
     }
     return Original_ExtTextOutW(hdc, x, y, options, rect, str, count, dx);
 }
@@ -320,7 +381,12 @@ int WINAPI Hook_DrawTextW(HDC hdc, LPCWSTR str, int count, LPRECT rect, UINT for
         if (len > 0) {
             // DrawText passa di solito una frase/paragrafo intero → caso ideale.
             std::wstring whole(str, len);
-            if (kSpikeLogOnly) {
+            if (kPassiveOverlayMode) {
+                // Passivo: inoltra l'intera stringa all'overlay, poi disegna
+                // normalmente (la guardia sotto evita la doppia cattura delle
+                // ExtTextOutW interne del word-wrap).
+                ForwardToOverlay(whole);
+            } else if (kSpikeLogOnly) {
                 LogLineW(L"[gs-hook/GDI] DRAWTEXT: " + whole + L"\n");
             } else if (g_translate && LooksSubstitutable(whole)) {
                 std::wstring t = g_translate(whole);
@@ -355,7 +421,15 @@ using EndPaint_t = BOOL (WINAPI*)(HWND, const PAINTSTRUCT*);
 EndPaint_t Original_EndPaint = nullptr;
 
 BOOL WINAPI Hook_EndPaint(HWND hwnd, const PAINTSTRUCT* ps) {
-    if (!kSpikeLogOnly && g_translate && kGlyphSuppressRedraw) {
+    if (kPassiveOverlayMode) {
+        // Idle-flush: chiude e inoltra la frase SOLO quando il typewriter è in
+        // pausa (ferma da kLineIdleMs). Durante la digitazione NON flushiamo per
+        // frame (spezzerebbe la frase), così la riga arriva all'overlay intera.
+        std::wstring closedText;
+        if (g_coalescer.FlushIfIdle(kLineIdleMs, closedText) && !closedText.empty()) {
+            ForwardToOverlay(closedText);
+        }
+    } else if (!kSpikeLogOnly && g_translate && kGlyphSuppressRedraw) {
         std::wstring closedText;
         DrawCtx      closedCtx;
         if (g_coalescer.Flush(closedText, closedCtx) && !closedText.empty()) {
