@@ -7432,6 +7432,135 @@ async fn execute_workflow_from_prediction(
     }
 
     // ══════════════════════════════════════════════════════════════════════════
+    // UNITY FAST PATH — installa BepInEx + XUnity.AutoTranslator (fix issue #46)
+    // Il testo dei giochi Unity vive negli asset binari, NON nei file di testo
+    // sciolti: il path generico non può tradurlo. Usiamo il patcher reale.
+    // ══════════════════════════════════════════════════════════════════════════
+    let unity_player = game_path.join("UnityPlayer.dll");
+    let has_data_folder = std::fs::read_dir(game_path)
+        .into_iter()
+        .flat_map(|rd| rd.into_iter())
+        .filter_map(|e| e.ok())
+        .any(|e| e.file_name().to_string_lossy().ends_with("_Data") && e.path().is_dir());
+    let is_unity = engine_lower.contains("unity") || unity_player.exists() || has_data_folder;
+
+    if is_unity {
+        emit_progress!("unity_patch", 6, "🎮 Unity rilevato — installazione BepInEx + XUnity AutoTranslator...", 30);
+        let stage_start = std::time::Instant::now();
+        let mut unity_outputs = Vec::new();
+
+        // Trova l'eseguibile del gioco (esclude crash handler e launcher Unity)
+        let exe_name: Option<String> = std::fs::read_dir(game_path)
+            .into_iter()
+            .flat_map(|rd| rd.into_iter())
+            .filter_map(|e| e.ok())
+            .filter(|e| {
+                let n = e.file_name().to_string_lossy().to_lowercase();
+                n.ends_with(".exe") && !n.starts_with("unitycrashhandler") && !n.starts_with("unins")
+            })
+            .map(|e| e.file_name().to_string_lossy().to_string())
+            // Preferisci l'exe con la cartella *_Data corrispondente
+            .max_by_key(|n| {
+                let stem = n.trim_end_matches(".exe").trim_end_matches(".EXE");
+                game_path.join(format!("{}_Data", stem)).exists() as u8
+            });
+
+        match exe_name {
+            Some(exe) => {
+                unity_outputs.push(format!("🎮 Eseguibile: {}", exe));
+                let target_lang = if target_lang_param.is_empty() { "it" } else { target_lang_param };
+                match super::unity_patcher::install_unity_autotranslator(
+                    game_path_str.clone(),
+                    exe,
+                    Some(target_lang.to_string()),
+                    Some("google".to_string()),
+                ).await {
+                    Ok(patch) => {
+                        unity_outputs.extend(patch.steps_completed.iter().cloned());
+                        unity_outputs.push(format!("✅ {}", patch.message));
+                        stages_completed.push(StageExecutionResult {
+                            stage_id: 3,
+                            stage_name: "Unity Patch (BepInEx + XUnity)".to_string(),
+                            status: if patch.success { ExecutionStatus::Completed } else { ExecutionStatus::Failed },
+                            duration_minutes: stage_start.elapsed().as_secs_f64() / 60.0,
+                            outputs: unity_outputs,
+                            errors: vec![],
+                            success: patch.success,
+                        });
+                        deliverables.push(ExecutionDeliverable {
+                            deliverable_id: "del_unity_patch".to_string(),
+                            deliverable_name: "BepInEx + XUnity.AutoTranslator".to_string(),
+                            file_path: Some(game_path.join("BepInEx").to_string_lossy().to_string()),
+                            size_mb: 0.0,
+                            status: ExecutionStatus::Completed,
+                            created_at: chrono::Utc::now().to_rfc3339(),
+                        });
+
+                        emit_progress!("unity_done", 7, "✅ Patch Unity installata — avvia il gioco per la traduzione live", 95);
+                        let elapsed_total = start.elapsed().as_secs_f64() / 60.0;
+                        let success_count = stages_completed.iter().filter(|s| s.success).count();
+                        let success_rate = success_count as f64 / stages_completed.len() as f64;
+                        let next_steps = vec![
+                            "🎮 Avvia il gioco: XUnity AutoTranslator tradurrà i testi in tempo reale".to_string(),
+                            format!("📂 Le traduzioni vengono salvate in BepInEx/Translation/{}/Text", target_lang),
+                            "✏️ Puoi rifinire le traduzioni catturate dall'editor di GameStringer".to_string(),
+                        ];
+                        return Ok(WorkflowExecutionResult {
+                            execution_id,
+                            game_title: prediction.game_title.clone(),
+                            engine: prediction.engine.clone(),
+                            total_duration_minutes: elapsed_total,
+                            stages_completed,
+                            final_status: if patch.success { ExecutionStatus::Completed } else { ExecutionStatus::Failed },
+                            deliverables,
+                            errors,
+                            success_rate,
+                            next_steps,
+                        });
+                    }
+                    Err(e) => {
+                        // Patch fallita (es. Unity 6 IL2CPP non supportato):
+                        // registra l'errore e prosegui col path generico come fallback.
+                        unity_outputs.push(format!("❌ Patch Unity fallita: {}", e));
+                        unity_outputs.push("⏩ Fallback: tentativo col path generico (file di testo sciolti)".to_string());
+                        error_counter += 1;
+                        errors.push(ExecutionError {
+                            error_id: format!("err_{}", error_counter),
+                            stage_id: 3,
+                            error_type: "UnityPatchFailed".to_string(),
+                            message: e,
+                            severity: "high".to_string(),
+                            timestamp: chrono::Utc::now().to_rfc3339(),
+                            resolved: false,
+                        });
+                        stages_completed.push(StageExecutionResult {
+                            stage_id: 3,
+                            stage_name: "Unity Patch (BepInEx + XUnity)".to_string(),
+                            status: ExecutionStatus::Failed,
+                            duration_minutes: stage_start.elapsed().as_secs_f64() / 60.0,
+                            outputs: unity_outputs,
+                            errors: vec![],
+                            success: false,
+                        });
+                    }
+                }
+            }
+            None => {
+                unity_outputs.push("⚠️ Nessun eseguibile Unity trovato nella root del gioco".to_string());
+                stages_completed.push(StageExecutionResult {
+                    stage_id: 3,
+                    stage_name: "Unity Patch (BepInEx + XUnity)".to_string(),
+                    status: ExecutionStatus::Skipped,
+                    duration_minutes: stage_start.elapsed().as_secs_f64() / 60.0,
+                    outputs: unity_outputs,
+                    errors: vec![],
+                    success: false,
+                });
+            }
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
     // STAGE 3: FILE SCANNING — Deep scan for all translatable content (generic path)
     // ══════════════════════════════════════════════════════════════════════════
     emit_progress!("generic_scan", 6, "🔍 Scansione profonda file traducibili...", 30);
@@ -8010,12 +8139,18 @@ async fn execute_workflow_from_prediction(
                                 // Restore from backup
                                 if std::fs::copy(&backup_file, file_path).is_ok() {
                                     stage7_outputs.push(format!("🔄 Restored: {}", relative.display()));
+                                    // Fix issue #46: il file iniettato è stato annullato dal
+                                    // ripristino — non deve contare come "gioco modificato".
+                                    injected_count = injected_count.saturating_sub(1);
                                 }
                             }
                         }
                     }
                 }
             }
+        }
+        if injected_count == 0 {
+            stage7_outputs.push("⚠️ Tutte le modifiche sono state annullate dal ripristino: il gioco NON è stato tradotto".to_string());
         }
     }
     
@@ -8025,7 +8160,7 @@ async fn execute_workflow_from_prediction(
     stages_completed.push(StageExecutionResult {
         stage_id: 7,
         stage_name: "Validation & QA".to_string(),
-        status: if validation_passed { ExecutionStatus::Completed } else { ExecutionStatus::Completed },
+        status: if validation_passed { ExecutionStatus::Completed } else { ExecutionStatus::Failed },
         duration_minutes: stage_start.elapsed().as_secs_f64() / 60.0,
         outputs: stage7_outputs,
         errors: vec![],
@@ -8095,11 +8230,20 @@ async fn execute_workflow_from_prediction(
     // ══════════════════════════════════════════════════════════════════════════
     let success_count = stages_completed.iter().filter(|s| s.success).count();
     let total_count = stages_completed.len();
-    let success_rate = success_count as f64 / total_count as f64;
+    let stage_rate = success_count as f64 / total_count as f64;
 
-    let final_status = if success_rate >= 0.8 {
-        ExecutionStatus::Completed
-    } else if success_rate >= 0.5 {
+    // Fix issue #46: il successo NON è "quanti stage sono finiti" ma "il gioco è
+    // stato modificato davvero". Senza stringhe trovate o senza iniezione reale,
+    // il risultato non può presentarsi come verde al 100%.
+    let game_was_modified = injected_count > 0;
+    let success_rate = if game_was_modified {
+        stage_rate
+    } else {
+        // Nessun file di gioco modificato: cap sotto la soglia "verde" (0.8)
+        stage_rate.min(0.5)
+    };
+
+    let final_status = if game_was_modified && success_rate >= 0.5 {
         ExecutionStatus::Completed
     } else {
         ExecutionStatus::Failed
@@ -8112,7 +8256,8 @@ async fn execute_workflow_from_prediction(
         next_steps.push("🔄 Usa 'Ripristina backup' se qualcosa non va".to_string());
     }
     if translated_count > 0 && injected_count == 0 {
-        next_steps.push("📄 Le traduzioni sono state salvate ma non iniettate — prova il metodo engine-specific".to_string());
+        next_steps.push("⚠️ ATTENZIONE: le traduzioni sono state generate ma NESSUN file di gioco è stato modificato".to_string());
+        next_steps.push("📄 Prova il metodo engine-specific dalla pagina del gioco".to_string());
     }
     if total_strings == 0 {
         next_steps.push("⚠️ Nessuna stringa trovata — potrebbe servire un patcher engine-specific".to_string());

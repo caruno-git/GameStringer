@@ -592,7 +592,8 @@ export default function GameDetailPage() {
       const result = await invoke<{success: boolean; message: string}>('install_unity_autotranslator', {
         gamePath: installPath,
         gameExeName: exeName,
-        targetLang: 'it',
+        // Fix issue #47: usa la lingua scelta dall'utente, non 'it' hardcoded
+        targetLang: targetLang || language || 'it',
         translationMode: 'google' // Usa Google Translate per traduzione automatica
       });
 
@@ -1591,7 +1592,7 @@ export default function GameDetailPage() {
         gameTitle: game.title || game.name || 'Unknown Game',
         engine: game.engine || undefined,
         sourceLang: 'en',
-        targetLang: targetLang || 'it',
+        targetLang: targetLang || language || 'it',
       });
       
       updateStep(0, 'done', `Analisi completata: ${predictionResult?.engine || 'Engine rilevato'}`);
@@ -1649,14 +1650,14 @@ export default function GameDetailPage() {
 
       const executionResult = await invoke<{
         successRate?: number; totalDurationMinutes?: number; finalStatus?: string;
-        deliverables?: unknown[]; errors?: unknown[];
+        deliverables?: unknown[]; errors?: unknown[]; nextSteps?: string[];
         translatedStrings?: number; totalStrings?: number;
       }>('execute_complete_workflow', {
         installPath: game.installPath,
         gameTitle: game.title || game.name || 'Unknown Game',
         engine: game.engine || undefined,
         sourceLang: 'en',
-        targetLang: targetLang || 'it',
+        targetLang: targetLang || language || 'it',
       });
 
       // Cleanup listener
@@ -1664,10 +1665,15 @@ export default function GameDetailPage() {
 
       const success = executionResult?.successRate || 0;
       const duration = executionResult?.totalDurationMinutes || 0;
-      const _finalStatus = executionResult?.finalStatus;
-      
-      if (success >= 0.8) {
+      const finalStatus = executionResult?.finalStatus;
+      const workflowFailed = finalStatus === 'Failed';
+
+      if (!workflowFailed && success >= 0.8) {
         updateStep(6, 'done', `Traduzione completata: ${(success * 100).toFixed(0)}% successo in ${duration.toFixed(1)}min`);
+      } else if (workflowFailed) {
+        // Fix issue #46: niente verde se il gioco non è stato modificato davvero
+        const hint = executionResult?.nextSteps?.[0] || 'Prova il patcher engine-specific dalla pagina del gioco';
+        updateStep(6, 'error', `Il gioco NON è stato tradotto — ${hint}`);
       } else {
         updateStep(6, 'error', `Parzialmente completata: ${(success * 100).toFixed(0)}% successo`);
       }
@@ -1693,7 +1699,7 @@ export default function GameDetailPage() {
         deliverables: deliverables.length,
         errors: errors.length,
         engine: game.engine || 'Unknown',
-        targetLang: targetLang || 'it',
+        targetLang: targetLang || language || 'it',
         stringsTranslated: executionResult?.translatedStrings || executionResult?.totalStrings || 0,
         stringsTotal: executionResult?.totalStrings || 0,
       });

@@ -37,11 +37,17 @@ const XUNITY_URL: &str = "https://github.com/bbepis/XUnity.AutoTranslator/releas
 // XUnity per BepInEx IL2CPP (versione speciale per IL2CPP) — aggiornato a v5.6.1
 const XUNITY_IL2CPP_URL: &str = "https://github.com/bbepis/XUnity.AutoTranslator/releases/download/v5.6.1/XUnity.AutoTranslator-BepInEx-IL2CPP-5.6.1.zip";
 
+// TMP Font AssetBundles (arialuni_sdf_*) — necessari per OverrideFontTextMeshPro
+// con lingue non latine (cirillico, CJK, ecc.). L'archivio è allegato alla release
+// v5.5.0 di XUnity (le release successive rimandano lì). ~129MB, scaricato una
+// volta sola e tenuto in cache in %LOCALAPPDATA%\GameStringer\tmp_fonts.
+const TMP_FONTS_URL: &str = "https://github.com/bbepis/XUnity.AutoTranslator/releases/download/v5.5.0/TMP_Font_AssetBundles_2025-12-08.7z";
+
 #[derive(serde::Serialize, serde::Deserialize, Clone)]
 pub struct PatchStatus {
-    success: bool,
-    message: String,
-    steps_completed: Vec<String>,
+    pub success: bool,
+    pub message: String,
+    pub steps_completed: Vec<String>,
 }
 
 /// Rileva se un eseguibile PE è 32-bit o 64-bit
@@ -2136,8 +2142,14 @@ pub async fn install_unity_autotranslator(game_path: String, game_exe_name: Stri
         _ => ("", "Solo cattura (traduci manualmente)"), // capture = nessun endpoint
     };
     
-    let config_content = build_xunity_config(&lang, endpoint);
+    // Fix issue #46: font TMP corretto per la versione Unity + override nel config
+    let tmp_font = tmp_font_asset_for_unity_version(unity_version.as_deref());
+    let config_content = build_xunity_config_with_font(&lang, endpoint, Some(tmp_font));
     fs::write(&auto_translator_config, config_content).map_err(|e| e.to_string())?;
+
+    // Per lingue non latine scarica/copia il TMP font bundle
+    // così OverrideFontTextMeshPro ha l'asset disponibile e niente quadrati.
+    ensure_tmp_fonts(game_dir, &lang, tmp_font, &mut steps).await;
 
     let translation_dir = game_dir.join("BepInEx").join("Translation").join(&lang).join("Text");
     fs::create_dir_all(&translation_dir).map_err(|e| e.to_string())?;
@@ -2206,8 +2218,13 @@ async fn install_il2cpp_patch(game_dir: &Path, lang: &str, mode: &str, is_64bit:
         _ => ("", "Solo cattura (traduci manualmente)"),
     };
     
-    let config_content = build_xunity_config(lang, endpoint);
+    // Fix issue #46: font TMP corretto per la versione Unity + override nel config
+    let tmp_font = tmp_font_asset_for_unity_version(detect_unity_version(game_dir).as_deref());
+    let config_content = build_xunity_config_with_font(lang, endpoint, Some(tmp_font));
     fs::write(&auto_translator_config, config_content).map_err(|e| e.to_string())?;
+
+    // TMP font bundle per lingue non latine (vedi path Mono)
+    ensure_tmp_fonts(game_dir, lang, tmp_font, &mut steps).await;
 
     let translation_dir = game_dir.join("BepInEx").join("Translation").join(lang).join("Text");
     fs::create_dir_all(&translation_dir).map_err(|e| e.to_string())?;
@@ -2225,8 +2242,53 @@ async fn install_il2cpp_patch(game_dir: &Path, lang: &str, mode: &str, is_64bit:
     })
 }
 
-/// Genera AutoTranslatorConfig.ini nel formato corretto (basato sul patch Blue Prince funzionante)
-fn build_xunity_config(lang: &str, endpoint: &str) -> String {
+/// Lingue che richiedono glifi non coperti dai font latini tipici dei giochi.
+/// Per queste serve un override/fallback font, altrimenti il testo tradotto
+/// viene renderizzato come quadrati (□□□) — vedi issue #46.
+fn needs_font_override(lang: &str) -> bool {
+    let base = lang.split(['-', '_']).next().unwrap_or(lang).to_lowercase();
+    matches!(
+        base.as_str(),
+        "ru" | "uk" | "be" | "bg" | "sr" | "mk" | "kk" | // cirillico
+        "el" |                                            // greco
+        "ja" | "zh" | "ko" |                              // CJK
+        "ar" | "fa" | "he" |                              // RTL
+        "th" | "hi" | "vi" | "ka" | "hy"
+    )
+}
+
+/// Sceglie l'asset bundle TMP corretto per la versione Unity del gioco.
+/// I bundle sono compilati per versioni specifiche: usare quello sbagliato
+/// significa che il font non viene caricato.
+fn tmp_font_asset_for_unity_version(unity_version: Option<&str>) -> &'static str {
+    let major: u32 = unity_version
+        .and_then(|v| v.split('.').next())
+        .and_then(|m| m.parse().ok())
+        .unwrap_or(2019);
+    match major {
+        0..=2017 => "arialuni_sdf-u55to2017",
+        2018 => "arialuni_sdf_u2018",
+        2019 | 2020 => "arialuni_sdf_u2019",
+        2021 => "arialuni_sdf_u2021",
+        2022..=2023 => "arialuni_sdf_u2022",
+        _ => "arialuni_sdf_u6000", // Unity 6 (6000.x)
+    }
+}
+
+/// Blocco di override font da iniettare in [Behaviour] per lingue non latine.
+/// - OverrideFont: font di sistema per uGUI/NGUI (Arial copre cirillico/greco su Windows)
+/// - OverrideFontTextMeshPro/FallbackFontTextMeshPro: asset bundle arialuni_sdf_*
+///   (TMP_Font_AssetBundles di XUnity, copiato nella cartella del gioco durante l'install)
+fn xunity_font_override_block(tmp_font: &str) -> String {
+    format!(
+        "OverrideFont=Arial\nOverrideFontTextMeshPro={font}\nFallbackFontTextMeshPro={font}\n",
+        font = tmp_font
+    )
+}
+
+/// Genera AutoTranslatorConfig.ini nel formato corretto (basato sul patch Blue Prince funzionante).
+/// `tmp_font`: nome dell'asset bundle TMP da usare per l'override font (None = default u2019).
+fn build_xunity_config_with_font(lang: &str, endpoint: &str, tmp_font: Option<&str>) -> String {
     let template = r#"[Service]
 Endpoint=ENDPOINT
 FallbackEndpoint=
@@ -2276,7 +2338,104 @@ DisableCertificateValidation=True
 [Debug]
 EnableConsole=False
 "#;
-    template.replace("ENDPOINT", endpoint).replace("LANG", lang)
+    let mut config = template.replace("ENDPOINT", endpoint).replace("LANG", lang);
+
+    // Fix issue #46: per lingue non latine (es. russo) i font dei giochi spesso
+    // non hanno i glifi necessari → quadrati al posto del testo. Iniettiamo
+    // override/fallback font nella sezione [Behaviour].
+    if needs_font_override(lang) {
+        let font = tmp_font.unwrap_or("arialuni_sdf_u2019");
+        config = config.replace(
+            "[Behaviour]\n",
+            &format!("[Behaviour]\n{}", xunity_font_override_block(font)),
+        );
+    }
+
+    config
+}
+
+/// Variante retro-compatibile: usa il font TMP di default.
+#[cfg_attr(not(test), allow(dead_code))]
+fn build_xunity_config(lang: &str, endpoint: &str) -> String {
+    build_xunity_config_with_font(lang, endpoint, None)
+}
+
+/// Copia nella cartella del gioco l'asset bundle TMP necessario per i glifi non
+/// latini. L'archivio (~129MB) viene scaricato una sola volta e tenuto in cache
+/// in %LOCALAPPDATA%\GameStringer\tmp_fonts. Non blocca l'installazione in caso
+/// di errore: la patch resta valida, ma viene segnalato il passo mancante.
+async fn ensure_tmp_fonts(game_dir: &Path, lang: &str, tmp_font: &str, steps: &mut Vec<String>) {
+    if !needs_font_override(lang) {
+        return;
+    }
+    let target = game_dir.join(tmp_font);
+    if target.exists() {
+        steps.push(format!("✓ TMP font bundle già presente ({})", tmp_font));
+        return;
+    }
+
+    let cache_dir = dirs::data_local_dir()
+        .unwrap_or_else(|| std::path::PathBuf::from("."))
+        .join("GameStringer")
+        .join("tmp_fonts");
+
+    if find_file_recursive(&cache_dir, tmp_font).is_none() {
+        let _ = fs::create_dir_all(&cache_dir);
+        steps.push("Download TMP Font AssetBundles (~129MB, solo la prima volta)...".to_string());
+        let archive_path = cache_dir.join("TMP_Font_AssetBundles.7z");
+        match download_to_file(TMP_FONTS_URL, &archive_path).await {
+            Ok(_) => match sevenz_rust::decompress_file(&archive_path, &cache_dir) {
+                Ok(_) => {
+                    let _ = fs::remove_file(&archive_path);
+                    steps.push("✓ Font bundle estratti nella cache locale".to_string());
+                }
+                Err(e) => steps.push(format!("⚠ Estrazione archivio font fallita: {}", e)),
+            },
+            Err(e) => steps.push(format!("⚠ Download TMP font fallito: {}", e)),
+        }
+    }
+
+    match find_file_recursive(&cache_dir, tmp_font) {
+        Some(src) => match fs::copy(&src, &target) {
+            Ok(_) => steps.push(format!("✓ TMP font '{}' copiato nel gioco (niente più quadrati □□□)", tmp_font)),
+            Err(e) => steps.push(format!("⚠ Copia font nel gioco fallita: {}", e)),
+        },
+        None => steps.push(format!(
+            "⚠ Font '{}' non disponibile. Scarica TMP_Font_AssetBundles dalla release v5.5.0 di XUnity e metti il file nella cartella del gioco.",
+            tmp_font
+        )),
+    }
+}
+
+/// Cerca ricorsivamente un file per nome esatto dentro una cartella.
+fn find_file_recursive(dir: &Path, name: &str) -> Option<std::path::PathBuf> {
+    let rd = fs::read_dir(dir).ok()?;
+    for e in rd.flatten() {
+        let p = e.path();
+        if p.is_dir() {
+            if let Some(f) = find_file_recursive(&p, name) {
+                return Some(f);
+            }
+        } else if p.file_name().map(|n| n == name).unwrap_or(false) {
+            return Some(p);
+        }
+    }
+    None
+}
+
+/// Scarica un file di grandi dimensioni in streaming (senza tenerlo tutto in RAM).
+async fn download_to_file(url: &str, dest: &Path) -> Result<(), String> {
+    use std::io::Write;
+    let client = Client::new();
+    let mut resp = client.get(url).send().await.map_err(|e| e.to_string())?;
+    if !resp.status().is_success() {
+        return Err(format!("HTTP {}", resp.status()));
+    }
+    let mut file = File::create(dest).map_err(|e| e.to_string())?;
+    while let Some(chunk) = resp.chunk().await.map_err(|e| e.to_string())? {
+        file.write_all(&chunk).map_err(|e| e.to_string())?;
+    }
+    Ok(())
 }
 
 async fn download_and_extract(url: &str, target_dir: &Path) -> Result<(), String> {
@@ -3566,6 +3725,56 @@ mod tests {
         let config = build_xunity_config("en", "");
         assert!(config.contains("EnableTextMeshPro=True"));
         assert!(config.contains("EnableUGUI=True"));
+    }
+
+    #[test]
+    fn build_xunity_config_adds_font_override_for_cyrillic() {
+        let config = build_xunity_config("ru", "GoogleTranslateV2");
+        assert!(config.contains("OverrideFont=Arial"));
+        assert!(config.contains("OverrideFontTextMeshPro=arialuni_sdf_u2019"));
+        assert!(config.contains("FallbackFontTextMeshPro=arialuni_sdf_u2019"));
+        // L'override deve stare nella sezione [Behaviour]
+        let behaviour_idx = config.find("[Behaviour]").unwrap();
+        let override_idx = config.find("OverrideFont=Arial").unwrap();
+        let texture_idx = config.find("[Texture]").unwrap();
+        assert!(behaviour_idx < override_idx && override_idx < texture_idx);
+    }
+
+    #[test]
+    fn build_xunity_config_adds_font_override_for_cjk_with_region() {
+        for lang in ["ja", "zh-CN", "ko", "uk"] {
+            let config = build_xunity_config(lang, "");
+            assert!(config.contains("OverrideFontTextMeshPro=arialuni_sdf_u2019"), "manca override per {}", lang);
+        }
+    }
+
+    #[test]
+    fn build_xunity_config_no_font_override_for_latin() {
+        for lang in ["it", "en", "de", "fr", "es", "pt", "pl"] {
+            let config = build_xunity_config(lang, "");
+            assert!(!config.contains("OverrideFont="), "override non atteso per {}", lang);
+        }
+    }
+
+    #[test]
+    fn build_xunity_config_with_font_uses_given_bundle() {
+        let config = build_xunity_config_with_font("ru", "", Some("arialuni_sdf_u2021"));
+        assert!(config.contains("OverrideFontTextMeshPro=arialuni_sdf_u2021"));
+        assert!(config.contains("FallbackFontTextMeshPro=arialuni_sdf_u2021"));
+    }
+
+    #[test]
+    fn tmp_font_asset_matches_unity_version() {
+        assert_eq!(tmp_font_asset_for_unity_version(Some("5.6.2f1")), "arialuni_sdf-u55to2017");
+        assert_eq!(tmp_font_asset_for_unity_version(Some("2017.4.1f1")), "arialuni_sdf-u55to2017");
+        assert_eq!(tmp_font_asset_for_unity_version(Some("2018.3.0f2")), "arialuni_sdf_u2018");
+        assert_eq!(tmp_font_asset_for_unity_version(Some("2019.4.40f1")), "arialuni_sdf_u2019");
+        assert_eq!(tmp_font_asset_for_unity_version(Some("2020.3.48f1")), "arialuni_sdf_u2019");
+        assert_eq!(tmp_font_asset_for_unity_version(Some("2021.3.16f1")), "arialuni_sdf_u2021");
+        assert_eq!(tmp_font_asset_for_unity_version(Some("2022.3.10f1")), "arialuni_sdf_u2022");
+        assert_eq!(tmp_font_asset_for_unity_version(Some("6000.0.23f1")), "arialuni_sdf_u6000");
+        // Versione sconosciuta → default u2019 (Unity più diffusa)
+        assert_eq!(tmp_font_asset_for_unity_version(None), "arialuni_sdf_u2019");
     }
 
     // ========================================================================
