@@ -18,6 +18,7 @@ mod activity_history;
 #[cfg(windows)]
 mod ue_translator;
 mod ocr_translator;
+mod overlay_ipc;
 
 pub mod profiles;
 pub mod notifications;
@@ -669,6 +670,8 @@ fn main() {
             ocr_translator::get_tesseract_languages,
             ocr_translator::tesseract_recognize,
             ocr_translator::get_tesseract_info,
+            overlay_ipc::open_gs_overlay,
+            overlay_ipc::close_gs_overlay,
 
             // Unreal Engine Patcher
             commands::unreal_patcher::detect_unreal_game,
@@ -1093,6 +1096,10 @@ fn main() {
             commands::secure_storage::remove_secure_key,
         ])
         .setup(|app| {
+            // Server IPC overlay (modalità "in tempo reale"): riceve dalla DLL
+            // gs-hook le righe estratte e le inoltra al frontend via evento.
+            overlay_ipc::start(app.handle().clone());
+
             // ═══════════════════════════════════════════════════
             // SYSTEM TRAY — Pacchetto Completo
             // ═══════════════════════════════════════════════════
