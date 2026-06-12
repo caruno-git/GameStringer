@@ -1,7 +1,7 @@
 {
   "identifier": "default",
   "description": "Default permissions for the application",
-  "windows": ["main", "rss-feed", "ocr-overlay"],
+  "windows": ["main", "rss-feed", "ocr-overlay", "gs-overlay"],
   "permissions": [
     "core:default",
     "core:webview:default",
