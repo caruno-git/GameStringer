@@ -88,10 +88,26 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         ExtTextOutW(hdc, 20, 230, 0, nullptr, en1,
                     (UINT)std::wcslen(en1), nullptr);
 
-        RECT rcEn = { 20, 260, 560, 330 };
+        RECT rcEn = { 20, 260, 560, 320 };
         const wchar_t* en2 =
             L"The old merchant smiles and says: welcome back, traveler.";
         DrawTextW(hdc, en2, -1, &rcEn, DT_WORDBREAK | DT_NOPREFIX);
+
+        // 6) Riga INGLESE disegnata GLIFO-PER-GLIFO: una ExtTextOutW per carattere
+        //    (count=1), avanzando X a mano. Simula gli engine (RPG Maker, VN…) che
+        //    blittano un glifo alla volta. gs-hook deve COALESCERE i glifi, e col
+        //    suppress-and-redraw ridisegnare la frase TRADOTTA (en->it).
+        const wchar_t* en3 = L"A wild slime appears before you.";
+        {
+            int gx = 20;
+            const int gy = 340;
+            for (const wchar_t* c = en3; *c; ++c) {
+                ExtTextOutW(hdc, gx, gy, 0, nullptr, c, 1, nullptr);
+                SIZE sz{};
+                GetTextExtentPoint32W(hdc, c, 1, &sz);
+                gx += sz.cx;
+            }
+        }
 
         EndPaint(hwnd, &ps);
         return 0;
@@ -122,7 +138,7 @@ int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE, LPWSTR, int nCmdShow) {
 
     HWND hwnd = CreateWindowExW(
         0, cls, title, WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, CW_USEDEFAULT, 620, 430,
+        CW_USEDEFAULT, CW_USEDEFAULT, 620, 470,
         nullptr, nullptr, hInst, nullptr);
     if (!hwnd) return 1;
 
