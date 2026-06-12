@@ -44,19 +44,21 @@ function flatten(obj: Json, prefix = ''): Map<string, string> {
 const it = flatten(itJson as Json);
 const en = flatten(enJson as Json);
 
-// Baseline misurata il 2026-06-12 — può solo SCENDERE. Quando bonifichi un
-// locale, abbassa qui i numeri (idealmente a 0, come ru).
+// Baseline misurata il 2026-06-12 dopo la bonifica completa — può solo
+// SCENDERE. I leftover residui di es/pt/fr/pl sono cognati legittimi
+// (parole identiche in italiano e nella lingua target, es. "Tono", "Sistema",
+// "Temperatura"): l'euristica non può distinguerli, quindi restano in baseline.
 const locales: { name: string; json: Json; maxMissing: number; maxLeftover: number }[] = [
   { name: 'en', json: enJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ru', json: ruJson as Json, maxMissing: 0, maxLeftover: 0 },
-  { name: 'es', json: esJson as Json, maxMissing: 15, maxLeftover: 51 },
-  { name: 'fr', json: frJson as Json, maxMissing: 15, maxLeftover: 19 },
-  { name: 'de', json: deJson as Json, maxMissing: 15, maxLeftover: 10 },
-  { name: 'ja', json: jaJson as Json, maxMissing: 15, maxLeftover: 10 },
-  { name: 'zh', json: zhJson as Json, maxMissing: 15, maxLeftover: 10 },
-  { name: 'ko', json: koJson as Json, maxMissing: 15, maxLeftover: 10 },
-  { name: 'pt', json: ptJson as Json, maxMissing: 15, maxLeftover: 51 },
-  { name: 'pl', json: plJson as Json, maxMissing: 83, maxLeftover: 21 },
+  { name: 'es', json: esJson as Json, maxMissing: 0, maxLeftover: 34 },
+  { name: 'fr', json: frJson as Json, maxMissing: 0, maxLeftover: 2 },
+  { name: 'de', json: deJson as Json, maxMissing: 0, maxLeftover: 0 },
+  { name: 'ja', json: jaJson as Json, maxMissing: 0, maxLeftover: 0 },
+  { name: 'zh', json: zhJson as Json, maxMissing: 0, maxLeftover: 0 },
+  { name: 'ko', json: koJson as Json, maxMissing: 0, maxLeftover: 0 },
+  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 39 },
+  { name: 'pl', json: plJson as Json, maxMissing: 0, maxLeftover: 9 },
 ];
 
 describe('integrità dei locale i18n', () => {
