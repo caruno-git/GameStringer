@@ -26,6 +26,7 @@ set(GS_HOOK_SOURCES
     src/sources/source_unity_mono.cpp
     src/sources/source_unreal_ftext.cpp
     src/sources/source_gdi.cpp
+    src/sources/source_gdi_glyph.cpp
     # core generico riusato (cache/ipc/translator/utils):
     ${CORE_DIR}/src/cache.cpp
     ${CORE_DIR}/src/ipc.cpp

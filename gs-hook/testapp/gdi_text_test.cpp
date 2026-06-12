@@ -109,6 +109,44 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             }
         }
 
+        // 7) Riga resa SOLO via GetGlyphOutlineW + blit manuale del bitmap del
+        //    glifo: NESSUNA chiamata a TextOut/ExtTextOut. Simula fedelmente gli
+        //    engine (RPG Maker/RPG_RT, molte VN) che chiedono il bitmap di ogni
+        //    glifo e lo disegnano da sé. La sorgente GDI/GetGlyphOutline deve
+        //    ricostruire la frase dalla sequenza di caratteri richiesti.
+        const wchar_t* en4 = L"The dragon roars from the mountain.";
+        {
+            MAT2 mat{};
+            mat.eM11.value = 1;            // matrice identità (no trasformazione)
+            mat.eM22.value = 1;
+            static BYTE gbuf[64 * 64];     // ampio per font UI normali
+            const COLORREF tc = RGB(20, 20, 20);
+            int penX = 20;
+            const int baselineY = 392;     // baseline della riga
+            for (const wchar_t* pc = en4; *pc; ++pc) {
+                GLYPHMETRICS gm{};
+                DWORD n = GetGlyphOutlineW(hdc, *pc, GGO_GRAY8_BITMAP, &gm,
+                                           sizeof(gbuf), gbuf, &mat);
+                if (n != GDI_ERROR && gm.gmBlackBoxX > 0 && gm.gmBlackBoxY > 0) {
+                    const UINT pitch = (gm.gmBlackBoxX + 3) & ~3u; // righe a 4 byte
+                    const int ox = penX + gm.gmptGlyphOrigin.x;
+                    const int oy = baselineY - gm.gmptGlyphOrigin.y;
+                    for (UINT row = 0; row < gm.gmBlackBoxY; ++row) {
+                        for (UINT col = 0; col < gm.gmBlackBoxX; ++col) {
+                            int a = gbuf[row * pitch + col]; // 0..64
+                            if (a <= 0) continue;
+                            if (a > 64) a = 64;
+                            int r = (255 * (64 - a) + GetRValue(tc) * a) / 64;
+                            int g = (255 * (64 - a) + GetGValue(tc) * a) / 64;
+                            int b = (255 * (64 - a) + GetBValue(tc) * a) / 64;
+                            SetPixel(hdc, ox + (int)col, oy + (int)row, RGB(r, g, b));
+                        }
+                    }
+                }
+                penX += gm.gmCellIncX ? gm.gmCellIncX : 8; // avanzamento del glifo
+            }
+        }
+
         EndPaint(hwnd, &ps);
         return 0;
     }
@@ -138,7 +176,7 @@ int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE, LPWSTR, int nCmdShow) {
 
     HWND hwnd = CreateWindowExW(
         0, cls, title, WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, CW_USEDEFAULT, 620, 470,
+        CW_USEDEFAULT, CW_USEDEFAULT, 620, 520,
         nullptr, nullptr, hInst, nullptr);
     if (!hwnd) return 1;
 
