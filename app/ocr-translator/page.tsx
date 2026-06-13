@@ -128,6 +128,64 @@ export default function OcrTranslatorPage() {
     } catch {}
   };
 
+  // ── Auto-routing dalla pagina del gioco (RPG Maker classico) ──
+  // Deep-link: /ocr-translator?game=<nome>&src=en&tgt=it&autostart=1
+  // Pre-seleziona la finestra del gioco e, se autostart, avvia OCR + overlay.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const sp = new URLSearchParams(window.location.search);
+    const gameName = sp.get('game');
+    if (!gameName) return;
+    const src = sp.get('src');
+    const tgt = sp.get('tgt');
+    const auto = sp.get('autostart') === '1';
+    let cancelled = false;
+
+    (async () => {
+      const wins = await invoke<WindowInfo[]>('list_capture_windows').catch(() => [] as WindowInfo[]);
+      if (cancelled) return;
+      setWindows(wins);
+
+      const norm = (s: string) => s.toLowerCase().trim();
+      const g = norm(gameName);
+      const match =
+        wins.find(w => norm(w.title).includes(g)) ||
+        wins.find(w => w.title.length > 3 && g.includes(norm(w.title)));
+
+      const nextCfg: OcrConfig = {
+        language: src || 'ja',
+        target_language: tgt || 'it',
+        capture_interval_ms: 500,
+        min_confidence: 0.5,
+        region: null,
+        target_window: match ? match.hwnd : null,
+      };
+      setConfig(prev => ({ ...prev, ...nextCfg }));
+
+      if (!match) {
+        toast.info(`Avvia ${gameName}, poi premi Play per la traduzione live`);
+        return;
+      }
+      if (!auto) return;
+
+      try {
+        await invoke('start_ocr_translator', { config: nextCfg });
+        setIsRunning(true);
+        toast.success('Traduzione live OCR avviata');
+        try {
+          await invoke('toggle_ocr_overlay', { show: true });
+          setOverlayOpen(true);
+          await invoke('position_overlay_on_window', { hwnd: match.hwnd });
+        } catch { /* overlay opzionale */ }
+      } catch (e: unknown) {
+        toast.error(`OCR: ${e}`);
+      }
+    })();
+
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const translateWithAi = async (text: string): Promise<string | null> => {
     if (translationCache.has(text)) return translationCache.get(text) || null;
     if (pendingTranslations.has(text)) return null;

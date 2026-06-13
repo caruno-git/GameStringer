@@ -27,6 +27,7 @@
 #include <vector>
 #include <mutex>
 #include <chrono>
+#include <climits>
 #include <cwctype>
 
 namespace gs {
@@ -72,6 +73,24 @@ public:
              std::wstring& closedText, DrawCtx& closedCtx) {
         std::lock_guard<std::mutex> lock(m_mutex);
         const auto now = Clock::now();
+
+        // ── Guardia di idempotenza (anti-doppione da repaint sovrapposti) ──
+        // Alcuni renderer (overlay trasparenti, redraw parziali) ri-disegnano lo
+        // STESSO glifo alla STESSA posizione (x,y) prima che la riga si chiuda:
+        // senza questa guardia il coalescer accodava il carattere due volte
+        // ("wiilld", "slliim"). Un frammento identico al precedente nello stesso
+        // identico punto è un no-op visivo → lo ignoriamo (aggiornando solo il
+        // tempo, così l'idle-flush resta corretto). Non può scartare testo vero:
+        // un gioco non disegna un glifo diverso nello stesso pixel.
+        if (!m_buf.empty() &&
+            ctx.x == m_lastFragX && ctx.y == m_lastFragY &&
+            fragment == m_lastFrag) {
+            m_lastTime = now;
+            return false;
+        }
+        m_lastFrag  = fragment;
+        m_lastFragX = ctx.x;
+        m_lastFragY = ctx.y;
 
         bool closedPrev = false;
         if (!m_buf.empty()) {
@@ -185,6 +204,10 @@ private:
     int          m_startX    = 0;
     int          m_lastRight = 0;
     Clock::time_point m_lastTime{};
+    // Ultimo frammento accodato + sua posizione (guardia di idempotenza).
+    std::wstring m_lastFrag;
+    int          m_lastFragX = INT_MIN;
+    int          m_lastFragY = INT_MIN;
 };
 
 LineCoalescer g_coalescer;

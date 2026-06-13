@@ -1548,6 +1548,38 @@ export default function GameDetailPage() {
       toast.error(t('common.percorsoDiInstallazioneNonDisponibile'));
       return;
     }
+
+    // ── Auto-routing RPG Maker classico → traduzione live OCR ──
+    // RPG Maker MV/MZ ha dati JSON estraibili (path file-based, sotto). Ma RPG_RT
+    // classico (2000/2003, e in genere ogni RPG Maker senza stringhe estraibili)
+    // NON è patchabile sui file e la cattura GDI è inaffidabile per la cache glifi
+    // del font. Per questi instradiamo alla traduzione live OCR (immune alla cache
+    // glifi), pre-targettando la finestra del gioco.
+    const engLc = (game.engine || engineInfo?.engine || detectEngineByName(game.name || game.title || '') || '').toLowerCase();
+    if (engLc.includes('rpg maker') || engLc.includes('rpgmaker')) {
+      try {
+        const rpgInfo = await invoke<{ version?: string }>('detect_rpgmaker_game', { gamePath: game.installPath });
+        const v = (rpgInfo?.version || '').toLowerCase();
+        const isMvMz = v === 'mv' || v === 'mz';
+        let strings = translationStrategy?.stringCount ?? -1;
+        if (!isMvMz && strings < 0) {
+          const extraction = await invoke<{ total_count?: number }>('extract_all_rpgmaker_strings', { gamePath: game.installPath }).catch(() => ({ total_count: 0 }));
+          strings = extraction?.total_count || 0;
+        }
+        if (!isMvMz && strings <= 0) {
+          const params = new URLSearchParams({
+            game: game.title || game.name || '',
+            src: 'en',
+            tgt: targetLang || language || 'it',
+            autostart: '1',
+          });
+          toast.info('RPG Maker classico: avvio traduzione live OCR');
+          router.push(`/ocr-translator?${params.toString()}`);
+          return;
+        }
+      } catch { /* detect fallito → prosegui col workflow file-based normale */ }
+    }
+
     if (autoTranslateRunningRef.current) return;
     autoTranslateRunningRef.current = true;
 
