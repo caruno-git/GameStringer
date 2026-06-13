@@ -4813,7 +4813,9 @@
     "feedbackRoom": "Feedback & Bug",
     "announcementsRoom": "Annunci",
     "userDefault": "Utente",
-    "chat": "Chat"
+    "chat": "Chat",
+    "connect": "Accedi",
+    "loginToChat": "Effettua il login per chattare"
   },
   "statistics": {
     "detailedStats": "Statistiche Dettagliate",

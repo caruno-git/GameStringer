@@ -4707,7 +4707,9 @@
     "feedbackRoom": "Feedback & Bugs",
     "announcementsRoom": "Announcements",
     "userDefault": "User",
-    "chat": "チャット"
+    "chat": "チャット",
+    "connect": "ログイン",
+    "loginToChat": "チャットするにはログインしてください"
   },
   "statistics": {
     "detailedStats": "詳細統計",

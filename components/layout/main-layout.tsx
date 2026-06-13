@@ -1255,6 +1255,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                 className="h-9 w-9 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all"
                 onClick={() => setExitDialogOpen(true)}
                 title={t('common.closeApp')}
+                aria-label={t('common.closeApp')}
               >
                 <Power className="h-4 w-4" />
               </Button>

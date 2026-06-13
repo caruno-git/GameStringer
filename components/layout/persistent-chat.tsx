@@ -228,7 +228,7 @@ export function PersistentChat() {
         
         if (!uid) {
           clientLogger.debug('[PersistentChat] No uid from getCurrentUserId, trying autoSync...');
-          uid = await timeout(autoSyncGSToSupabase(), 8000).catch((err) => {
+          uid = await timeout(autoSyncGSToSupabase(), 15000).catch((err) => {
             clientLogger.warn('[PersistentChat] autoSyncGSToSupabase failed:', err);
             return null;
           });
@@ -683,7 +683,7 @@ export function PersistentChat() {
         {!isLoading && !userId && (
           <div className="flex-1 flex flex-col items-center justify-center text-center gap-3 px-4">
             <LogIn className="h-8 w-8 text-slate-500" />
-            <p className="text-xs text-slate-400">Effettua il login per chattare</p>
+            <p className="text-xs text-slate-400">{t('communityChat.loginToChat')}</p>
             <Button
               variant="outline"
               size="sm"

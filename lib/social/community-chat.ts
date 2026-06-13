@@ -175,50 +175,74 @@ export async function autoSyncGSToSupabase(): Promise<string | null> {
 
   let authenticatedUserId: string | null = null;
 
-  // 1. Check if already signed in
-  const { data: current } = await supabase.auth.getUser();
-  if (current?.user?.id) {
-    clientLogger.debug(`[Chat Bridge] Già autenticato su Supabase: ${current.user.id}`);
-    authenticatedUserId = current.user.id;
-  }
+  // Alcuni errori del backend community sono TRANSITORI (cold-start del DB,
+  // 5xx tipo "Database error finding user", timeout, rete). In quei casi non ha
+  // senso arrendersi e mostrare il login manuale: ritentiamo con backoff breve.
+  const isTransient = (msg?: string): boolean =>
+    !!msg && /database error|timeout|timed ?out|network|fetch|connection|terminated|unavailable|rate limit|50[0234]|52[0-9]/i.test(msg);
 
-  // 2. Try sign in first (existing user)
-  if (!authenticatedUserId) {
-    const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+  // Un singolo tentativo completo: già-autenticato → sign-in → sign-up.
+  // Ritorna l'uid (solo se c'è una SESSIONE valida) e se l'errore è transitorio.
+  const tryAuthOnce = async (): Promise<{ uid: string | null; transient: boolean }> => {
+    // a) Sessione Supabase già presente (persistita tra i riavvii)?
+    const { data: current } = await supabase.auth.getUser();
+    if (current?.user?.id) return { uid: current.user.id, transient: false };
+
+    // b) Sign-in (utente esistente)
+    const { data: si, error: siErr } = await supabase.auth.signInWithPassword({ email: gs.email!, password });
+    if (si?.user?.id && si.session) {
+      clientLogger.debug(`[Chat Bridge] Sign-in riuscito: ${si.user.id}`);
+      return { uid: si.user.id, transient: false };
+    }
+    if (siErr && isTransient(siErr.message)) return { uid: null, transient: true };
+
+    // c) Sign-up (primo accesso)
+    const { data: su, error: suErr } = await supabase.auth.signUp({
       email: gs.email!,
       password,
+      options: { data: { username: gs.name || gs.id, avatar_url: gs.image || '', gs_id: gs.id }, emailRedirectTo: undefined },
     });
-
-    if (signInData?.user?.id) {
-      clientLogger.debug(`[Chat Bridge] Sign-in Supabase riuscito: ${signInData.user.id}`);
-      authenticatedUserId = signInData.user.id;
-    } else if (signInError) {
-      // 3. If sign-in fails, try sign up (new user)
-      clientLogger.debug(`[Chat Bridge] Sign-in fallito, provo sign-up... ${signInError.message}`);
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email: gs.email!,
-        password,
-        options: {
-          data: {
-            username: gs.name || gs.id,
-            avatar_url: gs.image || '',
-            gs_id: gs.id,
-          },
-          emailRedirectTo: undefined,
-        },
-      });
-
-      if (signUpError) {
-        clientLogger.error(`[Chat Bridge] Sign-up fallito: ${signUpError.message}`);
-        return null;
+    if (suErr) {
+      if (isTransient(suErr.message)) return { uid: null, transient: true };
+      // Account già registrato → ritenta il sign-in (password deterministica).
+      if (/already registered|already exists|user already/i.test(suErr.message)) {
+        const { data: si2, error: si2Err } = await supabase.auth.signInWithPassword({ email: gs.email!, password });
+        if (si2?.user?.id && si2.session) return { uid: si2.user.id, transient: false };
+        return { uid: null, transient: isTransient(si2Err?.message) };
       }
+      clientLogger.error(`[Chat Bridge] Sign-up fallito: ${suErr.message}`);
+      return { uid: null, transient: false };
+    }
+    if (su?.user?.id && su.session) {
+      clientLogger.debug(`[Chat Bridge] Sign-up riuscito: ${su.user.id}`);
+      return { uid: su.user.id, transient: false };
+    }
+    // Utente creato ma senza sessione (es. conferma email attiva) → prova sign-in.
+    if (su?.user?.id) {
+      const { data: si3 } = await supabase.auth.signInWithPassword({ email: gs.email!, password });
+      if (si3?.user?.id && si3.session) return { uid: si3.user.id, transient: false };
+      return { uid: null, transient: true };
+    }
+    return { uid: null, transient: false };
+  };
 
-      if (signUpData?.user?.id) {
-        clientLogger.debug(`[Chat Bridge] Sign-up Supabase riuscito: ${signUpData.user.id}`);
-        authenticatedUserId = signUpData.user.id;
-      }
+  const MAX_ATTEMPTS = 3;
+  for (let attempt = 0; attempt < MAX_ATTEMPTS && !authenticatedUserId; attempt++) {
+    try {
+      const { uid, transient } = await tryAuthOnce();
+      if (uid) { authenticatedUserId = uid; break; }
+      if (!transient) break; // fallimento permanente: inutile insistere
+      clientLogger.debug(`[Chat Bridge] Errore transitorio, ritento (${attempt + 1}/${MAX_ATTEMPTS})...`);
+    } catch (e: unknown) {
+      clientLogger.warn(`[Chat Bridge] Eccezione auth (tentativo ${attempt + 1}): ${String(e)}`);
+      // eccezione di rete → trattala come transitoria e ritenta
+    }
+    if (attempt < MAX_ATTEMPTS - 1) {
+      await new Promise(r => setTimeout(r, 600 * Math.pow(2, attempt))); // 600ms, 1200ms
     }
   }
+
+  if (!authenticatedUserId) return null;
 
   // 4. Ensure user_profiles row exists (prevents FK errors on presence/membership)
   if (authenticatedUserId) {

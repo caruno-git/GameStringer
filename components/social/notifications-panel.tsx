@@ -177,7 +177,7 @@ export function NotificationsPanel({ userId, onNotificationClick }: Notification
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
+        <Button variant="ghost" size="icon" className="relative" aria-label={t('social.notifications')} title={t('social.notifications')}>
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
             <Badge 

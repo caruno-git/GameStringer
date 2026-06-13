@@ -4707,7 +4707,9 @@
     "feedbackRoom": "Feedback & Bugs",
     "announcementsRoom": "Announcements",
     "userDefault": "User",
-    "chat": "Chat"
+    "chat": "Chat",
+    "connect": "Anmelden",
+    "loginToChat": "Melde dich an, um zu chatten"
   },
   "statistics": {
     "detailedStats": "Detaillierte Statistiken",

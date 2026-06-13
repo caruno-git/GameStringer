@@ -4813,7 +4813,9 @@
     "feedbackRoom": "Feedback & Bugs",
     "announcementsRoom": "Announcements",
     "userDefault": "User",
-    "chat": "채팅"
+    "chat": "채팅",
+    "connect": "로그인",
+    "loginToChat": "채팅하려면 로그인하세요"
   },
   "statistics": {
     "detailedStats": "상세 통계",

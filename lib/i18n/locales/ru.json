@@ -4813,7 +4813,9 @@
     "feedbackRoom": "Feedback & Bugs",
     "announcementsRoom": "Announcements",
     "userDefault": "User",
-    "chat": "Чат"
+    "chat": "Чат",
+    "connect": "Войти",
+    "loginToChat": "Войдите, чтобы общаться"
   },
   "statistics": {
     "detailedStats": "Подробная Статистика",

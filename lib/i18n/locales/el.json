@@ -4813,7 +4813,9 @@
     "feedbackRoom": "Σχόλια & σφάλματα",
     "announcementsRoom": "Ανακοινώσεις",
     "userDefault": "Χρήστης",
-    "chat": "Συνομιλία"
+    "chat": "Συνομιλία",
+    "connect": "Σύνδεση",
+    "loginToChat": "Συνδεθείτε για να συνομιλήσετε"
   },
   "statistics": {
     "detailedStats": "Λεπτομερή Στατιστικά",

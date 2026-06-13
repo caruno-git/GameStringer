@@ -79,6 +79,7 @@ export function UpdateBell() {
               : 'text-muted-foreground hover:text-foreground'
           }`}
           title={hasUpdate ? 'Aggiornamento disponibile!' : 'Nessun aggiornamento'}
+          aria-label={hasUpdate ? 'Aggiornamento disponibile' : 'Notifiche aggiornamenti'}
         >
           <Bell className="h-4 w-4" />
           {hasUpdate && (

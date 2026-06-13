@@ -583,7 +583,8 @@ export default function ProjectsPage() {
         </div>
       </div>
 
-      {/* Stats cards */}
+      {/* Stats cards — nascosti quando non c'è ancora alcun progetto (impalcatura inerte) */}
+      {projects.length > 0 && (
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         <StatCard label="Progetti totali" value={stats.total} icon={Rocket} color="text-violet-400" />
         <StatCard label="In corso" value={stats.inProgress} icon={Clock} color="text-cyan-400" />
@@ -595,8 +596,10 @@ export default function ProjectsPage() {
           color="text-amber-400"
         />
       </div>
+      )}
 
-      {/* Filters */}
+      {/* Filters — mostrati solo se esistono progetti (altrimenti sono controlli inerti) */}
+      {projects.length > 0 && (
       <div className="flex flex-wrap items-center gap-2 mb-6 p-3 rounded-lg bg-slate-900/50 border border-slate-700/50">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
@@ -649,6 +652,7 @@ export default function ProjectsPage() {
           </SelectContent>
         </Select>
       </div>
+      )}
 
       {/* Grid */}
       {loading ? (

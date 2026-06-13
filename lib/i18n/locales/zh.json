@@ -4707,7 +4707,9 @@
     "feedbackRoom": "Feedback & Bugs",
     "announcementsRoom": "Announcements",
     "userDefault": "User",
-    "chat": "聊天"
+    "chat": "聊天",
+    "connect": "登录",
+    "loginToChat": "登录后即可聊天"
   },
   "statistics": {
     "detailedStats": "详细统计",

@@ -161,6 +161,7 @@ export default function CommunityHubPage() {
                         showChat ? 'text-violet-400 bg-violet-500/10' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
                       )}
                       title="Chat"
+                      aria-label="Chat"
                     >
                       <MessageCircle className="h-5 w-5" />
                     </Button>
@@ -173,13 +174,15 @@ export default function CommunityHubPage() {
                         showFriendsSidebar ? 'text-violet-400 bg-violet-500/10' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
                       )}
                       title="Amici"
+                      aria-label="Amici"
                     >
                       <Users className="h-5 w-5" />
                     </Button>
                   </div>
                 </div>
 
-                {/* KPI Grid */}
+                {/* KPI Grid — nascosta finché non c'è attività reale (niente impalcatura a 0) */}
+                {!!stats && (stats.total_threads + stats.total_packs + stats.total_downloads + stats.active_users) > 0 && (
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                   <KpiCard
                     icon={MessageSquare}
@@ -206,6 +209,7 @@ export default function CommunityHubPage() {
                     accent="rose"
                   />
                 </div>
+                )}
             </div>
           )}
 
