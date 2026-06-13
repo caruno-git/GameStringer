@@ -46,29 +46,14 @@ export function ProfileWrapper({ children }: ProfileWrapperProps) {
       try {
         clientLogger.debug('🔄 ProfileWrapper: Inizializzazione...');
         
-        // ✅ RIABILITATO con protezione anti-loop
+        // ⛔ Sistema sessioni DISABILITATO (regola progetto: isAuthenticated = !!currentProfile,
+        //    nessun auto-login — il profilo va riselezionato a ogni avvio).
+        //    Si mantiene SOLO il ripristino delle connessioni store (Steam/Epic/GOG/Ubisoft),
+        //    che non c'entra con l'autenticazione del profilo.
         try {
-          // Setup activity tracking for session persistence con debouncing
-          sessionPersistence.setupActivityTracking();
-          
-          // Try to restore previous session con timeout BREVE
-          const restorePromise = sessionPersistence.restoreSession();
-          const timeoutPromise = new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Session restore timeout')), 1000)
-          );
-          
-          await Promise.race([restorePromise, timeoutPromise]);
-          
-          // Clean up any expired sessions
-          sessionPersistence.cleanup();
-          
-          // Ripristina le connessioni store dal backend Rust (non bloccante)
           sessionPersistence.restoreStoreConnections().catch(() => {});
-          
-          clientLogger.debug('✅ ProfileWrapper: Session persistence riabilitato con successo');
-        } catch (sessionError) {
-          clientLogger.warn('⚠️ ProfileWrapper: Session persistence fallito, continuando senza:', sessionError);
-          // Non bloccare l'inizializzazione se la session persistence fallisce
+        } catch (storeError) {
+          clientLogger.warn('⚠️ ProfileWrapper: restore store connections fallito, continuando:', storeError);
         }
         
         clientLogger.debug('✅ ProfileWrapper: Inizializzazione completata');
