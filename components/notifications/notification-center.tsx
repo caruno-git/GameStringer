@@ -137,10 +137,13 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
       setKeyboardNavigationActive(false);
       
       // Focus management
-      setTimeout(() => {
+      const focusTimer = setTimeout(() => {
         focusManager?.focusNotificationCenter();
         setKeyboardNavigationActive(true);
       }, 100);
+      // Pulisci il timer all'unmount/cambio deps: evita setState dopo lo smontaggio
+      // (nei test causava "window is not defined" dopo il teardown di jsdom).
+      return () => clearTimeout(focusTimer);
     } else {
       // Restore focus when closing
       focusManager?.restoreFocus();
