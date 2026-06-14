@@ -531,7 +531,9 @@ impl ProfileManager {
     pub fn is_session_expired(&self, timeout_seconds: u64) -> bool {
         if let Some(stats) = &self.session_stats {
             let inactive_time = Utc::now().signed_duration_since(stats.last_activity).num_seconds() as u64;
-            inactive_time > timeout_seconds
+            // >= così che timeout 0 significhi "scaduta immediatamente" (necessario per il
+            // logout immediato con timeout 0); per timeout > 0 la differenza è solo all'istante esatto.
+            inactive_time >= timeout_seconds
         } else {
             true
         }

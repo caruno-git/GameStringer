@@ -126,6 +126,12 @@ impl SystemEventHandler {
         }
     }
 
+    /// Accesso al manager (solo per i test: serve a impostare le preferenze del profilo).
+    #[cfg(test)]
+    pub fn notification_manager_for_test(&self) -> &Arc<Mutex<NotificationManager>> {
+        &self.notification_manager
+    }
+
     /// Aggiorna la lista dei profili attivi
     pub async fn update_active_profiles(&self, profile_ids: Vec<String>) {
         let mut profiles = self.active_profiles.lock().await;
@@ -766,9 +772,14 @@ impl SystemEventHandler {
 
     /// Verifica se un'operazione è importante e merita una notifica
     fn is_important_operation(&self, operation_type: &str) -> bool {
-        matches!(operation_type.to_lowercase().as_str(), 
-            "backup" | "restore" | "migration" | "sync" | "update" | "cleanup" | "repair"
-        )
+        // Match per sottostringa: i metodi di convenienza producono operation_type
+        // compositi ("Backup Full", "Database Cleanup", "Sync Steam Games") che con un
+        // match esatto non sarebbero mai riconosciuti come importanti → le operazioni
+        // riuscite non notificherebbero mai.
+        let op = operation_type.to_lowercase();
+        ["backup", "restore", "migration", "sync", "update", "cleanup", "repair"]
+            .iter()
+            .any(|kw| op.contains(kw))
     }
 
     /// Verifica se un cambio di stato è importante
