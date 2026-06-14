@@ -189,40 +189,18 @@ impl AntiCheatManager {
             }
         }
 
-        let mut detected_systems = Vec::new();
-        let mut details = HashMap::new();
-        let mut max_risk = RiskLevel::Low;
-
-        // Scansiona processi in esecuzione
+        // Raccoglie nomi processi (con PID) e moduli del target via WinAPI, poi
+        // applica il matching PURO delle firme note (vedi match_known_systems).
+        // Se la lettura dei moduli fallisce, si prosegue con i soli processi.
         let running_processes = self.get_running_processes()?;
-        for process in &running_processes {
-            for (key, info) in &self.known_systems {
-                if matches!(info.detection_method, DetectionMethod::ProcessName) && process.name.to_lowercase().contains(key) {
-                    detected_systems.push(info.name.clone());
-                    details.insert(
-                        format!("process_{}", key),
-                        format!("Processo rilevato: {} (PID: {})", process.name, process.pid)
-                    );
-                    max_risk = self.max_risk_level(&max_risk, &info.risk_level);
-                }
-            }
-        }
+        let process_entries: Vec<(String, u32)> = running_processes
+            .iter()
+            .map(|p| (p.name.clone(), p.pid))
+            .collect();
+        let module_names = self.get_process_modules(pid).unwrap_or_default();
 
-        // Scansiona moduli del processo target
-        if let Ok(modules) = self.get_process_modules(pid) {
-            for module in &modules {
-                for (key, info) in &self.known_systems {
-                    if matches!(info.detection_method, DetectionMethod::ModuleName) && module.to_lowercase().contains(key) {
-                        detected_systems.push(info.name.clone());
-                        details.insert(
-                            format!("module_{}", key),
-                            format!("Modulo rilevato: {}", module)
-                        );
-                        max_risk = self.max_risk_level(&max_risk, &info.risk_level);
-                    }
-                }
-            }
-        }
+        let (detected_systems, max_risk, details) =
+            self.match_known_systems(&process_entries, &module_names);
 
         // Determina modalità compatibilità raccomandata
         let recommended_mode = self.determine_compatibility_mode(&detected_systems);
@@ -267,16 +245,72 @@ impl AntiCheatManager {
     pub fn evaluate_injection_gate(&self, pid: u32) -> InjectionGateResult {
         match self.detect_anti_cheat(pid) {
             Ok(detection) => Self::gate_decision(&detection),
-            Err(e) => InjectionGateResult {
-                allowed: false,
-                detected_systems: Vec::new(),
-                risk_level: RiskLevel::Critical,
-                reason: format!(
-                    "Detection anti-cheat fallita: {}. Injection bloccata per sicurezza (fail-closed).",
-                    e
-                ),
-            },
+            Err(e) => Self::gate_fail_closed(&e.to_string()),
         }
+    }
+
+    /// Esito fail-closed puro: se la detection non è affidabile, l'injection è
+    /// bloccata con rischio Critical. Estratto per essere testabile senza WinAPI.
+    fn gate_fail_closed(error: &str) -> InjectionGateResult {
+        InjectionGateResult {
+            allowed: false,
+            detected_systems: Vec::new(),
+            risk_level: RiskLevel::Critical,
+            reason: format!(
+                "Detection anti-cheat fallita: {}. Injection bloccata per sicurezza (fail-closed).",
+                error
+            ),
+        }
+    }
+
+    /// Matching PURO delle firme anti-cheat note (testabile senza WinAPI).
+    ///
+    /// Dati i processi in esecuzione `(nome, pid)` e i moduli del processo target,
+    /// confronta i nomi con `known_systems` secondo il `detection_method` di
+    /// ciascun sistema e ritorna `(sistemi_rilevati, rischio_massimo, dettagli)`.
+    /// Il match è case-insensitive e per sottostringa della chiave nota.
+    fn match_known_systems(
+        &self,
+        processes: &[(String, u32)],
+        modules: &[String],
+    ) -> (Vec<String>, RiskLevel, HashMap<String, String>) {
+        let mut detected_systems = Vec::new();
+        let mut details = HashMap::new();
+        let mut max_risk = RiskLevel::Low;
+
+        // Firme rilevate per nome processo
+        for (name, pid) in processes {
+            for (key, info) in &self.known_systems {
+                if matches!(info.detection_method, DetectionMethod::ProcessName)
+                    && name.to_lowercase().contains(key)
+                {
+                    detected_systems.push(info.name.clone());
+                    details.insert(
+                        format!("process_{}", key),
+                        format!("Processo rilevato: {} (PID: {})", name, pid),
+                    );
+                    max_risk = self.max_risk_level(&max_risk, &info.risk_level);
+                }
+            }
+        }
+
+        // Firme rilevate per nome modulo del processo target
+        for module in modules {
+            for (key, info) in &self.known_systems {
+                if matches!(info.detection_method, DetectionMethod::ModuleName)
+                    && module.to_lowercase().contains(key)
+                {
+                    detected_systems.push(info.name.clone());
+                    details.insert(
+                        format!("module_{}", key),
+                        format!("Modulo rilevato: {}", module),
+                    );
+                    max_risk = self.max_risk_level(&max_risk, &info.risk_level);
+                }
+            }
+        }
+
+        (detected_systems, max_risk, details)
     }
 
     /// Logica pura di decisione del gate (testabile senza processi reali):
@@ -545,5 +579,131 @@ mod tests {
         assert!(!gate.allowed);
         assert_eq!(gate.detected_systems.len(), 2);
         assert!(matches!(gate.risk_level, RiskLevel::High));
+    }
+
+    // ── Helper aggiuntivo: detection con modalità compatibilità specifica ──
+    fn detection_mode(mode: CompatibilityMode) -> AntiCheatDetection {
+        AntiCheatDetection {
+            detected_systems: Vec::new(),
+            risk_assessment: RiskLevel::Low,
+            recommended_mode: mode,
+            detection_time: Utc::now(),
+            process_id: 1,
+            details: HashMap::new(),
+        }
+    }
+
+    // ── Matching firme note (logica pura, niente WinAPI) ──
+
+    #[test]
+    fn match_clean_process_list_detects_nothing() {
+        let m = AntiCheatManager::new();
+        let (sys, risk, _) = m.match_known_systems(
+            &[("notepad.exe".into(), 10), ("game.exe".into(), 20)],
+            &["d3d11.dll".to_string()],
+        );
+        assert!(sys.is_empty());
+        assert!(matches!(risk, RiskLevel::Low));
+    }
+
+    #[test]
+    fn match_detects_battleye_by_process_name() {
+        let m = AntiCheatManager::new();
+        let (sys, risk, details) =
+            m.match_known_systems(&[("BattlEye.exe".into(), 42)], &[]);
+        assert!(sys.contains(&"BattlEye".to_string()));
+        assert!(matches!(risk, RiskLevel::High));
+        // il dettaglio deve riportare il PID del processo incriminato
+        assert!(details.values().any(|v| v.contains("42")));
+    }
+
+    #[test]
+    fn match_is_case_insensitive() {
+        let m = AntiCheatManager::new();
+        let (sys, _, _) = m.match_known_systems(&[("RICOCHET.EXE".into(), 1)], &[]);
+        assert!(sys.contains(&"Ricochet Anti-Cheat".to_string()));
+    }
+
+    #[test]
+    fn match_detects_vac_only_via_module_name() {
+        let m = AntiCheatManager::new();
+        // VAC usa DetectionMethod::ModuleName: un processo con quel nome NON basta…
+        let (by_proc, _, _) = m.match_known_systems(&[("vac.exe".into(), 1)], &[]);
+        assert!(by_proc.is_empty());
+        // …ma un modulo sì, ed è rischio Critical.
+        let (by_mod, risk, _) =
+            m.match_known_systems(&[], &["steamservice_vac.dll".to_string()]);
+        assert!(by_mod.contains(&"Valve Anti-Cheat".to_string()));
+        assert!(matches!(risk, RiskLevel::Critical));
+    }
+
+    #[test]
+    fn match_aggregates_to_highest_risk() {
+        let m = AntiCheatManager::new();
+        // BattlEye (High) via processo + VAC (Critical) via modulo ⇒ Critical
+        let (sys, risk, _) = m.match_known_systems(
+            &[("BattlEye.exe".into(), 7)],
+            &["vac.dll".to_string()],
+        );
+        assert_eq!(sys.len(), 2);
+        assert!(matches!(risk, RiskLevel::Critical));
+    }
+
+    // ── Gate end-to-end sulla logica pura ──
+
+    #[test]
+    fn gate_fail_closed_blocks_with_critical_risk() {
+        let gate = AntiCheatManager::gate_fail_closed("snapshot processi non disponibile");
+        assert!(!gate.allowed);
+        assert!(matches!(gate.risk_level, RiskLevel::Critical));
+        assert!(gate.reason.contains("fail-closed"));
+    }
+
+    // ── Helper di policy ──
+
+    #[test]
+    fn injection_safe_only_when_clean_and_not_disabled() {
+        let m = AntiCheatManager::new();
+        // pulito + Low + Direct ⇒ sicuro
+        assert!(m.is_injection_safe(&detection_with(vec![], RiskLevel::Low)));
+        // anti-cheat rilevato (rischio alto) ⇒ non sicuro
+        assert!(!m.is_injection_safe(&detection_with(vec!["BattlEye"], RiskLevel::High)));
+        // modalità Disabled ⇒ mai sicuro
+        assert!(!m.is_injection_safe(&detection_mode(CompatibilityMode::Disabled)));
+    }
+
+    #[test]
+    fn injection_delay_depends_on_mode() {
+        let m = AntiCheatManager::new();
+        assert_eq!(m.get_injection_delay(&detection_mode(CompatibilityMode::Delayed)), Some(5000));
+        assert_eq!(m.get_injection_delay(&detection_mode(CompatibilityMode::Stealth)), Some(10000));
+        assert_eq!(m.get_injection_delay(&detection_mode(CompatibilityMode::Proxy)), Some(15000));
+        assert_eq!(m.get_injection_delay(&detection_mode(CompatibilityMode::Direct)), None);
+    }
+
+    #[test]
+    fn compatibility_strategies_known_vs_unknown() {
+        let m = AntiCheatManager::new();
+        assert!(!m.get_compatibility_strategies("BattlEye").is_empty());
+        assert!(m.get_compatibility_strategies("SistemaInesistente").is_empty());
+    }
+
+    #[test]
+    fn compatibility_mode_picks_most_restrictive() {
+        let m = AntiCheatManager::new();
+        // VAC ⇒ Disabled è il più restrittivo, vince su PunkBuster (Direct)
+        let mode = m.determine_compatibility_mode(&[
+            "Valve Anti-Cheat".to_string(),
+            "PunkBuster".to_string(),
+        ]);
+        assert!(matches!(mode, CompatibilityMode::Disabled));
+    }
+
+    #[test]
+    fn max_risk_level_promotes_to_higher() {
+        let m = AntiCheatManager::new();
+        assert!(matches!(m.max_risk_level(&RiskLevel::Low, &RiskLevel::Critical), RiskLevel::Critical));
+        assert!(matches!(m.max_risk_level(&RiskLevel::High, &RiskLevel::Low), RiskLevel::High));
+        assert!(matches!(m.max_risk_level(&RiskLevel::Low, &RiskLevel::Medium), RiskLevel::Medium));
     }
 }

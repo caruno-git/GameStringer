@@ -3,6 +3,19 @@
 
 echo "🚀 GameStringer Pre-commit Hook"
 
+# ── Guardia check-linux (anti-E0433) ───────────────────────────────
+# Ogni #[tauri::command] Windows-only registrato nell'invoke_handler deve
+# avere lo stub corrispondente in platform_stubs.rs, altrimenti check-linux
+# fallisce in CI con E0433. Verifica statica locale (~0.5s, niente cargo).
+if git diff --cached --name-only | grep -qE "src-tauri/.*\.rs$"; then
+    echo "🔍 Verifica stub Linux per comandi Windows-only..."
+    if command -v python >/dev/null 2>&1; then PY=python; else PY=python3; fi
+    if ! "$PY" scripts/check-linux-stubs.py; then
+        echo "❌ Commit bloccato: aggiungi gli stub mancanti in src-tauri/src/commands/platform_stubs.rs"
+        exit 1
+    fi
+fi
+
 # Controlla se ci sono modifiche nei file di versioning
 if git diff --cached --name-only | grep -qE "(version\.json|package\.json)"; then
     echo "⚠️  Version files modificati, skip auto-increment"

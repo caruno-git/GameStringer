@@ -72,6 +72,10 @@ jobs:
         working-directory: src-tauri
         run: cargo check --verbose
 
+      - name: Cargo test (Windows)
+        working-directory: src-tauri
+        run: cargo test --verbose
+
   check-linux:
     runs-on: ubuntu-22.04
     steps:

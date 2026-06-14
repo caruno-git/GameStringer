@@ -455,4 +455,113 @@ mod tests {
         assert_eq!(result.data[0], 0); // Sotto threshold
         assert_eq!(result.data[4], 255); // Sopra threshold
     }
+
+    // ── Helper: immagine a tinta unita (formato BGRA) ──
+    fn solid(width: u32, height: u32, b: u8, g: u8, r: u8, a: u8) -> ImageData {
+        let mut data = Vec::with_capacity((width * height * 4) as usize);
+        for _ in 0..(width * height) {
+            data.extend_from_slice(&[b, g, r, a]);
+        }
+        ImageData { data, width, height }
+    }
+
+    #[test]
+    fn upscale_replicates_pixel_content() {
+        // 1x1 → 2x2: ogni pixel di destinazione = sorgente (nearest neighbor)
+        let src = solid(1, 1, 10, 20, 30, 40);
+        let out = upscale_nearest_neighbor(src, 2).unwrap();
+        assert_eq!(out.width, 2);
+        assert_eq!(out.height, 2);
+        assert_eq!(out.data.len(), 2 * 2 * 4);
+        assert_eq!(&out.data[0..4], &[10, 20, 30, 40]);
+        assert_eq!(&out.data[12..16], &[10, 20, 30, 40]);
+    }
+
+    #[test]
+    fn invert_flips_rgb_and_keeps_alpha() {
+        let src = ImageData { data: vec![10, 20, 30, 255], width: 1, height: 1 };
+        let out = invert_colors(src).unwrap();
+        assert_eq!(out.data, vec![245, 235, 225, 255]);
+    }
+
+    #[test]
+    fn contrast_pushes_away_from_midpoint_and_clamps() {
+        // factor 2.0: (v-128)*2+128, con clamp a [0,255]; alpha invariato
+        let src = ImageData { data: vec![200, 100, 128, 255], width: 1, height: 1 };
+        let out = boost_contrast(src, 2.0).unwrap();
+        assert_eq!(out.data, vec![255, 72, 128, 255]);
+    }
+
+    #[test]
+    fn contrast_factor_one_is_identity() {
+        let src = ImageData { data: vec![200, 100, 128, 255], width: 1, height: 1 };
+        let out = boost_contrast(src, 1.0).unwrap();
+        assert_eq!(out.data, vec![200, 100, 128, 255]);
+    }
+
+    #[test]
+    fn threshold_is_binary_and_preserves_alpha() {
+        // gray = (B*114 + G*587 + R*299)/1000 = 100 < 128 ⇒ nero; alpha 200 intatto
+        let src = ImageData { data: vec![100, 100, 100, 200], width: 1, height: 1 };
+        let out = apply_threshold(src, 128).unwrap();
+        assert_eq!(out.data[0], 0);
+        assert_eq!(out.data[1], 0);
+        assert_eq!(out.data[2], 0);
+        assert_eq!(out.data[3], 200);
+    }
+
+    #[test]
+    fn detect_low_palette_is_8bit() {
+        // tinta unita ⇒ 1 colore ⇒ Bit8
+        assert_eq!(detect_retro_game_type(&solid(4, 4, 50, 50, 50, 255)), RetroGameType::Bit8);
+        // due colori distinti ⇒ ancora palette bassa ⇒ Bit8
+        let two = ImageData {
+            data: vec![0, 0, 0, 255, 200, 200, 200, 255],
+            width: 2,
+            height: 1,
+        };
+        assert_eq!(detect_retro_game_type(&two), RetroGameType::Bit8);
+    }
+
+    #[test]
+    fn recommended_config_maps_game_type() {
+        let b8 = get_recommended_config(RetroGameType::Bit8);
+        assert_eq!(b8.upscale_factor, 4);
+        assert_eq!(b8.threshold, Some(128));
+
+        let dos = get_recommended_config(RetroGameType::DosPC);
+        assert!(dos.remove_dithering);
+
+        let auto = get_recommended_config(RetroGameType::Auto);
+        assert_eq!(auto.threshold, None);
+        assert_eq!(auto.upscale_factor, 3);
+    }
+
+    #[test]
+    fn preprocess_default_upscales_by_factor() {
+        // immagine uniforme: la pipeline non panica e scala 4x4 → 12x12 (upscale 3x)
+        let src = solid(4, 4, 128, 128, 128, 255);
+        let out = preprocess_retro_image(&src, &RetroPreprocessConfig::default()).unwrap();
+        assert_eq!(out.width, 12);
+        assert_eq!(out.height, 12);
+    }
+
+    #[test]
+    fn preprocess_noop_config_returns_unchanged() {
+        let cfg = RetroPreprocessConfig {
+            game_type: RetroGameType::Auto,
+            upscale_factor: 1,
+            contrast_boost: 1.0,
+            threshold: None,
+            remove_dithering: false,
+            sharpen: false,
+            invert_colors: false,
+            denoise_level: 0,
+        };
+        let src = solid(3, 3, 50, 60, 70, 255);
+        let out = preprocess_retro_image(&src, &cfg).unwrap();
+        assert_eq!(out.width, 3);
+        assert_eq!(out.height, 3);
+        assert_eq!(out.data, src.data);
+    }
 }
