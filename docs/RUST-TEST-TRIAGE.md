@@ -18,18 +18,43 @@ Bugfix reali applicati (sbloccano ~65 test + correggono difetti di produzione):
 I restanti **42 test datati** sono marcati `#[ignore]` con causa + rimando a questo
 doc (non un ignore cieco). Suite **in locale**: 1086 passed, 0 failed, 42 ignored.
 
-⚠️ **Su CI in parallelo** 2 test di isolamento falliscono pur passando in locale
-(flaky da ambiente): `notifications::profile_isolation_tests::test_unauthorized_access_prevention`
-(file `.db` a nome fisso condiviso) e `profiles::integration_tests::test_profile_switching_data_isolation`
-(stato condiviso del ProfileManager). Per questo il gate CI resta **ristretto** a
-`anti_cheat` + `retro_preprocessor` (deterministicamente verde). Riallargare a
-`cargo test` completo SOLO dopo aver isolato i test (vedi debito #1).
+✅ **RISOLTO (2026-06-14)** — i 2 test di isolamento prima flaky in parallelo sono
+stati sistemati e il gate CI è stato **riallargato a `cargo test` completo**:
+1. `notifications::profile_isolation_tests::test_unauthorized_access_prevention` —
+   gli helper notifications con nome file `.db` **fisso** (`integration_test.rs`,
+   `system_event_tests.rs`, `event_system_tests.rs`, `profile_isolation_tests.rs`)
+   ora usano `tempfile::tempdir()` per-test (come `manager_tests.rs`);
+2. `profiles::integration_tests::test_profile_switching_data_isolation` — NON era
+   stato condiviso: `storage.rs::load_profile` lanciava un `tokio::spawn(save_profile)`
+   fire-and-forget a ogni auth, che faceva race con i save espliciti successivi e
+   sovrascriveva file+indice con la versione caricata (stantia). Rimosso; ora
+   `update_last_access()` resta solo in memoria. Era anche un bug di produzione.
 
-Debito residuo da fare quando si toccano notifications/profiles:
-1. helper con nome file DB **fisso** (`test_*.db`) → passare a `tempfile::tempdir()`
-   (evita stato stantio e contesa tra test paralleli);
-2. modernizzare i test ai comportamenti attuali (priority gating per tipo,
-   validazione `expires_at`, nuovo flusso auth) e togliere gli `#[ignore]`.
+Verifica: `cargo test` in parallelo → **1086 passed, 0 failed, 42 #[ignore]**.
+
+✅ **CHIUSO (2026-06-14, sera)** — modernizzati e riattivati TUTTI i 42 `#[ignore]`.
+Suite intera: **1128 passed, 0 failed, 0 ignored**. Riepilogo per causa:
+- **priority gating** (notifications): le notifiche `Low` sotto il minimo del tipo
+  (default Profile/System = Normal) sono soppresse → i test ora abbassano a `Low` la
+  soglia del tipo via helper `allow_low_priority_*` prima di emettere gli eventi.
+- **try_unwrap helper** (`integration_test.rs`): helper riscritto per restituire gli
+  `Arc` condivisi; i test bloccano i Mutex per-statement.
+- **validazione `expires_at`** (cleanup): `create_notification` rifiuta scadenze nel
+  passato → le notifiche già scadute si inseriscono via
+  `NotificationManager::insert_notification_unchecked` (`#[cfg(test)]`).
+- **validazione preferenze**: `max_notifications`/`auto_delete_after_days` = 0 ora
+  rifiutati → test aggiornato ad asserirlo.
+- **auth drift** (profiles): `create_profile` auto-attiva il profilo (→ `logout()` nei
+  test wrong-password); rate limiter blocca quando `failed >= max_attempts` (→
+  `max_attempts: 4`); le session stats sono per-sessione e `switch_profile` le azzera
+  (→ verifica prima dello switch); cross-profilo dà `NotificationNotFound` (isolamento
+  a livello storage), non `UnauthorizedProfile`.
+
+Fix di prodotto emersi durante la modernizzazione:
+- `system_event_handler::is_important_operation` ora fa match per **sottostringa**
+  (i wrapper convenience usano `operation_type` compositi tipo "Backup Full");
+- `profiles::manager::is_session_expired` usa `>=` così che timeout 0 = scaduta
+  immediatamente (necessario per il logout immediato).
 
 ## Sintesi per bucket
 

@@ -182,20 +182,16 @@ impl ProfileStorage {
             .map_err(|e| StorageError::SerializationError(serde_json::Error::io(std::io::Error::new(std::io::ErrorKind::InvalidData, e))))?;
         let mut profile: UserProfile = serde_json::from_str(&profile_json)?;
         
-        // Aggiorna ultimo accesso
+        // Aggiorna ultimo accesso (solo in memoria).
+        // NB: NON ripersistere qui. Un tempo veniva lanciato un tokio::spawn(save_profile)
+        // fire-and-forget per aggiornare last_access su disco, ma quel save detached faceva
+        // race con i save espliciti successivi (es. add_credential/update_settings),
+        // sovrascrivendo il file/indice con la versione caricata (stantia) → perdita dati
+        // e flakiness in parallelo (test_profile_switching_data_isolation). Il last_access
+        // su disco viene comunque aggiornato dal prossimo save esplicito. Coerente con il
+        // ProfileManager, che evita di salvare durante l'autenticazione.
         profile.update_last_access();
-        
-        // Salva aggiornamento (senza password per evitare loop)
-        if let Some(parent) = self.profiles_dir.parent() {
-            if let Ok(storage) = ProfileStorage::new(parent.to_path_buf()) {
-                let profile_clone = profile.clone();
-                let password = password.to_string();
-                tokio::spawn(async move {
-                    let _ = storage.save_profile(&profile_clone, &password).await;
-                });
-            }
-        }
-        
+
         println!("[PROFILE STORAGE] ✅ Profilo '{}' caricato", profile.name);
         Ok(profile)
     }

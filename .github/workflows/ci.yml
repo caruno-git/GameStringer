@@ -72,17 +72,13 @@ jobs:
         working-directory: src-tauri
         run: cargo check --verbose
 
-      # Gate sui suite STABILI e validati (anti-cheat gate + OCR preprocessing).
-      # La suite completa è verde in locale (1086 pass, 42 #[ignore]) ma alcuni
-      # test di isolamento notifications/profiles sono flaky su CI in parallelo
-      # (file .db a nome fisso + stato condiviso). Riallargare a `cargo test`
-      # completo SOLO dopo aver reso quei test isolati (helper → tempfile::tempdir()).
-      # Vedi docs/RUST-TEST-TRIAGE.md (debito residuo).
-      - name: Cargo test (validated suites)
+      # Suite Rust completa. I due test di isolamento prima flaky in parallelo sono
+      # stati isolati (2026-06-14): helper notifications → tempfile::tempdir() e
+      # rimosso il save detached in load_profile che faceva race con i save espliciti.
+      # Verde in parallelo: 1086 passed, 0 failed, 42 #[ignore]. Vedi docs/RUST-TEST-TRIAGE.md.
+      - name: Cargo test
         working-directory: src-tauri
-        run: |
-          cargo test anti_cheat --verbose
-          cargo test retro_preprocessor --verbose
+        run: cargo test --verbose
 
   check-linux:
     runs-on: ubuntu-22.04
