@@ -101,6 +101,11 @@ pub async fn detect_anti_cheat_systems(_pid: u32) -> Result<serde_json::Value, S
 }
 
 #[tauri::command]
+pub async fn check_injection_gate(_pid: u32) -> Result<serde_json::Value, String> {
+    Err(PLATFORM_ERR.into())
+}
+
+#[tauri::command]
 pub async fn get_anti_cheat_compatibility_strategies(_anti_cheat_name: String) -> Result<serde_json::Value, String> {
     Err(PLATFORM_ERR.into())
 }
