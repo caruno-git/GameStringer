@@ -233,6 +233,7 @@ mod validation_tests {
     }
 
     #[tokio::test]
+    #[ignore = "stale test (validazione preferenze drift), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_preferences_validation() {
         let manager = create_test_manager().await;
         

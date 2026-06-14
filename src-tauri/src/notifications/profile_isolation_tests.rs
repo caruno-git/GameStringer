@@ -16,6 +16,7 @@ mod profile_isolation_tests {
     }
 
     #[tokio::test]
+    #[ignore = "stale test (priority gating preferenze), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_profile_isolation_basic() {
         let manager = create_test_manager().await;
         

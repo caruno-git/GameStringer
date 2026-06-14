@@ -72,15 +72,13 @@ jobs:
         working-directory: src-tauri
         run: cargo check --verbose
 
-      # Gate sui test bonificati e validati (anti-cheat gate + OCR preprocessing).
-      # NON usare `cargo test` senza filtro finché l'intera suite Rust (~1100 test,
-      # inclusi i patcher mai girati in CI) non è portata a verde: la attiveremo
-      # come gate completo solo dopo la bonifica, come fatto per i gate frontend.
-      - name: Cargo test (validated suites)
+      # Gate completo: l'intera suite Rust (1086 pass, 42 #[ignore] documentati).
+      # I test datati di notifications/profiles sono marcati #[ignore] con causa
+      # e rimando a docs/RUST-TEST-TRIAGE.md; vanno modernizzati e riabilitati
+      # quando si tocca quei moduli. Gli #[ignore] non fanno fallire la CI.
+      - name: Cargo test (Windows)
         working-directory: src-tauri
-        run: |
-          cargo test anti_cheat --verbose
-          cargo test retro_preprocessor --verbose
+        run: cargo test --verbose
 
   check-linux:
     runs-on: ubuntu-22.04

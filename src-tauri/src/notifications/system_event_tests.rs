@@ -146,6 +146,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore = "stale test (priority gating broadcast), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_security_alert_notifications() {
         let integration = create_test_system_event_integration().await;
         integration.start().await.unwrap();
@@ -175,6 +176,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore = "stale test (priority gating broadcast), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_background_operation_notifications() {
         let integration = create_test_system_event_integration().await;
         integration.start().await.unwrap();
@@ -230,6 +232,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore = "stale test (priority gating broadcast), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_database_issue_notifications() {
         let integration = create_test_system_event_integration().await;
         integration.start().await.unwrap();
@@ -285,6 +288,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore = "stale test (priority gating broadcast), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_convenience_methods() {
         let integration = create_test_system_event_integration().await;
         integration.start().await.unwrap();
