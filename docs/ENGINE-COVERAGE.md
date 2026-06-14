@@ -99,8 +99,9 @@ rischio, fail-closed, policy di compatibilità) è ora estratta in funzioni pure
 coperta da 14 test in `src-tauri/src/anti_cheat.rs`. Resta non testato lo scan
 WinAPI vero (`get_running_processes` / `get_process_modules`), non riproducibile
 in CI. Da questo commit la CI esegue `cargo test` sul job **check-windows**
-(prima girava solo `cargo check`): i test del gate — e l'intera suite Rust — sono
-ora enforced sui PR.
+(prima girava solo `cargo check`), **limitato ai suite validati** (`anti_cheat`,
+`retro_preprocessor`): l'intera suite Rust (~1100 test, inclusi i patcher mai
+girati in CI) non è ancora pulita e verrà gateata solo dopo la bonifica.
 
 ---
 
