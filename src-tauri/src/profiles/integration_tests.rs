@@ -55,7 +55,6 @@ mod profile_manager_integration_tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (auth API drift), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_profile_crud_operations() {
         let (mut manager, _temp_dir) = create_test_manager().await;
 
@@ -111,13 +110,14 @@ mod profile_manager_integration_tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (auth API drift), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_rate_limiting() {
         let (mut manager, _temp_dir) = create_test_manager().await;
 
         // Configura rate limiter per test rapidi
+        // max_attempts: 4 → i 3 tentativi del loop restano InvalidCredentials e il 4°
+        // scatta il blocco (register_failed_attempt blocca quando failed >= max_attempts).
         let config = RateLimiterConfig {
-            max_attempts: 3,
+            max_attempts: 4,
             block_duration_seconds: 2,
             reset_after_seconds: 10,
             exponential_backoff: false,
@@ -252,7 +252,6 @@ mod profile_manager_integration_tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (auth API drift), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_session_management() {
         let (mut manager, _temp_dir) = create_test_manager().await;
 
@@ -319,7 +318,6 @@ mod profile_manager_integration_tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (auth API drift), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_multiple_profiles() {
         let (mut manager, _temp_dir) = create_test_manager().await;
 
@@ -374,7 +372,6 @@ mod profile_manager_integration_tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (auth API drift), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_error_handling_edge_cases() {
         let (mut manager, _temp_dir) = create_test_manager().await;
 
@@ -475,7 +472,6 @@ mod profile_manager_integration_tests {
 
     /// Test del flusso completo: creazione → autenticazione → uso → export/import
     #[tokio::test]
-    #[ignore = "stale test (auth API drift), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_complete_profile_workflow() {
         let (mut manager, _temp_dir) = create_test_manager().await;
 
@@ -576,6 +572,14 @@ mod profile_manager_integration_tests {
         manager.update_settings(updated_settings, "CompletePass123!").await
             .expect("Failed to update settings second time");
 
+        // Le statistiche di sessione sono PER-SESSIONE e vengono azzerate da switch_profile
+        // (che ri-autentica). Verifichiamole QUI, prima di cambiare profilo.
+        {
+            let session_stats = manager.get_session_stats().expect("No session stats");
+            assert!(session_stats.credential_operations >= 3); // 3 credenziali aggiunte
+            assert!(session_stats.settings_changes >= 2); // 2 modifiche impostazioni
+        }
+
         // FASE 4: Verifica isolamento dati - crea secondo profilo
         let second_request = create_test_profile_request("SecondUser", "SecondPass456!");
         let _second_profile = manager.create_profile(second_request).await
@@ -611,10 +615,11 @@ mod profile_manager_integration_tests {
         assert_eq!(final_settings.security.session_timeout, 30);
         assert_eq!(final_settings.game_library.refresh_interval, 60);
 
-        // FASE 6: Test statistiche sessione
+        // FASE 6: dopo lo switch di profilo la sessione corrente è nuova → le statistiche
+        // sono azzerate (sono per-sessione, non cumulative tra autenticazioni).
         let session_stats = manager.get_session_stats().expect("No session stats");
-        assert!(session_stats.credential_operations >= 3); // Almeno 3 credenziali aggiunte
-        assert!(session_stats.settings_changes >= 2); // Almeno 2 modifiche impostazioni
+        assert_eq!(session_stats.credential_operations, 0);
+        assert_eq!(session_stats.settings_changes, 0);
 
         // FASE 7: Test export profilo
         let current_profile_id = manager.current_profile_id().unwrap().to_string();

@@ -28,6 +28,12 @@ impl SystemEventIntegration {
         }
     }
 
+    /// Accesso all'handler (solo per i test: serve a impostare le preferenze profilo).
+    #[cfg(test)]
+    pub fn handler_for_test(&self) -> &Arc<SystemEventHandler> {
+        &self.system_event_handler
+    }
+
     /// Avvia il sistema di integrazione
     pub async fn start(&self) -> NotificationResult<()> {
         let mut is_active = self.is_active.lock().await;

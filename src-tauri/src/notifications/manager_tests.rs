@@ -65,6 +65,17 @@ mod manager_tests {
         }
     }
 
+    /// Abbassa a `Low` la soglia di priorità del tipo `System` per un profilo, così che
+    /// le notifiche `Low` (usate da alcuni test) non vengano soppresse dal priority
+    /// gating delle preferenze di default (System min = Normal).
+    async fn allow_low_priority_system(manager: &NotificationManager, profile_id: &str) {
+        let mut prefs = manager.get_preferences(profile_id).await.unwrap();
+        if let Some(tp) = prefs.type_settings.get_mut(&NotificationType::System) {
+            tp.priority = NotificationPriority::Low;
+        }
+        manager.update_preferences(prefs).await.unwrap();
+    }
+
     #[tokio::test]
     async fn test_manager_initialization() {
         let manager = create_test_manager().await;
@@ -328,18 +339,19 @@ mod manager_tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (assert auth drift), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_unauthorized_profile_access() {
         let manager = create_test_manager().await;
         let request = create_test_notification_request("profile_a");
         let notification = manager.create_notification(request).await.unwrap();
-        
-        // Prova ad accedere con un profilo diverso
+
+        // L'isolamento ora avviene a livello storage: il caricamento è filtrato per
+        // profilo, quindi un profilo diverso non "vede" la notifica e ottiene
+        // NotificationNotFound (non raggiunge più il check UnauthorizedProfile).
         let result = manager.mark_as_read(&notification.id, "profile_b").await;
-        assert!(matches!(result, Err(NotificationError::UnauthorizedProfile)));
-        
+        assert!(matches!(result, Err(NotificationError::NotificationNotFound(_))));
+
         let result = manager.delete_notification(&notification.id, "profile_b").await;
-        assert!(matches!(result, Err(NotificationError::UnauthorizedProfile)));
+        assert!(matches!(result, Err(NotificationError::NotificationNotFound(_))));
     }
 
     #[tokio::test]
@@ -482,10 +494,10 @@ mod manager_tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (priority gating preferenze), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_notification_sorting() {
         let manager = create_test_manager().await;
-        
+        allow_low_priority_system(&manager, "test_profile").await;
+
         // Crea notifiche con diverse priorità
         let requests = vec![
             CreateNotificationRequest {
@@ -524,10 +536,10 @@ mod manager_tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (priority gating preferenze), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_high_priority_unread_notifications() {
         let manager = create_test_manager().await;
-        
+        allow_low_priority_system(&manager, "test_profile").await;
+
         // Crea notifiche con diverse priorità
         let requests = vec![
             CreateNotificationRequest {
@@ -616,21 +628,21 @@ mod manager_tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (validazione expires_at nel passato), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_notification_expiration() {
         let manager = create_test_manager().await;
-        
-        // Crea una notifica già scaduta
+
+        // Una notifica con scadenza nel passato ora è rifiutata dalla validazione
+        // (CreateNotificationRequest::validate richiede expires_at nel futuro).
         let mut request = create_test_notification_request("test_profile");
         request.expires_at = Some(Utc::now() - Duration::hours(1)); // Scaduta un'ora fa
-        
-        let notification = manager.create_notification(request).await.unwrap();
-        assert!(notification.is_expired());
-        
-        // Crea una notifica che scade in futuro
+
+        let result = manager.create_notification(request).await;
+        assert!(matches!(result, Err(NotificationError::InvalidContent(_))));
+
+        // Una notifica che scade in futuro viene creata e non risulta scaduta
         let mut request = create_test_notification_request("test_profile");
         request.expires_at = Some(Utc::now() + Duration::hours(1)); // Scade tra un'ora
-        
+
         let notification = manager.create_notification(request).await.unwrap();
         assert!(!notification.is_expired());
     }

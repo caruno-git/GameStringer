@@ -375,7 +375,6 @@ mod tests {
     use super::*;
 
     #[test]
-    #[ignore = "stale test (messaggio validazione cambiato), vedi docs/RUST-TEST-TRIAGE.md"]
     fn test_profile_name_validation() {
         let validator = ProfileValidator::with_default_config();
         
@@ -397,7 +396,7 @@ mod tests {
         // Caratteri non validi
         let result = validator.validate_profile_name("Test@User");
         assert!(!result.is_valid);
-        assert!(result.errors.iter().any(|e| e.contains("caratteri")));
+        assert!(result.errors.iter().any(|e| e.contains("underscore")));
     }
 
     #[test]

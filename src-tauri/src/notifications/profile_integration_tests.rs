@@ -39,8 +39,20 @@ mod profile_integration_tests {
         
         let manager_arc = Arc::new(Mutex::new(manager));
         let integration = ProfileNotificationIntegration::new(Arc::clone(&manager_arc));
-        
+
         (manager_arc, integration)
+    }
+
+    /// Abbassa a `Low` la soglia di priorità del tipo `Profile` per un profilo, così
+    /// che le notifiche di lifecycle `Low` (auth/switch/logout/credenziali/settings)
+    /// non vengano soppresse dal priority gating delle preferenze di default (min Normal).
+    async fn allow_low_priority_profile(manager: &Arc<Mutex<NotificationManager>>, profile_id: &str) {
+        let guard = manager.lock().await;
+        let mut prefs = guard.get_preferences(profile_id).await.unwrap();
+        if let Some(tp) = prefs.type_settings.get_mut(&NotificationType::Profile) {
+            tp.priority = NotificationPriority::Low;
+        }
+        guard.update_preferences(prefs).await.unwrap();
     }
 
     #[tokio::test]
@@ -95,10 +107,10 @@ mod profile_integration_tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (priority gating / evento profilo), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_profile_authenticated_event() {
         let (manager_arc, integration) = create_shared_integration().await;
-        
+        allow_low_priority_profile(&manager_arc, "auth_profile_456").await;
+
         // Simula evento di autenticazione
         let event = ProfileEvent::ProfileAuthenticated {
             profile_id: "auth_profile_456".to_string(),
@@ -138,10 +150,10 @@ mod profile_integration_tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (priority gating / evento profilo), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_profile_switched_event() {
         let (manager_arc, integration) = create_shared_integration().await;
-        
+        allow_low_priority_profile(&manager_arc, "new_profile_789").await;
+
         // Simula evento di cambio profilo
         let event = ProfileEvent::ProfileSwitched {
             from_id: Some("old_profile".to_string()),
@@ -181,10 +193,10 @@ mod profile_integration_tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (priority gating / evento profilo), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_profile_logged_out_event() {
         let (manager_arc, integration) = create_shared_integration().await;
-        
+        allow_low_priority_profile(&manager_arc, "logout_profile_101").await;
+
         // Simula evento di logout
         let event = ProfileEvent::ProfileLoggedOut {
             profile_id: "logout_profile_101".to_string(),
@@ -347,10 +359,10 @@ mod profile_integration_tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (priority gating / evento profilo), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_credential_operation_success_notification() {
         let (manager_arc, integration) = create_shared_integration().await;
-        
+        allow_low_priority_profile(&manager_arc, "cred_profile_404").await;
+
         // Crea notifica di operazione credenziali riuscita
         let result = integration.create_credential_operation_notification(
             "cred_profile_404",
@@ -429,10 +441,10 @@ mod profile_integration_tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (priority gating / evento profilo), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_settings_update_notification() {
         let (manager_arc, integration) = create_shared_integration().await;
-        
+        allow_low_priority_profile(&manager_arc, "settings_profile_606").await;
+
         // Crea notifica di aggiornamento impostazioni
         let result = integration.create_settings_update_notification("settings_profile_606").await;
         assert!(result.is_ok());
@@ -560,13 +572,13 @@ mod profile_integration_tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (priority gating / evento profilo), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_multiple_profile_events_sequence() {
         let (manager_arc, integration) = create_shared_integration().await;
-        
+
         // Simula una sequenza di eventi per lo stesso profilo
         let profile_id = "sequence_profile_909";
         let profile_name = "Sequence User";
+        allow_low_priority_profile(&manager_arc, profile_id).await;
         
         // 1. Creazione profilo
         let create_event = ProfileEvent::ProfileCreated {

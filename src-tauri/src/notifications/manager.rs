@@ -66,8 +66,16 @@ impl NotificationManager {
         
         // Salva nel storage
         self.storage.save_notification(&notification).await?;
-        
+
         Ok(notification)
+    }
+
+    /// Inserisce una notifica direttamente nello storage saltando la validazione
+    /// (solo per i test: serve a creare notifiche GIÀ scadute, che `create_notification`
+    /// rifiuterebbe perché `expires_at` deve essere nel futuro).
+    #[cfg(test)]
+    pub async fn insert_notification_unchecked(&self, notification: &Notification) -> NotificationResult<()> {
+        self.storage.save_notification(notification).await
     }
 
     /// Validazione avanzata della richiesta di notifica

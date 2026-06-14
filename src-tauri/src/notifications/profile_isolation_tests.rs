@@ -7,16 +7,20 @@ mod profile_isolation_tests {
         access_control::NotificationAccessControl,
     };
     use chrono::Utc;
+    use tempfile::tempdir;
 
     async fn create_test_manager() -> NotificationManager {
-        let storage = NotificationStorage::new("test_profile_isolation.db".into());
+        // tempdir per-test: evita contesa sul nome file fisso tra test paralleli.
+        // La connessione aperta da initialize() resta viva nel manager.
+        let temp_dir = tempdir().unwrap();
+        let db_path = temp_dir.path().join("test_profile_isolation.db");
+        let storage = NotificationStorage::new(db_path);
         let manager = NotificationManager::new(storage);
         manager.initialize().await.unwrap();
         manager
     }
 
     #[tokio::test]
-    #[ignore = "stale test (priority gating preferenze), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_profile_isolation_basic() {
         let manager = create_test_manager().await;
         

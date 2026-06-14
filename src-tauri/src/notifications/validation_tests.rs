@@ -233,27 +233,28 @@ mod validation_tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (validazione preferenze drift), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_preferences_validation() {
         let manager = create_test_manager().await;
-        
-        // Test preferenze con max_notifications troppo basso
+
+        // max_notifications = 0 ora è rifiutato da validate_preferences
         let mut preferences = NotificationPreferences::default();
         preferences.profile_id = "test_profile".to_string();
-        preferences.max_notifications = 0; // Troppo basso
-        
-        let _result = manager.update_preferences(preferences).await;
-        // Nota: il manager potrebbe non validare questo specifico caso,
-        // ma testiamo comunque la struttura
-        
-        // Test preferenze con auto_delete_after_days troppo basso
+        preferences.max_notifications = 0;
+        let result = manager.update_preferences(preferences).await;
+        assert!(matches!(result, Err(NotificationError::InvalidContent(_))));
+
+        // auto_delete_after_days = 0 ora è rifiutato da validate_preferences
         let mut preferences = NotificationPreferences::default();
         preferences.profile_id = "test_profile".to_string();
-        preferences.auto_delete_after_days = 0; // Troppo basso
-        
-        // Il manager dovrebbe accettare questi valori ma potrebbero causare comportamenti inaspettati
-        let _result = manager.update_preferences(preferences).await;
-        assert!(_result.is_ok()); // Il manager non valida questi limiti specifici
+        preferences.auto_delete_after_days = 0;
+        let result = manager.update_preferences(preferences).await;
+        assert!(matches!(result, Err(NotificationError::InvalidContent(_))));
+
+        // Preferenze valide (valori di default) vengono accettate
+        let mut preferences = NotificationPreferences::default();
+        preferences.profile_id = "test_profile".to_string();
+        let result = manager.update_preferences(preferences).await;
+        assert!(result.is_ok());
     }
 
     #[tokio::test]

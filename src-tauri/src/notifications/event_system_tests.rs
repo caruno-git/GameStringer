@@ -6,14 +6,32 @@ mod tests {
         profile_integration::ProfileNotificationIntegration,
         event_system::NotificationEventSystem,
         auto_event_integration::AutoEventIntegration,
-        models::NotificationFilter,
+        models::{NotificationFilter, NotificationType, NotificationPriority},
     };
     use crate::profiles::manager::ProfileEvent;
     use std::sync::Arc;
     use tokio::sync::Mutex;
+    use tempfile::tempdir;
+
+    /// Abbassa a `Low` la soglia di priorità del tipo `Profile` per un profilo, così
+    /// che le notifiche `Low` (auth/switch/logout) non vengano soppresse dal priority
+    /// gating delle preferenze di default (min Normal).
+    async fn allow_low_priority_profile(event_system: &NotificationEventSystem, profile_id: &str) {
+        let handler = event_system.get_event_handler();
+        let manager = handler.get_notification_manager().lock().await;
+        let mut prefs = manager.get_preferences(profile_id).await.unwrap();
+        if let Some(tp) = prefs.type_settings.get_mut(&NotificationType::Profile) {
+            tp.priority = NotificationPriority::Low;
+        }
+        manager.update_preferences(prefs).await.unwrap();
+    }
 
     async fn create_test_event_system() -> (Arc<NotificationEventSystem>, AutoEventIntegration) {
-        let storage = NotificationStorage::new("test_event_system.db".into());
+        // tempdir per-test: evita contesa sul nome file fisso tra test paralleli.
+        // La connessione aperta da initialize() resta viva tramite gli Arc del manager.
+        let temp_dir = tempdir().unwrap();
+        let db_path = temp_dir.path().join("test_event_system.db");
+        let storage = NotificationStorage::new(db_path);
         let manager = NotificationManager::new(storage);
         manager.initialize().await.unwrap(); // senza questo la connessione è None e i save falliscono
         let manager_arc = Arc::new(Mutex::new(manager));
@@ -82,14 +100,14 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (priority gating preferenze), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_profile_authenticated_event() {
         let (event_system, _) = create_test_event_system().await;
         event_system.start().await.unwrap();
-        
+
         let profile_id = "test_profile_456";
         let profile_name = "Auth Test Profile";
-        
+        allow_low_priority_profile(&event_system, profile_id).await;
+
         // Emette evento di autenticazione
         event_system.handle_profile_authenticated(profile_id, profile_name).await.unwrap();
         
@@ -117,14 +135,14 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (priority gating preferenze), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_profile_switched_event() {
         let (event_system, _) = create_test_event_system().await;
         event_system.start().await.unwrap();
-        
+
         let from_profile_id = "old_profile";
         let to_profile_id = "new_profile";
-        
+        allow_low_priority_profile(&event_system, to_profile_id).await;
+
         // Emette evento di cambio profilo
         event_system.handle_profile_switched(Some(from_profile_id), to_profile_id).await.unwrap();
         
@@ -252,14 +270,14 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (priority gating preferenze), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_multiple_events_sequence() {
         let (event_system, _) = create_test_event_system().await;
         event_system.start().await.unwrap();
-        
+
         let profile_id = "sequence_test_profile";
         let profile_name = "Sequence Test Profile";
-        
+        allow_low_priority_profile(&event_system, profile_id).await;
+
         // Sequenza di eventi: creazione -> autenticazione -> cambio -> logout
         event_system.handle_profile_created(profile_id, profile_name).await.unwrap();
         event_system.handle_profile_authenticated(profile_id, profile_name).await.unwrap();

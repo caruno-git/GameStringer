@@ -223,7 +223,6 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (auth API drift), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_profile_authentication_wrong_password() {
         let temp_dir = TempDir::new().unwrap();
         let storage = ProfileStorage::new(temp_dir.path().to_path_buf()).unwrap();
@@ -237,6 +236,9 @@ mod tests {
             settings: None,
         };
         manager.create_profile(request).await.unwrap();
+        // create_profile auto-attiva il profilo: facciamo logout per partire da uno stato
+        // non autenticato, così verifichiamo che la password errata NON autentichi.
+        manager.logout().unwrap();
 
         // Test autenticazione con password sbagliata
         let result = manager.authenticate_profile("Auth Test", "WrongKey456$").await;
@@ -360,7 +362,6 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (auth API drift), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_profile_export_import() {
         let temp_dir = TempDir::new().unwrap();
         let storage = ProfileStorage::new(temp_dir.path().to_path_buf()).unwrap();
@@ -585,7 +586,6 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (auth API drift), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_profile_manager_wrong_password() {
         let temp_dir = TempDir::new().unwrap();
         let storage = ProfileStorage::new(temp_dir.path().to_path_buf()).unwrap();
@@ -600,6 +600,8 @@ mod tests {
         };
 
         manager.create_profile(request).await.unwrap();
+        // create_profile auto-attiva il profilo: logout per partire da stato non autenticato.
+        manager.logout().unwrap();
 
         // Test autenticazione con password sbagliata
         let auth_result = manager.authenticate_profile("Wrong Pass Test", "WrongKey456$").await;
@@ -701,7 +703,6 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (auth API drift), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_profile_manager_crud_operations() {
         let temp_dir = TempDir::new().unwrap();
         let storage = ProfileStorage::new(temp_dir.path().to_path_buf()).unwrap();

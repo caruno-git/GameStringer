@@ -5,13 +5,31 @@ mod tests {
         manager::NotificationManager,
         system_event_handler::{SystemEventHandler, SystemEvent, SecuritySeverity},
         system_event_integration::SystemEventIntegration,
+        models::NotificationPriority,
     };
     use std::sync::Arc;
     use tokio::sync::Mutex;
     use chrono::Utc;
+    use tempfile::tempdir;
+
+    /// Abbassa a `Low` la soglia di priorità di TUTTI i tipi per un profilo, così che le
+    /// notifiche broadcast (System/Security a priorità Low/Normal) non vengano soppresse
+    /// dal priority gating delle preferenze di default.
+    async fn allow_low_priority_all(integration: &SystemEventIntegration, profile_id: &str) {
+        let manager = integration.handler_for_test().notification_manager_for_test().lock().await;
+        let mut prefs = manager.get_preferences(profile_id).await.unwrap();
+        for tp in prefs.type_settings.values_mut() {
+            tp.priority = NotificationPriority::Low;
+        }
+        manager.update_preferences(prefs).await.unwrap();
+    }
 
     async fn create_test_system_event_integration() -> SystemEventIntegration {
-        let storage = NotificationStorage::new("test_system_events.db".into());
+        // tempdir per-test: evita contesa sul nome file fisso tra test paralleli.
+        // La connessione aperta da initialize() resta viva tramite gli Arc del manager.
+        let temp_dir = tempdir().unwrap();
+        let db_path = temp_dir.path().join("test_system_events.db");
+        let storage = NotificationStorage::new(db_path);
         let manager = NotificationManager::new(storage);
         manager.initialize().await.unwrap(); // senza questo la connessione è None e i save falliscono
         let manager_arc = Arc::new(Mutex::new(manager));
@@ -146,13 +164,13 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (priority gating broadcast), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_security_alert_notifications() {
         let integration = create_test_system_event_integration().await;
         integration.start().await.unwrap();
-        
+
         let profile_id = "test_profile_security";
         integration.add_active_profile(profile_id.to_string()).await;
+        allow_low_priority_all(&integration, profile_id).await;
         
         // Avviso di sicurezza critico
         let critical_ids = integration.notify_security_alert(
@@ -176,13 +194,13 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (priority gating broadcast), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_background_operation_notifications() {
         let integration = create_test_system_event_integration().await;
         integration.start().await.unwrap();
-        
+
         let profile_id = "test_profile_background";
         integration.add_active_profile(profile_id.to_string()).await;
+        allow_low_priority_all(&integration, profile_id).await;
         
         // Operazione completata con successo
         let success_ids = integration.notify_background_operation_completed(
@@ -232,13 +250,13 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (priority gating broadcast), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_database_issue_notifications() {
         let integration = create_test_system_event_integration().await;
         integration.start().await.unwrap();
-        
+
         let profile_id = "test_profile_database";
         integration.add_active_profile(profile_id.to_string()).await;
+        allow_low_priority_all(&integration, profile_id).await;
         
         // Problema database auto-risolto
         let auto_fixed_ids = integration.notify_database_issue(
@@ -288,17 +306,19 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (priority gating broadcast), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_convenience_methods() {
         let integration = create_test_system_event_integration().await;
         integration.start().await.unwrap();
-        
+
         let profile_id = "test_profile_convenience";
         integration.add_active_profile(profile_id.to_string()).await;
+        allow_low_priority_all(&integration, profile_id).await;
         
-        // Avvio applicazione
+        // Avvio applicazione: mappa su system_status_changed("stopped" → "running"),
+        // che NON è un cambio di stato "importante" (solo error/offline/maintenance o
+        // ripristini lo sono), quindi per design non genera notifiche broadcast.
         let start_ids = integration.notify_application_started("3.0.0".to_string()).await.unwrap();
-        assert!(!start_ids.is_empty());
+        assert!(start_ids.is_empty());
         
         // Backup completato
         let backup_ids = integration.notify_backup_completed(

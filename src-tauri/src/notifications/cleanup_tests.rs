@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use crate::notifications::{
-        models::{CreateNotificationRequest, NotificationType, NotificationPriority, NotificationMetadata, NotificationPreferences},
+        models::{CreateNotificationRequest, NotificationType, NotificationPriority, NotificationMetadata, NotificationPreferences, Notification},
         storage::NotificationStorage,
         manager::NotificationManager,
         cleanup::CleanupConfig,
@@ -30,7 +30,6 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (validazione expires_at nel passato), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_cleanup_expired_notifications() {
         let (manager, _temp_dir) = create_test_manager_with_cleanup().await;
 
@@ -69,8 +68,10 @@ mod tests {
             }),
         };
 
-        // Crea le notifiche
-        manager.create_notification(expired_request).await.unwrap();
+        // La notifica scaduta va inserita direttamente: create_notification rifiuta
+        // expires_at nel passato. La valida passa dalla via normale.
+        let expired = Notification::new(expired_request);
+        manager.insert_notification_unchecked(&expired).await.unwrap();
         manager.create_notification(valid_request).await.unwrap();
 
         // Verifica che ci siano 2 notifiche
@@ -158,7 +159,6 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (validazione expires_at nel passato), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_auto_cleanup_lifecycle() {
         let (manager, _temp_dir) = create_test_manager_with_cleanup().await;
 
@@ -187,7 +187,9 @@ mod tests {
             }),
         };
 
-        manager.create_notification(expired_request).await.unwrap();
+        // Inserimento diretto: notifica già scaduta (create_notification la rifiuterebbe).
+        let expired = Notification::new(expired_request);
+        manager.insert_notification_unchecked(&expired).await.unwrap();
 
         // Aspetta un po' per permettere al cleanup automatico di girare
         // (In un test reale, dovremmo usare mock del tempo o intervalli più brevi)
@@ -199,54 +201,52 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (validazione expires_at nel passato), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_notification_stats() {
         let (manager, _temp_dir) = create_test_manager_with_cleanup().await;
 
-        // Crea diverse tipologie di notifiche
-        let requests = vec![
-            CreateNotificationRequest {
-                profile_id: "test_profile".to_string(),
-                notification_type: NotificationType::System,
-                title: "System Notification".to_string(),
-                message: "System message".to_string(),
-                icon: None,
-                action_url: None,
-                priority: Some(NotificationPriority::High),
-                expires_at: None,
-                metadata: Some(NotificationMetadata {
-                    source: "system".to_string(),
-                    category: "stats_test".to_string(),
-                    tags: vec![],
-                    custom_data: None,
-                }),
-            },
-            CreateNotificationRequest {
-                profile_id: "test_profile".to_string(),
-                notification_type: NotificationType::Profile,
-                title: "Profile Notification".to_string(),
-                message: "Profile message".to_string(),
-                icon: None,
-                action_url: None,
-                priority: Some(NotificationPriority::Normal),
-                expires_at: Some(Utc::now() - Duration::hours(1)), // Scaduta
-                metadata: Some(NotificationMetadata {
-                    source: "profile".to_string(),
-                    category: "stats_test".to_string(),
-                    tags: vec![],
-                    custom_data: None,
-                }),
-            },
-        ];
+        // Notifica di sistema (non scaduta): creata dalla via normale
+        let system_request = CreateNotificationRequest {
+            profile_id: "test_profile".to_string(),
+            notification_type: NotificationType::System,
+            title: "System Notification".to_string(),
+            message: "System message".to_string(),
+            icon: None,
+            action_url: None,
+            priority: Some(NotificationPriority::High),
+            expires_at: None,
+            metadata: Some(NotificationMetadata {
+                source: "system".to_string(),
+                category: "stats_test".to_string(),
+                tags: vec![],
+                custom_data: None,
+            }),
+        };
 
-        let mut notification_ids = Vec::new();
-        for request in requests {
-            let notification = manager.create_notification(request).await.unwrap();
-            notification_ids.push(notification.id);
-        }
+        // Notifica di profilo GIÀ scaduta: inserita direttamente (create_notification
+        // rifiuterebbe expires_at nel passato).
+        let profile_request = CreateNotificationRequest {
+            profile_id: "test_profile".to_string(),
+            notification_type: NotificationType::Profile,
+            title: "Profile Notification".to_string(),
+            message: "Profile message".to_string(),
+            icon: None,
+            action_url: None,
+            priority: Some(NotificationPriority::Normal),
+            expires_at: Some(Utc::now() - Duration::hours(1)), // Scaduta
+            metadata: Some(NotificationMetadata {
+                source: "profile".to_string(),
+                category: "stats_test".to_string(),
+                tags: vec![],
+                custom_data: None,
+            }),
+        };
 
-        // Marca una notifica come letta
-        manager.mark_as_read(&notification_ids[0], "test_profile").await.unwrap();
+        let system_notif = manager.create_notification(system_request).await.unwrap();
+        let profile_notif = Notification::new(profile_request);
+        manager.insert_notification_unchecked(&profile_notif).await.unwrap();
+
+        // Marca come letta la notifica di sistema
+        manager.mark_as_read(&system_notif.id, "test_profile").await.unwrap();
 
         // Ottieni le statistiche
         let stats = manager.get_notification_stats("test_profile").await.unwrap();

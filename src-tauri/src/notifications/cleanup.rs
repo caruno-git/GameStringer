@@ -307,7 +307,6 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore = "stale test (validazione expires_at nel passato), vedi docs/RUST-TEST-TRIAGE.md"]
     async fn test_cleanup_expired_notifications() {
         let storage = Arc::new(create_test_storage().await);
         let config = CleanupConfig::default();
