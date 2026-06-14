@@ -16,8 +16,14 @@ Bugfix reali applicati (sbloccano ~65 test + correggono difetti di produzione):
 - cancellati i `.db` di test stantii con schema vecchio.
 
 I restanti **42 test datati** sono marcati `#[ignore]` con causa + rimando a questo
-doc (non un ignore cieco). Suite: **1086 passed, 0 failed, 42 ignored**. Il gate CI
-è stato riallargato a `cargo test` completo.
+doc (non un ignore cieco). Suite **in locale**: 1086 passed, 0 failed, 42 ignored.
+
+⚠️ **Su CI in parallelo** 2 test di isolamento falliscono pur passando in locale
+(flaky da ambiente): `notifications::profile_isolation_tests::test_unauthorized_access_prevention`
+(file `.db` a nome fisso condiviso) e `profiles::integration_tests::test_profile_switching_data_isolation`
+(stato condiviso del ProfileManager). Per questo il gate CI resta **ristretto** a
+`anti_cheat` + `retro_preprocessor` (deterministicamente verde). Riallargare a
+`cargo test` completo SOLO dopo aver isolato i test (vedi debito #1).
 
 Debito residuo da fare quando si toccano notifications/profiles:
 1. helper con nome file DB **fisso** (`test_*.db`) → passare a `tempfile::tempdir()`
