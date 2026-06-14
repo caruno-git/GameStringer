@@ -13,6 +13,7 @@ mod tests {
     async fn create_test_system_event_integration() -> SystemEventIntegration {
         let storage = NotificationStorage::new("test_system_events.db".into());
         let manager = NotificationManager::new(storage);
+        manager.initialize().await.unwrap(); // senza questo la connessione è None e i save falliscono
         let manager_arc = Arc::new(Mutex::new(manager));
         
         let system_handler = Arc::new(SystemEventHandler::new(manager_arc));

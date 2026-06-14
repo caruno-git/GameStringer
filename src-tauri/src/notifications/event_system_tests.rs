@@ -15,6 +15,7 @@ mod tests {
     async fn create_test_event_system() -> (Arc<NotificationEventSystem>, AutoEventIntegration) {
         let storage = NotificationStorage::new("test_event_system.db".into());
         let manager = NotificationManager::new(storage);
+        manager.initialize().await.unwrap(); // senza questo la connessione è None e i save falliscono
         let manager_arc = Arc::new(Mutex::new(manager));
         
         let integration = ProfileNotificationIntegration::new(Arc::clone(&manager_arc));

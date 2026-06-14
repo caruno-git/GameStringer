@@ -81,8 +81,11 @@ impl NotificationStorage {
                 created_at DATETIME NOT NULL,
                 read_at DATETIME,
                 expires_at DATETIME,
-                metadata TEXT,
-                FOREIGN KEY (profile_id) REFERENCES profiles(id) ON DELETE CASCADE
+                metadata TEXT
+                -- Nessuna FK verso `profiles`: i profili sono file-based
+                -- (ProfileStorage), non esistono come tabella in questo DB.
+                -- Con PRAGMA foreign_keys=ON una FK verso una tabella inesistente
+                -- bloccherebbe ogni INSERT su un DB fresco.
             )
             "#,
             [],
@@ -100,8 +103,8 @@ impl NotificationStorage {
                 quiet_hours TEXT,
                 max_notifications INTEGER NOT NULL DEFAULT 50,
                 auto_delete_after_days INTEGER NOT NULL DEFAULT 30,
-                updated_at DATETIME NOT NULL,
-                FOREIGN KEY (profile_id) REFERENCES profiles(id) ON DELETE CASCADE
+                updated_at DATETIME NOT NULL
+                -- Nessuna FK verso `profiles` (vedi tabella notifications sopra).
             )
             "#,
             [],
@@ -221,6 +224,11 @@ impl NotificationStorage {
         }
 
         if let Some(offset) = filter.offset {
+            // SQLite richiede LIMIT prima di OFFSET: senza limit esplicito
+            // usa LIMIT -1 (illimitato), altrimenti "OFFSET ?" è errore di sintassi.
+            if filter.limit.is_none() {
+                query.push_str(" LIMIT -1");
+            }
             query.push_str(&format!(" OFFSET ?{}", param_index));
             params.push(Box::new(offset as i64));
         }
