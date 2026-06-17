@@ -10,7 +10,7 @@
 
 - [ ] **Test GUI a runtime OCR live** — Overlay OCR L3 / RPG Maker classico e nuovo fallback "Traduzione live OCR" sono verificati solo staticamente. Manca la prova a runtime con un gioco reale.
 - [ ] **Fix lato DB community chat** — Il client è ora resiliente (circuit-breaker + warn), ma la causa è il trigger di creazione utente Supabase rotto (500 al signup): va sistemato sul database.
-- [ ] **Revisione traduzione UI greca** — `el.json` aggiunto con traduzione automatica, da rivedere a mano.
+- [x] **Revisione traduzione UI greca** — `el.json` rivisto (17 giu 2026): struttura allineata, 0 mismatch placeholder, frasi greche corrette; tradotte le ultime label descrittive residue, mantenuti brand/nomi prodotto/formati.
 
 ### 🏪 Store Integration
 

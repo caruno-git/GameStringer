@@ -240,7 +240,7 @@
     "traduciUnGiocoConNeuralTransla": "Μεταφράστε ένα παιχνίδι με το Neural Translator για να αρχίσετε να το γεμίζετε εδώ."
   },
   "binaryPatcherPage": {
-    "title": "Binary String Patcher",
+    "title": "Patcher δυαδικών συμβολοσειρών",
     "antiCheatWarning": "Προειδοποίηση Anti-Cheat",
     "noAntiCheat": "Δεν εντοπίστηκε anti-cheat",
     "targetLang": "Γλώσσα-στόχος:",
@@ -386,8 +386,8 @@
     "uiTransitions": "Μεταβάσεις UI",
     "diskSpace": "Χώρος δίσκου",
     "freeGbDisk": "Ελεύθερα GB δίσκου",
-    "appDataMb": "App Data MB",
-    "coverCacheMb": "Cover Cache MB",
+    "appDataMb": "Δεδομένα εφαρμογής (MB)",
+    "coverCacheMb": "Cache εξωφύλλων (MB)",
     "savedCovers": "Αποθηκευμένα εξώφυλλα",
     "rss": "RSS",
     "lmStudioLocale": "LM Studio (Τοπικό)",
@@ -457,7 +457,7 @@
     "glossario": "Γλωσσάρι"
   },
   "qualityScoringPage": {
-    "qualityScoringHva": "Quality Scoring H/V/A"
+    "qualityScoringHva": "Βαθμολογία ποιότητας H/V/A"
   },
   "visionTranslatorPage": {
     "caricamentoVisionLlm": "Φόρτωση Vision LLM..."
@@ -1452,7 +1452,7 @@
     "backendActive": "Backend ενεργό",
     "backendDisabledLocalOnly": "Backend ανενεργό (μόνο τοπικά)",
     "supabaseProjectUrl": "URL έργου Supabase",
-    "anonymousKeyAnonKey": "Anonymous Key (anon key)",
+    "anonymousKeyAnonKey": "Ανώνυμο κλειδί (anon key)",
     "hideSql": "Απόκρυψη SQL",
     "showSqlSetup": "Εμφάνιση ρύθμισης SQL",
     "runThisSqlInSupabaseSqlEditorToCreateRequiredTables": "Εκτελέστε αυτό το SQL στον SQL Editor του Supabase για να δημιουργήσετε τους απαιτούμενους πίνακες:",
@@ -1534,7 +1534,7 @@
     "selezionaFilePo": "Επιλέξτε αρχείο PO",
     "selezioneGioco": "Επιλογή παιχνιδιού",
     "applicaPatch": "Εφαρμογή patch",
-    "aiDubbingPipeline": "AI Dubbing Pipeline",
+    "aiDubbingPipeline": "Pipeline μεταγλώττισης AI",
     "linguaSorgente": "Γλώσσα προέλευσης",
     "linguaTarget": "Γλώσσα-στόχος",
     "audioFiles": "Αρχεία ήχου",
@@ -1932,7 +1932,7 @@
     "connessoAllaChatCommunity": "Συνδεθήκατε στη συνομιλία της κοινότητας!",
     "nessunaNotifica": "Καμία ειδοποίηση",
     "preferiti": "Αγαπημένα",
-    "retroTranslationPatches": "Retro Translation Patches",
+    "retroTranslationPatches": "Patch μετάφρασης retro",
     "nessunaPatchRetroTrovata": "Δεν βρέθηκε retro patch",
     "scarica": "Λήψη",
     "nessunPreferito": "Κανένα αγαπημένο",
