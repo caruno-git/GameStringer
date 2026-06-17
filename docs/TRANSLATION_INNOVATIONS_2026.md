@@ -6,7 +6,7 @@ Guida completa alle nuove funzionalità di traduzione AI integrate in GameString
 >
 > **Verifica 27/05/2026**: pricing `gemini-3.5-flash` confermato a **$1.50 / $9.00 per MTok (input / output)**, ~40% più economico di Gemini 3.1 Pro e ~4× più veloce sui benchmark coding/agentic (Google I/O 2026). Nessuna nuova release Gemini nelle ultime 24h.
 >
-> ⚠️ **Doc vs. codice**: questo documento descrive lo stato target. Il bump effettivo nei sorgenti (`lib/ai/ai-translate-direct.ts`, `lib/ai/ai-post-edit.ts`, `lib/ocr/vision-translate.ts`, `lib/lore-assistant.ts`, `lib/ai/smart-content-router.ts`) è ancora pendente al 27/05/2026: questi file referenziano ancora `gemini-2.0-flash` come stringa hard-coded. Una volta introdotta la lettura di `NEXT_PUBLIC_GEMINI_MODEL`, rimuovere questo blocco.
+> **Stato 14/06/2026**: bump completato nei sorgenti. Tutti i file rilevanti (`lib/ai/ai-translate-direct.ts`, `lib/ai/ai-post-edit.ts`, `lib/ocr/vision-translate.ts`, `lib/lore-assistant.ts`, `lib/ai/smart-content-router.ts`) leggono `NEXT_PUBLIC_GEMINI_MODEL` con default `gemini-3.5-flash`; nessun `gemini-2.0-flash` hard-coded residuo.
 
 ## Indice
 

@@ -23,7 +23,7 @@
 - [ ] **Real-time Collaboration** — Traduzione collaborativa in tempo reale
 - [ ] **Cloud Sync** — Sincronizzazione cloud per traduzioni e impostazioni
 - [ ] **Mobile Companion** — App mobile per gestione remota
-- [ ] **MelonLoader come alternativa BepInEx IL2CPP** — Solo se arrivano ≥3 segnalazioni utente di giochi Unity IL2CPP dove `BepInEx v6.0.0-pre.2 IL2CPP` non aggancia. Richiede: nuove URL in `src-tauri/src/commands/unity_patcher.rs` (partire da MelonLoader `v0.7.3` + Il2CppInterop `1.5.1-ci.845`, mag 2026), build XUnity.AutoTranslator compatibile MelonLoader (probabile fork community come `sevenl72/XUnity.AutoTranslator` — verificare versione e manutenzione), logica di scelta loader nella UI "Gestisci patch", path installazione `Mods/` invece di `BepInEx/plugins/`. Stima: 1–2 giornate + QA su 3–4 giochi reali.
+- [ ] **MelonLoader come alternativa BepInEx IL2CPP** — Solo se arrivano ≥3 segnalazioni utente di giochi Unity IL2CPP dove `BepInEx v6.0.0-pre.2 IL2CPP` non aggancia. Richiede: nuove URL in `src-tauri/src/commands/unity_patcher.rs` (partire da MelonLoader `v0.7.3` (14 mag 2026, ultima stabile) + Il2CppInterop `1.5.1-ci.845`), build XUnity.AutoTranslator compatibile MelonLoader (probabile fork community come `sevenl72/XUnity.AutoTranslator` — verificare versione e manutenzione), logica di scelta loader nella UI "Gestisci patch", path installazione `Mods/` invece di `BepInEx/plugins/`. Stima: 1–2 giornate + QA su 3–4 giochi reali.
 
 ### 📊 Metriche da Raggiungere
 
