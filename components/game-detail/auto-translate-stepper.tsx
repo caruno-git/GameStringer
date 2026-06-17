@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Zap, Loader2, CheckCircle, AlertTriangle, Edit3, Play, Package } from 'lucide-react';
+import { Zap, Loader2, CheckCircle, AlertTriangle, Edit3, Play, Package, ScanText } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n';
 import { toast } from 'sonner';
 
@@ -150,6 +150,36 @@ export function AutoTranslateStepper({
             {/* Action Prompt */}
             <div className="px-5 py-4">
               <p className="text-xs text-slate-300 mb-4 font-medium">Cosa vuoi fare ora?</p>
+
+              {/* Fallback copertura parziale RPG Maker → Traduzione live OCR (palette blue/sky = Traduzione) */}
+              {(/rpg\s*maker/i.test(result.engine || '')) && result.successRate < 0.9 && (
+                <button
+                  onClick={() => {
+                    onClose();
+                    onClearResult();
+                    const params = new URLSearchParams({
+                      game: game.title || game.name || '',
+                      // RPG Maker classico ≈ giapponese → default OCR 'ja' (l'utente può
+                      // cambiarlo dal selettore). Niente autostart: prima conferma lingua+finestra.
+                      src: 'ja',
+                      tgt: result?.targetLang || 'it',
+                    });
+                    window.location.href = `/ocr-translator?${params.toString()}`;
+                  }}
+                  className="group w-full mb-3 flex items-center gap-3 px-4 py-3 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 hover:border-sky-500/50 transition-all text-left"
+                >
+                  <div className="w-9 h-9 shrink-0 rounded-xl bg-sky-500/15 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <ScanText className="h-4 w-4 text-sky-400" />
+                  </div>
+                  <div className="min-w-0">
+                    <span className="text-xs font-bold text-sky-300 block">Traduzione live OCR</span>
+                    <span className="text-2xs text-slate-400 leading-tight block">
+                      Copertura file parziale ({(result.successRate * 100).toFixed(0)}%): il testo runtime/evento di questo RPG Maker non è estraibile dai file. Traducilo a schermo in tempo reale con l&apos;overlay OCR.
+                    </span>
+                  </div>
+                </button>
+              )}
+
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 {/* Option 1: Review Translations */}
                 <button

@@ -2,6 +2,7 @@ import { AgenticTranslator } from './agentic-translator';
 import { type BatchHarvestResult, type HarvestInput } from '@/lib/context-harvester';
 import { type GameGenre } from './genre-prompts';
 import { clientLogger } from '@/lib/client-logger';
+import { isTauri } from '@/lib/tauri-api';
 
 // Extracted modules
 import {
@@ -1418,6 +1419,28 @@ async function translateWithLingva(
   const results: string[] = [];
   let failures = 0;
   
+  // In Tauri la fetch del browser verso lingva.ml è bloccata da CORS (la pagina d'errore
+  // non porta header CORS) → instradiamo la GET via comando Rust `fetch_url_content`
+  // (reqwest lato backend, nessun vincolo CORS). Fuori da Tauri si usa la fetch del browser.
+  const lingvaGet = async (url: string): Promise<{ ok: boolean; status: number; translation?: string }> => {
+    if (isTauri()) {
+      try {
+        const { invoke } = await import('@tauri-apps/api/core');
+        const body = await invoke<string>('fetch_url_content', { url });
+        const data = JSON.parse(body);
+        return { ok: true, status: 200, translation: data?.translation };
+      } catch (e) {
+        // fetch_url_content ritorna Err "HTTP <code> per <url>" sui non-2xx (404/429)
+        const m = String(e).match(/HTTP (\d+)/);
+        return { ok: false, status: m ? parseInt(m[1], 10) : 0 };
+      }
+    }
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    if (!res.ok) return { ok: false, status: res.status };
+    const data = await res.json();
+    return { ok: true, status: 200, translation: data?.translation };
+  };
+
   const MAX_TEXT_LEN = 500;
   for (const text of opts.texts) {
     // Lingva usa GET con testo nel path — skip stringhe con char problematici
@@ -1428,9 +1451,9 @@ async function translateWithLingva(
     const truncated = text.length > MAX_TEXT_LEN ? text.slice(0, MAX_TEXT_LEN) : text;
     const url = `https://lingva.ml/api/v1/${srcLang}/${tgtLang}/${encodeURIComponent(truncated)}`;
     try {
-      const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
-      if (!res.ok) {
-        if (res.status === 429) {
+      const r = await lingvaGet(url);
+      if (!r.ok) {
+        if (r.status === 429) {
           blockProvider('lingva', false);
           throw new Error('RateLimit');
         }
@@ -1439,8 +1462,7 @@ async function translateWithLingva(
         failures++;
         continue;
       }
-      const data = await res.json();
-      const translated = data?.translation || truncated;
+      const translated = r.translation || truncated;
       results.push(text.length > MAX_TEXT_LEN ? translated + text.slice(MAX_TEXT_LEN) : translated);
     } catch (err: unknown) {
       const errObj = err instanceof Error ? err : null;
@@ -2004,8 +2026,11 @@ export async function translateWithFallback(
     }
   }
 
-  // Nessun provider disponibile, ritorna originali
-  clientLogger.error(`[translateWithFallback] ❌ NESSUN provider riuscito! ${opts.texts.length} stringhe NON tradotte (restituite come originali)`);
+  // Nessun provider disponibile, ritorna originali. È un esito GESTITO (success:false +
+  // testi originali): il chiamante decide come mostrarlo (la live OCR mostra l'originale,
+  // il batch conteggia gli errori). Quindi warn, non error → niente rosso in console su
+  // fallimenti transitori dei provider gratuiti, frequenti nella traduzione live.
+  clientLogger.warn(`[translateWithFallback] ⚠️ Nessun provider riuscito: ${opts.texts.length} stringhe NON tradotte (restituite come originali). Verifica chiavi/provider attivi.`);
   return { translations: opts.texts, provider: 'none', success: false };
 }
 

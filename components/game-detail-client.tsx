@@ -1569,11 +1569,15 @@ export default function GameDetailPage() {
         if (!isMvMz && strings <= 0) {
           const params = new URLSearchParams({
             game: game.title || game.name || '',
-            src: 'en',
+            // RPG Maker classico (RPG_RT 2000/2003, 0 stringhe estraibili) ≈ quasi sempre
+            // giapponese (Yume Nikki, Ib, The Witch's House…) → default OCR 'ja'. Con 'en'
+            // Tesseract leggerebbe inglese su schermo JP = spazzatura. L'utente può
+            // comunque cambiare lingua sorgente dal selettore della pagina OCR.
+            src: 'ja',
             tgt: targetLang || language || 'it',
             autostart: '1',
           });
-          toast.info('RPG Maker classico: avvio traduzione live OCR');
+          toast.info('RPG Maker classico: avvio traduzione live OCR (JA→' + (targetLang || language || 'it').toUpperCase() + ')');
           router.push(`/ocr-translator?${params.toString()}`);
           return;
         }

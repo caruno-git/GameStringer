@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { useOcrHotkey } from '@/hooks/use-global-hotkeys';
 import { useTranslation } from '@/lib/i18n';
 import { VlmTranslator } from '@/lib/ocr/vlm-translator';
-import { translateSingleSmart } from '@/lib/ai/ai-translate-direct';
+import { translateSingleSmart, translateWithFallback } from '@/lib/ai/ai-translate-direct';
 import { rawPixelsToBase64 } from '@/lib/image-utils';
 import { clientLogger } from '@/lib/client-logger';
 
@@ -84,6 +84,14 @@ export default function OcrTranslatorPage() {
         if (s.translation?.defaultTargetLang) {
           setConfig(prev => ({ ...prev, target_language: s.translation.defaultTargetLang }));
         }
+        // Usa il modello Ollama configurato (non l'hardcoded 'deepseek-ocr').
+        const cfgModel = s.translation?.ollamaModel;
+        if (cfgModel) setOllamaModel(cfgModel);
+        // Provider OCR: ricorda l'ultima scelta; in assenza, se Ollama è configurato
+        // parti da lì (evita di cadere sulla catena cloud che senza chiavi fallisce).
+        const savedProvider = localStorage.getItem('ocrProvider') as 'libre' | 'ollama' | 'vlm' | 'gemini' | null;
+        if (savedProvider) setOcrProvider(savedProvider);
+        else if (cfgModel) setOcrProvider('ollama');
       } catch {}
     }
   }, []);
@@ -92,6 +100,7 @@ export default function OcrTranslatorPage() {
   const [translationError, setTranslationError] = useState<string | null>(null);
   const [geminiApiKey, setGeminiApiKey] = useState('');
   const [ocrProvider, setOcrProvider] = useState<'libre' | 'ollama' | 'vlm' | 'gemini'>('libre');
+  const [ollamaModel, setOllamaModel] = useState('deepseek-ocr');
   const [lastTranslationTime, setLastTranslationTime] = useState(0);
   const [overlayOpen, setOverlayOpen] = useState(false);
   // Screenshot static mode
@@ -129,7 +138,7 @@ export default function OcrTranslatorPage() {
   };
 
   // ── Auto-routing dalla pagina del gioco (RPG Maker classico) ──
-  // Deep-link: /ocr-translator?game=<nome>&src=en&tgt=it&autostart=1
+  // Deep-link: /ocr-translator?game=<nome>&src=ja&tgt=it&autostart=1
   // Pre-seleziona la finestra del gioco e, se autostart, avvia OCR + overlay.
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -206,7 +215,7 @@ export default function OcrTranslatorPage() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            model: 'deepseek-ocr',
+            model: ollamaModel,
             messages: [
               { role: 'system', content: 'You are a translator. Translate the following text accurately. Reply ONLY with the translation.' },
               { role: 'user', content: `Translate from ${config.language} to ${config.target_language}: "${text}"` }
@@ -226,12 +235,29 @@ export default function OcrTranslatorPage() {
         return null;
       }
       
+      // 'libre' = traduzione gratuita: vai DIRETTO ai provider web (MyMemory/Lingva)
+      // con priorità (preferWebApis), senza passare dalla catena cloud che senza chiavi
+      // prova prima i provider a pagamento (skippati) ed è lenta/inaffidabile.
+      if (ocrProvider === 'libre') {
+        const r = await translateWithFallback(
+          { texts: [text], targetLanguage: config.target_language, sourceLanguage: config.language },
+          true,
+        );
+        if (r.success && r.translations[0] && r.translations[0] !== text) {
+          translationCache.set(text, r.translations[0]);
+          setTranslationError(null);
+          return r.translations[0];
+        }
+        setTranslationError('Traduzione gratuita non disponibile (MyMemory/Lingva irraggiungibili o quota esaurita). Usa Ollama o configura una chiave API.');
+        return null;
+      }
+
       const result = await translateSingleSmart(
         text,
         config.target_language,
         config.language
       );
-      
+
       if (result?.translated) {
         translationCache.set(text, result.translated);
         setTranslationError(null);
@@ -678,11 +704,15 @@ export default function OcrTranslatorPage() {
                   <select 
                     className="w-full h-9 px-2 rounded-lg border bg-background text-sm"
                     value={ocrProvider}
-                    onChange={(e) => setOcrProvider(e.target.value as "gemini" | "libre" | "ollama" | "vlm")}
+                    onChange={(e) => {
+                      const v = e.target.value as "gemini" | "libre" | "ollama" | "vlm";
+                      setOcrProvider(v);
+                      try { localStorage.setItem('ocrProvider', v); } catch {}
+                    }}
                     disabled={isRunning}
                   >
-                    <option value="libre">� Lingva (Gratis/Veloce)</option>
-                    <option value="ollama">🦙 Ollama (deepseek-ocr locale)</option>
+                    <option value="libre">🌐 Lingva (Gratis/Veloce)</option>
+                    <option value="ollama">🦙 Ollama ({ollamaModel} locale)</option>
                     <option value="vlm">👁️ Ollama VLM (LLaVA/Qwen-VL)</option>
                     <option value="gemini">✨ Gemini (API Key richiesta)</option>
                   </select>
