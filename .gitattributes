@@ -1,0 +1,25 @@
+# Normalizzazione fine-riga: LF nel repo E nel working tree.
+# Evita il mismatch CRLF/LF tra Windows (core.autocrlf=true) e ambienti Linux.
+* text=auto eol=lf
+
+# File binari: mai toccare i fine-riga.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.dll binary
+*.exe binary
+*.so binary
+*.dylib binary
+*.pck binary
+*.zip binary
+*.7z binary
+*.gz binary
+*.wasm binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.pdf binary
