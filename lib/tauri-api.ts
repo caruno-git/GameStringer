@@ -79,6 +79,10 @@ export const invoke = async <T = unknown>(cmd: string, args?: Record<string, unk
     } else if (errorMessage.includes('Credenziali corrotte') || errorMessage.includes('Riconnettiti a Steam')) {
       // Credenziali corrotte - messaggio già gestito, non loggare come errore
       clientLogger.info('ℹ️ Credenziali Steam rimosse. Riconnettiti nelle Impostazioni.');
+    } else if (cmd.startsWith('detect_') && errorMessage.includes('Non sembra essere')) {
+      // Probe di rilevamento engine: "non è questo engine" è un esito ATTESO (il chiamante
+      // ha un fallback), non un errore → debug, niente rumore rosso in console.
+      clientLogger.debug(`🔎 ${cmd}: engine non corrispondente (atteso).`);
     } else {
       clientLogger.error(`Errore durante l'invocazione del comando Tauri '${cmd}':`, error);
     }
