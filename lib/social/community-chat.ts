@@ -166,9 +166,59 @@ function derivePassword(gsId: string): string {
  * sign them into Supabase (signup on first use, then signin).
  * Returns the Supabase user ID or null.
  */
-export async function autoSyncGSToSupabase(): Promise<string | null> {
+// Circuit-breaker: se il backend community è risultato irraggiungibile da poco
+// (522/timeout/rete), evita di rimartellarlo ad ogni mount/Fast-Refresh per qualche
+// minuto. Persistito in localStorage per sopravvivere ai reload del dev.
+const CB_KEY = 'chatBridge:backendDownUntil';
+const CB_COOLDOWN_MS = 3 * 60 * 1000; // 3 minuti
+
+function backendInCooldown(): boolean {
+  try {
+    const until = Number(localStorage.getItem(CB_KEY) || 0);
+    return until > Date.now();
+  } catch { return false; }
+}
+function tripBreaker(): void {
+  try { localStorage.setItem(CB_KEY, String(Date.now() + CB_COOLDOWN_MS)); } catch {}
+}
+function resetBreaker(): void {
+  try { localStorage.removeItem(CB_KEY); } catch {}
+}
+
+// Caps una promise a `ms`: senza questo, una signInWithPassword contro un backend
+// giù resta appesa ~90s (il 522 di Cloudflare arriva dopo un lungo connect-timeout).
+function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    p,
+    new Promise<T>((_, reject) => setTimeout(() => reject(new Error('timeout')), ms)),
+  ]);
+}
+
+// Dedupe: l'auto-sync è invocato da più punti (persistent-chat.tsx in 2 effetti) e in
+// dev il double-invoke di StrictMode raddoppia tutto → senza guardia partono 4 richieste
+// in parallelo PRIMA che il breaker scatti. Condividiamo un'unica sync in volo.
+let _syncInFlight: Promise<string | null> | null = null;
+
+export function autoSyncGSToSupabase(): Promise<string | null> {
+  if (_syncInFlight) return _syncInFlight;
+  _syncInFlight = _runAutoSync().finally(() => { _syncInFlight = null; });
+  return _syncInFlight;
+}
+
+async function _runAutoSync(): Promise<string | null> {
+  // Chat disabilitata (flag backend) → niente richieste affatto. È l'interruttore da usare
+  // finché il backend Supabase è giù: zero 522/CORS in console (quelli li stampa il browser
+  // e NON sono sopprimibili da JS finché la fetch parte).
+  if (!isChatEnabled()) return null;
+
   const gs = getGSSession();
   if (!gs) return null;
+
+  // Backend giù di recente → salta in silenzio (niente retry-storm né rosso in console).
+  if (backendInCooldown()) {
+    clientLogger.debug('[Chat Bridge] Backend community non raggiungibile di recente → salto auto-sync (circuit breaker).');
+    return null;
+  }
 
   const supabase = await getSupabase();
   const password = derivePassword(gs.id);
@@ -210,7 +260,11 @@ export async function autoSyncGSToSupabase(): Promise<string | null> {
         if (si2?.user?.id && si2.session) return { uid: si2.user.id, transient: false };
         return { uid: null, transient: isTransient(si2Err?.message) };
       }
-      clientLogger.error(`[Chat Bridge] Sign-up fallito: ${suErr.message}`);
+      // Bug noto: il trigger DB di creazione utente Supabase è rotto → 500 al sign-up
+      // (vedi memoria community-chat-double-login). Il client è resiliente, quindi è un
+      // warning gestito, non un errore rosso. Fix vero lato DB.
+      const suStatus = (suErr as { status?: number }).status;
+      clientLogger.warn(`[Chat Bridge] Sign-up Supabase fallito (noto, fix lato DB): ${suErr.message || 'errore senza messaggio'}${suStatus ? ` [status ${suStatus}]` : ''}`);
       return { uid: null, transient: false };
     }
     if (su?.user?.id && su.session) {
@@ -226,23 +280,27 @@ export async function autoSyncGSToSupabase(): Promise<string | null> {
     return { uid: null, transient: false };
   };
 
-  const MAX_ATTEMPTS = 3;
-  for (let attempt = 0; attempt < MAX_ATTEMPTS && !authenticatedUserId; attempt++) {
-    try {
-      const { uid, transient } = await tryAuthOnce();
-      if (uid) { authenticatedUserId = uid; break; }
-      if (!transient) break; // fallimento permanente: inutile insistere
-      clientLogger.debug(`[Chat Bridge] Errore transitorio, ritento (${attempt + 1}/${MAX_ATTEMPTS})...`);
-    } catch (e: unknown) {
-      clientLogger.warn(`[Chat Bridge] Eccezione auth (tentativo ${attempt + 1}): ${String(e)}`);
-      // eccezione di rete → trattala come transitoria e ritenta
-    }
-    if (attempt < MAX_ATTEMPTS - 1) {
-      await new Promise(r => setTimeout(r, 600 * Math.pow(2, attempt))); // 600ms, 1200ms
-    }
+  // UN SOLO tentativo per mount: contro un backend giù ogni richiesta stampa 2 righe
+  // (CORS + ERR_FAILED) non sopprimibili → niente retry interni. La "ripetizione" è
+  // governata dal circuit-breaker (riprova solo dopo il cooldown).
+  let lastWasTransient = false;
+  try {
+    const { uid, transient } = await withTimeout(tryAuthOnce(), 8000);
+    if (uid) authenticatedUserId = uid;
+    else lastWasTransient = transient;
+  } catch (e: unknown) {
+    // timeout/eccezione di rete → transitoria
+    lastWasTransient = true;
+    clientLogger.debug(`[Chat Bridge] Tentativo fallito (rete/timeout): ${String(e)}`);
   }
 
-  if (!authenticatedUserId) return null;
+  if (!authenticatedUserId) {
+    // Fallimento per rete/timeout → arma il circuit-breaker così i prossimi mount
+    // (e il double-invoke di StrictMode) non rimartellano un backend irraggiungibile.
+    if (lastWasTransient) tripBreaker();
+    return null;
+  }
+  resetBreaker(); // backend di nuovo raggiungibile
 
   // 4. Ensure user_profiles row exists (prevents FK errors on presence/membership)
   if (authenticatedUserId) {
