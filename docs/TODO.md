@@ -9,7 +9,7 @@
 ### 🧪 Verifica & Stabilizzazione (lavori recenti)
 
 - [ ] **Test GUI a runtime OCR live** — Overlay OCR L3 / RPG Maker classico e nuovo fallback "Traduzione live OCR" sono verificati solo staticamente. Manca la prova a runtime con un gioco reale.
-- [ ] **Fix lato DB community chat** — Il client è ora resiliente (circuit-breaker + warn), ma la causa è il trigger di creazione utente Supabase rotto (500 al signup): va sistemato sul database.
+- [x] **Community chat — diagnosi chiusa (17 giu 2026)** — NESSUN fix DB necessario: DB sano (817/817 profili, password bcrypt allineate, trigger `handle_new_user` ok). Il sintomo "mostra Accedi" era l'outage del backend del 15 giu (522/timeout), ora rientrato. Ritoccato solo il client (riconoscimento "utente esiste" esteso al 500 transitorio + commento corretto).
 - [x] **Revisione traduzione UI greca** — `el.json` rivisto (17 giu 2026): struttura allineata, 0 mismatch placeholder, frasi greche corrette; tradotte le ultime label descrittive residue, mantenuti brand/nomi prodotto/formati.
 
 ### 🏪 Store Integration

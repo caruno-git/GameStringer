@@ -253,18 +253,25 @@ async function _runAutoSync(): Promise<string | null> {
       options: { data: { username: gs.name || gs.id, avatar_url: gs.image || '', gs_id: gs.id }, emailRedirectTo: undefined },
     });
     if (suErr) {
-      if (isTransient(suErr.message)) return { uid: null, transient: true };
-      // Account già registrato → ritenta il sign-in (password deterministica).
-      if (/already registered|already exists|user already/i.test(suErr.message)) {
+      const suStatus = (suErr as { status?: number }).status;
+      // L'utente ESISTE già → retry immediato del sign-in (password deterministica), PRIMA
+      // del check "transitorio". Il 422 "User already registered" e il 500 transitorio
+      // "Database error saving new user" indicano entrambi un account esistente: il secondo
+      // capita quando il check-duplicati di GoTrue va in timeout sotto carico e l'INSERT
+      // colpisce comunque l'indice unique email (users_email_partial_key). In entrambi i casi
+      // ha senso il signin subito, non aspettare il cooldown del circuit-breaker.
+      if (/already registered|already exists|user already|database error saving new user/i.test(suErr.message) || suStatus === 422) {
         const { data: si2, error: si2Err } = await supabase.auth.signInWithPassword({ email: gs.email!, password });
         if (si2?.user?.id && si2.session) return { uid: si2.user.id, transient: false };
         return { uid: null, transient: isTransient(si2Err?.message) };
       }
-      // Bug noto: il trigger DB di creazione utente Supabase è rotto → 500 al sign-up
-      // (vedi memoria community-chat-double-login). Il client è resiliente, quindi è un
-      // warning gestito, non un errore rosso. Fix vero lato DB.
-      const suStatus = (suErr as { status?: number }).status;
-      clientLogger.warn(`[Chat Bridge] Sign-up Supabase fallito (noto, fix lato DB): ${suErr.message || 'errore senza messaggio'}${suStatus ? ` [status ${suStatus}]` : ''}`);
+      // Altri 5xx/timeout/rete → transitorio, ritenta più tardi (circuit-breaker).
+      if (isTransient(suErr.message)) return { uid: null, transient: true };
+      // Fallimento non riconosciuto: condizione gestita (il client resta resiliente) →
+      // warning, non errore rosso. NB: il DB e il trigger di creazione utente sono SANI
+      // (verificato 2026-06-17: 817/817 profili, password bcrypt allineate alla derivazione);
+      // i 500 residui sono timeout DB transitori, NON un trigger rotto.
+      clientLogger.warn(`[Chat Bridge] Sign-up Supabase fallito (condizione gestita): ${suErr.message || 'errore senza messaggio'}${suStatus ? ` [status ${suStatus}]` : ''}`);
       return { uid: null, transient: false };
     }
     if (su?.user?.id && su.session) {
