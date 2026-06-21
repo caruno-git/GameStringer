@@ -28,6 +28,7 @@ import { GspackExportDialog, GspackImportDialog } from '@/components/gspack-dial
 import { GameMakerTranslator } from '@/components/gamemaker-translator';
 import { clientLogger } from '@/lib/client-logger';
 import { runHendrixTranslation } from '@/lib/hendrix-translate';
+import { runRenpyTranslation } from '@/lib/renpy-translate';
 import {
   ScreenshotGallery,
   ScreenshotLightbox,
@@ -1588,6 +1589,37 @@ export default function GameDetailPage() {
           toast.success(`Tradotto: ${r.applied}/${r.total} stringhe in ${tgtName[tgt] || tgt}. Rilancia il gioco.`, { id: toastId });
         } catch (e) {
           toast.error('Hendrix: errore (Ollama avviato?)', { id: toastId, description: String(e) });
+        }
+        return;
+      }
+    }
+
+    // ── Ren'Py (visual novel) → pipeline file-based nativa ───────────
+    // Estrae le .rpy, traduce via LLM offline e genera la cartella game/tl/<lang>/:
+    // blocco `strings` per la UI + filtro runtime say_menu_text_filter per i
+    // dialoghi (vedi generate_renpy_translation). Non invasivo: Ren'Py carica la
+    // traduzione nativamente quando il giocatore seleziona la lingua.
+    {
+      const engR = (game.engine || engineInfo?.engine || detectEngineByName(game.name || game.title || '') || '').toLowerCase();
+      if (engR.includes("ren'py") || engR.includes('renpy')) {
+        const tgt = (targetLang || language || 'it').toLowerCase();
+        const toastId = toast.loading("Ren'Py: estrazione stringhe...");
+        try {
+          const r = await runRenpyTranslation({
+            gamePath: game.installPath,
+            targetLang: tgt,
+            sourceLang: 'en',
+            gameId: game.id || (game.appid ? String(game.appid) : undefined),
+            onProgress: (p) => {
+              if (p.phase === 'extract') toast.loading("Ren'Py: estrazione stringhe...", { id: toastId });
+              else if (p.phase === 'glossary') toast.loading("Ren'Py: carico il glossario...", { id: toastId });
+              else if (p.phase === 'translate') toast.loading(`Ren'Py: traduzione ${p.done}/${p.total}... (ripresa salvata)`, { id: toastId });
+              else if (p.phase === 'generate') toast.loading("Ren'Py: genero i file tl/...", { id: toastId });
+            },
+          });
+          toast.success(`Tradotto: ${r.translated}/${r.total} stringhe${r.glossaryTerms ? ` (glossario: ${r.glossaryTerms} termini)` : ''}. Avvia il gioco e seleziona ${tgt.toUpperCase()} dalle preferenze.`, { id: toastId });
+        } catch (e) {
+          toast.error("Ren'Py: errore (Ollama avviato?)", { id: toastId, description: String(e) });
         }
         return;
       }

@@ -289,3 +289,185 @@ async fn call_ollama_translate(
 
     Ok(response_text)
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// TRADUZIONE CON CONTESTO (glossario + voce personaggio)
+// ═══════════════════════════════════════════════════════════════════
+
+/// Coppia di glossario passata dal frontend (camelCase: doNotTranslate).
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GlossaryPair {
+    pub source: String,
+    #[serde(default)]
+    pub target: String,
+    #[serde(default)]
+    pub do_not_translate: bool,
+}
+
+/// Costruisce il prompt per Ollama iniettando glossario e contesto/voce del
+/// personaggio. Funzione pura → unit-testabile senza Ollama.
+pub fn build_context_prompt(
+    text: &str,
+    context: Option<&str>,
+    glossary: &[GlossaryPair],
+    source_lang: &str,
+    target_lang: &str,
+) -> String {
+    let mut p = String::new();
+    p.push_str(&format!(
+        "You are a professional video game translator. Translate from {} to {}.\n",
+        source_lang, target_lang
+    ));
+
+    if !glossary.is_empty() {
+        p.push_str("Apply this glossary exactly and consistently:\n");
+        for g in glossary {
+            if g.do_not_translate {
+                p.push_str(&format!("- \"{}\": keep unchanged (do NOT translate)\n", g.source));
+            } else if !g.target.is_empty() {
+                p.push_str(&format!("- \"{}\" => \"{}\"\n", g.source, g.target));
+            }
+        }
+    }
+
+    if let Some(c) = context {
+        let c = c.trim();
+        if !c.is_empty() {
+            p.push_str(&format!(
+                "This line is spoken by character \"{}\"; keep a consistent voice and register for this speaker.\n",
+                c
+            ));
+        }
+    }
+
+    p.push_str("Output ONLY the translation of the text below — no notes, no quotes, no explanations.\n\n");
+    p.push_str(text);
+    p
+}
+
+/// Traduzione batch con contesto per-stringa (voce personaggio) e glossario
+/// condiviso. `contexts` è parallelo a `texts` (None = nessun contesto).
+#[command]
+pub async fn offline_translate_batch_context(
+    texts: Vec<String>,
+    contexts: Vec<Option<String>>,
+    glossary: Vec<GlossaryPair>,
+    source_lang: String,
+    target_lang: String,
+    model: Option<String>,
+) -> Result<Vec<OfflineTranslationResult>, String> {
+    if !check_ollama_running().await {
+        return Err("Ollama non è in esecuzione.".to_string());
+    }
+
+    let installed = get_installed_models().await;
+    let model_name = model.unwrap_or_else(|| pick_best_translation_model(&installed));
+    if model_name.is_empty() {
+        return Err("Nessun modello installato.".to_string());
+    }
+
+    let mut results = Vec::with_capacity(texts.len());
+    for (i, text) in texts.iter().enumerate() {
+        let ctx = contexts.get(i).and_then(|c| c.as_deref());
+        let prompt = build_context_prompt(text, ctx, &glossary, &source_lang, &target_lang);
+        let start = std::time::Instant::now();
+        match call_ollama_with_prompt(&prompt, &model_name).await {
+            Ok(translated) => results.push(OfflineTranslationResult {
+                original: text.clone(),
+                translated,
+                model: model_name.clone(),
+                duration_ms: start.elapsed().as_millis() as u64,
+            }),
+            Err(e) => {
+                log::warn!(
+                    "[OFFLINE-CTX] Errore '{}': {}",
+                    &text.chars().take(30).collect::<String>(),
+                    e
+                );
+                results.push(OfflineTranslationResult {
+                    original: text.clone(),
+                    translated: format!("[ERRORE] {}", e),
+                    model: model_name.clone(),
+                    duration_ms: start.elapsed().as_millis() as u64,
+                });
+            }
+        }
+    }
+
+    log::info!("[OFFLINE-CTX] Batch completato: {} testi", results.len());
+    Ok(results)
+}
+
+/// Invia un prompt già costruito a Ollama e ritorna la risposta.
+async fn call_ollama_with_prompt(prompt: &str, model: &str) -> Result<String, String> {
+    let client = reqwest::Client::builder()
+        .timeout(std::time::Duration::from_secs(120))
+        .build()
+        .map_err(|e| format!("Errore client HTTP: {}", e))?;
+
+    let body = serde_json::json!({
+        "model": model,
+        "prompt": prompt,
+        "stream": false,
+        "options": { "temperature": 0.3, "top_p": 0.9, "num_predict": 2048 }
+    });
+
+    let url = format!("{}/api/generate", OLLAMA_API);
+    let resp = client
+        .post(&url)
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| format!("Errore connessione Ollama: {}", e))?;
+
+    if !resp.status().is_success() {
+        let status = resp.status();
+        let body_text = resp.text().await.unwrap_or_default();
+        return Err(format!("Ollama errore {}: {}", status, body_text));
+    }
+
+    let json: serde_json::Value = resp
+        .json()
+        .await
+        .map_err(|e| format!("Errore parsing risposta: {}", e))?;
+
+    let response_text = json["response"].as_str().unwrap_or("").trim().to_string();
+    if response_text.is_empty() {
+        return Err("Ollama ha restituito una risposta vuota".to_string());
+    }
+    Ok(response_text)
+}
+
+#[cfg(test)]
+mod context_tests {
+    use super::*;
+
+    #[test]
+    fn test_build_context_prompt_glossary_and_speaker() {
+        let gloss = vec![
+            GlossaryPair { source: "Liyue".to_string(), target: String::new(), do_not_translate: true },
+            GlossaryPair { source: "Sword".to_string(), target: "Spada".to_string(), do_not_translate: false },
+        ];
+        let p = build_context_prompt("Hello", Some("Eileen"), &gloss, "en", "it");
+        assert!(p.contains("from en to it"));
+        assert!(p.contains("\"Liyue\": keep unchanged"));
+        assert!(p.contains("\"Sword\" => \"Spada\""));
+        assert!(p.contains("character \"Eileen\""));
+        assert!(p.trim_end().ends_with("Hello"));
+    }
+
+    #[test]
+    fn test_build_context_prompt_no_glossary_no_speaker() {
+        let p = build_context_prompt("Hi", None, &[], "en", "it");
+        assert!(!p.contains("glossary"));
+        assert!(!p.contains("spoken by"));
+        assert!(p.trim_end().ends_with("Hi"));
+    }
+
+    #[test]
+    fn test_build_context_prompt_skips_empty_speaker() {
+        let p = build_context_prompt("Yo", Some("   "), &[], "en", "it");
+        assert!(!p.contains("spoken by"));
+    }
+}

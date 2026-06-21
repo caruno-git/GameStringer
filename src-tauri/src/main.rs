@@ -1095,6 +1095,7 @@ fn main() {
             commands::offline_translation::offline_translation_models,
             commands::offline_translation::offline_translate_text,
             commands::offline_translation::offline_translate_batch,
+            commands::offline_translation::offline_translate_batch_context,
 
             // Secure Key Storage (AES-256-GCM encrypted)
             commands::secure_storage::set_secure_key,

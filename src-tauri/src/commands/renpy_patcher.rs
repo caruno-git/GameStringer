@@ -591,7 +591,18 @@ pub fn extract_all_renpy_strings(game_path: String) -> Result<RenpyExtractionRes
 // GENERAZIONE FILE TRADUZIONE
 // ============================================================================
 
-/// Genera file di traduzione Ren'Py (.rpy nella cartella tl/)
+/// Genera i file di traduzione Ren'Py nella cartella `game/tl/<lang>/`.
+///
+/// **Perché due meccanismi diversi.** In Ren'Py il blocco
+/// `translate <lang> strings:` con coppie `old`/`new` traduce SOLO le stringhe
+/// UI / `_()`. I dialoghi (`say`), la narrazione e le scelte di `menu` passano
+/// invece per il sistema a identificatori (hash interni), NON per `old`/`new`:
+/// generarli come `old`/`new` produce un file che in gioco lascia i dialoghi in
+/// lingua originale. Per tradurli in modo robusto senza replicare gli hash di
+/// Ren'Py generiamo un filtro runtime (`config.say_menu_text_filter`) con un
+/// dizionario originale→tradotto, attivo solo quando il giocatore ha
+/// selezionato questa lingua (`preferences.language`), e che concatena un
+/// eventuale filtro preesistente del gioco.
 #[command]
 pub fn generate_renpy_translation(
     game_path: String,
@@ -600,52 +611,158 @@ pub fn generate_renpy_translation(
 ) -> Result<String, String> {
     let path = Path::new(&game_path);
     let tl_folder = path.join("game").join("tl").join(&language);
-    
+
     // Crea cartella traduzione
     fs::create_dir_all(&tl_folder)
         .map_err(|e| format!("Errore creazione cartella: {}", e))?;
-    
-    // Raggruppa stringhe per file
-    let mut by_file: HashMap<String, Vec<&RenpyString>> = HashMap::new();
+
+    // Partiziona le stringhe TRADOTTE per meccanismo di applicazione:
+    //  - dialogue_like (Dialogue/Narration/Menu) → filtro runtime say_menu_text_filter
+    //  - ui_strings   (String, es. testo nelle screen) → blocco `translate <lang> strings:`
+    //  - Label        → non è testo visibile, ignorata
+    let mut dialogue_like: Vec<&RenpyString> = Vec::new();
+    let mut ui_strings: HashMap<String, Vec<&RenpyString>> = HashMap::new();
+
     for s in &strings {
-        by_file.entry(s.file.clone()).or_default().push(s);
+        if s.translated.is_empty() {
+            continue;
+        }
+        match s.string_type {
+            RenpyStringType::Dialogue
+            | RenpyStringType::Narration
+            | RenpyStringType::Menu => dialogue_like.push(s),
+            RenpyStringType::String => {
+                ui_strings.entry(s.file.clone()).or_default().push(s);
+            }
+            RenpyStringType::Label => { /* non testo visibile */ }
+        }
     }
-    
-    let mut generated_files = Vec::new();
-    
-    for (file, file_strings) in by_file {
+
+    let mut generated_files: Vec<String> = Vec::new();
+
+    // ── Blocco `strings` old/new per il testo UI delle screen ───────────
+    for (file, file_strings) in &ui_strings {
         let output_filename = file.replace(".rpy", &format!("_{}.rpy", language));
         let output_path = tl_folder.join(&output_filename);
-        
+
         let mut content = format!("# Translation file for {}\n\n", file);
         content.push_str(&format!("translate {} strings:\n\n", language));
-        
+
         for s in file_strings {
-            if !s.translated.is_empty() {
-                // Formato Ren'Py translation
-                content.push_str(&format!("    # {}:{}\n", s.file, s.line_number));
-                content.push_str(&format!("    old \"{}\"\n", escape_renpy_string(&s.original)));
-                content.push_str(&format!("    new \"{}\"\n\n", escape_renpy_string(&s.translated)));
-            }
+            // L'estrazione conserva gli escape sorgente (\" \n …). La stringa
+            // runtime con cui Ren'Py confronta `old` è de-escapata: de-escapiamo
+            // e poi ri-escapiamo per il literal, evitando il doppio escape.
+            let key = escape_renpy_string(&unescape_renpy_string(&s.original));
+            let val = escape_renpy_string(&s.translated);
+            content.push_str(&format!("    # {}:{}\n", s.file, s.line_number));
+            content.push_str(&format!("    old \"{}\"\n", key));
+            content.push_str(&format!("    new \"{}\"\n\n", val));
         }
-        
+
         fs::write(&output_path, content)
             .map_err(|e| format!("Errore scrittura {}: {}", output_filename, e))?;
-        
         generated_files.push(output_filename);
     }
-    
+
+    // ── Filtro runtime per dialoghi / narrazione / scelte menu ──────────
+    if !dialogue_like.is_empty() {
+        let filter_filename = "gamestringer_say_filter.rpy".to_string();
+        let filter_path = tl_folder.join(&filter_filename);
+
+        // Deduplica per chiave runtime (l'ultima traduzione vince)
+        let mut seen: HashMap<String, String> = HashMap::new();
+        for s in &dialogue_like {
+            seen.insert(unescape_renpy_string(&s.original), s.translated.clone());
+        }
+
+        let mut content = String::new();
+        content.push_str(&format!(
+            "# GameStringer — filtro traduzione dialoghi runtime per '{}'.\n",
+            language
+        ));
+        content.push_str("# Generato automaticamente: non modificare a mano.\n");
+        content.push_str("# Traduce say/menu via config.say_menu_text_filter, attivo solo\n");
+        content.push_str("# quando il giocatore seleziona questa lingua.\n\n");
+        content.push_str("init 1900 python:\n");
+        content.push_str("    __gs_tl = {\n");
+        for (key_runtime, translated) in &seen {
+            content.push_str(&format!(
+                "        u\"{}\": u\"{}\",\n",
+                escape_renpy_string(key_runtime),
+                escape_renpy_string(translated)
+            ));
+        }
+        content.push_str("    }\n");
+        content.push_str(&format!(
+            "    __gs_lang = \"{}\"\n",
+            escape_renpy_string(&language)
+        ));
+        content.push_str("    __gs_prev_filter = getattr(config, \"say_menu_text_filter\", None)\n");
+        content.push_str("    def __gs_say_filter(s):\n");
+        content.push_str("        try:\n");
+        content.push_str("            if renpy.game.preferences.language == __gs_lang:\n");
+        content.push_str("                t = __gs_tl.get(s)\n");
+        content.push_str("                if t is not None:\n");
+        content.push_str("                    return t\n");
+        content.push_str("        except Exception:\n");
+        content.push_str("            pass\n");
+        content.push_str("        if __gs_prev_filter is not None:\n");
+        content.push_str("            return __gs_prev_filter(s)\n");
+        content.push_str("        return s\n");
+        content.push_str("    config.say_menu_text_filter = __gs_say_filter\n");
+
+        fs::write(&filter_path, content)
+            .map_err(|e| format!("Errore scrittura {}: {}", filter_filename, e))?;
+        generated_files.push(filter_filename);
+    }
+
     let count = generated_files.len();
-    log::info!("✅ Generati {} file di traduzione in game/tl/{}/", count, language);
-    
-    Ok(format!("Generati {} file in game/tl/{}/", count, language))
+    log::info!(
+        "✅ Generati {} file di traduzione in game/tl/{}/ ({} dialoghi/menu via filtro runtime)",
+        count,
+        language,
+        dialogue_like.len()
+    );
+
+    Ok(format!(
+        "Generati {} file in game/tl/{}/ ({} stringhe dialogo/menu via filtro runtime)",
+        count,
+        language,
+        dialogue_like.len()
+    ))
 }
 
-/// Escape caratteri speciali per stringhe Ren'Py
+/// Escape caratteri speciali per stringhe Ren'Py (literal `"..."`).
 fn escape_renpy_string(s: &str) -> String {
     s.replace('\\', "\\\\")
      .replace('"', "\\\"")
      .replace('\n', "\\n")
+}
+
+/// Inverte `escape_renpy_string` / gli escape sorgente conservati in fase di
+/// estrazione: `\\`→`\`, `\"`→`"`, `\n`→newline, `\t`→tab. Una sequenza
+/// sconosciuta (`\x`) viene mantenuta invariata (backslash + carattere).
+fn unescape_renpy_string(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    let mut chars = s.chars();
+    while let Some(c) = chars.next() {
+        if c == '\\' {
+            match chars.next() {
+                Some('\\') => out.push('\\'),
+                Some('"') => out.push('"'),
+                Some('n') => out.push('\n'),
+                Some('t') => out.push('\t'),
+                Some(other) => {
+                    out.push('\\');
+                    out.push(other);
+                }
+                None => out.push('\\'),
+            }
+        } else {
+            out.push(c);
+        }
+    }
+    out
 }
 
 // ============================================================================
@@ -804,6 +921,102 @@ mod tests {
     #[test]
     fn test_escape_renpy_string_empty() {
         assert_eq!(escape_renpy_string(""), "");
+    }
+
+    // ── unescape_renpy_string ───────────────────────────────────────────
+
+    #[test]
+    fn test_unescape_renpy_string_plain() {
+        assert_eq!(unescape_renpy_string("Hello world"), "Hello world");
+    }
+
+    #[test]
+    fn test_unescape_renpy_string_quote_and_backslash() {
+        assert_eq!(unescape_renpy_string(r#"She said \"hi\""#), r#"She said "hi""#);
+        assert_eq!(unescape_renpy_string(r"path\\to"), r"path\to");
+    }
+
+    #[test]
+    fn test_unescape_renpy_string_newline_tab() {
+        assert_eq!(unescape_renpy_string(r"line1\nline2"), "line1\nline2");
+        assert_eq!(unescape_renpy_string(r"a\tb"), "a\tb");
+    }
+
+    #[test]
+    fn test_unescape_roundtrip_with_escape() {
+        let src = r#"He said \"go\" now"#;
+        let runtime = unescape_renpy_string(src);
+        assert_eq!(runtime, r#"He said "go" now"#);
+        assert_eq!(escape_renpy_string(&runtime), r#"He said \"go\" now"#);
+    }
+
+    // ── generate_renpy_translation (split ibrido) ───────────────────────
+
+    #[test]
+    fn test_generate_splits_dialogue_and_ui() {
+        let tmp = TempDir::new().unwrap();
+        let game_path = tmp.path().to_str().unwrap().to_string();
+
+        let mut dlg = make_string("Hello there", "Ciao", RenpyStringType::Dialogue);
+        dlg.file = "script.rpy".to_string();
+        let mut narr = make_string("The sun sets.", "Il sole tramonta.", RenpyStringType::Narration);
+        narr.file = "script.rpy".to_string();
+        let mut ui = make_string("Start Game", "Inizia partita", RenpyStringType::String);
+        ui.file = "screens.rpy".to_string();
+        let untr = make_string("Untranslated", "", RenpyStringType::Dialogue);
+
+        let res = generate_renpy_translation(
+            game_path.clone(),
+            "it".to_string(),
+            vec![dlg, narr, ui, untr],
+        );
+        assert!(res.is_ok(), "generate fallita: {:?}", res);
+
+        let tl = tmp.path().join("game").join("tl").join("it");
+        let filter = fs::read_to_string(tl.join("gamestringer_say_filter.rpy")).unwrap();
+        let screens = fs::read_to_string(tl.join("screens_it.rpy")).unwrap();
+
+        assert!(filter.contains("config.say_menu_text_filter = __gs_say_filter"));
+        assert!(filter.contains("renpy.game.preferences.language == __gs_lang"));
+        assert!(filter.contains(r#"u"Hello there": u"Ciao","#));
+        assert!(filter.contains(r#"u"The sun sets.": u"Il sole tramonta.","#));
+        assert!(!filter.contains("Start Game"));
+        assert!(!filter.contains("Untranslated"));
+
+        assert!(screens.contains("translate it strings:"));
+        assert!(screens.contains(r#"old "Start Game""#));
+        assert!(screens.contains(r#"new "Inizia partita""#));
+        assert!(!screens.contains("Hello there"));
+    }
+
+    #[test]
+    fn test_generate_no_dialogue_skips_filter_file() {
+        let tmp = TempDir::new().unwrap();
+        let game_path = tmp.path().to_str().unwrap().to_string();
+
+        let mut ui = make_string("Options", "Opzioni", RenpyStringType::String);
+        ui.file = "screens.rpy".to_string();
+
+        generate_renpy_translation(game_path.clone(), "it".to_string(), vec![ui]).unwrap();
+
+        let tl = tmp.path().join("game").join("tl").join("it");
+        assert!(!tl.join("gamestringer_say_filter.rpy").exists());
+        assert!(tl.join("screens_it.rpy").exists());
+    }
+
+    #[test]
+    fn test_generate_escapes_quotes_in_dialogue_key() {
+        let tmp = TempDir::new().unwrap();
+        let game_path = tmp.path().to_str().unwrap().to_string();
+
+        let mut dlg = make_string(r#"He said \"go\""#, r#"Disse "vai""#, RenpyStringType::Dialogue);
+        dlg.file = "script.rpy".to_string();
+
+        generate_renpy_translation(game_path.clone(), "it".to_string(), vec![dlg]).unwrap();
+
+        let tl = tmp.path().join("game").join("tl").join("it");
+        let filter = fs::read_to_string(tl.join("gamestringer_say_filter.rpy")).unwrap();
+        assert!(filter.contains(r#"u"He said \"go\"": u"Disse \"vai\"","#));
     }
 
     // ── get_renpy_translation_stats ─────────────────────────────────────
@@ -1283,8 +1496,8 @@ mod tests {
             translated: "Ciao".to_string(),
             file: "script.rpy".to_string(),
             line_number: 5,
-            string_type: RenpyStringType::Dialogue,
-            character: Some("e".to_string()),
+            string_type: RenpyStringType::String,
+            character: None,
         }];
 
         let result = generate_renpy_translation(
@@ -1316,7 +1529,7 @@ mod tests {
             translated: "".to_string(), // not translated
             file: "script.rpy".to_string(),
             line_number: 5,
-            string_type: RenpyStringType::Dialogue,
+            string_type: RenpyStringType::String,
             character: None,
         }];
 
@@ -1326,10 +1539,11 @@ mod tests {
             strings,
         ).unwrap();
 
+        // Nessuna stringa tradotta → nessun file di traduzione generato.
         let tl_file = game_dir.join("tl").join("italian").join("script_italian.rpy");
-        let content = fs::read_to_string(&tl_file).unwrap();
-        // Should NOT contain old/new for untranslated strings
-        assert!(!content.contains("old \"Hello\""));
+        assert!(!tl_file.exists());
+        let filter = game_dir.join("tl").join("italian").join("gamestringer_say_filter.rpy");
+        assert!(!filter.exists());
     }
 
     #[test]
@@ -1344,7 +1558,7 @@ mod tests {
             translated: "Lei disse \"ciao\"".to_string(),
             file: "script.rpy".to_string(),
             line_number: 1,
-            string_type: RenpyStringType::Dialogue,
+            string_type: RenpyStringType::String,
             character: None,
         }];
 
