@@ -77,6 +77,7 @@ import { TranslationMemoryManager } from '@/lib/translation-memory';
 import { extractTerms, loadGlossaryConfig } from '@/lib/auto-glossary';
 import { useTranslation } from '@/lib/i18n';
 import { clientLogger } from '@/lib/client-logger';
+import { runHendrixTranslation } from '@/lib/hendrix-translate';
 
 interface AlternativeMethod {
   method: string;
@@ -243,6 +244,32 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
           gamePath,
           gameName,
         });
+        // Coerenza: se è un gioco con Hendrix_Localization (game_messages.csv), instrada
+        // all'importer CSV dedicato. Senza questo override il backend lo classifica come
+        // RPG Maker e proporrebbe il patcher JSON — confondendo l'utente.
+        try {
+          const hx = await invoke<{ unique_strings?: number }>('detect_hendrix_game', { gamePath });
+          if (hx) {
+            result.engine_name = 'Hendrix Localization';
+            result.primary_method = 'file_translation';
+            result.method_description = 'Traduzione via game_messages.csv (sistema nativo del gioco)';
+            result.localization_format = 'Hendrix CSV';
+            result.has_localization_files = true;
+            result.optimal_strategy = {
+              description: `Importer Hendrix CSV — ${hx.unique_strings ?? 0} stringhe uniche`,
+              combined_reliability: 95,
+              tools: [{
+                id: 'hendrix_csv',
+                name: 'Importer Hendrix CSV',
+                description: 'Riempie la colonna lingua di game_messages.csv, abilita il plugin e la lingua',
+                reliability: 95,
+                route: '',
+                available: true,
+                reason: 'Hendrix_Localization rilevato',
+              }],
+            };
+          }
+        } catch { /* non è un gioco Hendrix: si tiene la raccomandazione del backend */ }
         setRecommendation(result);
       } catch (err: unknown) {
         clientLogger.error('Error loading recommendation: ' + String(err));
@@ -1200,6 +1227,24 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
           );
         }
         break;
+
+      case 'hendrix_csv': {
+        // Importer Hendrix CSV: estrai → traduci (offline) → applica colonna → abilita lingua.
+        // Con checkpoint/resume e apply incrementale (vedi lib/hendrix-translate).
+        const r = await runHendrixTranslation({
+          gamePath,
+          targetLang: 'it',
+          targetName: 'Italiano',
+          onProgress: (p) => {
+            if (p.phase === 'translate') updateProgress(10 + Math.round((p.done / Math.max(p.total, 1)) * 78), `Traduzione ${p.done}/${p.total}... (ripresa salvata)`);
+            else if (p.phase === 'apply') updateProgress(90, 'Applico la colonna lingua al CSV...');
+            else if (p.phase === 'enable') updateProgress(96, 'Abilito plugin e lingua italiana...');
+          },
+        });
+        updateProgress(100, `✅ ${r.applied}/${r.total} stringhe tradotte in italiano`);
+        toast.success(`Hendrix: ${r.applied} stringhe tradotte. Rilancia il gioco.`);
+        break;
+      }
 
       default:
         // Step generico - simula progress

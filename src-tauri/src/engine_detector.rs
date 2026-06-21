@@ -51,6 +51,7 @@ pub enum GameEngine {
     Platinum,
     Visionaire,
     SierraSCI,
+    HendrixLocalization,
     Unknown,
 }
 
@@ -105,6 +106,7 @@ impl GameEngine {
             GameEngine::Platinum => "Platinum Engine",
             GameEngine::Visionaire => "Visionaire Studio",
             GameEngine::SierraSCI => "Sierra SCI",
+            GameEngine::HendrixLocalization => "Hendrix Localization",
             GameEngine::Unknown => "Unknown",
         }
     }
@@ -135,6 +137,12 @@ pub fn detect_engine(game_path: &Path) -> GameEngine {
         return GameEngine::Godot;
     }
     
+    // 3.5. Hendrix Localization (RPG Maker MV/MZ con game_messages.csv) - PRIMA di
+    // RPG Maker: è comunque un RPG Maker, ma va instradato all'importer CSV dedicato.
+    if is_hendrix(game_path) {
+        return GameEngine::HendrixLocalization;
+    }
+
     // 4. RPG Maker (tutte le versioni)
     if is_rpg_maker(game_path) {
         return GameEngine::RPGMaker;
@@ -449,12 +457,39 @@ fn is_godot(path: &Path) -> bool {
     false
 }
 
+/// Rileva RPG Maker MV/MZ con localizzazione Hendrix (game_messages.csv + plugin).
+fn is_hendrix(path: &Path) -> bool {
+    use std::io::Read;
+    let csv = [path.join("game_messages.csv"), path.join("www").join("game_messages.csv")]
+        .into_iter()
+        .find(|p| p.exists());
+    let csv = match csv {
+        Some(p) => p,
+        None => return false,
+    };
+    let plugin = path.join("js/plugins/Hendrix_Localization.js");
+    let plugin_www = path.join("www/js/plugins/Hendrix_Localization.js");
+    if !plugin.exists() && !plugin_www.exists() {
+        return false;
+    }
+    // Legge solo l'header (prima riga) per validare il formato.
+    if let Ok(mut f) = std::fs::File::open(&csv) {
+        let mut buf = [0u8; 512];
+        if let Ok(n) = f.read(&mut buf) {
+            let head = String::from_utf8_lossy(&buf[..n]);
+            let line = head.lines().next().unwrap_or("");
+            return line.contains("UniqueID") && line.contains("Context") && line.contains("Original");
+        }
+    }
+    false
+}
+
 fn is_rpg_maker(path: &Path) -> bool {
     // RPG Maker MV/MZ
     if path.join("www").exists() && path.join("www/data/System.json").exists() {
         return true;
     }
-    
+
     if path.join("Game.rpgproject").exists() {
         return true;
     }

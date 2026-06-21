@@ -1038,7 +1038,15 @@ fn main() {
             commands::rpgmaker_patcher::get_rpgmaker_translation_stats,
             commands::rpgmaker_patcher::is_translator_plus_available,
             commands::rpgmaker_patcher::get_translator_plus_info,
-            
+
+            // Hendrix_Localization (RPG Maker MV/MZ con game_messages.csv)
+            commands::hendrix_csv_patcher::detect_hendrix_game,
+            commands::hendrix_csv_patcher::extract_hendrix_strings,
+            commands::hendrix_csv_patcher::apply_hendrix_translations,
+            commands::hendrix_csv_patcher::save_hendrix_translations,
+            commands::hendrix_csv_patcher::load_hendrix_translations,
+            commands::hendrix_csv_patcher::enable_hendrix_localization,
+
             // Ren'Py Patcher
             commands::renpy_patcher::detect_renpy_game,
             commands::renpy_patcher::extract_renpy_strings,

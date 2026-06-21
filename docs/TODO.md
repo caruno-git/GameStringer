@@ -1,47 +1,85 @@
-﻿# 📋 TODO.md - GameStringer Development Tasks
+# 📋 TODO.md - GameStringer Development Tasks
 
 > Ultimo aggiornamento: 17 Giugno 2026 — v1.9.0
 
 ---
 
-## 🚨 TASK ATTIVI & DA FARE
+## 🎯 RELEASE v2.0 — IL FLUSSO HERO
 
-### 🧪 Verifica & Stabilizzazione (lavori recenti)
+> **La promessa:** l'utente trascina la cartella di un gioco, preme **un pulsante**, e ottiene il gioco tradotto nella sua lingua. Tutto il resto della app (multi-LLM, glossario, voci, OCR, texture) sono *ingredienti* di questo piatto, non feature a sé.
 
-- [ ] **Test GUI a runtime OCR live** — Overlay OCR L3 / RPG Maker classico e nuovo fallback "Traduzione live OCR" sono verificati solo staticamente. Manca la prova a runtime con un gioco reale.
+### ⭐ "Un pulsante. Traduci il gioco."
+
+**Principio di progetto — leggere prima di toccare codice:**
+"Un pulsante" è la promessa *all'utente*, non magia universale. Sotto, la app **riconosce il motore** del gioco e instrada all'estrattore/ripacker giusto. L'utente vede un click; noi supportiamo **un motore alla volta, reso perfetto su un set curato di giochi**. Niente lotteria runtime, niente "test su un milione di giochi": si testa la *pipeline* su 4-5 titoli per motore.
+
+**Esito audit (17/06/2026): la pipeline NON è da costruire — esiste già.** Router motore (`engine_detector.rs`, 48 motori), rilevamento, estrazione, generazione traduzione e il "pulsante" (`startAutoTranslate()` in `components/game-detail-client.tsx`) sono **tutti implementati**. Esistono 12 patcher file-based con test su fixture (vedi `docs/ENGINE-COVERAGE.md`). Il lavoro per la release **non è scrivere la pipeline, è collaudarla sul gioco reale e renderla impeccabile su UN motore.**
+
+**Motore scelto per primo: Ren'Py** (confermato 17/06). Pipeline completa: `detect_renpy_game` → `extract_all_renpy_strings` → `generate_renpy_translation` → `save/load_renpy_translations`, già instradata in `startAutoTranslate()` (righe ~489-503). Perché Ren'Py come hero:
+- **Output nativo, non invasivo**: `generate_renpy_translation` genera i blocchi `translate` nel sistema ufficiale di Ren'Py (cartella `tl/`) → niente ripacking di archivi, il gioco carica la traduzione nativamente.
+- **Più solido**: 82 test su fixture (vs 23 di RPG Maker) → meno rischio per arrivare a "perfetto".
+- **Pulito**: nessuna contaminazione OCR (RPG Maker classico dirotta su live OCR; Ren'Py no).
+- **Domanda alta**: enorme scena di fan-translation di visual novel (DDLC, Katawa Shoujo, VA-11 Hall-A…).
+
+- [x] **Audit di ciò che esiste già in casa** — *Fatto 17/06.* Pipeline Ren'Py completa in codice (detect → extract → generate → save). Gap reale = collaudo end-to-end + UX, non implementazione.
+- [ ] **Collaudo end-to-end su gioco reale** — Nessuno dei 12 patcher è mai stato provato su un gioco vero start-to-finish ("Testato" = solo fixture, vedi nota in ENGINE-COVERAGE.md). Prendere un gioco Ren'Py reale, passarlo dal pulsante alla cartella `tl/` tradotta, verificare il risultato in gioco. Qui escono i bug veri (encoding, font CJK, stringhe interpolate, tag testo).
+- [ ] **Verifica aggancio glossario / multi-LLM / voci personaggio** — Confermare che `startAutoTranslate()` per Ren'Py usi davvero auto-glossario + voci personaggio per la coerenza di tono (non solo traduzione riga-per-riga).
+- [ ] **UX "un pulsante" rifinita** — Il pulsante esiste; renderlo l'esperienza-hero: stato chiaro, progress, output traduzione pronta, messaggio onesto sui motori non supportati.
+- [ ] **QA su set curato** — 4-5 giochi Ren'Py reali tradotti end-to-end e verificati. Questo è il criterio di "hero pronto".
+
+### 🚦 Gate di release (bloccanti)
+
+- [ ] **3 gate CI verdi** — `tsc` (type-check) + ESLint + test devono passare.
+- [ ] **Suite test 466 verde / 0 rossa** — Nessuna regressione.
+- [ ] **Definizione di "fatto" per l'hero** — L'hero è pronto quando i 4-5 titoli del set curato passano end-to-end senza intervento manuale.
+
+---
+
+## 🧊 POST-RELEASE — Roadmap motori
+
+> Ogni nuovo motore è un traguardo a sé, con la stessa logica condizionale dell'item MelonLoader. Non "supporto 1000 giochi" — "supporto Ren'Py, poi RPG Maker, poi Unity…".
+
+- [ ] **RPG Maker MV/MZ** — Secondo motore (il nome che fa marketing: To the Moon, OMORI, Yume Nikki…). Pipeline già completa (`detect_rpgmaker_game` → `extract_all_rpgmaker_strings` → `apply_rpgmaker_translations`), 23 test su fixture. Stesso lavoro di Ren'Py: collaudo end-to-end + UX. ⚠️ Scoping: RPG Maker *classico* (RPG_RT 2000/2003) è dirottato su **live OCR** in `game-detail-client.tsx` (~1552-1580) → l'hero va limitato a MV/MZ, con messaggio onesto sul classico invece del dirottamento silenzioso.
+- [ ] **Unity** — *Attenzione: non partire da qui.* XUnity.AutoTranslator fa già traduzione a runtime via BepInEx → rischio di duplicare l'overlay live. IL2CPP / asset bundle sono complessi. Valutare solo dopo che l'hero RPG Maker è blindato.
+- [ ] **Unreal Engine** — Estrazione/ripacking da `.pak`/`.locres`. Più complesso, dopo Unity.
+- [ ] **MelonLoader come alternativa BepInEx IL2CPP** — Solo se arrivano ≥3 segnalazioni utente di giochi Unity IL2CPP dove `BepInEx v6.0.0-pre.2 IL2CPP` non aggancia. Richiede: nuove URL in `src-tauri/src/commands/unity_patcher.rs` (partire da MelonLoader `v0.7.3` (14 mag 2026, ultima stabile) + Il2CppInterop `1.5.1-ci.845`), build XUnity.AutoTranslator compatibile MelonLoader (probabile fork community come `sevenl72/XUnity.AutoTranslator` — verificare versione e manutenzione), logica di scelta loader nella UI "Gestisci patch", path installazione `Mods/` invece di `BepInEx/plugins/`. Stima: 1–2 giornate + QA su 3–4 giochi reali.
+
+---
+
+## 🔬 LABS — Fuoco d'artificio
+
+> Demo che fanno cadere la mascella. Non bloccano la release; vivono in Labs perché più rischiose sulla qualità.
+
+- [ ] **Fandub AI** — Generare una traccia doppiata del gioco con voci di personaggio coerenti. Infra già presente (Whisper → traduzione → TTS + profili voce). Rischio qualità su timing/voci → Labs, non flusso-hero.
+
+---
+
+## 💭 IDEE / FORSE (condizione-gated)
+
+> Legittime ma non azionabili ora. Restano visibili senza occupare la strada. Da promuovere solo quando scatta una condizione reale.
+
+- [ ] **Store PlayStation / Nintendo eShop** — Supporto store console, se fattibile.
+- [ ] **Espandere Database Nomi** — Più giochi popolari per tutti gli store.
+- [ ] **Real-time Collaboration** — Traduzione collaborativa in tempo reale.
+- [ ] **Cloud Sync** — Sincronizzazione cloud per traduzioni e impostazioni.
+- [ ] **Mobile Companion** — App mobile per gestione remota.
+- [ ] **Plugin System** — Sistema di plugin per estensioni di terze parti.
+- [ ] **Metriche aspirazionali** — `<3s startup`, `<100MB memory`, `99% uptime`, `<1s translation`. Da trattare come obiettivi solo dopo aver *misurato* un punto di partenza.
+
+---
+
+## 🧪 Verifica minore (non bloccante)
+
+- [ ] **Test GUI runtime OCR live** — Overlay OCR L3 / RPG Maker classico e fallback "Traduzione live OCR" verificati solo staticamente. *Non è più il flusso-hero* (intestabile a runtime, non differenziante). Resta come verifica opportunistica quando capita un gioco a portata di mano.
 - [x] **Community chat — diagnosi chiusa (17 giu 2026)** — NESSUN fix DB necessario: DB sano (817/817 profili, password bcrypt allineate, trigger `handle_new_user` ok). Il sintomo "mostra Accedi" era l'outage del backend del 15 giu (522/timeout), ora rientrato. Ritoccato solo il client (riconoscimento "utente esiste" esteso al 500 transitorio + commento corretto).
 - [x] **Revisione traduzione UI greca** — `el.json` rivisto (17 giu 2026): struttura allineata, 0 mismatch placeholder, frasi greche corrette; tradotte le ultime label descrittive residue, mantenuti brand/nomi prodotto/formati.
 
-### 🏪 Store Integration
+---
 
-- [ ] **PlayStation Store** — Supporto per giochi PlayStation (se possibile)
-- [ ] **Nintendo eShop** — Integrazione per giochi Nintendo (se possibile)
-- [ ] **Espandere Database Nomi** — Coprire più giochi popolari per tutti gli store
+## 📚 Documentazione
 
-### 🛠️ Developer Tools & Testing
-
-- [ ] **Automated Testing** — Suite di test automatizzati completa (Rust + Frontend)
-- [ ] **Debug Console** — Console di debug integrata per sviluppatori
-- [ ] **Plugin System** — Sistema di plugin per estensioni di terze parti
-
-### 🚀 Roadmap — Funzionalità Avanzate
-
-- [ ] **Real-time Collaboration** — Traduzione collaborativa in tempo reale
-- [ ] **Cloud Sync** — Sincronizzazione cloud per traduzioni e impostazioni
-- [ ] **Mobile Companion** — App mobile per gestione remota
-- [ ] **MelonLoader come alternativa BepInEx IL2CPP** — Solo se arrivano ≥3 segnalazioni utente di giochi Unity IL2CPP dove `BepInEx v6.0.0-pre.2 IL2CPP` non aggancia. Richiede: nuove URL in `src-tauri/src/commands/unity_patcher.rs` (partire da MelonLoader `v0.7.3` (14 mag 2026, ultima stabile) + Il2CppInterop `1.5.1-ci.845`), build XUnity.AutoTranslator compatibile MelonLoader (probabile fork community come `sevenl72/XUnity.AutoTranslator` — verificare versione e manutenzione), logica di scelta loader nella UI "Gestisci patch", path installazione `Mods/` invece di `BepInEx/plugins/`. Stima: 1–2 giornate + QA su 3–4 giochi reali.
-
-### 📊 Metriche da Raggiungere
-
-- [ ] **<3s Startup Time** — Tempo di avvio sotto 3 secondi
-- [ ] **<100MB Memory** — Uso memoria sotto 100MB a riposo
-- [ ] **99% Uptime** — Stabilità applicazione 99%
-- [ ] **<1s Translation** — Traduzione testi sotto 1 secondo
-
-### 📚 Documentazione
-
-- [ ] **Blocco 4 User Guide** — Prossimo blocco di feature AI da documentare (se presenti)
-- [ ] **Tradurre docs tecnici** — `API_REFERENCE.md`, `TROUBLESHOOTING.md`, `ARCHITETTURA.md` in EN
+- [ ] **Blocco 4 User Guide** — Prossimo blocco di feature AI da documentare (se presenti).
+- [ ] **Tradurre docs tecnici** — `API_REFERENCE.md`, `TROUBLESHOOTING.md`, `ARCHITETTURA.md` in EN.
 
 ---
 

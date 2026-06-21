@@ -27,6 +27,7 @@ import { GspackExportDialog, GspackImportDialog } from '@/components/gspack-dial
 // AudioPatcher import removed — not currently used
 import { GameMakerTranslator } from '@/components/gamemaker-translator';
 import { clientLogger } from '@/lib/client-logger';
+import { runHendrixTranslation } from '@/lib/hendrix-translate';
 import {
   ScreenshotGallery,
   ScreenshotLightbox,
@@ -245,7 +246,7 @@ export default function GameDetailPage() {
   // Pre-computed translation strategy (populated on page load)
   const [translationStrategy, setTranslationStrategy] = useState<{
     engine: string;
-    method: 'unity' | 'unreal' | 'gamemaker' | 'visionaire' | 'tyranoscript' | 'rpgmaker' | 'wolfrpg' | 'renpy' | 'godot' | 'generic';
+    method: 'unity' | 'unreal' | 'gamemaker' | 'visionaire' | 'tyranoscript' | 'rpgmaker' | 'wolfrpg' | 'renpy' | 'godot' | 'hendrix' | 'generic';
     detail: string;
     fileCount: number;
     stringCount: number;
@@ -385,7 +386,22 @@ export default function GameDetailPage() {
     const eng = detectedEngine.toLowerCase();
 
     try {
-      if (eng.includes('gamemaker') || eng.includes('game maker')) {
+      if (eng.includes('hendrix')) {
+        // Hendrix_Localization: RPG Maker MV/MZ con game_messages.csv (colonna lingua)
+        try {
+          const h = await invoke<{ languages?: string[]; unique_strings?: number; plugin_enabled?: boolean }>('detect_hendrix_game', { gamePath: game.installPath });
+          setTranslationStrategy({
+            engine: detectedEngine || 'Hendrix Localization',
+            method: 'hendrix',
+            detail: `game_messages.csv — ${h?.unique_strings ?? 0} stringhe uniche${h?.plugin_enabled ? '' : ' (plugin da abilitare)'}`,
+            fileCount: 1,
+            stringCount: h?.unique_strings || 0,
+            ready: true,
+          });
+        } catch {
+          setTranslationStrategy({ engine: detectedEngine || 'Hendrix Localization', method: 'hendrix', detail: 'Hendrix Localization rilevato', fileCount: 1, stringCount: 0, ready: true });
+        }
+      } else if (eng.includes('gamemaker') || eng.includes('game maker')) {
         // GameMaker: check for .jn files or data.win
         try {
           const gmInfo = await invoke<{has_language_files?: boolean; language_file_count?: number; translatable_strings?: number; is_yyc?: boolean}>('gm_scan_data_win', { gamePath: game.installPath });
@@ -1547,6 +1563,34 @@ export default function GameDetailPage() {
     if (!game?.installPath) {
       toast.error(t('common.percorsoDiInstallazioneNonDisponibile'));
       return;
+    }
+
+    // ── Hendrix_Localization (RPG Maker MV/MZ con game_messages.csv) ──
+    // Via CSV nativa del gioco: riempiamo la colonna lingua, abilitiamo il plugin
+    // e registriamo la lingua. Non invasivo (nessun .json toccato).
+    {
+      const engH = (game.engine || engineInfo?.engine || detectEngineByName(game.name || game.title || '') || '').toLowerCase();
+      if (engH.includes('hendrix')) {
+        const tgt = (targetLang || language || 'it').toLowerCase();
+        const tgtName: Record<string, string> = { it: 'Italiano', en: 'English', fr: 'Français', es: 'Español', sp: 'Español', de: 'Deutsch', pt: 'Português', ja: '日本語', cn: '中文', zh: '中文', ru: 'Русский' };
+        const toastId = toast.loading('Hendrix: estrazione stringhe...');
+        try {
+          const r = await runHendrixTranslation({
+            gamePath: game.installPath,
+            targetLang: tgt,
+            targetName: tgtName[tgt] || tgt.toUpperCase(),
+            onProgress: (p) => {
+              if (p.phase === 'translate') toast.loading(`Hendrix: traduzione ${p.done}/${p.total}... (ripresa salvata)`, { id: toastId });
+              else if (p.phase === 'apply') toast.loading('Hendrix: applico la colonna lingua...', { id: toastId });
+              else if (p.phase === 'enable') toast.loading('Hendrix: abilito plugin e lingua...', { id: toastId });
+            },
+          });
+          toast.success(`Tradotto: ${r.applied}/${r.total} stringhe in ${tgtName[tgt] || tgt}. Rilancia il gioco.`, { id: toastId });
+        } catch (e) {
+          toast.error('Hendrix: errore (Ollama avviato?)', { id: toastId, description: String(e) });
+        }
+        return;
+      }
     }
 
     // ── Auto-routing RPG Maker classico → traduzione live OCR ──
