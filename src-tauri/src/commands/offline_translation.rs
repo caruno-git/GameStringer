@@ -243,7 +243,10 @@ async fn call_ollama_translate(
     let prompt = format!(
         "Translate the following text from {} to {}. \
          Output ONLY the translation, nothing else. \
-         Do not add explanations, notes, or quotes.\n\n{}",
+         Do not add explanations, notes, or quotes. \
+         Keep any game control codes EXACTLY as they appear, in the same position — \
+         do not translate, remove, reorder or alter them \
+         (e.g. \\C[n] \\V[n] \\N[n] \\I[n] and other backslash codes, {{...}} tokens, %1..%9).\n\n{}",
         source_lang, target_lang, text
     );
 
@@ -341,6 +344,11 @@ pub fn build_context_prompt(
         }
     }
 
+    p.push_str(
+        "Keep any game control codes EXACTLY as they appear, in the same position — do not translate, \
+         remove, reorder or alter them (e.g. \\C[n] \\V[n] \\N[n] \\I[n] and other backslash codes, \
+         {...} tokens, %1..%9).\n",
+    );
     p.push_str("Output ONLY the translation of the text below — no notes, no quotes, no explanations.\n\n");
     p.push_str(text);
     p

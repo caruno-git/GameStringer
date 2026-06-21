@@ -18,14 +18,15 @@ interface HendrixRow {
   context: string;
 }
 
-// Codici di controllo RPG Maker / placeholder da NON tradurre: \C[n] \N[n] \V[n] \I[n],
+// Codici di controllo RPG Maker / placeholder da preservare: \C[n] \N[n] \V[n] \I[n],
 // \. \! \| \^ ecc., token {ITEM}/{...}, e segnaposto %1..%9.
-const MASK = /(\\[A-Za-z]+\[[^\]]*\]|\\[.!|^><$]|\{[^}]*\}|%\d)/g;
-function mask(txt: string, store: string[]): string {
-  return txt.replace(MASK, (m) => { store.push(m); return `⟦${store.length - 1}⟧`; });
-}
-function unmask(txt: string, store: string[]): string {
-  return txt.replace(/⟦(\d+)⟧/g, (_m, i) => store[Number(i)] ?? '');
+// Niente masking: i test su gemma4:e4b mostrano che il modello preserva meglio i codici se
+// istruito nel prompt (vedi offline_translation.rs) che sostituendoli con token che poi altera.
+// Qui i codici servono solo a VALIDARE: se la traduzione li perde/altera, la scartiamo e
+// lasciamo la stringa non tradotta (così non finiscono codici rotti in gioco; retry al resume).
+const CODE = /(\\[A-Za-z]+\[[^\]]*\]|\\[.!|^><$]|\{[^}]*\}|%\d)/g;
+function codeKey(s: string): string {
+  return (s.match(CODE) ?? []).slice().sort().join('');
 }
 
 function lsGet(key: string): string | null {
@@ -85,13 +86,16 @@ export async function runHendrixTranslation(opts: {
   let sinceSave = 0;
   for (let i = 0; i < todo.length; i += CHUNK) {
     const slice = todo.slice(i, i + CHUNK);
-    const stores: string[][] = [];
-    const masked = slice.map(r => { const st: string[] = []; stores.push(st); return mask(r.original, st); });
     const res = await invoke<{ translated: string }[]>('offline_translate_batch', {
-      texts: masked, sourceLang: 'en', targetLang: tgt, model,
+      texts: slice.map(r => r.original), sourceLang: 'en', targetLang: tgt, model,
     });
     res.forEach((tr, k) => {
-      translations[slice[k].original] = unmask(tr.translated || slice[k].original, stores[k]);
+      const orig = slice[k].original;
+      const out = (tr.translated || '').trim();
+      const bad = !out || out.startsWith('[ERRORE]');
+      // Accetta solo se i codici di controllo combaciano; altrimenti lascia non tradotto
+      // (verrà ritentato al prossimo resume, evitando di scrivere placeholder rotti).
+      if (!bad && codeKey(out) === codeKey(orig)) translations[orig] = out;
     });
     done += slice.length;
     sinceSave += slice.length;

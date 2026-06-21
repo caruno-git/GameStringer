@@ -45,13 +45,13 @@ export interface GlossaryPair { source: string; target: string; doNotTranslate: 
 interface SmartGlossaryTerm { sourceTerm: string; targetTerm: string; doNotTranslate?: boolean; tier?: string; }
 interface SmartGlossary { terms?: SmartGlossaryTerm[]; }
 
-// Placeholder Ren'Py da NON tradurre: tag testo, interpolazione [var], escape \n \t \" \\.
-const MASK = /(\{[^}]*\}|\[[^\]]*\]|\\[nt"\\])/g;
-function mask(txt: string, store: string[]): string {
-  return txt.replace(MASK, (m) => { store.push(m); return `@@GS${store.length - 1}@@`; });
-}
-function unmask(txt: string, store: string[]): string {
-  return txt.replace(/@@GS(\d+)@@/g, (_m, i) => store[Number(i)] ?? '');
+// Placeholder Ren'Py da preservare: tag testo {..} e interpolazione [var].
+// Niente masking: il modello mantiene meglio i codici se istruito nel prompt
+// (vedi offline_translation.rs) che sostituendoli con token che poi altera. Qui i codici
+// servono solo a VALIDARE: se la traduzione li altera, la scartiamo (no codici rotti nei tl/).
+const CODE = /(\{[^}]*\}|\[[^\]]*\])/g;
+function codeKey(s: string): string {
+  return (s.match(CODE) ?? []).slice().sort().join('');
 }
 
 // De-escape mirror di unescape_renpy_string (Rust): \\->\, \"->", \n->newline, \t->tab.
@@ -166,19 +166,16 @@ export async function runRenpyTranslation(opts: {
   let sinceSave = 0;
   for (let i = 0; i < pendingOriginals.length; i += CHUNK) {
     const slice = pendingOriginals.slice(i, i + CHUNK);
-    const stores: string[][] = [];
-    const masked = slice.map(orig => {
-      const st: string[] = [];
-      stores.push(st);
-      return mask(unescapeRenpy(orig), st);
-    });
+    const raws = slice.map(orig => unescapeRenpy(orig));
     const contexts = slice.map(orig => speakerOf[orig] ?? null);
     const res = await invoke<{ translated: string }[]>('offline_translate_batch_context', {
-      texts: masked, contexts, glossary, sourceLang: src, targetLang: tgt, model,
+      texts: raws, contexts, glossary, sourceLang: src, targetLang: tgt, model,
     });
     res.forEach((tr, k) => {
-      const out = (tr.translated || '').startsWith('[ERRORE]') ? '' : unmask(tr.translated || '', stores[k]);
-      if (out) byOriginal[slice[k]] = out;
+      const out = (tr.translated || '').trim();
+      const bad = !out || out.startsWith('[ERRORE]');
+      // Accetta solo se i tag {..}/[..] combaciano; altrimenti lascia non tradotto (retry al resume).
+      if (!bad && codeKey(out) === codeKey(raws[k])) byOriginal[slice[k]] = out;
     });
     done = rows.filter(r => byOriginal[r.original] || r.translated).length;
     sinceSave += slice.length;
