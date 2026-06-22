@@ -78,7 +78,7 @@ criptato (RGSS, GameMaker, Kirikiri, NScripter, Wolf, Godot, Unreal).
 |-----------------|--------|:------:|:----:|-------|
 | Unreal localization | `unreal_localization` | 12 | 20 | ✅ Testato |
 | Unity bundle | `unity_bundle` | 8 | 0 | 🟡 Registrato, non testato |
-| Unity localization | `unity_localization` | 6 | 0 | 🟡 Registrato, non testato |
+| Unity localization | `unity_localization` | 6 | 24 | ✅ Testato |
 | Unity .assets manager | `unity_assets` | 6 | 0 | 🟡 Registrato, non testato |
 | Unity asset injector (runtime) | `unity_asset_injector` | 3 | 0 | 🟡 Registrato, non testato |
 | Unity injector (runtime) | `unity_injector` | 3 | 0 | 🟡 Registrato, non testato |
@@ -94,6 +94,17 @@ helper FS (`find_project_name`, `find_paks_dir`, `find_loose_locres`) e i comand
 async (`parse_locres_file`, `get_unreal_localization_status`,
 `extract_unreal_localization` su `.locres` libero, con regressione sul messaggio
 "Estratte 0 stringhe").
+
+`unity_localization` è coperto da 24 test: tokenizer Smart String (literal/variable/
+formatter/plural/nested, escape), classificazione token, `extract_brace_tokens`,
+detection locale (paren/underscore/path, passthrough sconosciuti), helper binari
+Unity (`unity_string` con alignment, null-terminated, `align4`), scansione
+(`find_all_occurrences`, `is_reasonable_utf8`), comandi async (`parse_smart_string`,
+`validate_smart_string_translation` su match/missing/braces sbilanciate,
+`parse_addressables_catalog` su catalog.json). Include un **bundle UnityFS
+sintetico** non compresso usato per il round-trip `parse_unityfs_header` →
+`parse_block_info` → `decompress_blocks` → `extract_string_table` e per
+`build_patched_bundle` (sostituzione stringa + ri-estrazione).
 
 ---
 

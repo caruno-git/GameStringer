@@ -1902,3 +1902,277 @@ fn rebuild_bundle(
 
     Ok(result)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tempfile::TempDir;
+
+    // ── Helper binari Unity ─────────────────────────────────────────────
+    #[test]
+    fn align4_rounds_up() {
+        assert_eq!(align4(0), 0);
+        assert_eq!(align4(1), 4);
+        assert_eq!(align4(4), 4);
+        assert_eq!(align4(5), 8);
+    }
+
+    #[test]
+    fn unity_string_round_trip_with_alignment() {
+        let mut buf = Vec::new();
+        write_unity_string(&mut buf, "Hi"); // 4 (len) + 2 + 2 pad = 8
+        assert_eq!(buf.len(), 8);
+        let mut off = 0;
+        assert_eq!(read_unity_string(&buf, &mut off).unwrap(), "Hi");
+        assert_eq!(off, 8); // offset allineato
+    }
+
+    #[test]
+    fn unity_string_empty() {
+        let mut buf = Vec::new();
+        write_unity_string(&mut buf, "");
+        let mut off = 0;
+        assert_eq!(read_unity_string(&buf, &mut off).unwrap(), "");
+    }
+
+    #[test]
+    fn null_terminated_string_reads_until_zero() {
+        let data = b"Ciao\0resto";
+        let mut off = 0;
+        assert_eq!(read_null_terminated_string(data, &mut off).unwrap(), "Ciao");
+        assert_eq!(off, 5);
+    }
+
+    // ── Locale detection ────────────────────────────────────────────────
+    #[test]
+    fn locale_code_maps_known_and_passthrough() {
+        assert_eq!(locale_code_to_name("en"), "English");
+        assert_eq!(locale_code_to_name("IT"), "Italian");
+        assert_eq!(locale_code_to_name("xx"), "xx"); // sconosciuto → passthrough
+    }
+
+    #[test]
+    fn detect_locale_paren_pattern() {
+        assert_eq!(detect_locale_from_name("Localization_English(en).bundle").as_deref(), Some("en"));
+    }
+
+    #[test]
+    fn detect_locale_underscore_pattern() {
+        assert_eq!(detect_locale_from_name("MyTable_ja.asset").as_deref(), Some("ja"));
+    }
+
+    #[test]
+    fn detect_locale_path_pattern() {
+        assert_eq!(detect_locale_from_name("Assets/Localization/it/Game.asset").as_deref(), Some("it"));
+    }
+
+    #[test]
+    fn detect_locale_none_when_absent() {
+        assert!(detect_locale_from_name("random_file.txt").is_none());
+    }
+
+    // ── Smart String tokenizer ──────────────────────────────────────────
+    #[test]
+    fn tokenize_literal_and_variable() {
+        let toks = tokenize_smart_string("Hello {name}!").unwrap();
+        assert_eq!(toks.len(), 3);
+        assert_eq!(toks[0].token_type, "literal");
+        assert_eq!(toks[1].token_type, "variable");
+        assert_eq!(toks[1].inner.as_deref(), Some("name"));
+        assert_eq!(toks[2].raw, "!");
+    }
+
+    #[test]
+    fn tokenize_escaped_braces_are_literal() {
+        let toks = tokenize_smart_string("\\{not a token\\}").unwrap();
+        assert!(toks.iter().all(|t| t.token_type == "literal"));
+        let joined: String = toks.iter().map(|t| t.raw.clone()).collect();
+        assert_eq!(joined, "{not a token}");
+    }
+
+    #[test]
+    fn classify_smart_token_types() {
+        assert_eq!(classify_smart_token(""), "variable");
+        assert_eq!(classify_smart_token("name"), "variable");
+        assert_eq!(classify_smart_token("x:000"), "formatter");
+        assert_eq!(classify_smart_token("count:plural:one|many"), "plural");
+        assert_eq!(classify_smart_token("a{b}"), "nested");
+    }
+
+    #[test]
+    fn extract_brace_tokens_basic_and_escaped() {
+        assert_eq!(extract_brace_tokens("{a} x {b}"), vec!["{a}", "{b}"]);
+        assert_eq!(extract_brace_tokens("{outer{inner}}"), vec!["{outer{inner}}"]);
+        assert!(extract_brace_tokens("\\{escaped\\}").is_empty());
+    }
+
+    // ── Scansione pattern ───────────────────────────────────────────────
+    #[test]
+    fn find_all_occurrences_finds_positions() {
+        assert_eq!(find_all_occurrences(b"abcabc", b"bc"), vec![1, 4]);
+        assert!(find_all_occurrences(b"abc", b"").is_empty());
+    }
+
+    #[test]
+    fn reasonable_utf8_filters() {
+        assert!(is_reasonable_utf8(b"Hello"));
+        assert!(!is_reasonable_utf8(b"")); // vuoto
+        assert!(!is_reasonable_utf8(b"!!!")); // nessun alfanumerico
+        assert!(!is_reasonable_utf8(&[0x00, 0x01, 0x02])); // controllo
+    }
+
+    // ── Comandi async puri ──────────────────────────────────────────────
+    #[tokio::test]
+    async fn parse_smart_string_command() {
+        let toks = parse_smart_string("Val: {x:000}".into()).await.unwrap();
+        assert!(toks.iter().any(|t| t.token_type == "formatter"));
+    }
+
+    #[tokio::test]
+    async fn validate_ok_when_tokens_match() {
+        let v = validate_smart_string_translation("{0} apples".into(), "{0} mele".into()).await.unwrap();
+        assert!(v.valid);
+        assert!(v.missing_tokens.is_empty() && v.extra_tokens.is_empty());
+    }
+
+    #[tokio::test]
+    async fn validate_detects_missing_token() {
+        let v = validate_smart_string_translation("{0}".into(), "mele".into()).await.unwrap();
+        assert!(!v.valid);
+        assert_eq!(v.missing_tokens, vec!["{0}"]);
+    }
+
+    #[tokio::test]
+    async fn validate_detects_unbalanced_braces() {
+        let v = validate_smart_string_translation("{0}".into(), "{0".into()).await.unwrap();
+        assert!(!v.valid);
+        assert!(v.warnings.iter().any(|w| w.contains("non bilanciate")));
+    }
+
+    #[tokio::test]
+    async fn parse_addressables_catalog_extracts_tables_and_bundles() {
+        let tmp = TempDir::new().unwrap();
+        let cat = tmp.path().join("catalog.json");
+        let json = r#"{
+            "m_InternalIds": [
+                "Assets/Loc/StringTable_English(en).asset",
+                "0123_loc_assets_all.bundle"
+            ]
+        }"#;
+        fs::write(&cat, json).unwrap();
+        let res = parse_addressables_catalog(cat.to_string_lossy().to_string()).await.unwrap();
+        assert_eq!(res.locales, vec!["en"]);
+        assert_eq!(res.tables.len(), 1);
+        assert_eq!(res.bundles.len(), 1);
+    }
+
+    #[tokio::test]
+    async fn parse_addressables_catalog_errors_on_missing() {
+        assert!(parse_addressables_catalog("/nope/catalog.json".into()).await.is_err());
+    }
+
+    // ── Bundle UnityFS sintetico (round-trip estrazione + patch) ─────────
+    fn put_entry(buf: &mut Vec<u8>, key: i64, val: &str) {
+        buf.extend_from_slice(&key.to_le_bytes());
+        buf.extend_from_slice(&(val.len() as i32).to_le_bytes());
+        buf.extend_from_slice(val.as_bytes());
+        while buf.len() % 4 != 0 {
+            buf.push(0);
+        }
+    }
+
+    /// Costruisce un bundle UnityFS non compresso (flags=0) con un singolo nodo
+    /// che contiene `payload` come dati grezzi.
+    fn build_uncompressed_bundle(payload: &[u8]) -> Vec<u8> {
+        // Block info (non compresso)
+        let mut bi = Vec::new();
+        bi.extend_from_slice(&[0u8; 16]); // hash
+        bi.extend_from_slice(&1i32.to_be_bytes()); // block count
+        bi.extend_from_slice(&(payload.len() as u32).to_be_bytes()); // uncompressed
+        bi.extend_from_slice(&(payload.len() as u32).to_be_bytes()); // compressed
+        bi.extend_from_slice(&0u16.to_be_bytes()); // block flags
+        bi.extend_from_slice(&1i32.to_be_bytes()); // node count
+        bi.extend_from_slice(&0i64.to_be_bytes()); // node offset
+        bi.extend_from_slice(&(payload.len() as i64).to_be_bytes()); // node size
+        bi.extend_from_slice(&0u32.to_be_bytes()); // node flags
+        bi.extend_from_slice(b"CAB-test");
+        bi.push(0);
+
+        let mut out = Vec::new();
+        out.extend_from_slice(b"UnityFS\0");
+        out.extend_from_slice(&7u32.to_be_bytes()); // format version
+        out.extend_from_slice(b"2021.3.0f1\0");
+        out.extend_from_slice(b"5.x.x\0");
+        let fs_off = out.len();
+        out.extend_from_slice(&[0u8; 8]); // file_size placeholder
+        out.extend_from_slice(&(bi.len() as u32).to_be_bytes()); // compressed block info size
+        out.extend_from_slice(&(bi.len() as u32).to_be_bytes()); // uncompressed block info size
+        out.extend_from_slice(&0u32.to_be_bytes()); // flags = 0 (uncompresso, info dopo header)
+        out.extend_from_slice(&bi);
+        out.extend_from_slice(payload);
+        let total = out.len() as i64;
+        out[fs_off..fs_off + 8].copy_from_slice(&total.to_be_bytes());
+        out
+    }
+
+    fn sample_payload() -> Vec<u8> {
+        let mut p = Vec::new();
+        put_entry(&mut p, 1001, "Hello");
+        put_entry(&mut p, 1002, "World");
+        put_entry(&mut p, 1003, "Foobar");
+        put_entry(&mut p, 1004, "Ciao {name}");
+        p
+    }
+
+    #[test]
+    fn synthetic_bundle_header_and_blocks_parse() {
+        let bundle = build_uncompressed_bundle(&sample_payload());
+        let (header, header_end) = parse_unityfs_header(&bundle).unwrap();
+        let (blocks, nodes, _data_off) = parse_block_info(&bundle, &header, header_end).unwrap();
+        assert_eq!(blocks.len(), 1);
+        assert_eq!(nodes.len(), 1);
+    }
+
+    #[tokio::test]
+    async fn extract_string_table_from_synthetic_bundle() {
+        let tmp = TempDir::new().unwrap();
+        let bundle_path = tmp.path().join("loc_en.bundle");
+        fs::write(&bundle_path, build_uncompressed_bundle(&sample_payload())).unwrap();
+
+        let tables = extract_string_table(bundle_path.to_string_lossy().to_string()).await.unwrap();
+        assert_eq!(tables.len(), 1);
+        let values: Vec<&str> = tables[0].entries.iter().map(|e| e.value.as_str()).collect();
+        assert!(values.contains(&"Hello"));
+        assert!(values.contains(&"World"));
+        // La entry smart deve essere riconosciuta come tale.
+        assert!(tables[0].entries.iter().any(|e| e.is_smart && !e.smart_tokens.is_empty()));
+        // Locale dedotto dal nome file.
+        assert_eq!(tables[0].locale, "en");
+    }
+
+    #[tokio::test]
+    async fn build_patched_bundle_replaces_string() {
+        let tmp = TempDir::new().unwrap();
+        let src = tmp.path().join("loc_en.bundle");
+        fs::write(&src, build_uncompressed_bundle(&sample_payload())).unwrap();
+        let out = tmp.path().join("loc_en_patched.bundle");
+
+        let res = build_patched_bundle(
+            src.to_string_lossy().to_string(),
+            vec![TranslatedStringTableEntry { key_id: 1001, translated: "Hi".into() }],
+            out.to_string_lossy().to_string(),
+        )
+        .await
+        .unwrap();
+
+        assert!(res.success);
+        assert_eq!(res.entries_patched, 1);
+        assert!(out.exists());
+
+        // Ri-estrai dal bundle patchato: "Hi" presente, "Hello" sparito.
+        let tables = extract_string_table(out.to_string_lossy().to_string()).await.unwrap();
+        let values: Vec<String> = tables.iter().flat_map(|t| t.entries.iter().map(|e| e.value.clone())).collect();
+        assert!(values.iter().any(|v| v == "Hi"));
+        assert!(!values.iter().any(|v| v == "Hello"));
+    }
+}
