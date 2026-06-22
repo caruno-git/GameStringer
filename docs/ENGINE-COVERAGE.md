@@ -111,10 +111,11 @@ binding Tesseract, non riproducibili in CI.
 rischio, fail-closed, policy di compatibilità) è ora estratta in funzioni pure e
 coperta da 14 test in `src-tauri/src/anti_cheat.rs`. Resta non testato lo scan
 WinAPI vero (`get_running_processes` / `get_process_modules`), non riproducibile
-in CI. Da questo commit la CI esegue `cargo test` sul job **check-windows**
-(prima girava solo `cargo check`), **limitato ai suite validati** (`anti_cheat`,
-`retro_preprocessor`): l'intera suite Rust (~1100 test, inclusi i patcher mai
-girati in CI) non è ancora pulita e verrà gateata solo dopo la bonifica.
+in CI. Il job **check-windows** esegue ora l'**intera suite Rust** con
+`cargo test --verbose` (non più solo `cargo check` né un sottoinsieme): dopo la
+bonifica dei test flaky (2026-06-14) la suite è pulita e gira completa nel gate,
+quindi anche i test dei patcher (incluso `universal_injector`) sono coperti dalla
+CI. Vedi `.github/workflows/ci.yml` e `docs/RUST-TEST-TRIAGE.md`.
 
 ---
 
