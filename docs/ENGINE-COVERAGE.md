@@ -79,7 +79,7 @@ criptato (RGSS, GameMaker, Kirikiri, NScripter, Wolf, Godot, Unreal).
 | Unreal localization | `unreal_localization` | 12 | 20 | ✅ Testato |
 | Unity bundle | `unity_bundle` | 8 | 19 | ✅ Testato |
 | Unity localization | `unity_localization` | 6 | 24 | ✅ Testato |
-| Unity .assets manager | `unity_assets` | 6 | 0 | 🟡 Registrato, non testato |
+| Unity .assets manager | `unity_assets` | 6 | 8 | ✅ Testato |
 | Unity asset injector (runtime) | `unity_asset_injector` | 3 | 0 | 🟡 Registrato, non testato |
 | Unity injector (runtime) | `unity_injector` | 3 | 0 | 🟡 Registrato, non testato |
 | Unreal IoStore | `unreal_iostore` | 2 | 0 | 🟡 Registrato, non testato |
@@ -116,6 +116,13 @@ classificazione complete/empty, `detect_localization_folder`, round-trip
 **off-by-one in `find_string_in_bundle`** (una stringa length-prefixed in coda al
 buffer non veniva trovata, con conseguente mancata sostituzione in
 `create_translated_bundle`).
+
+`unity_assets` è coperto da 8 test: euristiche di testo (`is_likely_text` accetta
+ASCII/scarta binario e UTF-8 invalido, `looks_like_game_text` filtra simboli e
+stringhe senza spazi), `find_unity_assets_files` (rileva `.assets` solo in cartelle
+`_Data`), `scan_assets_for_text` (estrazione length-prefixed di testo di gioco,
+errore su file mancante), `check_uabea_installed` (coerenza installed/path),
+`prepare_assets_for_translation` (conteggio file rilevanti).
 
 ---
 

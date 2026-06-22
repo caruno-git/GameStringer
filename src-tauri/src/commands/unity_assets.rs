@@ -266,3 +266,94 @@ pub async fn prepare_assets_for_translation(game_path: String) -> Result<serde_j
         }
     }))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tempfile::TempDir;
+
+    // ── Euristiche di testo ─────────────────────────────────────────────
+    #[test]
+    fn is_likely_text_accepts_ascii_rejects_binary() {
+        assert!(is_likely_text(b"Questo e' un testo leggibile."));
+        assert!(!is_likely_text(&[0x00, 0x01, 0x02, 0x03, 0xFF, 0xFE])); // binario
+        assert!(!is_likely_text(b"")); // vuoto
+        assert!(!is_likely_text(&[0xFF, 0xFE, 0xFF])); // utf-8 non valido
+    }
+
+    #[test]
+    fn looks_like_game_text_filters() {
+        assert!(looks_like_game_text("Il vecchio mago pronuncia un incantesimo"));
+        assert!(!looks_like_game_text("!!! ??? ### @@@")); // troppi simboli / poche lettere
+        assert!(!looks_like_game_text("nospacehere")); // nessuno spazio
+        assert!(!looks_like_game_text("Hi")); // troppo corto
+    }
+
+    // ── find_unity_assets_files ─────────────────────────────────────────
+    #[tokio::test]
+    async fn find_assets_in_data_folder() {
+        let tmp = TempDir::new().unwrap();
+        let data = tmp.path().join("Game_Data");
+        fs::create_dir_all(&data).unwrap();
+        fs::write(data.join("resources.assets"), vec![0u8; 64]).unwrap();
+        fs::write(data.join("readme.txt"), b"x").unwrap();
+        // Cartella non _Data ignorata.
+        fs::create_dir_all(tmp.path().join("Other")).unwrap();
+        fs::write(tmp.path().join("Other/foo.assets"), b"x").unwrap();
+
+        let res = find_unity_assets_files(tmp.path().to_string_lossy().to_string()).await.unwrap();
+        assert_eq!(res.len(), 1);
+        assert_eq!(res[0].file_name, "resources.assets");
+    }
+
+    #[tokio::test]
+    async fn find_assets_empty_without_data_folder() {
+        let tmp = TempDir::new().unwrap();
+        fs::write(tmp.path().join("file.txt"), b"x").unwrap();
+        let res = find_unity_assets_files(tmp.path().to_string_lossy().to_string()).await.unwrap();
+        assert!(res.is_empty());
+    }
+
+    // ── scan_assets_for_text ────────────────────────────────────────────
+    #[tokio::test]
+    async fn scan_finds_length_prefixed_game_text() {
+        let tmp = TempDir::new().unwrap();
+        let assets = tmp.path().join("resources.assets");
+        let text = "Il vecchio mago pronuncia un potente incantesimo di fuoco.";
+        assert!(text.len() >= 40);
+        let mut data = Vec::new();
+        data.extend_from_slice(&(text.len() as u32).to_le_bytes());
+        data.extend_from_slice(text.as_bytes());
+        fs::write(&assets, &data).unwrap();
+
+        let res = scan_assets_for_text(assets.to_string_lossy().to_string()).await.unwrap();
+        assert_eq!(res.len(), 1);
+        assert_eq!(res[0].content, text);
+        assert_eq!(res[0].content_length, text.len());
+    }
+
+    #[tokio::test]
+    async fn scan_errors_on_missing_file() {
+        assert!(scan_assets_for_text("/nope/missing.assets".into()).await.is_err());
+    }
+
+    // ── check_uabea_installed / prepare ─────────────────────────────────
+    #[tokio::test]
+    async fn check_uabea_status_consistent() {
+        let st = check_uabea_installed().await.unwrap();
+        assert_eq!(st.installed, st.path.is_some());
+    }
+
+    #[tokio::test]
+    async fn prepare_assets_reports_found_count() {
+        let tmp = TempDir::new().unwrap();
+        let data = tmp.path().join("Game_Data");
+        fs::create_dir_all(&data).unwrap();
+        // >1024 byte per superare il filtro di rilevanza.
+        fs::write(data.join("resources.assets"), vec![0u8; 4096]).unwrap();
+
+        let res = prepare_assets_for_translation(tmp.path().to_string_lossy().to_string()).await.unwrap();
+        assert_eq!(res["found"].as_u64().unwrap(), 1);
+        assert!(res["uabea_installed"].is_boolean());
+    }
+}
