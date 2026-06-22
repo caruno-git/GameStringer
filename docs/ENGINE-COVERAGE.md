@@ -51,6 +51,19 @@ RPG Maker ha inoltre routing esplicito in `startAutoTranslate()`: i giochi
 RPG_RT classici (2000/2003, senza stringhe estraibili) vengono instradati alla
 **traduzione live OCR** invece che al patch file-based.
 
+### Universal Injector (auto-detect dispatcher, file-based)
+
+| Funzione | Modulo | Comandi | Test | Stato |
+|----------|--------|:------:|:----:|-------|
+| Auto-detect engine + setup traduzione | `universal_injector` | 3 | 0 | 🟡 Registrato, non testato |
+
+Tool cross-engine raggiungibile da `/injector` (sidebar gruppo Patcher). Espone
+`detect_game_engine`, `inject_translation_hook`, `list_translatable_files`. È
+**puro filesystem e cross-platform** (niente WinAPI: rileva l'engine dai file su
+disco e prepara cartelle/config di traduzione), quindi non rientra nei moduli
+runtime Windows-only né passa dal gate anti-cheat. Mancano test unitari su
+fixture per la rilevazione engine.
+
 ---
 
 ## Ecosistema Unity / Unreal aggiuntivo
@@ -84,7 +97,6 @@ sono coperti da test unitari su fixture. Su Linux esistono solo come stub
 | UE translator (hook DLL) | `ue_translator` | 7 | 0 | 🟡 Registrato, non testato |
 | Auto-hook scanner | `auto_hook` | 1 | 0 | 🟡 Registrato, non testato |
 | GS-Hook injector (spike GDI) | `gs_hook_injector` | 1 | 0 | 🟡 Registrato, non testato |
-| Universal injector | `universal_injector` | 0 | 0 | ⚪ Non agganciato / WIP |
 
 L'infrastruttura OCR (start_ocr_translator / overlay) è completa e già agganciata
 per RPG Maker classico. La **pipeline di preprocessing** (upscale nearest-neighbor,
