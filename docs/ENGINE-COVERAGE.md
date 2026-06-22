@@ -81,7 +81,7 @@ criptato (RGSS, GameMaker, Kirikiri, NScripter, Wolf, Godot, Unreal).
 | Unity localization | `unity_localization` | 6 | 24 | ✅ Testato |
 | Unity .assets manager | `unity_assets` | 6 | 8 | ✅ Testato |
 | Unity asset injector (runtime) | `unity_asset_injector` | 3 | 0 | 🟡 Registrato, non testato |
-| Unity injector (runtime) | `unity_injector` | 3 | 0 | 🟡 Registrato, non testato |
+| Unity injector (runtime) | `unity_injector` | 3 | 6 | 🟡 Logica IPC/guardia testata; injection WinAPI no |
 | Unreal IoStore | `unreal_iostore` | 2 | 13 | ✅ Testato |
 | Unity CSV | `unity_csv` | 1 | 11 | ✅ Testato |
 
@@ -123,6 +123,14 @@ stringhe senza spazi), `find_unity_assets_files` (rileva `.assets` solo in carte
 `_Data`), `scan_assets_for_text` (estrazione length-prefixed di testo di gioco,
 errore su file mancante), `check_uabea_installed` (coerenza installed/path),
 `prepare_assets_for_translation` (conteggio file rilevanti).
+
+`unity_injector` (runtime, Windows-only) ha 6 test sulla parte non-WinAPI:
+`extract_text_from_request` (parser JSON IPC), `get_unity_translator_dll` (suffisso
+path), `stop_unity_translation_server` (reset flag), e la guardia di
+`inject_unity_translator` che fallisce su processo inesistente **prima** di
+qualsiasi chiamata di injection. La DLL injection vera (`CreateRemoteThread` +
+`LoadLibrary`, dietro il gate `assert_injection_allowed`) e il server named-pipe non
+sono riproducibili in CI.
 
 `unity_csv` è coperto da 11 test: `parse_csv_line` (quote/virgole), `parse_csv_block`
 (estrazione entry, scarto id vuoti e blocchi troppo corti), `find_csv_in_binary`

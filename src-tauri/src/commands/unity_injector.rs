@@ -385,3 +385,46 @@ fn extract_text_from_request(json: &str) -> Option<String> {
     }
     None
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn extract_text_parses_field() {
+        let json = r#"{"type":"translate","text":"Hello world"}"#;
+        assert_eq!(extract_text_from_request(json).as_deref(), Some("Hello world"));
+    }
+
+    #[test]
+    fn extract_text_empty_string() {
+        assert_eq!(extract_text_from_request(r#"{"text":""}"#).as_deref(), Some(""));
+    }
+
+    #[test]
+    fn extract_text_none_without_field() {
+        assert!(extract_text_from_request(r#"{"type":"ping"}"#).is_none());
+    }
+
+    #[test]
+    fn translator_dll_path_has_expected_suffix() {
+        let p = get_unity_translator_dll().unwrap();
+        let s = p.to_string_lossy().replace('\\', "/");
+        assert!(s.ends_with("resources/unity-translator/unity_auto_translator.dll"), "path inatteso: {s}");
+    }
+
+    #[tokio::test]
+    async fn stop_server_returns_ok_and_clears_flag() {
+        let res = stop_unity_translation_server().await;
+        assert!(res.is_ok());
+        assert!(!IPC_SERVER_RUNNING.load(Ordering::SeqCst));
+    }
+
+    #[tokio::test]
+    async fn inject_errors_on_missing_process() {
+        // Nessuna injection reale: il processo non esiste, quindi la funzione
+        // fallisce prima di qualsiasi chiamata WinAPI di injection.
+        let res = inject_unity_translator("definitely_not_a_real_process_zzz999".to_string()).await;
+        assert!(res.is_err());
+    }
+}
