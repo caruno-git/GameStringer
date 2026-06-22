@@ -55,15 +55,20 @@ RPG_RT classici (2000/2003, senza stringhe estraibili) vengono instradati alla
 
 | Funzione | Modulo | Comandi | Test | Stato |
 |----------|--------|:------:|:----:|-------|
-| Auto-detect engine + setup traduzione | `universal_injector` | 3 | 16 | ✅ Testato |
+| Auto-detect engine + setup traduzione | `universal_injector` | 3 | 22 | ✅ Testato |
 
 Tool cross-engine raggiungibile da `/injector` (sidebar gruppo Patcher). Espone
 `detect_game_engine`, `inject_translation_hook`, `list_translatable_files`. È
 **puro filesystem e cross-platform** (niente WinAPI: rileva l'engine dai file su
 disco e prepara cartelle/config di traduzione), quindi non rientra nei moduli
-runtime Windows-only né passa dal gate anti-cheat. La rilevazione engine è
-coperta da 16 test su fixture tempdir (uno per engine + priorità Unity/Unreal,
-dir sconosciuta, path mancante, `list_translatable_files`).
+runtime Windows-only né passa dal gate anti-cheat. Coperto da 22 test su fixture
+tempdir: rilevazione engine (uno per engine + priorità Unity/Unreal, dir
+sconosciuta, path mancante), `list_translatable_files`, e `inject_translation_hook`
+(Ren'Py/RPG Maker MV creano cartelle e config, backup, Unity rimanda al patcher
+dedicato, engine tool-based restituiscono guida, fallback engine sconosciuto).
+`inject_translation_hook` gestisce tutti i 12 engine rilevati: setup file-based
+per Unity/RPG Maker MV·MZ/Ren'Py, step guida con tool per gli engine ad archivio
+criptato (RGSS, GameMaker, Kirikiri, NScripter, Wolf, Godot, Unreal).
 
 ---
 

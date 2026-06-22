@@ -762,7 +762,10 @@ pub async fn inject_translation_hook(
     "targetLanguage": "it"
   }
 }"#;
-            let plugin_path = path.join("www").join("js").join("plugins").join("GameStringerTranslation.json");
+            let plugins_dir = path.join("www").join("js").join("plugins");
+            fs::create_dir_all(&plugins_dir)
+                .map_err(|e| format!("Impossibile creare cartella plugins: {}", e))?;
+            let plugin_path = plugins_dir.join("GameStringerTranslation.json");
             fs::write(&plugin_path, plugin_config)
                 .map_err(|e| format!("Impossibile scrivere plugin config: {}", e))?;
             steps.push("Plugin configurazione creato".to_string());
@@ -794,6 +797,26 @@ define config.language = "italian"
         "UnrealEngine" => {
             steps.push("Unreal Engine richiede tool esterni".to_string());
             steps.push("Usa UnrealLocres per modificare i .pak".to_string());
+        }
+        "RPGMakerVXAce" | "RPGMakerXP" => {
+            steps.push("Gli archivi RGSS (.rgss3a/.rgss2a/.rxdata) sono criptati".to_string());
+            steps.push("Usa RPG Maker Trans per estrarre e reiniettare le traduzioni".to_string());
+        }
+        "GameMaker" => {
+            steps.push("I testi sono dentro data.win (formato GameMaker)".to_string());
+            steps.push("Usa UndertaleModTool per estrarre e modificare le stringhe".to_string());
+        }
+        "Kirikiri" => {
+            steps.push("Gli archivi .xp3 sono compressi/criptati".to_string());
+            steps.push("Usa GARbro per estrarre; i testi sono negli script .ks".to_string());
+        }
+        "NScripter" => {
+            steps.push("Lo script è in nscript.dat (formato proprietario)".to_string());
+            steps.push("Usa i tool NScripter (es. NSDec) per decomprimere ed estrarre il testo".to_string());
+        }
+        "Wolf" => {
+            steps.push("I dati Wolf RPG (.wolf) sono in formato proprietario".to_string());
+            steps.push("Usa Wolf Trans per estrarre e reiniettare le traduzioni".to_string());
         }
         _ => {
             steps.push(format!("Engine {} non supporta injection automatica", engine));
@@ -1049,5 +1072,86 @@ mod tests {
         assert!(types.contains(&"INI"));
         // Le immagini non sono traducibili.
         assert!(!types.contains(&"PNG"));
+    }
+
+    // ── inject_translation_hook ─────────────────────────────────────────
+
+    async fn inject(dir: &TempDir, engine: &str, backup: bool) -> InjectionResult {
+        inject_translation_hook(
+            dir.path().to_string_lossy().to_string(),
+            engine.to_string(),
+            backup,
+        )
+        .await
+        .unwrap()
+    }
+
+    #[tokio::test]
+    async fn inject_renpy_creates_translation_folder() {
+        let dir = setup(&[("game/script.rpy", b"label start:")]);
+        let r = inject(&dir, "RenPy", false).await;
+        assert!(r.success);
+        assert!(dir.path().join("game/tl/italian/options.rpy").exists());
+        assert!(!r.files_modified.is_empty());
+    }
+
+    #[tokio::test]
+    async fn inject_rpgmaker_mv_creates_plugin_even_without_dirs() {
+        // Regressione: il plugin va scritto creando prima www/js/plugins.
+        let dir = setup(&[("data/System.json", b"{}")]);
+        let r = inject(&dir, "RPGMakerMV", false).await;
+        assert!(r.success);
+        assert!(dir
+            .path()
+            .join("www/js/plugins/GameStringerTranslation.json")
+            .exists());
+    }
+
+    #[tokio::test]
+    async fn inject_creates_backup_when_requested() {
+        let dir = setup(&[("data.win", b"FORM")]);
+        let r = inject(&dir, "GameMaker", true).await;
+        assert!(r.success);
+        assert!(r.backup_path.is_some());
+        assert!(dir.path().join("_backup_gamestringer").exists());
+    }
+
+    #[tokio::test]
+    async fn inject_unity_points_to_dedicated_patcher() {
+        let dir = setup(&[("Game_Data/globalgamemanagers", b"x")]);
+        let r = inject(&dir, "Unity", false).await;
+        assert!(r.success);
+        assert!(r.message.contains("Unity Patcher"));
+    }
+
+    #[tokio::test]
+    async fn inject_tool_based_engines_return_guidance() {
+        // Engine che richiedono tool esterni: nessun file scritto, ma step informativi.
+        for (engine, needle) in [
+            ("Kirikiri", "GARbro"),
+            ("Wolf", "Wolf Trans"),
+            ("RPGMakerVXAce", "RPG Maker Trans"),
+            ("NScripter", "nscript.dat"),
+        ] {
+            let dir = setup(&[("placeholder", b"x")]);
+            let r = inject(&dir, engine, false).await;
+            assert!(r.success, "{engine} dovrebbe restituire success");
+            assert!(
+                r.steps_completed.iter().any(|s| s.contains(needle)),
+                "{engine}: atteso uno step contenente '{needle}', trovato {:?}",
+                r.steps_completed
+            );
+        }
+    }
+
+    #[tokio::test]
+    async fn inject_unknown_engine_falls_back_gracefully() {
+        let dir = setup(&[("x", b"x")]);
+        let r = inject(&dir, "QualcosaDiStrano", false).await;
+        assert!(r.success);
+        assert!(r
+            .steps_completed
+            .iter()
+            .any(|s| s.contains("non supporta injection automatica")));
     }
 }
