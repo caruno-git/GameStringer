@@ -65,7 +65,7 @@ const ENGINE_COLORS: Record<string, string> = {
   'RPGMakerVXAce': 'bg-gradient-to-r from-orange-600 to-amber-600',
   'RPGMakerXP': 'bg-gradient-to-r from-yellow-500 to-orange-500',
   'GameMaker': 'bg-gradient-to-r from-green-500 to-emerald-600',
-  'RenPy': 'bg-gradient-to-r from-pink-500 to-rose-600',
+  'RenPy': 'bg-gradient-to-r from-sky-500 to-blue-600',
   'Kirikiri': 'bg-gradient-to-r from-purple-500 to-violet-600',
   'NScripter': 'bg-gradient-to-r from-slate-500 to-slate-700',
   'Wolf': 'bg-gradient-to-r from-amber-600 to-yellow-600',

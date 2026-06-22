@@ -645,6 +645,11 @@ fn main() {
             // gs-hook Direct Injection (dual-arch: GDI/Unity/Unreal universale)
             commands::gs_hook_injector::inject_gs_hook,
 
+            // Universal Injector (auto-detect engine + setup traduzione file-based)
+            commands::universal_injector::detect_game_engine,
+            commands::universal_injector::inject_translation_hook,
+            commands::universal_injector::list_translatable_files,
+
             // OCR Translator (Universal - funziona su qualsiasi gioco)
             ocr_translator::start_ocr_translator,
             ocr_translator::stop_ocr_translator,

@@ -101,7 +101,7 @@ pub mod gs_hook_injector;
 pub mod ue_translator;
 #[cfg(windows)]
 pub mod screen_capture;
-#[cfg(windows)]
+// Universal Injector: rilevazione engine + setup traduzione file-based (puro filesystem, cross-platform)
 pub mod universal_injector;
 // Auto-Hook Scanner (cross-platform, con stubs per non-Windows)
 pub mod auto_hook;
@@ -143,8 +143,6 @@ pub mod gs_hook_injector { pub use super::platform_stubs::*; }
 pub mod ue_translator { pub use super::platform_stubs::*; }
 #[cfg(not(windows))]
 pub mod screen_capture { pub use super::platform_stubs::*; }
-#[cfg(not(windows))]
-pub mod universal_injector {}
 
 // === Shared stubs for non-Windows platforms ===
 #[cfg(not(windows))]

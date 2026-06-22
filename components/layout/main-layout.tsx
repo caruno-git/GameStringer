@@ -188,6 +188,7 @@ const getNavGroups = (t: (key: string) => string) => [
           { name: 'CRI Middleware', href: '/cri-patcher', icon: Disc },
         ],
       },
+      { name: 'Universal Injector', href: '/injector', icon: Wand2 },
       { name: 'Video Extractor', href: '/video-extractor', icon: Film },
       { name: 'Lip Sync', href: '/lip-sync', icon: Smile },
       { name: t('nav.overlay'), href: '/overlay', icon: Subtitles },
