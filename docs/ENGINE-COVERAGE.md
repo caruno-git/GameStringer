@@ -83,7 +83,7 @@ criptato (RGSS, GameMaker, Kirikiri, NScripter, Wolf, Godot, Unreal).
 | Unity asset injector (runtime) | `unity_asset_injector` | 3 | 0 | 🟡 Registrato, non testato |
 | Unity injector (runtime) | `unity_injector` | 3 | 0 | 🟡 Registrato, non testato |
 | Unreal IoStore | `unreal_iostore` | 2 | 0 | 🟡 Registrato, non testato |
-| Unity CSV | `unity_csv` | 1 | 0 | 🟡 Registrato, non testato |
+| Unity CSV | `unity_csv` | 1 | 11 | ✅ Testato |
 
 `unreal_localization` è coperto da 20 test deterministici (no file di gioco
 reali): round-trip dei writer/parser `.locres` v0 e v2 (con dedup string array),
@@ -123,6 +123,15 @@ stringhe senza spazi), `find_unity_assets_files` (rileva `.assets` solo in carte
 `_Data`), `scan_assets_for_text` (estrazione length-prefixed di testo di gioco,
 errore su file mancante), `check_uabea_installed` (coerenza installed/path),
 `prepare_assets_for_translation` (conteggio file rilevanti).
+
+`unity_csv` è coperto da 11 test: `parse_csv_line` (quote/virgole), `parse_csv_block`
+(estrazione entry, scarto id vuoti e blocchi troppo corti), `find_csv_in_binary`
+(localizza il blocco `ID,ENGLISH` tra byte null), `find_data_dir`,
+`detect_unity_version` (regex su globalgamemanagers), e il comando
+`scan_unity_csv_tables`. I test hanno fatto emergere e correggere una collisione in
+`identify_table_name`: `"spell_"` contiene `"ll_"` e veniva classificato come
+"popups" invece di "spelltexts" (riordinati i prefissi specifici prima di
+`ll_`/`vl_`).
 
 ---
 
