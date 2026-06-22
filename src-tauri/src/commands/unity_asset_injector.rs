@@ -403,3 +403,120 @@ fn find_python() -> Option<String> {
     }
     None
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs;
+    use tempfile::TempDir;
+
+    fn entry(id: &str, en: &str, it: &str, table: Option<&str>) -> TranslationEntry {
+        TranslationEntry {
+            id: id.into(),
+            english: en.into(),
+            translated: it.into(),
+            table: table.map(|s| s.to_string()),
+        }
+    }
+
+    // ── csv_escape ──────────────────────────────────────────────────────
+    #[test]
+    fn csv_escape_quotes_when_needed() {
+        assert_eq!(csv_escape("plain"), "plain");
+        assert_eq!(csv_escape("with, comma"), "\"with, comma\"");
+        assert_eq!(csv_escape("say \"hi\""), "\"say \"\"hi\"\"\"");
+        assert_eq!(csv_escape("line\nbreak"), "\"line\nbreak\"");
+    }
+
+    // ── export_translations_to_csv ──────────────────────────────────────
+    #[test]
+    fn export_translations_groups_and_skips_empty() {
+        let tmp = TempDir::new().unwrap();
+        let entries = vec![
+            entry("k1", "Hello", "Ciao", Some("ui")),
+            entry("k2", "With, comma", "Con, virgola", Some("ui")),
+            entry("k3", "", "x", Some("ui")), // english vuoto → saltato
+            entry("k4", "Bye", "", Some("ui")), // translated vuoto → saltato
+        ];
+        export_translations_to_csv(tmp.path(), &entries).unwrap();
+        let content = fs::read_to_string(tmp.path().join("ui.csv")).unwrap();
+        assert!(content.starts_with("ID,ENGLISH,ITALIAN"));
+        assert!(content.contains("k1,Hello,Ciao"));
+        assert!(content.contains("\"With, comma\"")); // campo con virgola quotato
+        assert!(!content.contains("k3"));
+        assert!(!content.contains("k4"));
+    }
+
+    #[test]
+    fn export_translations_default_table_name() {
+        let tmp = TempDir::new().unwrap();
+        export_translations_to_csv(tmp.path(), &[entry("k", "A", "B", None)]).unwrap();
+        assert!(tmp.path().join("translations.csv").exists());
+    }
+
+    #[test]
+    fn export_ink_writes_two_column_csv() {
+        let tmp = TempDir::new().unwrap();
+        let path = export_ink_to_csv(tmp.path(), &[entry("", "Hello", "Ciao", None)]).unwrap();
+        let content = fs::read_to_string(&path).unwrap();
+        assert!(content.starts_with("ENGLISH,ITALIAN"));
+        assert!(content.contains("Hello,Ciao"));
+    }
+
+    // ── contains_bytes / extract_caret_strings ──────────────────────────
+    #[test]
+    fn contains_bytes_finds_needle() {
+        assert!(contains_bytes(b"xxinkVersionyy", b"inkVersion"));
+        assert!(!contains_bytes(b"nothing here", b"inkVersion"));
+    }
+
+    #[test]
+    fn extract_caret_strings_basic_and_filters() {
+        let data = b"junk \"^Hello world\" mid \"^ev skip me\" tail \"^Real line\" end";
+        let strings = extract_caret_strings(data);
+        assert!(strings.contains(&"Hello world".to_string()));
+        assert!(strings.contains(&"Real line".to_string()));
+        assert!(!strings.iter().any(|s| s.starts_with("ev "))); // "^ev ..." filtrato
+    }
+
+    #[test]
+    fn extract_caret_strings_unescapes_newline() {
+        let data = b"\"^A\\nB\"";
+        let strings = extract_caret_strings(data);
+        assert!(strings.iter().any(|s| s == "A\nB"));
+    }
+
+    // ── restore_unity_assets ────────────────────────────────────────────
+    #[tokio::test]
+    async fn restore_copies_backups() {
+        let tmp = TempDir::new().unwrap();
+        fs::write(tmp.path().join("resources.assets.backup"), b"original data").unwrap();
+        let msg = restore_unity_assets(tmp.path().to_string_lossy().to_string()).await.unwrap();
+        assert!(msg.contains("1 file"));
+        let restored = fs::read(tmp.path().join("resources.assets")).unwrap();
+        assert_eq!(restored, b"original data");
+    }
+
+    // ── scan_unity_ink_strings ──────────────────────────────────────────
+    #[tokio::test]
+    async fn scan_ink_finds_strings_in_sharedassets() {
+        let tmp = TempDir::new().unwrap();
+        let mut data = Vec::new();
+        data.extend_from_slice(b"blob with inkVersion marker ");
+        data.extend_from_slice(b"\"^Buongiorno avventuriero\" ");
+        data.extend_from_slice(b"\"^Premi invio\"");
+        fs::write(tmp.path().join("sharedassets0.assets"), &data).unwrap();
+        // File senza marker Ink → ignorato dal conteggio files_with_ink.
+        fs::write(tmp.path().join("sharedassets1.assets"), b"no ink here").unwrap();
+
+        let res = scan_unity_ink_strings(tmp.path().to_string_lossy().to_string()).await.unwrap();
+        assert_eq!(res.files_with_ink, 1);
+        assert!(res.total >= 2);
+        assert!(res.strings.iter().any(|s| s.text == "Buongiorno avventuriero"));
+    }
+
+    #[tokio::test]
+    async fn scan_ink_errors_on_missing_dir() {
+        assert!(scan_unity_ink_strings("/nope/missing".into()).await.is_err());
+    }
+}

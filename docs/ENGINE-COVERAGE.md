@@ -80,7 +80,7 @@ criptato (RGSS, GameMaker, Kirikiri, NScripter, Wolf, Godot, Unreal).
 | Unity bundle | `unity_bundle` | 8 | 19 | ✅ Testato |
 | Unity localization | `unity_localization` | 6 | 24 | ✅ Testato |
 | Unity .assets manager | `unity_assets` | 6 | 8 | ✅ Testato |
-| Unity asset injector (runtime) | `unity_asset_injector` | 3 | 0 | 🟡 Registrato, non testato |
+| Unity asset injector (Python) | `unity_asset_injector` | 3 | 10 | ✅ Logica Rust testata; script Python no |
 | Unity injector (runtime) | `unity_injector` | 3 | 6 | 🟡 Logica IPC/guardia testata; injection WinAPI no |
 | Unreal IoStore | `unreal_iostore` | 2 | 13 | ✅ Testato |
 | Unity CSV | `unity_csv` | 1 | 11 | ✅ Testato |
@@ -131,6 +131,14 @@ path), `stop_unity_translation_server` (reset flag), e la guardia di
 qualsiasi chiamata di injection. La DLL injection vera (`CreateRemoteThread` +
 `LoadLibrary`, dietro il gate `assert_injection_allowed`) e il server named-pipe non
 sono riproducibili in CI.
+
+`unity_asset_injector` (orchestra lo script Python `unity_inject.py`) ha 10 test
+sulla logica Rust: `csv_escape` (quoting), export CSV traduzioni (raggruppamento per
+tabella, skip righe vuote, nome tabella di default) e Ink, `contains_bytes`,
+`extract_caret_strings` (estrazione `"^testo"` dai blob Ink con filtri ed
+unescape `\n`), e i comandi `restore_unity_assets` (ripristino backup) e
+`scan_unity_ink_strings` (scan sharedassets, errore su dir mancante). L'injection
+vera (resize asset) è delegata allo script Python, non coperto dalla CI Rust.
 
 `unity_csv` è coperto da 11 test: `parse_csv_line` (quote/virgole), `parse_csv_block`
 (estrazione entry, scarto id vuoti e blocchi troppo corti), `find_csv_in_binary`
