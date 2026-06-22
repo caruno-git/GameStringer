@@ -1,0 +1,40 @@
+name: Supabase Keep-Alive
+
+# Evita la pausa per inattività del piano Free di Supabase (sospensione dopo
+# 7 giorni senza traffico). Fa una query leggera ogni 3 giorni = il progetto
+# resta sempre "attivo". Costo: 0 (GitHub Actions gratis sui repo pubblici).
+#
+# NOTE:
+#   - L'anon key qui sotto è la stessa già pubblica nel codice
+#     (lib/social/community-hub-backend.ts), quindi non espone nulla di nuovo.
+#   - Se preferisci, spostala in un Secret del repo (Settings → Secrets → Actions,
+#     nome SUPABASE_ANON_KEY) e sostituisci il valore inline con ${{ secrets.SUPABASE_ANON_KEY }}.
+#   - GitHub disabilita i cron dopo 60 giorni di inattività del repo: dato che
+#     committi spesso, non è un problema.
+
+on:
+  schedule:
+    - cron: '0 7 */3 * *'   # ogni 3 giorni, 07:00 UTC
+  workflow_dispatch:          # avvio manuale dalla tab Actions
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST API
+        env:
+          SUPABASE_URL: 'https://relbkjoxdnbqizgomzhs.supabase.co'
+          SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJlbGJram94ZG5icWl6Z29temhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNDcxMDUsImV4cCI6MjA4OTkyMzEwNX0.TY4pVsZVJ3vS_8AArXXr4RghxUn1ATju4kiVwjzpdyM'
+        run: |
+          echo "Ping a Supabase per tenere il progetto attivo..."
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${SUPABASE_URL}/rest/v1/community_rooms?select=id&limit=1" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}")
+          echo "HTTP status: ${HTTP_CODE}"
+          # 200 = ok, 401/403 = key/policy ma il DB ha comunque ricevuto traffico (basta per il keep-alive)
+          if [ "${HTTP_CODE}" -ge 500 ]; then
+            echo "::error::Supabase ha risposto ${HTTP_CODE} (errore server)"
+            exit 1
+          fi
+          echo "Keep-alive completato."
