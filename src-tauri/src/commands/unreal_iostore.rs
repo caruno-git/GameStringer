@@ -2301,8 +2301,201 @@ pub async fn apply_datatable_translation(
         pak_path: utoc_path.to_string_lossy().to_string(),
         entries_count: total_patched,
         message: format!(
-            "Creato IoStore {}.utoc/.ucas con {} traduzioni da {} DataTable ({})", 
+            "Creato IoStore {}.utoc/.ucas con {} traduzioni da {} DataTable ({})",
             base_name, total_patched, iostore_entries.len(), target_language
         ),
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tempfile::TempDir;
+
+    // ── Helpers ─────────────────────────────────────────────────────────
+    fn put_fstring(buf: &mut Vec<u8>, s: &str) {
+        if s.is_empty() {
+            buf.extend_from_slice(&0i32.to_le_bytes());
+            return;
+        }
+        let len = (s.len() + 1) as i32; // include null
+        buf.extend_from_slice(&len.to_le_bytes());
+        buf.extend_from_slice(s.as_bytes());
+        buf.push(0);
+    }
+
+    // ── Helper binari ───────────────────────────────────────────────────
+    #[test]
+    fn read_integers_round_trip() {
+        let mut buf = Vec::new();
+        buf.push(0xAB);
+        buf.extend_from_slice(&0x1234_5678u32.to_le_bytes());
+        buf.extend_from_slice(&(-5i32).to_le_bytes());
+        buf.extend_from_slice(&0x1122_3344_5566_7788u64.to_le_bytes());
+        let mut off = 0;
+        assert_eq!(read_u8(&buf, &mut off).unwrap(), 0xAB);
+        assert_eq!(read_u32(&buf, &mut off).unwrap(), 0x1234_5678);
+        assert_eq!(read_i32(&buf, &mut off).unwrap(), -5);
+        assert_eq!(read_u64(&buf, &mut off).unwrap(), 0x1122_3344_5566_7788);
+    }
+
+    #[test]
+    fn read_u32_eof_errors() {
+        let mut off = 0;
+        assert!(read_u32(&[1, 2], &mut off).is_err());
+    }
+
+    #[test]
+    fn fstring_utf8_and_empty() {
+        let mut buf = Vec::new();
+        put_fstring(&mut buf, "Ciao");
+        put_fstring(&mut buf, "");
+        let mut off = 0;
+        assert_eq!(read_fstring(&buf, &mut off).unwrap(), "Ciao");
+        assert_eq!(read_fstring(&buf, &mut off).unwrap(), "");
+    }
+
+    #[test]
+    fn try_read_fstring_at_handles_cases() {
+        let mut buf = Vec::new();
+        put_fstring(&mut buf, "Testo");
+        let mut off = 0;
+        assert_eq!(try_read_fstring_at(&buf, &mut off), Some("Testo".to_string()));
+        // Senza null terminator → None
+        let mut bad = Vec::new();
+        bad.extend_from_slice(&3i32.to_le_bytes());
+        bad.extend_from_slice(b"abc"); // niente null finale
+        let mut off2 = 0;
+        assert_eq!(try_read_fstring_at(&bad, &mut off2), None);
+    }
+
+    // ── Euristiche testo ────────────────────────────────────────────────
+    #[test]
+    fn is_translatable_text_filters() {
+        assert!(is_translatable_text("Hello world"));
+        assert!(is_translatable_text("Press start to play."));
+        assert!(!is_translatable_text("SKILL_NAME_TEMP")); // ID tecnico maiuscolo
+        assert!(!is_translatable_text("LocalizationItemData")); // CamelCase interno
+        assert!(!is_translatable_text("Content/UI/Foo")); // path
+        assert!(!is_translatable_text("0xFF00")); // hex
+        assert!(!is_translatable_text("Hi")); // troppo poche lettere
+    }
+
+    #[test]
+    fn split_on_id_boundaries_separates_text() {
+        let parts = split_on_id_boundaries("Bolt cuttersIT_TO_THANDLEWRENCH");
+        assert!(parts.iter().any(|p| p == "Bolt cutters"));
+    }
+
+    #[test]
+    fn clean_datatable_string_returns_segments() {
+        let out = clean_datatable_string("Hello world");
+        assert!(out.iter().any(|s| s == "Hello world"));
+    }
+
+    // ── scan_ftext_entries ──────────────────────────────────────────────
+    #[test]
+    fn scan_ftext_finds_base_entry() {
+        let mut buf = Vec::new();
+        buf.extend_from_slice(&0u32.to_le_bytes()); // FText flags
+        buf.push(0u8); // history_type Base
+        put_fstring(&mut buf, "GameNS");
+        put_fstring(&mut buf, "KEY_01");
+        put_fstring(&mut buf, "Hello there, traveler");
+        buf.push(0); // padding finale
+
+        let entries = scan_ftext_entries(&buf);
+        assert_eq!(entries.len(), 1);
+        assert_eq!(entries[0].0, "GameNS");
+        assert_eq!(entries[0].1, "KEY_01");
+        assert_eq!(entries[0].2, "Hello there, traveler");
+    }
+
+    // ── scan_uasset_strings ─────────────────────────────────────────────
+    #[test]
+    fn scan_uasset_strings_extracts_translatable() {
+        let mut buf = Vec::new();
+        put_fstring(&mut buf, "Hello world");
+        put_fstring(&mut buf, "Press start now");
+        let entries = scan_uasset_strings(&buf, "MyTable");
+        let values: Vec<&str> = entries.iter().map(|e| e.value.as_str()).collect();
+        assert!(values.contains(&"Hello world"));
+        assert!(values.contains(&"Press start now"));
+        assert!(entries.iter().all(|e| e.namespace == "MyTable"));
+    }
+
+    // ── parse_utoc_header (sintetico v3) ────────────────────────────────
+    #[test]
+    fn parse_utoc_header_reads_fields() {
+        let mut buf = Vec::new();
+        buf.extend_from_slice(UTOC_MAGIC); // 16
+        buf.push(3u8); // version 3 (< 4: niente PerfectHash)
+        buf.extend_from_slice(&[0u8; 3]); // reserved
+        buf.extend_from_slice(&144u32.to_le_bytes()); // header_size
+        buf.extend_from_slice(&5u32.to_le_bytes()); // entry_count
+        buf.extend_from_slice(&2u32.to_le_bytes()); // compressed_block_entry_count
+        buf.extend_from_slice(&12u32.to_le_bytes()); // compressed_block_entry_size
+        buf.extend_from_slice(&1u32.to_le_bytes()); // compression_method_name_count
+        buf.extend_from_slice(&32u32.to_le_bytes()); // compression_method_name_length
+        buf.extend_from_slice(&65536u32.to_le_bytes()); // compression_block_size
+        buf.extend_from_slice(&0u32.to_le_bytes()); // directory_index_size
+        buf.extend_from_slice(&1u32.to_le_bytes()); // partition_count
+        buf.extend_from_slice(&0xABCDu64.to_le_bytes()); // container_id
+        buf.extend_from_slice(&[0u8; 16]); // guid
+        buf.push(0u8); // container_flags
+        buf.resize(144, 0); // pad alla dimensione minima
+
+        let h = parse_utoc_header(&buf).unwrap();
+        assert_eq!(h.version, 3);
+        assert_eq!(h.entry_count, 5);
+        assert_eq!(h.partition_count, 1);
+        assert_eq!(h.container_id, 0xABCD);
+        assert_eq!(h.directory_index_size, 0);
+    }
+
+    #[test]
+    fn parse_utoc_header_rejects_bad_magic() {
+        let buf = vec![0u8; 200];
+        assert!(parse_utoc_header(&buf).is_err());
+    }
+
+    // ── parse_directory_index (sintetico) ───────────────────────────────
+    #[test]
+    fn parse_directory_index_builds_file_paths() {
+        const INVALID: u32 = 0xFFFFFFFF;
+        let mut buf = Vec::new();
+        put_fstring(&mut buf, "/"); // mount point
+        // 1 directory (root, senza nome)
+        buf.extend_from_slice(&1u32.to_le_bytes()); // dir_count
+        buf.extend_from_slice(&INVALID.to_le_bytes()); // name (root = nessuno)
+        buf.extend_from_slice(&INVALID.to_le_bytes()); // first_child
+        buf.extend_from_slice(&INVALID.to_le_bytes()); // next_sibling
+        buf.extend_from_slice(&0u32.to_le_bytes()); // first_file = 0
+        // 1 file
+        buf.extend_from_slice(&1u32.to_le_bytes()); // file_count
+        buf.extend_from_slice(&0u32.to_le_bytes()); // name = string[0]
+        buf.extend_from_slice(&INVALID.to_le_bytes()); // next_file
+        buf.extend_from_slice(&42u32.to_le_bytes()); // user_data (toc entry)
+        // string table
+        buf.extend_from_slice(&1u32.to_le_bytes()); // string_count
+        put_fstring(&mut buf, "Game.locres");
+
+        let files = parse_directory_index(&buf).unwrap();
+        assert_eq!(files.len(), 1);
+        assert_eq!(files[0].path, "Game.locres");
+        assert_eq!(files[0].toc_entry_index, 42);
+    }
+
+    // ── find_utoc_files ─────────────────────────────────────────────────
+    #[test]
+    fn find_utoc_files_scans_content_paks() {
+        let tmp = TempDir::new().unwrap();
+        let paks = tmp.path().join("MyGame/Content/Paks");
+        fs::create_dir_all(&paks).unwrap();
+        fs::write(paks.join("pakchunk0.utoc"), b"x").unwrap();
+        fs::write(paks.join("pakchunk0.ucas"), b"x").unwrap();
+        let found = find_utoc_files(tmp.path());
+        assert_eq!(found.len(), 1);
+        assert!(found[0].to_string_lossy().ends_with(".utoc"));
+    }
 }

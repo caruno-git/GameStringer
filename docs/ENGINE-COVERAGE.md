@@ -82,7 +82,7 @@ criptato (RGSS, GameMaker, Kirikiri, NScripter, Wolf, Godot, Unreal).
 | Unity .assets manager | `unity_assets` | 6 | 8 | ✅ Testato |
 | Unity asset injector (runtime) | `unity_asset_injector` | 3 | 0 | 🟡 Registrato, non testato |
 | Unity injector (runtime) | `unity_injector` | 3 | 0 | 🟡 Registrato, non testato |
-| Unreal IoStore | `unreal_iostore` | 2 | 0 | 🟡 Registrato, non testato |
+| Unreal IoStore | `unreal_iostore` | 2 | 13 | ✅ Testato |
 | Unity CSV | `unity_csv` | 1 | 11 | ✅ Testato |
 
 `unreal_localization` è coperto da 20 test deterministici (no file di gioco
@@ -132,6 +132,15 @@ errore su file mancante), `check_uabea_installed` (coerenza installed/path),
 `identify_table_name`: `"spell_"` contiene `"ll_"` e veniva classificato come
 "popups" invece di "spelltexts" (riordinati i prefissi specifici prima di
 `ll_`/`vl_`).
+
+`unreal_iostore` è coperto da 13 test: helper binari (`read_u8/u32/i32/u64` con EOF,
+`read_fstring`/`try_read_fstring_at` UTF-8 + casi limite), euristiche di pulizia
+(`is_translatable_text`, `split_on_id_boundaries`, `clean_datatable_string`),
+scanner `scan_ftext_entries` (FText Base ns/key/source) e `scan_uasset_strings`
+(DataTable), e parser su fixture sintetiche: **UTOC header v3** (`parse_utoc_header`,
+campi + rifiuto magic errato) e **directory index** (`parse_directory_index`,
+ricostruzione path file → toc entry). Non testati la decompressione Oodle (DLL
+esterna) e la lettura UCAS con seek (richiedono container reali).
 
 ---
 
