@@ -877,3 +877,177 @@ fn get_file_description(ext: &str) -> String {
         _ => "File traducibile".to_string(),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs;
+    use tempfile::TempDir;
+
+    // ── Helpers ─────────────────────────────────────────────────────────
+    /// Crea una tempdir popolata con file (path relativo, contenuto). I path con
+    /// separatore `/` creano automaticamente le cartelle intermedie.
+    fn setup(files: &[(&str, &[u8])]) -> TempDir {
+        let dir = TempDir::new().unwrap();
+        for (rel, content) in files {
+            let p = dir.path().join(rel);
+            if let Some(parent) = p.parent() {
+                fs::create_dir_all(parent).unwrap();
+            }
+            fs::write(&p, content).unwrap();
+        }
+        dir
+    }
+
+    async fn detect(dir: &TempDir) -> EngineDetectionResult {
+        detect_game_engine(dir.path().to_string_lossy().to_string())
+            .await
+            .unwrap()
+    }
+
+    // ── Rilevazione per engine ──────────────────────────────────────────
+
+    #[tokio::test]
+    async fn detects_unity_from_data_folder() {
+        let dir = setup(&[("MyGame_Data/globalgamemanagers", b"2021.3.1f1\x00")]);
+        let r = detect(&dir).await;
+        assert_eq!(r.engine, GameEngine::Unity);
+        assert!(r.can_inject);
+        assert_eq!(r.version.as_deref(), Some("2021.3.1f1"));
+    }
+
+    #[tokio::test]
+    async fn detects_unreal_from_pak() {
+        let dir = setup(&[("Game-WindowsNoEditor.pak", b"\x00\x00\x00\x00")]);
+        let r = detect(&dir).await;
+        assert_eq!(r.engine, GameEngine::UnrealEngine);
+        assert!(!r.translatable_files.is_empty());
+    }
+
+    #[tokio::test]
+    async fn detects_godot_from_project_file() {
+        let dir = setup(&[("project.godot", b"config_version=5")]);
+        let r = detect(&dir).await;
+        assert_eq!(r.engine, GameEngine::Godot);
+    }
+
+    #[tokio::test]
+    async fn detects_rpgmaker_mz_when_rmmz_core_present() {
+        let dir = setup(&[
+            ("data/System.json", b"{}"),
+            ("js/rmmz_core.js", b"// mz"),
+        ]);
+        let r = detect(&dir).await;
+        assert_eq!(r.engine, GameEngine::RPGMakerMZ);
+        assert!(r.translatable_files.iter().any(|f| f.path.contains("System.json")));
+    }
+
+    #[tokio::test]
+    async fn detects_rpgmaker_mv_without_rmmz_core() {
+        let dir = setup(&[
+            ("data/Actors.json", b"[]"),
+            ("js/rpg_core.js", b"// mv"),
+        ]);
+        let r = detect(&dir).await;
+        assert_eq!(r.engine, GameEngine::RPGMakerMV);
+    }
+
+    #[tokio::test]
+    async fn detects_rpgmaker_vx_ace_from_rgss3a() {
+        let dir = setup(&[("Game.rgss3a", b"RGSSAD")]);
+        let r = detect(&dir).await;
+        assert_eq!(r.engine, GameEngine::RPGMakerVXAce);
+    }
+
+    #[tokio::test]
+    async fn detects_rpgmaker_xp_from_rxdata() {
+        let dir = setup(&[("Data/MapInfos.rxdata", b"\x04\x08")]);
+        let r = detect(&dir).await;
+        assert_eq!(r.engine, GameEngine::RPGMakerXP);
+    }
+
+    #[tokio::test]
+    async fn detects_gamemaker_from_data_win() {
+        let dir = setup(&[("data.win", b"FORM")]);
+        let r = detect(&dir).await;
+        assert_eq!(r.engine, GameEngine::GameMaker);
+    }
+
+    #[tokio::test]
+    async fn detects_renpy_from_game_scripts() {
+        let dir = setup(&[("game/script.rpy", b"label start:")]);
+        let r = detect(&dir).await;
+        assert_eq!(r.engine, GameEngine::RenPy);
+        assert!(r.translatable_files.iter().any(|f| f.path.contains("script.rpy")));
+    }
+
+    #[tokio::test]
+    async fn detects_kirikiri_from_xp3() {
+        let dir = setup(&[("data.xp3", b"XP3\x0d")]);
+        let r = detect(&dir).await;
+        assert_eq!(r.engine, GameEngine::Kirikiri);
+    }
+
+    #[tokio::test]
+    async fn detects_nscripter_from_nscript_dat() {
+        let dir = setup(&[("nscript.dat", b"\x00")]);
+        let r = detect(&dir).await;
+        assert_eq!(r.engine, GameEngine::NScripter);
+    }
+
+    #[tokio::test]
+    async fn detects_wolf_from_wolf_files() {
+        // Data/*.wolf senza .rxdata: non deve scattare RPG Maker XP, ma Wolf.
+        let dir = setup(&[("Data/BasicData.wolf", b"\x00")]);
+        let r = detect(&dir).await;
+        assert_eq!(r.engine, GameEngine::Wolf);
+    }
+
+    // ── Edge case / priorità ────────────────────────────────────────────
+
+    #[tokio::test]
+    async fn unknown_engine_for_empty_dir() {
+        let dir = setup(&[("readme.md", b"hello")]);
+        let r = detect(&dir).await;
+        assert_eq!(r.engine, GameEngine::Unknown);
+        assert!(!r.can_inject);
+    }
+
+    #[tokio::test]
+    async fn unity_takes_priority_over_pak() {
+        // Unity è valutato prima di Unreal: con entrambe le firme vince Unity.
+        let dir = setup(&[
+            ("Game_Data/globalgamemanagers", b"5.6.7f1\x00"),
+            ("extra.pak", b"\x00"),
+        ]);
+        let r = detect(&dir).await;
+        assert_eq!(r.engine, GameEngine::Unity);
+    }
+
+    #[tokio::test]
+    async fn detect_errors_on_missing_path() {
+        let res = detect_game_engine("/path/che/non/esiste/davvero".to_string()).await;
+        assert!(res.is_err());
+    }
+
+    // ── list_translatable_files ─────────────────────────────────────────
+
+    #[tokio::test]
+    async fn lists_translatable_files_by_extension() {
+        let dir = setup(&[
+            ("data/System.json", b"{}"),
+            ("notes.txt", b"hi"),
+            ("config.ini", b"[a]"),
+            ("image.png", b"\x89PNG"),
+        ]);
+        let files = list_translatable_files(dir.path().to_string_lossy().to_string())
+            .await
+            .unwrap();
+        let types: Vec<&str> = files.iter().map(|f| f.file_type.as_str()).collect();
+        assert!(types.contains(&"JSON"));
+        assert!(types.contains(&"TXT"));
+        assert!(types.contains(&"INI"));
+        // Le immagini non sono traducibili.
+        assert!(!types.contains(&"PNG"));
+    }
+}

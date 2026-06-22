@@ -55,14 +55,15 @@ RPG_RT classici (2000/2003, senza stringhe estraibili) vengono instradati alla
 
 | Funzione | Modulo | Comandi | Test | Stato |
 |----------|--------|:------:|:----:|-------|
-| Auto-detect engine + setup traduzione | `universal_injector` | 3 | 0 | 🟡 Registrato, non testato |
+| Auto-detect engine + setup traduzione | `universal_injector` | 3 | 16 | ✅ Testato |
 
 Tool cross-engine raggiungibile da `/injector` (sidebar gruppo Patcher). Espone
 `detect_game_engine`, `inject_translation_hook`, `list_translatable_files`. È
 **puro filesystem e cross-platform** (niente WinAPI: rileva l'engine dai file su
 disco e prepara cartelle/config di traduzione), quindi non rientra nei moduli
-runtime Windows-only né passa dal gate anti-cheat. Mancano test unitari su
-fixture per la rilevazione engine.
+runtime Windows-only né passa dal gate anti-cheat. La rilevazione engine è
+coperta da 16 test su fixture tempdir (uno per engine + priorità Unity/Unreal,
+dir sconosciuta, path mancante, `list_translatable_files`).
 
 ---
 
