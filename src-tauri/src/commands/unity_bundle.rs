@@ -851,9 +851,14 @@ fn find_string_in_bundle(data: &[u8], search: &str) -> Option<usize> {
     let search_bytes = search.as_bytes();
     let len = search_bytes.len();
     let len_bytes = (len as u32).to_le_bytes();
-    
-    // Cerca pattern: length (4 bytes) + string
-    for i in 0..data.len().saturating_sub(4 + len) {
+
+    // Cerca pattern: length (4 bytes) + string.
+    // Nota: il range deve essere inclusivo dell'ultima posizione valida, altrimenti
+    // una stringa length-prefixed posta in coda al buffer non verrebbe mai trovata.
+    if data.len() < 4 + len {
+        return None;
+    }
+    for i in 0..=(data.len() - 4 - len) {
         if data[i..i+4] == len_bytes && data[i+4..i+4+len] == *search_bytes {
             return Some(i + 4); // Ritorna posizione della stringa (dopo il length)
         }
@@ -942,10 +947,236 @@ fn is_valid_game_string(s: &str) -> bool {
     }
     
     // Escludi se troppi caratteri speciali (probabilmente dati binari)
-    let printable = s.chars().filter(|c| 
-        c.is_alphanumeric() || c.is_whitespace() || 
+    let printable = s.chars().filter(|c|
+        c.is_alphanumeric() || c.is_whitespace() ||
         ".,!?'-:;\"()[]{}…".contains(*c)
     ).count();
-    
+
     printable > s.len() * 2 / 3
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tempfile::TempDir;
+
+    // ── Helpers ─────────────────────────────────────────────────────────
+    /// Stringa length-prefixed (i32 LE) allineata a 4 byte, come scansiona il parser.
+    fn lp_aligned(buf: &mut Vec<u8>, s: &str) {
+        buf.extend_from_slice(&(s.len() as u32).to_le_bytes());
+        buf.extend_from_slice(s.as_bytes());
+        while buf.len() % 4 != 0 {
+            buf.push(0);
+        }
+    }
+
+    // ── extract_locale ──────────────────────────────────────────────────
+    #[test]
+    fn extract_locale_from_language_name() {
+        assert_eq!(extract_locale("localization_string-table_english(en).bundle"), Some(("en".into(), "English".into())));
+        assert_eq!(extract_locale("italian(it).bundle"), Some(("it".into(), "Italiano".into())));
+    }
+
+    #[test]
+    fn extract_locale_from_paren_code() {
+        // Codice non in mappa ma nel pattern (xx-yy)
+        assert_eq!(extract_locale("table_(pt-br).bundle"), Some(("pt-br".into(), "PT-BR".into())));
+    }
+
+    #[test]
+    fn extract_locale_none() {
+        assert!(extract_locale("random.bundle").is_none());
+    }
+
+    // ── is_valid_game_string ────────────────────────────────────────────
+    #[test]
+    fn valid_game_string_accepts_text() {
+        assert!(is_valid_game_string("Hello world"));
+        assert!(is_valid_game_string("Premi START per giocare"));
+    }
+
+    #[test]
+    fn valid_game_string_rejects_paths_numbers_control() {
+        assert!(!is_valid_game_string("Assets/Foo/Bar.asset")); // path Unity
+        assert!(!is_valid_game_string("1234567")); // niente lettere
+        assert!(!is_valid_game_string("CAB-abcdef")); // metadata
+        assert!(!is_valid_game_string("bad\u{0001}ctrl")); // carattere di controllo
+    }
+
+    // ── find_string_in_bundle ───────────────────────────────────────────
+    #[test]
+    fn find_string_returns_position_after_length() {
+        let mut data = vec![0xAA, 0xBB]; // rumore iniziale
+        let start = data.len();
+        data.extend_from_slice(&(5u32).to_le_bytes());
+        data.extend_from_slice(b"Hello");
+        let pos = find_string_in_bundle(&data, "Hello").unwrap();
+        assert_eq!(pos, start + 4);
+        assert_eq!(&data[pos..pos + 5], b"Hello");
+    }
+
+    #[test]
+    fn find_string_absent_returns_none() {
+        let data = b"no length prefixed strings here";
+        assert!(find_string_in_bundle(data, "Hello").is_none());
+    }
+
+    // ── extract_strings_from_raw ────────────────────────────────────────
+    #[test]
+    fn extract_strings_from_raw_finds_length_prefixed() {
+        let mut data = Vec::new();
+        lp_aligned(&mut data, "Hello world");
+        lp_aligned(&mut data, "Buongiorno a tutti");
+        let entries = extract_strings_from_raw(&data);
+        let values: Vec<&str> = entries.iter().map(|e| e.value.as_str()).collect();
+        assert!(values.contains(&"Hello world"));
+        assert!(values.contains(&"Buongiorno a tutti"));
+        // Ordinamento per lunghezza decrescente.
+        assert_eq!(entries[0].value, "Buongiorno a tutti");
+    }
+
+    #[test]
+    fn extract_strings_from_raw_dedups() {
+        let mut data = Vec::new();
+        lp_aligned(&mut data, "Repeated text");
+        lp_aligned(&mut data, "Repeated text");
+        let entries = extract_strings_from_raw(&data);
+        assert_eq!(entries.iter().filter(|e| e.value == "Repeated text").count(), 1);
+    }
+
+    // ── parse dump UABEA ────────────────────────────────────────────────
+    #[test]
+    fn parse_dump_content_pairs_key_value() {
+        let dump = "\
+0 string m_Key = \"greeting\"
+1 string m_Value = \"Hello\"
+2 string m_Key = \"farewell\"
+3 string m_Value = \"Bye\"
+";
+        let entries = parse_dump_content(dump);
+        assert_eq!(entries.len(), 2);
+        assert_eq!(entries[0].key, "greeting");
+        assert_eq!(entries[0].value, "Hello");
+        assert_eq!(entries[1].key, "farewell");
+    }
+
+    #[test]
+    fn parse_exported_dumps_reads_txt_files() {
+        let tmp = TempDir::new().unwrap();
+        fs::write(tmp.path().join("a.txt"), "key1 = \"Valore uno\"\nkey2 = \"Valore due\"\n").unwrap();
+        let entries = parse_exported_dumps(&tmp.path().to_string_lossy());
+        assert_eq!(entries.len(), 2);
+        assert!(entries.iter().any(|e| e.value == "Valore uno"));
+    }
+
+    // ── Comandi async ───────────────────────────────────────────────────
+    #[tokio::test]
+    async fn analyze_classifies_complete_and_empty() {
+        let tmp = TempDir::new().unwrap();
+        // String-table grande (completo) e piccolo (vuoto).
+        fs::write(tmp.path().join("localization_string-table_english(en).bundle"), vec![0u8; 20_000]).unwrap();
+        fs::write(tmp.path().join("localization_string-table_italian(it).bundle"), vec![0u8; 100]).unwrap();
+        // Bundle non-localization ignorato.
+        fs::write(tmp.path().join("random_data.bundle"), vec![0u8; 50]).unwrap();
+
+        let res = analyze_localization_bundles(tmp.path().to_string_lossy().to_string()).await;
+        assert!(res.success);
+        assert_eq!(res.bundles.len(), 2);
+        assert!(res.summary.complete_locales.contains(&"en".to_string()));
+        assert!(res.summary.empty_locales.contains(&"it".to_string()));
+    }
+
+    #[tokio::test]
+    async fn analyze_errors_on_missing_folder() {
+        let res = analyze_localization_bundles("/nope/missing".into()).await;
+        assert!(!res.success);
+    }
+
+    #[tokio::test]
+    async fn detect_localization_folder_finds_aa_path() {
+        let tmp = TempDir::new().unwrap();
+        let aa = tmp.path().join("Game_Data/StreamingAssets/aa/StandaloneWindows64");
+        fs::create_dir_all(&aa).unwrap();
+        fs::write(aa.join("localization_string-table_en.bundle"), b"x").unwrap();
+        let found = detect_localization_folder(tmp.path().to_string_lossy().to_string()).await.unwrap();
+        assert!(found.is_some());
+        assert!(found.unwrap().replace('\\', "/").ends_with("StandaloneWindows64"));
+    }
+
+    #[tokio::test]
+    async fn detect_localization_folder_none_without_data() {
+        let tmp = TempDir::new().unwrap();
+        let res = detect_localization_folder(tmp.path().to_string_lossy().to_string()).await.unwrap();
+        assert!(res.is_none());
+    }
+
+    #[tokio::test]
+    async fn save_and_read_strings_round_trip() {
+        let tmp = TempDir::new().unwrap();
+        let json = tmp.path().join("strings.json");
+        let entries = vec![
+            StringEntry { key: "k1".into(), value: "Uno".into(), translated: Some("One".into()) },
+            StringEntry { key: "k2".into(), value: "Due".into(), translated: None },
+        ];
+        save_translated_strings(json.to_string_lossy().to_string(), entries.clone()).await.unwrap();
+        let read = read_extracted_strings(json.to_string_lossy().to_string()).await.unwrap();
+        assert_eq!(read.len(), 2);
+        assert_eq!(read[0].value, "Uno");
+    }
+
+    #[tokio::test]
+    async fn extract_strings_auto_writes_json() {
+        let tmp = TempDir::new().unwrap();
+        let bundle = tmp.path().join("loc.bundle");
+        let mut data = Vec::new();
+        lp_aligned(&mut data, "Inizia partita");
+        lp_aligned(&mut data, "Esci dal gioco");
+        fs::write(&bundle, &data).unwrap();
+
+        let res = extract_strings_auto(bundle.to_string_lossy().to_string()).await;
+        assert!(res.success);
+        assert!(res.entry_count >= 2);
+        let out = res.output_file.unwrap();
+        assert!(Path::new(&out).exists());
+    }
+
+    #[tokio::test]
+    async fn import_uabea_export_single_file() {
+        let tmp = TempDir::new().unwrap();
+        let dump = tmp.path().join("dump.txt");
+        fs::write(&dump, "0 string m_Key = \"hi\"\n1 string m_Value = \"Ciao\"\n").unwrap();
+        let res = import_uabea_export(dump.to_string_lossy().to_string()).await;
+        assert!(res.success);
+        assert_eq!(res.entry_count, 1);
+        assert!(res.output_file.is_some());
+    }
+
+    #[tokio::test]
+    async fn create_translated_bundle_replaces_equal_length() {
+        let tmp = TempDir::new().unwrap();
+        let src = tmp.path().join("src.bundle");
+        let mut data = vec![0u8; 8]; // rumore
+        data.extend_from_slice(&(5u32).to_le_bytes());
+        data.extend_from_slice(b"Hello");
+        fs::write(&src, &data).unwrap();
+
+        let trans = tmp.path().join("trans.json");
+        let entries = vec![StringEntry { key: "k".into(), value: "Hello".into(), translated: Some("Hallo".into()) }];
+        fs::write(&trans, serde_json::to_string(&entries).unwrap()).unwrap();
+
+        let out = tmp.path().join("out.bundle");
+        let msg = create_translated_bundle(
+            src.to_string_lossy().to_string(),
+            trans.to_string_lossy().to_string(),
+            out.to_string_lossy().to_string(),
+        )
+        .await
+        .unwrap();
+        assert!(msg.contains("1 stringhe sostituite"));
+
+        let written = fs::read(&out).unwrap();
+        // "Hello" sostituito da "Hallo" (stessa lunghezza).
+        assert!(written.windows(5).any(|w| w == b"Hallo"));
+        assert!(!written.windows(5).any(|w| w == b"Hello"));
+    }
 }

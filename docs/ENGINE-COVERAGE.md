@@ -77,7 +77,7 @@ criptato (RGSS, GameMaker, Kirikiri, NScripter, Wolf, Godot, Unreal).
 | Engine/Funzione | Modulo | Comandi | Test | Stato |
 |-----------------|--------|:------:|:----:|-------|
 | Unreal localization | `unreal_localization` | 12 | 20 | ✅ Testato |
-| Unity bundle | `unity_bundle` | 8 | 0 | 🟡 Registrato, non testato |
+| Unity bundle | `unity_bundle` | 8 | 19 | ✅ Testato |
 | Unity localization | `unity_localization` | 6 | 24 | ✅ Testato |
 | Unity .assets manager | `unity_assets` | 6 | 0 | 🟡 Registrato, non testato |
 | Unity asset injector (runtime) | `unity_asset_injector` | 3 | 0 | 🟡 Registrato, non testato |
@@ -105,6 +105,17 @@ Unity (`unity_string` con alignment, null-terminated, `align4`), scansione
 sintetico** non compresso usato per il round-trip `parse_unityfs_header` →
 `parse_block_info` → `decompress_blocks` → `extract_string_table` e per
 `build_patched_bundle` (sostituzione stringa + ri-estrazione).
+
+`unity_bundle` è coperto da 19 test: `extract_locale` (nome lingua + codice paren),
+`is_valid_game_string` (accetta testo, scarta path/numeri/controllo), estrazione raw
+length-prefixed (con dedup e ordinamento), parsing dump UABEA (`parse_dump_content`,
+`parse_exported_dumps`), e comandi async (`analyze_localization_bundles` con
+classificazione complete/empty, `detect_localization_folder`, round-trip
+`save`/`read` JSON, `extract_strings_auto`, `import_uabea_export`,
+`create_translated_bundle`). I test hanno scoperto e fatto correggere un
+**off-by-one in `find_string_in_bundle`** (una stringa length-prefixed in coda al
+buffer non veniva trovata, con conseguente mancata sostituzione in
+`create_translated_bundle`).
 
 ---
 
