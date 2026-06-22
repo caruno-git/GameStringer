@@ -883,15 +883,16 @@ pub async fn extract_unreal_localization(game_path: String) -> Result<Extraction
         let data = fs::read(locres_path)
             .map_err(|e| format!("Errore lettura {}: {}", locres_path.display(), e))?;
         
-        let (_version, entries) = parse_locres(&data)?;
-        
+        let (version, entries) = parse_locres(&data)?;
+        let count = entries.len();
+
         return Ok(ExtractionResult {
             success: true,
             entries,
             source_file: locres_path.to_string_lossy().to_string(),
             pak_version: 0,
             locres_path: locres_path.to_string_lossy().to_string(),
-            message: format!("Estratte {} stringhe da .locres libero", 0),
+            message: format!("Estratte {} stringhe da .locres libero (LocRes v{})", count, version),
         });
     }
     
@@ -1449,5 +1450,223 @@ pub async fn remove_unreal_translation(game_path: String) -> Result<String, Stri
             "Rimossi {}/{} file. {} file bloccati (chiudi il gioco e riprova): {}",
             removed, targets.len(), failed.len(), failed.join(", ")
         ))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::collections::BTreeSet;
+    use tempfile::TempDir;
+
+    // ── Helpers ─────────────────────────────────────────────────────────
+    fn sample_entries() -> Vec<LocEntry> {
+        vec![
+            LocEntry { namespace: "UI".into(), key: "start".into(), source_hash: 111, value: "Start".into() },
+            LocEntry { namespace: "UI".into(), key: "quit".into(), source_hash: 222, value: "Quit".into() },
+            LocEntry { namespace: "Dialog".into(), key: "hello".into(), source_hash: 333, value: "Ciao mondo".into() },
+        ]
+    }
+
+    /// Set comparabile (namespace, key, source_hash, value) per confronto indipendente dall'ordine.
+    fn to_set(entries: &[LocEntry]) -> BTreeSet<(String, String, u32, String)> {
+        entries.iter().map(|e| (e.namespace.clone(), e.key.clone(), e.source_hash, e.value.clone())).collect()
+    }
+
+    // ── Helper binari ───────────────────────────────────────────────────
+    #[test]
+    fn i32_round_trip() {
+        let mut buf = Vec::new();
+        write_i32(&mut buf, -123456);
+        write_i32(&mut buf, 987654);
+        let mut off = 0;
+        assert_eq!(read_i32(&buf, &mut off).unwrap(), -123456);
+        assert_eq!(read_i32(&buf, &mut off).unwrap(), 987654);
+        assert_eq!(off, 8);
+    }
+
+    #[test]
+    fn fstring_utf8_round_trip() {
+        let mut buf = Vec::new();
+        write_fstring(&mut buf, "Ciao");
+        let mut off = 0;
+        assert_eq!(read_fstring(&buf, &mut off).unwrap(), "Ciao");
+    }
+
+    #[test]
+    fn fstring_empty_round_trip() {
+        let mut buf = Vec::new();
+        write_fstring(&mut buf, "");
+        let mut off = 0;
+        assert_eq!(read_fstring(&buf, &mut off).unwrap(), "");
+        assert_eq!(off, 4); // solo l'i32 di lunghezza
+    }
+
+    #[test]
+    fn read_i32_eof_errors() {
+        let buf = [0u8, 1];
+        let mut off = 0;
+        assert!(read_i32(&buf, &mut off).is_err());
+    }
+
+    // ── LocRes parser/writer round-trip ─────────────────────────────────
+    #[test]
+    fn locres_v0_round_trip() {
+        let entries = sample_entries();
+        let bytes = write_locres_v0(&entries);
+        let (version, parsed) = parse_locres(&bytes).unwrap();
+        assert_eq!(version, 0);
+        assert_eq!(to_set(&parsed), to_set(&entries));
+    }
+
+    #[test]
+    fn locres_v2_round_trip() {
+        let entries = sample_entries();
+        let bytes = write_locres_v2(&entries);
+        let (version, parsed) = parse_locres(&bytes).unwrap();
+        assert_eq!(version, 2);
+        assert_eq!(to_set(&parsed), to_set(&entries));
+    }
+
+    #[test]
+    fn locres_v2_dedups_shared_strings() {
+        // Due entry con lo stesso valore: la string array deve deduplicare ma il parse li recupera entrambi.
+        let entries = vec![
+            LocEntry { namespace: "A".into(), key: "k1".into(), source_hash: 1, value: "Stesso".into() },
+            LocEntry { namespace: "A".into(), key: "k2".into(), source_hash: 2, value: "Stesso".into() },
+        ];
+        let bytes = write_locres_v2(&entries);
+        let (_v, parsed) = parse_locres(&bytes).unwrap();
+        assert_eq!(parsed.len(), 2);
+        assert!(parsed.iter().all(|e| e.value == "Stesso"));
+    }
+
+    #[test]
+    fn matching_version_selects_writer() {
+        let entries = sample_entries();
+        // source_version >= 2 → writer v2
+        let (v_hi, _) = parse_locres(&write_locres_matching_version(&entries, 3)).unwrap();
+        assert_eq!(v_hi, 2);
+        // source_version < 2 → writer v0
+        let (v_lo, _) = parse_locres(&write_locres_matching_version(&entries, 1)).unwrap();
+        assert_eq!(v_lo, 0);
+    }
+
+    #[test]
+    fn parse_locres_rejects_future_version() {
+        let mut bytes = Vec::new();
+        write_u32(&mut bytes, 0x0E14DA7A);
+        bytes.push(5u8); // versione > 3
+        assert!(parse_locres(&bytes).is_err());
+    }
+
+    // ── PAK writer + footer + index + estrazione (round-trip completo) ───
+    #[test]
+    fn pak_round_trip_extracts_locres() {
+        let entries = sample_entries();
+        let locres = write_locres_v0(&entries);
+        let inner_path = "Game/Content/Localization/Game/en/Game.locres";
+        let pak = create_pak_v4(&[(inner_path, &locres)]);
+
+        // Footer
+        let (version, index_offset, index_size, encrypted) = find_pak_footer(&pak).unwrap();
+        assert_eq!(version, 8);
+        assert!(!encrypted);
+
+        // Index
+        let (_mount, pak_entries) = parse_pak_index(&pak, version, index_offset, index_size).unwrap();
+        assert_eq!(pak_entries.len(), 1);
+        assert_eq!(pak_entries[0].filename, inner_path);
+        assert_eq!(pak_entries[0].compression_method, 0);
+
+        // Estrazione + parse del .locres contenuto
+        let extracted = extract_file_from_pak(&pak, &pak_entries[0]).unwrap();
+        let (_v, parsed) = parse_locres(&extracted).unwrap();
+        assert_eq!(to_set(&parsed), to_set(&entries));
+    }
+
+    #[test]
+    fn find_pak_footer_errors_on_garbage() {
+        assert!(find_pak_footer(&[0u8; 64]).is_err());
+    }
+
+    #[test]
+    fn cityhash32_is_deterministic() {
+        assert_eq!(cityhash32(b"Hello"), cityhash32(b"Hello"));
+        assert_ne!(cityhash32(b"Hello"), cityhash32(b"World"));
+    }
+
+    // ── Helper filesystem ───────────────────────────────────────────────
+    fn touch(dir: &Path, rel: &str) {
+        let p = dir.join(rel);
+        fs::create_dir_all(p.parent().unwrap()).unwrap();
+        fs::write(&p, b"x").unwrap();
+    }
+
+    #[test]
+    fn find_project_name_from_content_dir() {
+        let tmp = TempDir::new().unwrap();
+        touch(tmp.path(), "MyGame/Content/placeholder");
+        assert_eq!(find_project_name(tmp.path()).as_deref(), Some("MyGame"));
+    }
+
+    #[test]
+    fn find_paks_dir_locates_paks_with_pak() {
+        let tmp = TempDir::new().unwrap();
+        touch(tmp.path(), "MyGame/Content/Paks/MyGame.pak");
+        let found = find_paks_dir(tmp.path()).unwrap();
+        assert!(found.ends_with("Paks"));
+    }
+
+    #[test]
+    fn find_paks_dir_none_when_absent() {
+        let tmp = TempDir::new().unwrap();
+        touch(tmp.path(), "random/file.txt");
+        assert!(find_paks_dir(tmp.path()).is_none());
+    }
+
+    #[test]
+    fn find_loose_locres_finds_nested() {
+        let tmp = TempDir::new().unwrap();
+        touch(tmp.path(), "a/b/c/Game.locres");
+        let found = find_loose_locres(tmp.path());
+        assert_eq!(found.len(), 1);
+    }
+
+    // ── Comandi (async) ─────────────────────────────────────────────────
+    #[tokio::test]
+    async fn parse_locres_file_command_round_trip() {
+        let tmp = TempDir::new().unwrap();
+        let p = tmp.path().join("Game.locres");
+        fs::write(&p, write_locres_v2(&sample_entries())).unwrap();
+        let res = parse_locres_file(p.to_string_lossy().to_string()).await.unwrap();
+        assert!(res.success);
+        assert_eq!(res.entries.len(), 3);
+    }
+
+    #[tokio::test]
+    async fn parse_locres_file_command_errors_on_missing() {
+        assert!(parse_locres_file("/nope/missing.locres".into()).await.is_err());
+    }
+
+    #[tokio::test]
+    async fn status_reports_no_localization_for_empty_dir() {
+        let tmp = TempDir::new().unwrap();
+        let st = get_unreal_localization_status(tmp.path().to_string_lossy().to_string()).await.unwrap();
+        assert!(!st.has_gs_pak);
+        assert!(!st.has_locres);
+    }
+
+    #[tokio::test]
+    async fn extract_unreal_localization_reads_loose_locres() {
+        let tmp = TempDir::new().unwrap();
+        let loc = tmp.path().join("Content/Localization/Game/en/Game.locres");
+        fs::create_dir_all(loc.parent().unwrap()).unwrap();
+        fs::write(&loc, write_locres_v0(&sample_entries())).unwrap();
+        let res = extract_unreal_localization(tmp.path().to_string_lossy().to_string()).await.unwrap();
+        assert!(res.success);
+        assert_eq!(res.entries.len(), 3);
+        // Regressione: il messaggio non deve dire "Estratte 0 stringhe".
+        assert!(!res.message.contains("Estratte 0 "));
     }
 }

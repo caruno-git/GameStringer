@@ -76,7 +76,7 @@ criptato (RGSS, GameMaker, Kirikiri, NScripter, Wolf, Godot, Unreal).
 
 | Engine/Funzione | Modulo | Comandi | Test | Stato |
 |-----------------|--------|:------:|:----:|-------|
-| Unreal localization | `unreal_localization` | 12 | 0 | 🟡 Registrato, non testato |
+| Unreal localization | `unreal_localization` | 12 | 20 | ✅ Testato |
 | Unity bundle | `unity_bundle` | 8 | 0 | 🟡 Registrato, non testato |
 | Unity localization | `unity_localization` | 6 | 0 | 🟡 Registrato, non testato |
 | Unity .assets manager | `unity_assets` | 6 | 0 | 🟡 Registrato, non testato |
@@ -84,6 +84,16 @@ criptato (RGSS, GameMaker, Kirikiri, NScripter, Wolf, Godot, Unreal).
 | Unity injector (runtime) | `unity_injector` | 3 | 0 | 🟡 Registrato, non testato |
 | Unreal IoStore | `unreal_iostore` | 2 | 0 | 🟡 Registrato, non testato |
 | Unity CSV | `unity_csv` | 1 | 0 | 🟡 Registrato, non testato |
+
+`unreal_localization` è coperto da 20 test deterministici (no file di gioco
+reali): round-trip dei writer/parser `.locres` v0 e v2 (con dedup string array),
+selezione versione, rifiuto versioni future, helper binari (`FString` UTF-8/vuota,
+i32, EOF), e un **round-trip PAK completo** `create_pak_v4` → `find_pak_footer` →
+`parse_pak_index` → `extract_file_from_pak` → `parse_locres`. Coperti anche gli
+helper FS (`find_project_name`, `find_paks_dir`, `find_loose_locres`) e i comandi
+async (`parse_locres_file`, `get_unreal_localization_status`,
+`extract_unreal_localization` su `.locres` libero, con regressione sul messaggio
+"Estratte 0 stringhe").
 
 ---
 
