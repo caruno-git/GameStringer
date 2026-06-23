@@ -12,6 +12,24 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useTranslation } from '@/lib/i18n';
 import { clientLogger } from '@/lib/client-logger';
+import { isTauri } from '@/lib/tauri-api';
+
+// Proxy JSON cross-mode: nel desktop (static export, niente route /api) usa il
+// comando Rust `fetch_url_content`; in web/dev usa la route `/api/covers/proxy`.
+// Ritorna l'oggetto JSON tipizzato o null su errore.
+async function proxyJson<T = unknown>(targetUrl: string): Promise<T | null> {
+  try {
+    if (isTauri()) {
+      const body = await invoke<string>('fetch_url_content', { url: targetUrl });
+      return JSON.parse(body) as T;
+    }
+    const res = await fetch(`/api/covers/proxy?url=${encodeURIComponent(targetUrl)}`);
+    if (!res.ok) return null;
+    return (await res.json()) as T;
+  } catch {
+    return null;
+  }
+}
 
 interface Cover {
   id: number;
@@ -291,9 +309,8 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
     try {
       // 1. MobyGames - ottima fonte per giochi classici
       try {
-        const mobyRes = await fetch(`/api/covers/proxy?url=${encodeURIComponent(`https://api.mobygames.com/v1/games?title=${encodeURIComponent(searchName)}&format=normal`)}`);
-        if (mobyRes.ok) {
-          const mobyData = await mobyRes.json();
+        const mobyData = await proxyJson<{ games?: Array<{ sample_cover?: { image?: string; thumbnail?: string } }> }>(`https://api.mobygames.com/v1/games?title=${encodeURIComponent(searchName)}&format=normal`);
+        if (mobyData) {
           if (mobyData.games && mobyData.games.length > 0) {
             const game = mobyData.games[0];
             if (game.sample_cover?.image) {
@@ -321,9 +338,8 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
       
       // 3. TheGamesDB
       try {
-        const tgdbRes = await fetch(`/api/covers/proxy?url=${encodeURIComponent(`https://api.thegamesdb.net/v1/Games/ByGameName?apikey=1&name=${encodeURIComponent(searchName)}`)}`);
-        if (tgdbRes.ok) {
-          const tgdbData = await tgdbRes.json();
+        const tgdbData = await proxyJson<{ data?: { games?: Array<{ id: number; boxart?: unknown }> } }>(`https://api.thegamesdb.net/v1/Games/ByGameName?apikey=1&name=${encodeURIComponent(searchName)}`);
+        if (tgdbData) {
           if (tgdbData.data?.games && tgdbData.data.games.length > 0) {
             const game = tgdbData.data.games[0];
             if (game.boxart) {
