@@ -1636,7 +1636,7 @@ export default function GameDetailPage() {
               else if (p.phase === 'generate') toast.loading("Ren'Py: genero i file tl/...", { id: toastId });
             },
           });
-          toast.success(`Tradotto: ${r.translated}/${r.total} stringhe${r.glossaryTerms ? ` (glossario: ${r.glossaryTerms} termini)` : ''}. Avvia il gioco e seleziona ${tgt.toUpperCase()} dalle preferenze.`, { id: toastId });
+          toast.success(`Tradotto: ${r.translated}/${r.total} stringhe${r.glossaryTerms ? ` (glossario: ${r.glossaryTerms} termini)` : ''}${r.voiceProfiles ? ` (voci personaggio: ${r.voiceProfiles})` : ''}. Avvia il gioco e seleziona ${tgt.toUpperCase()} dalle preferenze.`, { id: toastId });
         } catch (e) {
           toast.error("Ren'Py: errore (Ollama avviato?)", { id: toastId, description: String(e) });
         }

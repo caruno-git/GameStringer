@@ -12,6 +12,26 @@
 // de-escapa la chiave e ri-escapa il valore in modo coerente).
 
 import { invoke } from '@/lib/tauri-api';
+import {
+  loadVoiceProfiles,
+  getVoiceProfile,
+  extractVoiceProfilesFromStrings,
+  type VoiceProfile,
+} from '@/lib/voice/voice-profiles';
+
+// Descrittore voce compatto (una riga) per il contesto per-stringa: tono,
+// registro, personalità e pattern del parlante. Va a finire nel prompt LLM
+// (offline_translation.rs build_context_prompt) come voce del personaggio.
+function buildVoiceDescriptor(p: VoiceProfile): string {
+  const parts: string[] = [p.characterName];
+  if (p.tone) parts.push(`${p.tone} tone`);
+  if (p.formality) parts.push(`${p.formality.replace(/_/g, ' ')} register`);
+  if (p.personality) parts.push(p.personality);
+  if (p.speechPatterns?.length) parts.push(`speech: ${p.speechPatterns.slice(0, 3).join('; ')}`);
+  if (p.catchphrases?.length) parts.push(`catchphrases: ${p.catchphrases.slice(0, 2).join('; ')}`);
+  if (p.avoidPatterns?.length) parts.push(`avoid: ${p.avoidPatterns.slice(0, 2).join('; ')}`);
+  return parts.join(' — ').replace(/\s+/g, ' ').trim();
+}
 
 export interface RenpyProgress {
   phase: 'extract' | 'glossary' | 'translate' | 'generate' | 'done';
@@ -111,7 +131,7 @@ export async function runRenpyTranslation(opts: {
   model?: string;
   chunkSize?: number;
   onProgress?: (p: RenpyProgress) => void;
-}): Promise<{ translated: number; total: number; files: string; glossaryTerms: number }> {
+}): Promise<{ translated: number; total: number; files: string; glossaryTerms: number; voiceProfiles: number }> {
   const tgt = (opts.targetLang || 'it').toLowerCase();
   const src = (opts.sourceLang || 'en').toLowerCase();
   const model = opts.model || lsGet('gs_renpy_model') || lsGet('gs_hendrix_model') || 'gemma4:e4b';
@@ -137,6 +157,32 @@ export async function runRenpyTranslation(opts: {
   const speakerOf: Record<string, string> = {};
   for (const r of rows) {
     if (r.character && !speakerOf[r.original]) speakerOf[r.original] = r.character;
+  }
+
+  // Profili voce personaggio (coerenza di tono/personalità per parlante).
+  // Se il gioco non ha profili, li auto-estraiamo dai dialoghi (Speaker: testo).
+  // Per ogni parlante con profilo costruiamo un descrittore ricco da iniettare nel
+  // prompt al posto del solo nome. Fallback: nome del parlante (comportamento base).
+  const voiceDescOf: Record<string, string> = {};
+  let voiceProfilesUsed = 0;
+  if (opts.gameId) {
+    try {
+      const existing = loadVoiceProfiles(opts.gameId);
+      if (existing.profiles.length === 0) {
+        const synth: string[] = [];
+        for (const r of rows) {
+          if (r.character && (r.string_type === 'Dialogue' || r.string_type === 'Menu')) {
+            synth.push(`${r.character}: ${unescapeRenpy(r.original)}`);
+          }
+        }
+        if (synth.length) extractVoiceProfilesFromStrings(opts.gameId, synth);
+      }
+      const speakers = new Set(Object.values(speakerOf));
+      for (const sp of speakers) {
+        const prof = getVoiceProfile(opts.gameId, sp);
+        if (prof) { voiceDescOf[sp] = buildVoiceDescriptor(prof); voiceProfilesUsed++; }
+      }
+    } catch { /* voce non disponibile → fallback al nome */ }
   }
 
   const progressPath = `${opts.gamePath}/gs_renpy_progress_${tgt}.json`;
@@ -167,7 +213,13 @@ export async function runRenpyTranslation(opts: {
   for (let i = 0; i < pendingOriginals.length; i += CHUNK) {
     const slice = pendingOriginals.slice(i, i + CHUNK);
     const raws = slice.map(orig => unescapeRenpy(orig));
-    const contexts = slice.map(orig => speakerOf[orig] ?? null);
+    // Contesto per riga: descrittore voce ricco se il parlante ha un profilo,
+    // altrimenti il solo nome del parlante (o null per narrazione/UI senza parlante).
+    const contexts = slice.map(orig => {
+      const sp = speakerOf[orig];
+      if (!sp) return null;
+      return voiceDescOf[sp] ?? sp;
+    });
     const res = await invoke<{ translated: string }[]>('offline_translate_batch_context', {
       texts: raws, contexts, glossary, sourceLang: src, targetLang: tgt, model,
     });
@@ -195,5 +247,5 @@ export async function runRenpyTranslation(opts: {
 
   const translated = rows.filter(r => r.translated).length;
   report({ phase: 'done', done: translated, total });
-  return { translated, total, files, glossaryTerms: glossary.length };
+  return { translated, total, files, glossaryTerms: glossary.length, voiceProfiles: voiceProfilesUsed };
 }
