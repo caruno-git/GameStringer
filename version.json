@@ -1,12 +1,12 @@
 {
-  "version": "1.10.1",
+  "version": "1.10.2",
   "major": 1,
   "minor": 10,
-  "patch": 1,
+  "patch": 2,
   "prerelease": null,
   "buildNumber": 128,
-  "buildDate": "2026-06-23T06:58:40.698Z",
-  "gitHash": "e2911220",
+  "buildDate": "2026-06-23T08:49:05.109Z",
+  "gitHash": "00fd10a8",
   "branch": "main",
   "changelog": {
     "1.9.1": {
@@ -648,6 +648,14 @@
       "changes": [
         "🐛 Build macOS: abilitata la feature Tauri macos-private-api per la finestra overlay trasparente — la release multi-OS ora compila su Apple Silicon e Intel",
         "🐛 i18n: completate le chiavi storeGate in tutte le lingue (integrità dei locale, CI verde)"
+      ]
+    },
+    "1.10.2": {
+      "date": "2026-06-23",
+      "type": "patch",
+      "changes": [
+        "✨ impostazioni: Persistenza affidabile settings/API key + aggiunta manuale giochi da disco",
+        "🐛 updater: Risolve blocco 'Preparazione' (update stantio passato a downloadAndInstall + reset updating in finally)"
       ]
     }
   }

@@ -21,6 +21,11 @@
 - 🐛 Build macOS: abilitata la feature Tauri macos-private-api per la finestra overlay trasparente — la release multi-OS ora compila su Apple Silicon e Intel
 - 🐛 i18n: completate le chiavi storeGate in tutte le lingue (integrità dei locale, CI verde)
 
+## 🔧 v1.10.2 - 2026-06-23
+
+- ✨ impostazioni: Persistenza affidabile settings/API key + aggiunta manuale giochi da disco
+- 🐛 updater: Risolve blocco 'Preparazione' (update stantio passato a downloadAndInstall + reset updating in finally)
+
 ## 🔧 v1.9.1 - 2026-04-29
 
 - Community Chat: fix avatars (gradient-IDs non generano più errori 404)
