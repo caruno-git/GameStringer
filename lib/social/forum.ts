@@ -102,6 +102,21 @@ export interface CreatePostInput {
   quote_text?: string;
 }
 
+// Errori transitori di backend irraggiungibile (Cloudflare 5xx/522, timeout, rete):
+// attesi quando il server community è giù → log a debug, non warn (niente rumore rosso).
+function isBackendUnreachable(error: unknown): boolean {
+  const e = error as { code?: string | number; message?: string; status?: number } | null;
+  const msg = (e?.message || '').toLowerCase();
+  const code = String(e?.code ?? '');
+  return (
+    ['520', '521', '522', '523', '524'].includes(code) ||
+    e?.status === 522 ||
+    msg.includes('522') || msg.includes('timed out') || msg.includes('timeout') ||
+    msg.includes('failed to fetch') || msg.includes('networkerror') ||
+    msg.includes('fetch failed') || msg.includes('network')
+  );
+}
+
 // ─── CATEGORIES ──────────────────────────────────────────────────────────────
 
 export async function getCategories(): Promise<ForumCategory[]> {
@@ -116,6 +131,8 @@ export async function getCategories(): Promise<ForumCategory[]> {
     // Tabelle forum non esistono ancora - è normale se il forum non è stato configurato
     if (error.code === '42P01' || error.message?.includes('does not exist')) {
       console.debug('[Forum] Tabelle forum non ancora create');
+    } else if (isBackendUnreachable(error)) {
+      console.debug('[Forum] Backend community non raggiungibile (categorie):', error.message || error);
     } else {
       console.warn('[Forum] Error fetching categories:', error.message || error);
     }
@@ -211,7 +228,11 @@ export async function getThreads(filter: ThreadsFilter = {}): Promise<{ threads:
   const { data, error, count } = await query;
   
   if (error) {
-    if (error.code !== '42P01' && !error.message?.includes('does not exist')) {
+    if (error.code === '42P01' || error.message?.includes('does not exist')) {
+      // tabelle forum non ancora create
+    } else if (isBackendUnreachable(error)) {
+      console.debug('[Forum] Backend community non raggiungibile (thread):', error.message || error);
+    } else {
       console.warn('[Forum] Error fetching threads:', error.message || error);
     }
     return { threads: [], total: 0 };
