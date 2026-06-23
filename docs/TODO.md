@@ -1,6 +1,6 @@
 # 📋 TODO.md - GameStringer Development Tasks
 
-> Ultimo aggiornamento: 17 Giugno 2026 — v1.9.0
+> Ultimo aggiornamento: 23 Giugno 2026 — v1.10.2
 
 ---
 
@@ -32,6 +32,26 @@
 - [ ] **3 gate CI verdi** — `tsc` (type-check) + ESLint + test devono passare.
 - [ ] **Suite test 466 verde / 0 rossa** — Nessuna regressione.
 - [ ] **Definizione di "fatto" per l'hero** — L'hero è pronto quando i 4-5 titoli del set curato passano end-to-end senza intervento manuale.
+
+---
+
+## 🌍 Localizzazione UI (11 lingue)
+
+> Stato 23/06/2026 — copertura quasi piena su tutte le lingue. Guardia anti-regressione: `__tests__/lib/i18n-locale-integrity.test.ts` (chiavi allineate a `it.json`, zero leftover oltre baseline). Sorgenti: `lib/i18n/locales/<lang>.json` (~4.414 stringhe per lingua).
+
+Stato per lingua:
+
+- [x] **it** — lingua sorgente (100%)
+- [x] **en** — 100%
+- [x] **ru** — completata (issue #47, chiusa): ~97% cirillico, 0 residui italiani
+- [x] **es / fr / de / pt / pl** — completate (EN→lingua, ~3.800 stringhe). Residui in baseline = cognati corretti identici all'italiano (es. "Sistema", "Data", "Tipo", "Tema", "Formato", "Temperatura", "Lista", "Legenda")
+- [x] **ja / zh / ko** — completate (EN→lingua). ~80% caratteri nativi; il resto sono nomi propri, sigle e numeri (normale per UI CJK)
+
+Manutenzione (ricorrente):
+
+- [ ] Ogni nuova feature: aggiungere le nuove chiavi a **tutte e 11** le lingue, non solo a `it.json` — altrimenti il test `i18n-locale-integrity` fallisce (chiavi mancanti).
+- [ ] Release: `scripts/release-all.js` (step 5) scrive il changelog i18n **solo in italiano** se manca una API key di traduzione → tradurre poi `changelog.vX_Y_Z` nelle altre 10 lingue (come fatto per v1.10.2).
+- [ ] I "leftover italiani" residui in baseline (es/pt/fr/pl) sono cognati legittimi, **non** errori: non forzare traduzioni innaturali solo per azzerare il contatore.
 
 ---
 
