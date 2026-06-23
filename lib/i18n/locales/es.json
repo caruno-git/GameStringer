@@ -4694,6 +4694,10 @@
       "10": "✨ Sitio web: rediseño sci-fi/cyberpunk, chatbot de FAQ con base de conocimiento y versión actualizada automáticamente desde las releases de GitHub",
       "11": "🐛 Traducción más fiable: códigos de control de los juegos preservados en la traducción offline y un criterio de éxito honesto para Unity",
       "12": "🐛 Estabilidad y calidad: correcciones de community chat y auto-login, selector de perfiles restaurado, correcciones de notificaciones/perfiles (race y pérdida de datos), limpieza i18n en 9 idiomas, ESLint 78->0, typecheck a 0 errores, suite Rust verde y CI alineada"
+    },
+    "v1_10_1": {
+      "0": "🐛 Build de macOS: habilitada la feature macos-private-api de Tauri para la ventana de overlay transparente — la release multi-OS ahora compila en Apple Silicon e Intel",
+      "1": "🐛 i18n: completadas las claves storeGate en todos los idiomas (integridad de locales, CI en verde)"
     }
   },
   "communityChat": {

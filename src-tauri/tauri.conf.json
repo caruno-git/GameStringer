@@ -1,6 +1,6 @@
 {
   "productName": "GameStringer",
-  "version": "1.10.0",
+  "version": "1.10.1",
   "identifier": "com.gamestringer.app",
   "build": {
     "beforeDevCommand": "",
@@ -65,7 +65,8 @@
         "app-events"
       ]
     },
-    "withGlobalTauri": true
+    "withGlobalTauri": true,
+    "macOSPrivateApi": true
   },
   "bundle": {
     "active": true,

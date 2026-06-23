@@ -4806,6 +4806,10 @@
       "10": "✨ Website: sci-fi/cyberpunk redesign, FAQ chatbot with knowledge base, and version auto-updated from GitHub releases",
       "11": "🐛 More reliable translation: game control codes preserved in offline translation and an honest success criterion for Unity",
       "12": "🐛 Stability & quality: community chat and auto-login fixes, profile selector restored, notifications/profiles fixes (race and data loss), i18n cleanup in 9 languages, ESLint 78->0, typecheck at 0 errors, green Rust suite and aligned CI"
+    },
+    "v1_10_1": {
+      "0": "🐛 macOS build: enabled the Tauri macos-private-api feature for the transparent overlay window — the multi-OS release now compiles on Apple Silicon and Intel",
+      "1": "🐛 i18n: completed the storeGate keys in all languages (locale integrity, green CI)"
     }
   },
   "communityChat": {

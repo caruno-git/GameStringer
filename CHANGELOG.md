@@ -16,6 +16,11 @@
 - 🐛 Traduzione più affidabile: preservati i codici di controllo dei giochi nella traduzione offline e criterio di successo onesto per Unity
 - 🐛 Stabilità e qualità: fix community chat e auto-login, ripristino selettore profili, correzioni notifiche/profili (race e perdita dati), bonifica i18n in 9 lingue, ESLint 78->0, typecheck a 0 errori, suite Rust verde e CI allineata
 
+## 🔧 v1.10.1 - 2026-06-23
+
+- 🐛 Build macOS: abilitata la feature Tauri macos-private-api per la finestra overlay trasparente — la release multi-OS ora compila su Apple Silicon e Intel
+- 🐛 i18n: completate le chiavi storeGate in tutte le lingue (integrità dei locale, CI verde)
+
 ## 🔧 v1.9.1 - 2026-04-29
 
 - Community Chat: fix avatars (gradient-IDs non generano più errori 404)

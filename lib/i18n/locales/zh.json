@@ -4694,6 +4694,10 @@
       "10": "✨ 网站：sci-fi/cyberpunk 重新设计、带知识库的 FAQ 聊天机器人，以及从 GitHub releases 自动更新的版本号",
       "11": "🐛 更可靠的翻译：离线翻译中保留游戏控制代码，并为 Unity 设定诚实的成功标准",
       "12": "🐛 稳定性与质量：修复 community chat 与自动登录、恢复配置文件选择器、通知/配置文件修复（竞态与数据丢失）、9 种语言的 i18n 整理、ESLint 78->0、类型检查 0 错误、Rust 测试套件全绿并对齐 CI"
+    },
+    "v1_10_1": {
+      "0": "🐛 macOS 构建：为透明悬浮窗启用 Tauri 的 macos-private-api 功能 — 多 OS 发布现在可在 Apple Silicon 和 Intel 上编译",
+      "1": "🐛 i18n：补齐所有语言的 storeGate 键（区域设置完整性，CI 通过）"
     }
   },
   "communityChat": {
