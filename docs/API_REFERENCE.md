@@ -1,8 +1,10 @@
 # API Reference - GameStringer
 
+> ℹ️ **Due modalità runtime — leggere prima.** Le route `/api/*` qui sotto sono reali route Next.js e funzionano in **modalità web/dev** (`npm run dev`). La **app desktop però viene buildata con `output: 'export'`** (export statico, vedi `next.config.js`), che **elimina tutte le route `/api/*`**: nel pacchetto desktop (Tauri) quegli endpoint **non esistono** e il frontend parla col backend Rust via comandi Tauri **`invoke()`**. Ogni `fetch('/api/...')` rimasto nella UI funziona solo in web/dev e **fallisce nel build desktop** — vedi la regola di progetto "0 `fetch('/api/')` attive". La **Public API v1** (`app/api/v1`) è l'API HTTP esterna/di integrazione, valida quando l'app gira come server, non nel desktop a export statico.
+
 ## 🌐 Panoramica
 
-GameStringer utilizza Next.js API Routes per gestire tutte le operazioni backend. Le API sono organizzate per dominio funzionale e seguono i principi RESTful.
+GameStringer espone due interfacce: **(1)** Next.js API Routes (`/api/*`) usate in modalità web/dev, documentate qui sotto; e **(2)** comandi Tauri `invoke()`, la vera interfaccia backend della app desktop pacchettizzata. Le API qui sotto sono organizzate per dominio funzionale e seguono i principi RESTful (modalità web/dev).
 
 ## 🔐 Autenticazione
 

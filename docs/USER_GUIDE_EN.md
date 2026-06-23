@@ -248,13 +248,26 @@ Search **"Danganronpa"** with Ctrl+K.
 
 ## PHASE 14: PREDICTION TOOL & QA CHECK
 
-### Prediction Tool
+### Prediction Tool (P.T.)
 
-Search with Ctrl+K. Analyzes a game before translation:
-- Estimated string and word count
-- Estimated cost per provider (DeepL, OpenAI, local)
-- Estimated time per method
-- Recommended translation chains
+Open it from the game detail page (**"Run P.T."**) or via search (Ctrl+K). It analyzes a game **before** translating, so you can plan instead of discovering problems halfway.
+
+What it tells you:
+- **Difficulty Score 0–100** — combined weight of string volume, engine complexity, DRM, encoding and linguistic challenges.
+- **Time estimates** across multiple LLM models (local Ollama and cloud).
+- **5 recommended LLM chains** — Local (privacy), Cloud (quality), Hybrid, Budget, Premium — each with estimated cost and quality.
+- **DRM / anti-cheat detection** (Denuvo, VMProtect, Steam DRM, EAC, BattlEye, Vanguard) — warns before touching any file.
+- **Encoding analysis** per file (Shift-JIS, UTF-8/16, Big5, EUC-KR).
+- **Translation complexity** (honorifics, gender agreement, CJK, ruby/furigana, RTL).
+- **Confidence score** + **workflow plan**, plus an **exportable report** (JSON + Markdown).
+
+Results are **cached for 24h**, so reopening an analyzed game is instant.
+
+**P.T.Rank** — after analyzing several games, open P.T.Rank to see them ranked by difficulty (plan your queue: easy wins first, save the huge RPGs for last).
+
+**Dry Run Scanner** — from the Library, scan the entire library **without modifying anything**; it classifies each title as **Ready** (engine supported + strings extractable), **Errors** (manifest/DRM blocker) or **Unsupported** (unknown engine / no text).
+
+**"String it!" Smart Gate** — the button is smart: if the game was analyzed by P.T. within 24h it starts directly; otherwise it suggests running P.T. first ("Run P.T. first" / "String it! anyway").
 
 ### QA Check
 

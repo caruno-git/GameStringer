@@ -99,7 +99,7 @@ Manutenzione (ricorrente):
 ## 📚 Documentazione
 
 - [x] **Blocco 4 User Guide** — *Fatto 23/06.* Gap analisi: le feature AI erano quasi tutte già documentate (Vision LLM, Lore Assistant, Doppiaggio/Fandub, Fine-Tuning, Multi-LLM, Adaptive MT, Auto-Glossario, Profili Voce…). L'unica grande mancante era il **Prediction Tool (P.T.)** → aggiunta sezione completa in `docs/GUIDA_UTENTE.md` (Difficulty Score, stime/catene LLM, DRM/encoding/complessità, P.T.Rank, Dry Run, "String it!" Smart Gate, cache 24h, export). *(Mirror EN in `USER_GUIDE_EN.md` opzionale.)*
-- [x] **Tradurre docs tecnici** — *Fatto 23/06.* Creati `docs/API_REFERENCE_EN.md`, `docs/TROUBLESHOOTING_EN.md`, `docs/ARCHITETTURA_EN.md` (traduzione fedele, struttura/codice preservati). ⚠️ Segnalato: `API_REFERENCE` (e parti di `TROUBLESHOOTING`) descrivono API REST Next.js `/api` — probabilmente **obsolete** vs l'attuale architettura Tauri `invoke()`; tradotte com'erano + nota in cima al file EN. Da rivedere nei contenuti, non solo nella lingua.
+- [x] **Tradurre docs tecnici** — *Fatto 23/06.* Creati `docs/API_REFERENCE_EN.md`, `docs/TROUBLESHOOTING_EN.md`, `docs/ARCHITETTURA_EN.md` (traduzione fedele). **Correzione 23/06**: `API_REFERENCE` NON è obsoleto — le route `/api/*` esistono e funzionano in web/dev; ma il build desktop usa `output:'export'` (static export → niente `/api`), quindi nel desktop si usa Tauri `invoke()`. Aggiunta nota **dual-mode** accurata in cima a `API_REFERENCE.md` e `_EN.md`. ⚠️ **Tech-debt scoperto**: ~10 file con `fetch('/api/...')` attivi (editor, subtitles, stores, dubbing, translator/pro…) → **rotti nel build desktop** (violano la regola "0 fetch('/api/')"). Da migrare a `invoke()` (task di CODICE separato).
 
 ---
 

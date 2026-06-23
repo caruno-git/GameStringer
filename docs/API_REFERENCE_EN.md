@@ -1,10 +1,10 @@
 # API Reference - GameStringer
 
-> ⚠️ Note: this reference may be outdated — the current app uses Tauri `invoke()` rather than HTTP `/api/` routes.
+> ℹ️ **Two runtime modes — read this first.** The `/api/*` routes below are real Next.js API routes that work in **web/dev mode** (`npm run dev`). However, the **desktop app is built with `output: 'export'`** (static export, see `next.config.js`), which **strips all `/api/*` routes**. In the packaged desktop (Tauri) app those endpoints do **not** exist: the frontend talks to the Rust backend via Tauri **`invoke()`** commands instead. Any `fetch('/api/...')` left in the UI works only in web/dev and will fail in the desktop build — see the project rule "0 active `fetch('/api/')`". The **Public API v1** (`app/api/v1`) is the external/integration HTTP API and applies when the app runs as a server, not in the static-export desktop build.
 
 ## 🌐 Overview
 
-GameStringer uses Next.js API Routes to handle all backend operations. The APIs are organized by functional domain and follow RESTful principles.
+GameStringer exposes two interfaces: **(1)** Next.js API Routes (`/api/*`) used in web/dev mode, documented below; and **(2)** Tauri `invoke()` commands, the actual backend interface of the packaged desktop app. The APIs below are organized by functional domain and follow RESTful principles (web/dev mode).
 
 ## 🔐 Authentication
 
