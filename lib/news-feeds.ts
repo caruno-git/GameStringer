@@ -6,6 +6,7 @@
  */
 
 import { clientLogger } from '@/lib/client-logger';
+import { isTauri } from '@/lib/tauri-api';
 
 export interface NewsFeedSource {
   id: string;
@@ -238,14 +239,17 @@ class NewsFeedService {
       }
     } catch {}
 
-    // 4) Ultimo fallback: CORS proxies pubblici
-    for (const proxy of CORS_PROXIES) {
-      try {
-        const res = await fetch(proxy + encodeURIComponent(url), { signal: AbortSignal.timeout(10000) });
-        if (res.ok) {
-          return await res.text();
-        }
-      } catch {}
+    // 4) Ultimo fallback: CORS proxies pubblici — SOLO in web/dev. Nel webview Tauri
+    // questi proxy falliscono sempre per CORS, quindi li saltiamo (evita errori in console).
+    if (!isTauri()) {
+      for (const proxy of CORS_PROXIES) {
+        try {
+          const res = await fetch(proxy + encodeURIComponent(url), { signal: AbortSignal.timeout(10000) });
+          if (res.ok) {
+            return await res.text();
+          }
+        } catch {}
+      }
     }
     throw new Error(`Failed to fetch RSS: ${url}`);
   }
@@ -434,10 +438,10 @@ class NewsFeedService {
         // Tauri not available
       }
 
-      // Try CORS proxy
-      for (const proxy of CORS_PROXIES) {
+      // Try CORS proxy — SOLO in web/dev (nel webview Tauri falliscono per CORS).
+      if (!isTauri()) for (const proxy of CORS_PROXIES) {
         try {
-          const res = await fetch(proxy + encodeURIComponent(url), { 
+          const res = await fetch(proxy + encodeURIComponent(url), {
             signal: AbortSignal.timeout(5000),
             headers: { 'Accept': 'text/html' }
           });

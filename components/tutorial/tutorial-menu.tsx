@@ -27,6 +27,8 @@ import { cn } from '@/lib/utils';
 
 interface TutorialMenuProps {
   userId?: string;
+  /** Se true, il trigger è una riga full-width (icona + etichetta), tutta cliccabile. */
+  fullWidth?: boolean;
 }
 
 // Icone per ogni tipo di tutorial
@@ -49,7 +51,7 @@ const TUTORIAL_COLORS: Record<string, { bg: string; text: string; border: string
 
 const DEFAULT_COLOR = { bg: 'bg-indigo-500/20', text: 'text-indigo-400', border: 'border-indigo-500/30' };
 
-export function TutorialMenu({ userId: _userId }: TutorialMenuProps) {
+export function TutorialMenu({ userId: _userId, fullWidth }: TutorialMenuProps) {
   const { startTutorial, isActive } = useTutorial();
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
@@ -94,18 +96,41 @@ export function TutorialMenu({ userId: _userId }: TutorialMenuProps) {
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          aria-label={t('nav.tutorialAndGuide')}
-          className={cn(
-            "h-8 w-8 p-0 transition-all",
-            open ? "text-violet-400 bg-violet-500/10" : "text-slate-500 hover:text-violet-400 hover:bg-violet-500/10"
-          )}
-          disabled={isActive}
-        >
-          <GraduationCap className="h-4 w-4" />
-        </Button>
+        {fullWidth ? (
+          // Trigger a riga intera: tutta l'area (icona + etichetta) è cliccabile.
+          <button
+            type="button"
+            aria-label={t('nav.tutorialAndGuide')}
+            disabled={isActive}
+            className={cn(
+              "w-full flex items-center gap-2 px-2 py-1 rounded-lg transition-colors group disabled:opacity-50 disabled:cursor-not-allowed",
+              open ? "bg-slate-800/60" : "hover:bg-slate-800/50"
+            )}
+          >
+            <span className={cn(
+              "h-8 w-8 flex items-center justify-center shrink-0 transition-colors",
+              open ? "text-violet-400" : "text-slate-500 group-hover:text-violet-400"
+            )}>
+              <GraduationCap className="h-4 w-4" />
+            </span>
+            <span className="text-2xs font-medium text-slate-500 group-hover:text-slate-300 transition-colors uppercase tracking-widest">
+              {t('nav.tutorialAndGuide')}
+            </span>
+          </button>
+        ) : (
+          <Button
+            variant="ghost"
+            size="sm"
+            aria-label={t('nav.tutorialAndGuide')}
+            className={cn(
+              "h-8 w-8 p-0 transition-all",
+              open ? "text-violet-400 bg-violet-500/10" : "text-slate-500 hover:text-violet-400 hover:bg-violet-500/10"
+            )}
+            disabled={isActive}
+          >
+            <GraduationCap className="h-4 w-4" />
+          </Button>
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent
         side="right"

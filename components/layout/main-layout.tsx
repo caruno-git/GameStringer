@@ -842,10 +842,7 @@ export function MainLayout({ children }: MainLayoutProps) {
           {/* Tutorial Help */}
           <div className="shrink-0 px-3 py-2 flex items-center justify-center bg-slate-900/30 border-t border-slate-800/50">
             {sidebarOpen ? (
-              <div className="w-full flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-slate-800/50 transition-colors cursor-pointer group">
-                <TutorialMenu />
-                <span className="text-2xs font-medium text-slate-500 group-hover:text-slate-300 transition-colors uppercase tracking-widest">{t('nav.tutorialAndGuide')}</span>
-              </div>
+              <TutorialMenu fullWidth />
             ) : (
               <TutorialMenu />
             )}

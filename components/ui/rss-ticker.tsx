@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Rss, ExternalLink } from 'lucide-react';
+import { invoke, isTauri } from '@/lib/tauri-api';
 
 interface RssItem {
   title: string;
@@ -77,13 +78,20 @@ export function RssTicker({ className = '' }: RssTickerProps) {
         
         for (const feed of enabledFeeds) {
           try {
-            const corsProxy = 'https://api.allorigins.win/raw?url=';
-            const response = await fetch(corsProxy + encodeURIComponent(feed.url), {
-              signal: AbortSignal.timeout(5000)
-            });
-            
-            if (response.ok) {
-              const text = await response.text();
+            // In Tauri (webview): usa il comando Rust fetch_url_content, niente CORS né
+            // proxy pubblici. In web/dev fuori da Tauri: fallback al proxy CORS.
+            let text: string | null = null;
+            if (isTauri()) {
+              text = await invoke<string>('fetch_url_content', { url: feed.url });
+            } else {
+              const corsProxy = 'https://api.allorigins.win/raw?url=';
+              const response = await fetch(corsProxy + encodeURIComponent(feed.url), {
+                signal: AbortSignal.timeout(5000)
+              });
+              if (response.ok) text = await response.text();
+            }
+
+            if (text) {
               const parser = new DOMParser();
               const xml = parser.parseFromString(text, 'text/xml');
               const rssItems = xml.querySelectorAll('item');
