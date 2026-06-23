@@ -110,10 +110,10 @@ Get the latest release from **[GitHub Releases](https://github.com/rouges78/Game
 
 | Platform | File | Notes |
 |----------|------|-------|
-| **Windows** | `GameStringer_1.9.1_x64-setup.exe` | Installer (recommended) |
-| **Windows** | `GameStringer_1.9.1_x64-portable.zip` | No install needed |
-| **Windows** | `GameStringer_1.9.1_x64_en-US.msi` | MSI alternative |
-| **macOS** | `GameStringer_1.9.1_x64.dmg` | Intel Mac |
+| **Windows** | `GameStringer_1.10.2_x64-setup.exe` | Installer (recommended) |
+| **Windows** | `GameStringer_1.10.2_x64-portable.zip` | No install needed |
+| **Windows** | `GameStringer_1.10.2_x64_en-US.msi` | MSI alternative |
+| **macOS** | `GameStringer_1.10.2_x64.dmg` | Intel Mac |
 | **macOS** | `GameStringer_aarch64.app.tar.gz` | Apple Silicon |
 | **Linux** | `GameStringer.AppImage` | Universal (recommended) |
 | **Linux** | `GameStringer.deb` | Debian / Ubuntu |
@@ -193,6 +193,12 @@ GameStringer supports **20+ engines** with varying levels of depth:
 ---
 
 ## ✨ Features
+
+### 🆕 New in v1.10.2
+
+- **Auto-updater fix** — resolved a stuck "Preparing…" state where the update never started downloading. A stale React update object was passed to `downloadAndInstall` and the `updating` flag was never reset; now auto-update reliably starts, downloads, and installs (`components/notifications/auto-updater.tsx`, `hooks/use-tauri-updater.ts`)
+- **Reliable settings persistence** — app settings and AI provider API keys are now saved reliably to disk (`data_dir/GameStringer/settings.json`) via the `save_app_settings` / `load_app_settings` Tauri commands; previously some settings were not persisted
+- **Add games manually from disk** — you can now add a game by picking its folder from disk, without relying solely on library auto-detection (Steam/Epic/etc.) (`lib/manual-games.ts`, `app/library/page.tsx`)
 
 ### 🆕 New in v1.9.1
 

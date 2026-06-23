@@ -1,4 +1,4 @@
-# GameStringer - Architettura del Progetto (v1.9.1)
+# GameStringer - Architettura del Progetto (v1.10.2)
 
 ## Visione
 
@@ -14,6 +14,14 @@ Software desktop professionale per la localizzazione di videogiochi che analizza
 - **Digest quotidiani**: monitoraggio automatico version-drift e traduzioni amatoriali in `docs/digests/`
 - **Quality gate**: typecheck TypeScript bloccante in CI (0 errori), rimosse dipendenze morte (`sqlx`, `zustand`, `yup`), eliminati file orfani
 - **Igiene repo**: dati profilo utente e cloni di studio (`research/`) fuori dal tracking git
+
+---
+
+## Aggiornamenti v1.10.x
+
+- **Persistenza impostazioni affidabile**: impostazioni dell'app e API key dei provider AI vengono salvate su disco in `data_dir/GameStringer/settings.json` tramite i comandi Tauri `save_app_settings` / `load_app_settings` (`src-tauri/src/commands/utilities.rs`). Lato frontend: `lib/settings-persistence.ts`, `components/providers/settings-boot-gate.tsx`, `app/settings/page.tsx`. Prima alcune impostazioni non venivano persistite.
+- **Aggiunta manuale giochi da disco**: la Library può aggiungere un gioco selezionando la cartella dal disco, senza dipendere solo dall'auto-detect delle librerie (Steam/Epic/ecc.) — `lib/manual-games.ts`, `app/library/page.tsx`.
+- **Fix auto-updater**: risolto il blocco su "Preparazione…" (stato update stantio passato a `downloadAndInstall` + flag `updating` mai resettato) in `components/notifications/auto-updater.tsx` e `hooks/use-tauri-updater.ts`.
 
 ---
 
@@ -109,6 +117,8 @@ Motivo: l'injection ha la firma di un cheat; su un multiplayer competitivo signi
 | **Traduzione al Volo** | BepInEx/XUnity (Unity), Overlay (altri) | Giochi senza file modificabili |
 | **Traduzione File** | Modifica diretta dei file di localizzazione | Giochi con file accessibili |
 | **Creazione Patch** | Genera patch distribuibile con dizionario | Per condividere traduzioni |
+
+> **Aggiunta manuale (v1.10.2)**: oltre all'auto-detect degli store, un gioco può essere aggiunto manualmente selezionando la cartella dal disco (`lib/manual-games.ts`, `app/library/page.tsx`).
 
 **Stato attuale**: ⚠️ Parziale - manca integrazione analisi + raccomandazioni
 
@@ -216,14 +226,5 @@ Configurabili per profilo, con API key personali.
 - Frontend: Next.js + React + TailwindCSS + shadcn/ui
 - Backend: Tauri (Rust)
 - Database: SQLite locale per TM
+- Impostazioni/API key: persistite su disco in `data_dir/GameStringer/settings.json` (`save_app_settings` / `load_app_settings`)
 - AI: API REST per vari provider
-
-Buongiorno.
-Ora che mi sono calmata, mi sembrava giusto scriverti ciò che penso, alla luce di quello che c’è stato tra di noi.
-Mi hai fatto perdere completamente il controllo: la tua insistenza mi ha mandato in escandescenza. Considera che ero già piuttosto satura per quanto era accaduto in precedenza, quindi questa è stata la goccia che ha fatto traboccare il vaso.
-
-Io ho commesso i miei errori, ma tu hai perseverato e non sei riuscito a passarci sopra, se non temporaneamente, perché poi ogni scusa era buona per tirare fuori tutto.
-
-Non c’è fiducia e un rapporto a distanza, in queste condizioni, non si può vivere. Conserverò di te solo i ricordi belli, cancellando questo ultimo periodo deleterio.
-
-Buona vita.

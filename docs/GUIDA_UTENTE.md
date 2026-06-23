@@ -120,6 +120,14 @@ La Libreria mostra tutti i tuoi giochi sincronizzati da Steam, Epic Games, GOG e
 - **Condivisi**: Mostra/nascondi giochi Family Sharing
 - **Filtri**: Filtra per piattaforma, stato installazione, engine
 
+### Aggiungere un gioco manualmente (NUOVO v1.10.2)
+
+Oltre all'auto-detect delle librerie (Steam, Epic, GOG, ecc.), ora puoi aggiungere un gioco **manualmente selezionando la sua cartella dal disco**. È utile per giochi installati fuori dagli store supportati, copie portable o titoli non rilevati automaticamente.
+
+1. Nella pagina **Libreria**, clicca su **"Aggiungi gioco"**
+2. **Seleziona la cartella** del gioco dal disco
+3. Il gioco viene aggiunto alla libreria e può essere tradotto come qualsiasi altro titolo rilevato automaticamente
+
 ### Pagina Dettaglio Gioco
 
 Clicca su un gioco per aprire la pagina dettaglio con layout **3:1**:
@@ -835,6 +843,44 @@ I dizionari salvano le traduzioni per ogni gioco.
 
 - **Causa**: L'AI ha modificato variabili o tag
 - **Soluzione**: Attiva "Quality Checks" per rilevare automaticamente
+
+---
+
+## Impostazioni e API Key
+
+> Salvataggio affidabile su disco (NUOVO v1.10.2)
+
+Le **impostazioni dell'app** e le **API key dei provider AI** ora vengono salvate in modo affidabile su disco. Prima alcune impostazioni potevano non essere conservate tra una sessione e l'altra; con la v1.10.2 il salvataggio è garantito.
+
+### Dove vengono salvate
+
+I dati vengono persistiti nel file:
+
+```text
+data_dir/GameStringer/settings.json
+```text
+
+Il salvataggio e il caricamento avvengono tramite i comandi Tauri `save_app_settings` / `load_app_settings`: le impostazioni vengono ricaricate automaticamente all'avvio dell'app e scritte su disco quando le modifichi.
+
+### Come configurare le API key
+
+1. Vai su **Settings → API Keys**
+2. Inserisci la chiave del provider AI desiderato (Claude, Gemini, OpenAI, DeepSeek, ecc.)
+3. Le chiavi vengono salvate automaticamente e restano disponibili anche dopo la chiusura dell'app
+
+---
+
+## Aggiornamento Automatico dell'App
+
+> One-click (firmato)
+
+GameStringer si aggiorna **con un solo clic** direttamente dall'app, tramite l'auto-updater firmato di Tauri.
+
+1. Quando è disponibile un aggiornamento, l'app te lo segnala
+2. Clicca per **scaricare e installare** l'aggiornamento
+3. L'app si aggiorna automaticamente — al riavvio sarai sulla nuova versione
+
+> **Nota (v1.10.2)**: è stato corretto un bug per cui l'aggiornamento poteva bloccarsi su "Preparazione…" senza mai avviare il download. Ora l'auto-update parte, scarica e installa correttamente.
 
 ---
 
