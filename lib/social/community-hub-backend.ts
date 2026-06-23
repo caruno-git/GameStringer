@@ -20,6 +20,55 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 import type { TranslationPack, CommunityAuthor, PackReview, PackSearchFilters, HubStats, PackFile } from './community-hub-service';
 import { clientLogger } from '@/lib/client-logger';
+import { isTauri } from '@/lib/tauri-api';
+
+// Instrada le fetch di supabase-js attraverso un comando Rust (supabase_proxy_fetch)
+// per evitare il blocco CORS del webview Tauri verso Supabase. Fuori da Tauri
+// (browser puro / SSR) ricade sul fetch nativo. Pensato per traffico JSON (auth + REST):
+// il body è gestito come testo, quindi non adatto a download binari da Storage.
+async function tauriProxyFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+  if (!isTauri()) return fetch(input, init);
+
+  const reqObj = input instanceof Request ? input : null;
+  const url =
+    typeof input === 'string' ? input : input instanceof URL ? input.toString() : (input as Request).url;
+  const method = (init?.method ?? reqObj?.method ?? 'GET').toUpperCase();
+
+  const headers: Record<string, string> = {};
+  const collect = (h?: HeadersInit) => {
+    if (!h) return;
+    if (h instanceof Headers) h.forEach((v, k) => { headers[k] = v; });
+    else if (Array.isArray(h)) for (const [k, v] of h) headers[k] = v;
+    else Object.assign(headers, h as Record<string, string>);
+  };
+  collect(reqObj?.headers);
+  collect(init?.headers);
+
+  let body: string | null = null;
+  if (init?.body != null) {
+    body = typeof init.body === 'string' ? init.body : await new Response(init.body as BodyInit).text();
+  } else if (reqObj && reqObj.body != null) {
+    body = await reqObj.clone().text();
+  }
+
+  try {
+    const { invoke } = await import('@tauri-apps/api/core');
+    const res = await invoke<{ status: number; status_text: string; headers: Record<string, string>; body: string }>(
+      'supabase_proxy_fetch',
+      { req: { url, method, headers, body } }
+    );
+    const nullBody = res.status === 204 || res.status === 205 || res.status === 304;
+    return new Response(nullBody ? null : res.body, {
+      status: res.status,
+      statusText: res.status_text,
+      headers: res.headers,
+    });
+  } catch (e) {
+    // Mantieni i token "network"/"fetch" per la classificazione transitoria a valle.
+    const msg = e instanceof Error ? e.message : String(e);
+    throw new Error(`network: proxy fetch Supabase fallita: ${msg}`);
+  }
+}
 
 // ─── CONFIG ──────────────────────────────────────────────────────
 
@@ -91,6 +140,11 @@ export async function getSupabase(): Promise<SupabaseClient> {
   // Config changed or first init — (re)create client
   _supabaseClient = createClient(cfg.url, cfg.anonKey, {
     auth: { persistSession: true, autoRefreshToken: true },
+    global: {
+      // In Tauri instradiamo le richieste via comando Rust (no CORS); fuori da Tauri
+      // usa il fetch nativo. Vedi tauriProxyFetch sopra.
+      fetch: tauriProxyFetch,
+    },
   });
   _lastConfigHash = hash;
   clientLogger.debug('[Supabase] Client creato per:', cfg.url);

@@ -20,6 +20,7 @@ import { enrichGameTitle } from '@/lib/game-names-db';
 import { Gamepad2, ImageIcon, Search, LayoutGrid, List, SlidersHorizontal, ArrowUpDown, ChevronDown, ChevronUp, RefreshCw, Download, Languages, Sparkles, FolderOpen, Monitor, Wrench, Brain } from 'lucide-react';
 import { useTranslation, translations } from '@/lib/i18n';
 import { CoverPicker } from '@/components/cover-picker';
+import { StoreGate } from '@/components/auth/store-gate';
 import { clientLogger } from '@/lib/client-logger';
 
 // Guard globale: sopravvive a HMR/Fast Refresh e doppio mount React 18
@@ -415,13 +416,15 @@ function LibraryPageInner() {
 
 export default function LibraryPage() {
   return (
-    <Suspense fallback={
-      <div className="flex items-center justify-center h-full py-24">
-        <div className="animate-spin h-8 w-8 border-2 border-indigo-500 border-t-transparent rounded-full" />
-      </div>
-    }>
-      <LibraryPageInner />
-    </Suspense>
+    <StoreGate>
+      <Suspense fallback={
+        <div className="flex items-center justify-center h-full py-24">
+          <div className="animate-spin h-8 w-8 border-2 border-indigo-500 border-t-transparent rounded-full" />
+        </div>
+      }>
+        <LibraryPageInner />
+      </Suspense>
+    </StoreGate>
   );
 }
 

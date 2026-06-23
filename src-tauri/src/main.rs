@@ -558,6 +558,8 @@ fn main() {
             // RSS proxy (bypass CORS)
             commands::rss_proxy::fetch_rss_feed,
             commands::rss_proxy::fetch_url_content,
+            commands::rss_proxy::supabase_proxy_fetch,
+            commands::game_lang_scan::detect_languages_from_files,
 
             // Godot Engine PCK patcher
             commands::godot_patcher::detect_godot_engine,

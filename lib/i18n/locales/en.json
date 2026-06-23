@@ -3878,6 +3878,12 @@
     "sounds": "Sounds",
     "desktop": "Desktop"
   },
+  "storeGate": {
+    "title": "Connect a store to continue",
+    "description": "To retrieve game information you must first register with at least one store. No store is currently connected to this profile.",
+    "connectButton": "Go to Stores and connect an account",
+    "hint": "Steam, Epic, GOG, Ubisoft, itch.io and more"
+  },
   "stores": {
     "title": "Store Management",
     "subtitle": "Connect your accounts to import game library",

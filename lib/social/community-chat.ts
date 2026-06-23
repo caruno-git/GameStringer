@@ -188,6 +188,11 @@ function resetBreaker(): void {
 // Caps una promise a `ms`: senza questo, una signInWithPassword contro un backend
 // giù resta appesa ~90s (il 522 di Cloudflare arriva dopo un lungo connect-timeout).
 function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
+  // Se vince il timeout, `p` resta pendente e potrebbe rifiutare DOPO (es. fetch
+  // CORS-bloccata): senza questo handler esplicito la sua rejection diventa "orfana"
+  // e l'overlay dev di Next la segnala. La marchiamo come gestita (la logica resta
+  // governata dal timeout sotto, classificato come transitorio dal chiamante).
+  p.catch(() => {});
   return Promise.race([
     p,
     new Promise<T>((_, reject) => setTimeout(() => reject(new Error('timeout')), ms)),

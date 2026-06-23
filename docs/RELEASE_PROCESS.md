@@ -9,6 +9,39 @@ first release.
 
 ---
 
+## 0. TL;DR — Release con un comando
+
+Dopo aver committato e pushato le tue modifiche di codice, lancia:
+
+```bash
+npm run ship              # bump dedotto dai commit (feat→minor, fix→patch, BREAKING→major)
+npm run ship -- minor     # forza il tipo di bump
+npm run ship -- --dry-run # mostra cosa farebbe, senza scrivere nulla  (alias: npm run ship:dry)
+npm run ship -- --no-publish  # prepara tutto ma NON lancia la build pubblica (alias: ship:prepare)
+npm run ship -- --yes     # salta la conferma interattiva
+```
+
+`scripts/release-all.js` esegue in sequenza, da solo:
+
+1. **Preflight** — branch, working tree pulito, `gh` autenticato.
+2. **Changelog dai commit** — legge i commit dall ultimo tag, li raggruppa (Conventional Commits) e deduce il tipo di bump. Anteprima: `npm run changelog:preview`.
+3. **Bump + sync** — `version-manager.js` aggiorna `version.json`, `package.json`, `Cargo.toml`, `tauri.conf.json`.
+4. **CHANGELOG.md** — rigenerato.
+5. **Changelog in-app multilingua** — `scripts/release/translate-changelog.js` scrive le chiavi `changelog.vX_Y_Z.N` in TUTTI i `lib/i18n/locales/*.json`, traducendo dall italiano. Vedi 0.1 per la API key.
+6. **README + guide** — `senior-versioning-agent.js fix` (badge/footer/versione).
+7. **Sito** — aggiorna i riferimenti di versione in `docs/sito/**` (il deploy su gh-pages parte da solo via `deploy-site.yml` al push).
+8. **Commit + tag + push** — `chore(release): vX.Y.Z`, push del branch e del tag.
+9. **Build & publish multi-OS** — dispatch di `release.yml` (Windows/Linux/macOS firmati + `latest.json` per auto-update). Saltato con `--no-publish`.
+
+Il resto di questo documento spiega i prerequisiti e il debugging di ogni passo: leggilo se qualcosa va storto.
+
+### 0.1 API key per la traduzione del changelog
+
+Lo step 5 traduce le voci del changelog in tutte le lingue. Imposta UNA di queste env var (in ordine di preferenza):
+`ANTHROPIC_API_KEY` (Claude), `OPENAI_API_KEY`, `GEMINI_API_KEY`/`GOOGLE_API_KEY`, `DEEPL_API_KEY`.
+Se nessuna è presente, lo script scrive solo l italiano e le altre lingue usano il **fallback grezzo** dal `version.json` (testo IT/EN): la release NON si blocca mai.
+
+---
 ## 1. Prerequisites
 
 ### 1.1 Rust / Tauri crate versions

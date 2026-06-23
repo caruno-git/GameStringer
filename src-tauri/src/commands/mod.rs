@@ -115,6 +115,8 @@ pub mod gamestranslator_integration;
 pub mod repak_wrapper;
 // RSS proxy (bypass CORS per feed news)
 pub mod rss_proxy;
+// Rilevamento lingue gioco da file di localizzazione
+pub mod game_lang_scan;
 // Godot Engine PCK patcher
 pub mod godot_patcher;
 // GameMaker data.win string extractor & patcher

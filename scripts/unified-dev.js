@@ -81,6 +81,40 @@ class UnifiedDevServer {
     return process;
   }
 
+  // Verifica che le dipendenze (in particolare "next") siano installate.
+  // Se mancano, tenta un "npm install" automatico. Fallisce in modo chiaro
+  // invece di lasciar partire Next con "next non riconosciuto".
+  ensureDependencies() {
+    const fs = require('fs');
+    const nextBin = path.join(process.cwd(), 'node_modules', 'next', 'dist', 'bin', 'next');
+
+    if (fs.existsSync(nextBin)) {
+      return; // tutto a posto
+    }
+
+    console.warn('⚠️  Dipendenze mancanti: "next" non trovato in node_modules.');
+    console.log('📦 Eseguo "npm install" automaticamente...');
+
+    const result = require('child_process').spawnSync('npm', ['install'], {
+      stdio: 'inherit',
+      shell: true,
+      cwd: process.cwd()
+    });
+
+    if (result.status !== 0) {
+      throw new Error('"npm install" fallito (codice ' + result.status + '). Eseguilo manualmente da PowerShell.');
+    }
+
+    if (!fs.existsSync(nextBin)) {
+      throw new Error(
+        '"next" ancora mancante dopo npm install: node_modules potrebbe essere corrotto.\n' +
+        '   Rimedio: elimina node_modules e package-lock.json, poi "npm install".'
+      );
+    }
+
+    console.log('✅ Dipendenze installate.');
+  }
+
   // Avvia il server Next.js
   async startNextJS(port) {
     console.log(`🌐 Avvio Next.js sulla porta ${port}...`);
@@ -98,21 +132,44 @@ class UnifiedDevServer {
       }
     );
 
+    // Rileva se Next.js muore PRIMA di diventare pronto (es. "next non
+    // riconosciuto", errore di build). In quel caso abortiamo subito invece
+    // di pollare a vuoto e poi avviare Tauri (che aspetterebbe 180s).
+    let nextCrashed = false;
+    let nextExitCode = null;
+    nextProcess.on('exit', (code) => {
+      if (code !== 0) {
+        nextCrashed = true;
+        nextExitCode = code;
+      }
+    });
+
     // Aspetta che Next.js sia pronto
     console.log('⏳ Attendendo che Next.js sia pronto...');
-    await new Promise((resolve) => {
+    await new Promise((resolve, reject) => {
       let attempts = 0;
       const maxAttempts = 30; // 60 secondi max
-      
+
       const checkNext = setInterval(async () => {
+        // Crash immediato: niente attesa, errore chiaro.
+        if (nextCrashed) {
+          clearInterval(checkNext);
+          reject(new Error(
+            `Next.js è terminato (codice ${nextExitCode}) prima di avviarsi. ` +
+            `Controlla il log qui sopra (tipico: "next" non riconosciuto → "npm install").`
+          ));
+          return;
+        }
+
         attempts++;
         if (attempts > maxAttempts) {
           clearInterval(checkNext);
-          console.log('⚠️  Timeout Next.js - continuo comunque...');
-          resolve();
+          reject(new Error(
+            `Next.js non risponde su http://localhost:${port} dopo ${maxAttempts * 2}s. Avvio interrotto.`
+          ));
           return;
         }
-        
+
         try {
           const response = await fetch(`http://localhost:${port}`);
           if (response.ok) {
@@ -151,7 +208,11 @@ class UnifiedDevServer {
     try {
       console.log('🔧 === UNIFIED DEV SERVER ===');
       console.log(`🎯 Modalità: ${mode}`);
-      
+
+      // 0. Verifica dipendenze (fail-fast prima di qualsiasi cosa)
+      console.log('\n📦 Fase 0: Verifica dipendenze...');
+      this.ensureDependencies();
+
       // 1. Sincronizza le porte
       console.log('\n📡 Fase 1: Sincronizzazione porte...');
       const port = await this.portManager.synchronizePorts();

@@ -187,3 +187,25 @@ export const getAllConnectedAccounts = (): ConnectedAccount[] => {
   return getStoredAccounts();
 };
 
+// Provider degli store di gioco (chiavi salvate in gameStringer_connectedAccounts).
+// Mappa coerente con providerMap in app/stores/page.tsx.
+export const STORE_PROVIDER_IDS = [
+  'steam-credentials',
+  'epicgames',
+  'gog-credentials',
+  'ubisoft-credentials',
+  'origin-credentials',
+  'battlenet-credentials',
+  'rockstar-credentials',
+  'amazon-credentials',
+  'itchio-credentials',
+] as const;
+
+// True se l'utente ha collegato (registrato credenziali su) almeno uno store.
+// NON considera la detection locale (Xbox/Amazon installati): quella è gestita
+// in modo asincrono via Tauri dentro StoreGate.
+export const hasAnyStoreConnected = (): boolean => {
+  const ids = STORE_PROVIDER_IDS as readonly string[];
+  return getStoredAccounts().some(acc => ids.includes(acc.provider));
+};
+

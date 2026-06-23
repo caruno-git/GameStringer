@@ -3878,6 +3878,12 @@
     "sounds": "Suoni",
     "desktop": "Desktop"
   },
+  "storeGate": {
+    "title": "Collega uno store per continuare",
+    "description": "Per recuperare le informazioni sui giochi devi prima registrarti ad almeno uno store. Nessuno store risulta collegato a questo profilo.",
+    "connectButton": "Vai agli Store e collega un account",
+    "hint": "Steam, Epic, GOG, Ubisoft, itch.io e altri"
+  },
   "stores": {
     "title": "Gestione Stores",
     "subtitle": "Collega i tuoi account per importare la libreria giochi",

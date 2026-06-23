@@ -15,7 +15,7 @@ import {
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import InlineTranslator from '@/components/inline-translator';
-// LanguageFlags import removed — not currently used
+import { LanguageFlags, getCountryCode } from '@/components/ui/language-flags';
 import { activityHistory } from '@/lib/activity-history';
 import { TranslationRecommendation } from '@/components/translation-recommendation';
 import { useTranslation } from '@/lib/i18n';
@@ -171,6 +171,9 @@ export default function GameDetailPage() {
 
   // FMV detection (rileva automaticamente se il gioco contiene file video FMV)
   const [fmvInfo, setFmvInfo] = useState<{ isFmvGame: boolean; totalFiles: number; totalSizeMB: number; formats: string[] } | null>(null);
+
+  // Lingue rilevate dai file di localizzazione del gioco (offline, qualsiasi store/engine).
+  const [detectedLanguages, setDetectedLanguages] = useState<string[]>([]);
 
   // ═══ TARGET LANGUAGE (lingua traduzione, indipendente dalla lingua UI) ═══
   const TARGET_LANGUAGES = [
@@ -375,6 +378,22 @@ export default function GameDetailPage() {
       setIsDetectingEngine(false);
     }
   };
+
+  // Rileva le lingue supportate dal gioco analizzandone i file di localizzazione.
+  useEffect(() => {
+    const path = game?.installPath;
+    if (!path) { setDetectedLanguages([]); return; }
+    let cancelled = false;
+    (async () => {
+      try {
+        const langs = await invoke<string[]>('detect_languages_from_files', { gamePath: path });
+        if (!cancelled) setDetectedLanguages(Array.isArray(langs) ? langs : []);
+      } catch (e: unknown) {
+        if (!cancelled) clientLogger.debug('[LangScan] rilevamento lingue da file fallito:', String(e));
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [game?.installPath]);
 
   // Pre-compute translation strategy on page load (engine + files + method)
   const computeTranslationStrategy = async () => {
@@ -2232,6 +2251,29 @@ export default function GameDetailPage() {
                 <span className="text-2xs font-bold px-2.5 py-1 rounded-md text-violet-300 bg-violet-500/10 border border-violet-500/15 flex items-center gap-1"><Clock className="h-3 w-3" /> {Math.round((game.playtime_forever ?? 0) / 60)}h</span>
               )}
             </div>
+
+            {/* Lingue del gioco — rilevate dai file di localizzazione (+ Steam se presenti) */}
+            {(() => {
+              const fromSteam = typeof game.supported_languages === 'string'
+                ? game.supported_languages.split(',').map(s => s.replace(/<[^>]*>/g, '').replace(/\*/g, '').trim()).filter(Boolean)
+                : [];
+              const seen = new Set<string>();
+              const merged: string[] = [];
+              for (const l of [...detectedLanguages, ...fromSteam]) {
+                const key = getCountryCode(l) ?? l.trim().toLowerCase();
+                if (key && !seen.has(key)) { seen.add(key); merged.push(l.trim()); }
+              }
+              if (merged.length === 0) return null;
+              return (
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-2xs font-semibold uppercase tracking-wider text-slate-500 flex items-center gap-1">
+                    <Languages className="h-3 w-3" /> {t('gameDetails.gameLanguages') || 'Lingue'}
+                  </span>
+                  <LanguageFlags supportedLanguages={merged} maxFlags={12} />
+                  <span className="text-2xs text-slate-500">({merged.length})</span>
+                </div>
+              );
+            })()}
           </motion.div>
 
           {/* Action buttons (right side — desktop) */}
