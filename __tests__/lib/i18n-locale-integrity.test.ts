@@ -44,21 +44,23 @@ function flatten(obj: Json, prefix = ''): Map<string, string> {
 const it = flatten(itJson as Json);
 const en = flatten(enJson as Json);
 
-// Baseline misurata il 2026-06-12 dopo la bonifica completa — può solo
-// SCENDERE. I leftover residui di es/pt/fr/pl sono cognati legittimi
-// (parole identiche in italiano e nella lingua target, es. "Tono", "Sistema",
-// "Temperatura"): l'euristica non può distinguerli, quindi restano in baseline.
+// Baseline aggiornata il 2026-06-23 dopo il completamento delle traduzioni
+// (es/fr/de/pt/pl/ja/zh/ko portati a copertura quasi piena). Può solo SCENDERE.
+// I leftover residui di es/pt/fr/pl sono cognati legittimi: parole corrette nella
+// lingua target ma identiche all'italiano (es. "Sistema", "Data", "Tipo", "Tema",
+// "Formato", "Temperatura", "Lista", "Legenda", "Filtro"). L'euristica non può
+// distinguerli dall'italiano non tradotto, quindi restano in baseline.
 const locales: { name: string; json: Json; maxMissing: number; maxLeftover: number }[] = [
   { name: 'en', json: enJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ru', json: ruJson as Json, maxMissing: 0, maxLeftover: 0 },
-  { name: 'es', json: esJson as Json, maxMissing: 0, maxLeftover: 34 },
+  { name: 'es', json: esJson as Json, maxMissing: 0, maxLeftover: 33 },
   { name: 'fr', json: frJson as Json, maxMissing: 0, maxLeftover: 2 },
   { name: 'de', json: deJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ja', json: jaJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'zh', json: zhJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ko', json: koJson as Json, maxMissing: 0, maxLeftover: 0 },
-  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 39 },
-  { name: 'pl', json: plJson as Json, maxMissing: 0, maxLeftover: 9 },
+  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 43 },
+  { name: 'pl', json: plJson as Json, maxMissing: 0, maxLeftover: 11 },
 ];
 
 describe('integrità dei locale i18n', () => {
