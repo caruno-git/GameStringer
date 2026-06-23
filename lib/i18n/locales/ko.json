@@ -5075,5 +5075,11 @@
     "startToUseAdvanced": "Start Ollama to use advanced features",
     "yes": "Yes",
     "no": "No"
+  },
+  "storeGate": {
+    "title": "계속하려면 스토어를 연결하세요",
+    "description": "게임 정보를 가져오려면 먼저 하나 이상의 스토어에 등록해야 합니다. 이 프로필에 연결된 스토어가 없습니다.",
+    "connectButton": "스토어로 이동하여 계정 연결",
+    "hint": "Steam, Epic, GOG, Ubisoft, itch.io 등"
   }
 }

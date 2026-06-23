@@ -5075,5 +5075,11 @@
     "startToUseAdvanced": "Start Ollama to use advanced features",
     "yes": "Yes",
     "no": "No"
+  },
+  "storeGate": {
+    "title": "Подключите магазин, чтобы продолжить",
+    "description": "Чтобы получить информацию об играх, сначала нужно зарегистрироваться хотя бы в одном магазине. К этому профилю не подключён ни один магазин.",
+    "connectButton": "Перейти к магазинам и привязать аккаунт",
+    "hint": "Steam, Epic, GOG, Ubisoft, itch.io и другие"
   }
 }

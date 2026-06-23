@@ -5075,5 +5075,11 @@
     "startToUseAdvanced": "Uruchom Ollamę, aby korzystać z funkcji zaawansowanych",
     "yes": "Tak",
     "no": "Nie"
+  },
+  "storeGate": {
+    "title": "Połącz sklep, aby kontynuować",
+    "description": "Aby pobrać informacje o grach, musisz najpierw zarejestrować się w co najmniej jednym sklepie. Do tego profilu nie jest podłączony żaden sklep.",
+    "connectButton": "Przejdź do Sklepów i połącz konto",
+    "hint": "Steam, Epic, GOG, Ubisoft, itch.io i inne"
   }
 }

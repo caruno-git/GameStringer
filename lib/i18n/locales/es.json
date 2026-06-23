@@ -4969,5 +4969,11 @@
     "startToUseAdvanced": "Start Ollama to use advanced features",
     "yes": "Yes",
     "no": "No"
+  },
+  "storeGate": {
+    "title": "Conecta una tienda para continuar",
+    "description": "Para obtener la información de los juegos primero debes registrarte en al menos una tienda. No hay ninguna tienda vinculada a este perfil.",
+    "connectButton": "Ir a las Tiendas y vincular una cuenta",
+    "hint": "Steam, Epic, GOG, Ubisoft, itch.io y más"
   }
 }

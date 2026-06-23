@@ -4969,5 +4969,11 @@
     "startToUseAdvanced": "Start Ollama to use advanced features",
     "yes": "Yes",
     "no": "No"
+  },
+  "storeGate": {
+    "title": "请连接一个商店以继续",
+    "description": "要获取游戏信息，您需要先注册至少一个商店。此配置文件未连接任何商店。",
+    "connectButton": "前往商店并关联账户",
+    "hint": "Steam、Epic、GOG、Ubisoft、itch.io 等"
   }
 }
