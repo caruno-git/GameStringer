@@ -7,7 +7,9 @@
 >
 > Pipeline sotto test: pulsante hero `startAutoTranslate` → `runRenpyTranslation`
 > (`lib/renpy-translate.ts`) → `extract_all_renpy_strings` → `offline_translate_batch_context`
-> (Ollama, glossario + voce) → `generate_renpy_translation` (`src-tauri/.../renpy_patcher.rs`).
+> (Ollama, **glossario + profili voce personaggio**: tono/personalità/pattern, auto-estratti se
+> assenti) → `generate_renpy_translation` (`src-tauri/.../renpy_patcher.rs`). Avanzamento mostrato
+> nel **pannello stepper** (`AutoTranslateStepper`), non più solo nei toast.
 
 ## 0. Prerequisiti
 
@@ -27,9 +29,11 @@
 
 - [ ] Aprire il dettaglio del gioco → motore rilevato come **Ren'Py**.
 - [ ] Premere il pulsante hero ("STRING IT!" / Traduci).
-- [ ] Seguire i toast di progresso nell'ordine atteso: **estrazione → carico glossario → traduzione N/M (ripresa salvata) → genero i file tl/ → Tradotto: X/Y**.
-- [ ] Il toast finale riporta `X/Y stringhe` e, se presente, `(glossario: N termini)`.
+- [ ] Il **pulsante** si disabilita e mostra lo spinner + `Traduzione N/M` (niente doppio-click possibile).
+- [ ] Il **pannello stepper** mostra gli step in ordine: **📂 Estrazione → 📖 Glossario & voci personaggio → ✨ Traduzione AI (N/M) → 🩹 Generazione file tl/**, con stato `running/done/error`.
+- [ ] A fine job il pannello mostra il **risultato**: % successo, durata, `X/Y stringhe`, e nel dettaglio dell'ultimo step `glossario N · voci M` se presenti.
 - [ ] Nessun errore "Ollama avviato?" o eccezioni in console.
+- [ ] (Motore non Ren'Py/non supportato) il pannello mostra un **messaggio onesto** ("motore non ancora supportato / nessuna stringa estraibile"), non un falso successo.
 
 ## 3. Verifica dei file generati (`game/tl/<lang>/`)
 
@@ -38,6 +42,19 @@
 - [ ] Esistono i file `*_<lang>.rpy` con blocco `translate <lang> strings:` per il **testo UI** delle screen (coppie `old`/`new`).
 - [ ] Le **chiavi** del dizionario corrispondono al testo runtime (niente doppio escape: `\"` singolo, non `\\\"`).
 - [ ] I **placeholder** Ren'Py nelle traduzioni sono intatti: tag `{...}`, interpolazione `[var]`, escape `\n`/`\t` (non devono risultare tradotti o rotti dal masking).
+
+### 3b. Validazione automatica (oggettiva)
+
+Invece di controllare i file a occhio, lancia lo script di validazione:
+
+```
+node scripts/validate-renpy-tl.js "<percorso gioco>" <lang>
+# es: node scripts/validate-renpy-tl.js "C:/Games/DDLC" it
+```
+
+- [ ] Lo script trova `game/tl/<lang>/` e riporta: voci totali, **% tradotte**, non tradotte (vuote / == originale), **codici `{..}`/`[..]` rotti**.
+- [ ] **ESITO: ✅ PASS** (default: ≥90% tradotte e 0 codici rotti). Soglia regolabile con `GS_TL_MIN_RATIO`.
+- [ ] Se FAIL: usare gli "Esempi non tradotti" / "Esempi codici rotti" stampati per individuare le stringhe da correggere.
 
 ## 4. Verifica in gioco (la prova del nove)
 
@@ -62,7 +79,8 @@
 
 - [ ] Con un **glossario** popolato per il gioco (termini locked/synced): i nomi/termini chiave appaiono **coerenti** e i `doNotTranslate` restano invariati.
 - [ ] Senza glossario: il flusso procede comunque (toast senza conteggio termini).
-- [ ] **Voce**: righe dello stesso personaggio mantengono un registro coerente (effetto del contesto `character` passato all'LLM). Valutazione qualitativa su 2-3 personaggi.
+- [ ] **Voci personaggio (profili)**: con profili in `lib/voice/voice-profiles.ts` (manuali o auto-estratti), righe dello stesso personaggio mantengono tono/registro/personalità coerenti (nel prompt finisce il descrittore ricco, non solo il nome). Il pannello/risultato riporta `voci M`. Valutazione qualitativa su 2-3 personaggi con profilo distinto (es. uno formale, uno sarcastico).
+- [ ] Senza profili: il flusso li **auto-estrae** dai dialoghi (≥3 battute per personaggio) e li applica; verificare che `voci M` sia > 0 su una VN con dialoghi attribuiti.
 
 ## 7. Checkpoint / resume
 
@@ -72,6 +90,7 @@
 
 ## 8. Criteri di PASS (gate hero)
 
+- [ ] `node scripts/validate-renpy-tl.js` → **PASS** (≥90% tradotte, 0 codici rotti).
 - [ ] Dialoghi + narrazione + menu + UI **tutti tradotti in gioco**, senza intervento manuale.
 - [ ] Nessun placeholder/tag rotto, nessun crash all'avvio del gioco tradotto.
 - [ ] Resume funzionante.

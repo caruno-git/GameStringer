@@ -233,6 +233,10 @@ export default function GameDetailPage() {
 
   // Auto-Translate one-click flow
   const [autoTranslateActive, setAutoTranslateActive] = useState(false);
+  // "busy" = una traduzione è in corso (feedback pulsante + guard anti-doppio-click su TUTTI i motori).
+  // "active" = mostra il pannello stepper (Ren'Py + path generico). Separati per non mostrare pannelli vuoti.
+  const [autoTranslateBusy, setAutoTranslateBusy] = useState(false);
+  const [autoTranslateProgress, setAutoTranslateProgress] = useState<string>('');
   const [_autoTranslateStep, setAutoTranslateStep] = useState(0);
   const [autoTranslateSteps, setAutoTranslateSteps] = useState<{label: string, status: 'pending' | 'running' | 'done' | 'error', detail?: string}[]>([]);
   const [autoTranslateError, setAutoTranslateError] = useState<string | null>(null);
@@ -1584,6 +1588,12 @@ export default function GameDetailPage() {
       toast.error(t('common.percorsoDiInstallazioneNonDisponibile'));
       return;
     }
+    // Guard anti-doppio-click + feedback pulsante valido per OGNI motore (anche i rami
+    // con return anticipato: Hendrix/Ren'Py/RPG). Reset garantito nei rispettivi finally.
+    if (autoTranslateBusy || autoTranslateRunningRef.current) return;
+    autoTranslateRunningRef.current = true;
+    setAutoTranslateBusy(true);
+    setAutoTranslateProgress('');
 
     // ── Hendrix_Localization (RPG Maker MV/MZ con game_messages.csv) ──
     // Via CSV nativa del gioco: riempiamo la colonna lingua, abilitiamo il plugin
@@ -1608,6 +1618,10 @@ export default function GameDetailPage() {
           toast.success(`Tradotto: ${r.applied}/${r.total} stringhe in ${tgtName[tgt] || tgt}. Rilancia il gioco.`, { id: toastId });
         } catch (e) {
           toast.error('Hendrix: errore (Ollama avviato?)', { id: toastId, description: String(e) });
+        } finally {
+          setAutoTranslateBusy(false);
+          setAutoTranslateProgress('');
+          autoTranslateRunningRef.current = false;
         }
         return;
       }
@@ -1622,7 +1636,20 @@ export default function GameDetailPage() {
       const engR = (game.engine || engineInfo?.engine || detectEngineByName(game.name || game.title || '') || '').toLowerCase();
       if (engR.includes("ren'py") || engR.includes('renpy')) {
         const tgt = (targetLang || language || 'it').toLowerCase();
-        const toastId = toast.loading("Ren'Py: estrazione stringhe...");
+        const t0 = Date.now();
+        // Esperienza "hero": stati chiari nel pannello stepper (non solo toast).
+        const rpSteps = [
+          { label: "📂 Estrazione stringhe (.rpy)", status: 'pending' as const },
+          { label: "📖 Glossario & voci personaggio", status: 'pending' as const },
+          { label: "✨ Traduzione AI", status: 'pending' as const },
+          { label: "🩹 Generazione file tl/", status: 'pending' as const },
+        ];
+        const rpStep = (idx: number, status: 'running' | 'done' | 'error', detail?: string) =>
+          setAutoTranslateSteps(prev => prev.map((s, i) => i === idx ? { ...s, status, detail } : i < idx ? { ...s, status: 'done' } : s));
+        setAutoTranslateError(null);
+        setAutoTranslateResult(null);
+        setAutoTranslateSteps([...rpSteps]);
+        setAutoTranslateActive(true);
         try {
           const r = await runRenpyTranslation({
             gamePath: game.installPath,
@@ -1630,15 +1657,36 @@ export default function GameDetailPage() {
             sourceLang: 'en',
             gameId: game.id || (game.appid ? String(game.appid) : undefined),
             onProgress: (p) => {
-              if (p.phase === 'extract') toast.loading("Ren'Py: estrazione stringhe...", { id: toastId });
-              else if (p.phase === 'glossary') toast.loading("Ren'Py: carico il glossario...", { id: toastId });
-              else if (p.phase === 'translate') toast.loading(`Ren'Py: traduzione ${p.done}/${p.total}... (ripresa salvata)`, { id: toastId });
-              else if (p.phase === 'generate') toast.loading("Ren'Py: genero i file tl/...", { id: toastId });
+              if (p.phase === 'extract') rpStep(0, 'running');
+              else if (p.phase === 'glossary') { rpStep(0, 'done'); rpStep(1, 'running'); }
+              else if (p.phase === 'translate') {
+                rpStep(1, 'done');
+                rpStep(2, 'running', `${p.done}/${p.total}`);
+                setAutoTranslateProgress(p.total ? `${p.done}/${p.total}` : '');
+              } else if (p.phase === 'generate') { rpStep(2, 'done'); rpStep(3, 'running'); }
+              else if (p.phase === 'done') rpStep(3, 'done');
             },
           });
-          toast.success(`Tradotto: ${r.translated}/${r.total} stringhe${r.glossaryTerms ? ` (glossario: ${r.glossaryTerms} termini)` : ''}${r.voiceProfiles ? ` (voci personaggio: ${r.voiceProfiles})` : ''}. Avvia il gioco e seleziona ${tgt.toUpperCase()} dalle preferenze.`, { id: toastId });
+          rpStep(3, 'done', `${r.translated}/${r.total} stringhe${r.glossaryTerms ? ` · glossario ${r.glossaryTerms}` : ''}${r.voiceProfiles ? ` · voci ${r.voiceProfiles}` : ''}`);
+          setAutoTranslateResult({
+            successRate: r.total ? Math.round((100 * r.translated) / r.total) : 0,
+            duration: Math.round((Date.now() - t0) / 1000),
+            deliverables: 1,
+            errors: Math.max(0, r.total - r.translated),
+            engine: "Ren'Py",
+            targetLang: tgt,
+            stringsTranslated: r.translated,
+            stringsTotal: r.total,
+          });
+          toast.success(`Ren'Py: ${r.translated}/${r.total} stringhe tradotte. Avvia il gioco e seleziona ${tgt.toUpperCase()}.`);
         } catch (e) {
-          toast.error("Ren'Py: errore (Ollama avviato?)", { id: toastId, description: String(e) });
+          rpStep(2, 'error', String(e));
+          setAutoTranslateError(`Ren'Py: ${String(e)} — Ollama è avviato?`);
+          toast.error("Ren'Py: errore (Ollama avviato?)", { description: String(e) });
+        } finally {
+          setAutoTranslateBusy(false);
+          setAutoTranslateProgress('');
+          autoTranslateRunningRef.current = false;
         }
         return;
       }
@@ -1673,14 +1721,14 @@ export default function GameDetailPage() {
             autostart: '1',
           });
           toast.info('RPG Maker classico: avvio traduzione live OCR (JA→' + (targetLang || language || 'it').toUpperCase() + ')');
+          setAutoTranslateBusy(false);
+          setAutoTranslateProgress('');
+          autoTranslateRunningRef.current = false;
           router.push(`/ocr-translator?${params.toString()}`);
           return;
         }
       } catch { /* detect fallito → prosegui col workflow file-based normale */ }
     }
-
-    if (autoTranslateRunningRef.current) return;
-    autoTranslateRunningRef.current = true;
 
     setAutoTranslateActive(true);
     setAutoTranslateError(null);
@@ -1816,7 +1864,19 @@ export default function GameDetailPage() {
       
       const deliverables = executionResult?.deliverables || [];
       const errors = executionResult?.errors || [];
-      
+      const totalStr = executionResult?.totalStrings || 0;
+
+      // Messaggio onesto: nessun deliverable e nessuna stringa estraibile = motore non
+      // supportato (file-based) o niente da tradurre. Niente falso "successo".
+      if (deliverables.length === 0 && totalStr === 0) {
+        updateStep(7, 'error', 'Nessuna stringa estraibile da questo gioco');
+        setAutoTranslateError(
+          `Il motore "${predictionResult?.engine || game.engine || 'sconosciuto'}" non è ancora supportato per la traduzione automatica sui file, oppure non sono state trovate stringhe estraibili. Opzioni: prova l'OCR overlay (per giochi che mostrano testo a runtime) o la traduzione manuale dal patcher dedicato.`
+        );
+        toast.error('Motore non supportato o nessuna stringa estraibile');
+        return; // → finally resetta lo stato; nessun result di "successo"
+      }
+
       if (errors.length === 0) {
         updateStep(7, 'done', `✅ ${deliverables.length} deliverables creati, 0 errori`);
       } else {
@@ -1843,6 +1903,8 @@ export default function GameDetailPage() {
       if (unlistenWorkflow) unlistenWorkflow();
     } finally {
       autoTranslateRunningRef.current = false;
+      setAutoTranslateBusy(false);
+      setAutoTranslateProgress('');
     }
   };
 
@@ -2295,11 +2357,11 @@ export default function GameDetailPage() {
                 {/* ── Bottone STRING IT! (HERO — azione principale) ── */}
                 <button className="h-12 flex-1 flex items-center justify-center gap-2 rounded-l-xl bg-gradient-to-r from-indigo-600 to-violet-500 hover:from-indigo-500 hover:to-violet-400 text-white font-extrabold text-xs uppercase tracking-widest shadow-xl shadow-indigo-500/40 hover:shadow-indigo-500/60 transition-all border border-indigo-400/30 border-r-0 relative overflow-hidden group"
                   onClick={handleStringIt}
-                  disabled={autoTranslateActive}
+                  disabled={autoTranslateBusy}
                   title={t('common.avviaLaTraduzioneCompletaDelGioco')}
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-[200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
-                  {autoTranslateActive ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" fill="currentColor" />} {autoTranslateActive ? t('gameDetails.translating') || 'Translating...' : 'String it!'}
+                  {autoTranslateBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" fill="currentColor" />} {autoTranslateBusy ? (autoTranslateProgress ? `Traduzione ${autoTranslateProgress}` : (t('gameDetails.translating') || 'Translating...')) : 'String it!'}
                 </button>
                 {/* ── Bandierina lingua target ── */}
                 <div className="relative" ref={langPickerRef}>
@@ -2376,9 +2438,9 @@ export default function GameDetailPage() {
         )}
         <button className="flex-1 h-9 flex items-center justify-center gap-1.5 rounded-l-lg bg-gradient-to-r from-indigo-600 to-violet-500 text-white font-bold text-2xs uppercase tracking-wider shadow-lg shadow-indigo-500/30"
           onClick={handleStringIt}
-          disabled={autoTranslateActive}
+          disabled={autoTranslateBusy}
         >
-          {autoTranslateActive ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" fill="currentColor" />} {autoTranslateActive ? '...' : 'String it!'}
+          {autoTranslateBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" fill="currentColor" />} {autoTranslateBusy ? (autoTranslateProgress || '...') : 'String it!'}
         </button>
         <button className="h-9 px-2 flex items-center gap-0.5 rounded-r-lg bg-violet-600/90 text-white text-xs font-bold"
           onClick={() => setShowLangPicker(!showLangPicker)}
