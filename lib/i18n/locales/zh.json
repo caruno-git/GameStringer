@@ -4679,7 +4679,22 @@
     "featureUpdate": "✨ Feature Update",
     "majorRelease": "🚀 Major Release",
     "patchNotes": "🔧 Patch Notes",
-    "currentVersion": "Current Version"
+    "currentVersion": "Current Version",
+    "v1_10_0": {
+      "0": "✨ gs-hook：全新的 Universal Text Interception Framework — GDI/GetGlyphOutlineW 提取、逐字形（glyph-by-glyph）替换、Unreal FText 挂钩、dual-arch x86/x64、反作弊 gate 与被动模式",
+      "1": "✨ 实时悬浮层：注入时自动打开的实时窗口（Rust + 前端），通过应用的翻译栈翻译提取的文本",
+      "2": "✨ Universal injector 完成：inject_translation_hook 覆盖全部 12 种引擎（含 RPG Maker 修复）、已注册命令并支持跨平台",
+      "3": "✨ 面向 RPG Maker MV/MZ 的全新 Hendrix Localization 引擎（通过 game_messages.csv）",
+      "4": "✨ Ren'Py Hero 端到端流水线：带上下文、术语表、语音和断点续传（resume）的离线批量翻译",
+      "5": "✨ 针对 RPG Maker 部分覆盖的实时 OCR 回退；通过 Rust 路由 Lingva 以绕过 Tauri 的 CORS 限制",
+      "6": "✨ Ollama：全新的高级功能页面（6 个标签页），新增 8 项功能及其翻译",
+      "7": "✨ AI：可通过环境变量选择 Gemini/Claude 模型，并支持高级提供商",
+      "8": "✨ 新增希腊语（el）界面语言，并重新设计了 changelog 对话框",
+      "9": "✨ 翻译：XUnity 更新至 5.5.0 -> 5.6.1，新增 5 个意大利语订阅源；新闻图片始终可见并采用级联回退",
+      "10": "✨ 网站：sci-fi/cyberpunk 重新设计、带知识库的 FAQ 聊天机器人，以及从 GitHub releases 自动更新的版本号",
+      "11": "🐛 更可靠的翻译：离线翻译中保留游戏控制代码，并为 Unity 设定诚实的成功标准",
+      "12": "🐛 稳定性与质量：修复 community chat 与自动登录、恢复配置文件选择器、通知/配置文件修复（竞态与数据丢失）、9 种语言的 i18n 整理、ESLint 78->0、类型检查 0 错误、Rust 测试套件全绿并对齐 CI"
+    }
   },
   "communityChat": {
     "communityChatTitle": "Community Chat",

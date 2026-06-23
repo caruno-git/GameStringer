@@ -4679,7 +4679,22 @@
     "featureUpdate": "✨ Feature Update",
     "majorRelease": "🚀 Major Release",
     "patchNotes": "🔧 Patch Notes",
-    "currentVersion": "Current Version"
+    "currentVersion": "Current Version",
+    "v1_10_0": {
+      "0": "✨ gs-hook: 新しい Universal Text Interception Framework — GDI/GetGlyphOutlineW 抽出、glyph-by-glyph 置換、Unreal FText フック、dual-arch x86/x64、アンチチート gate、パッシブモード",
+      "1": "✨ リアルタイムオーバーレイ: インジェクション時に自動で開くライブウィンドウ（Rust + フロントエンド）。抽出テキストをアプリの翻訳スタックで翻訳",
+      "2": "✨ Universal injector 完成: inject_translation_hook が全 12 エンジンに対応（RPG Maker 修正含む）、コマンド登録とクロスプラットフォーム対応",
+      "3": "✨ RPG Maker MV/MZ 向けの新エンジン Hendrix Localization（game_messages.csv 経由）",
+      "4": "✨ Ren'Py Hero パイプラインのエンドツーエンド: コンテキスト・用語集・音声・再開（resume）に対応したオフラインのバッチ翻訳",
+      "5": "✨ RPG Maker の部分カバレッジ向けライブ OCR フォールバック。Tauri の CORS 制限を回避するため Lingva を Rust 経由でルーティング",
+      "6": "✨ Ollama: 8 つの追加機能とその翻訳を備えた新しい高度な機能ページ（6 タブ）",
+      "7": "✨ AI: 環境変数で Gemini/Claude モデルを選択可能、プレミアムプロバイダーに対応",
+      "8": "✨ ギリシャ語（el）UI を追加し、changelog ダイアログを再設計",
+      "9": "✨ 翻訳: XUnity を 5.5.0 -> 5.6.1 に更新、IT フィードを 5 件追加。ニュースの画像はカスケードフォールバックで常に表示",
+      "10": "✨ Web サイト: sci-fi/cyberpunk リデザイン、ナレッジベース付き FAQ チャットボット、GitHub リリースから自動更新されるバージョン表示",
+      "11": "🐛 より信頼性の高い翻訳: オフライン翻訳でゲームの制御コードを保持し、Unity に対して正直な成功基準を採用",
+      "12": "🐛 安定性と品質: community chat と自動ログインの修正、プロフィールセレクターの復元、通知/プロフィールの修正（競合とデータ損失）、9 言語の i18n 整理、ESLint 78->0、型チェックエラー 0、Rust テストスイートのグリーン化と CI 整合"
+    }
   },
   "communityChat": {
     "communityChatTitle": "Community Chat",

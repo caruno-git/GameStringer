@@ -4679,7 +4679,22 @@
     "featureUpdate": "✨ Feature Update",
     "majorRelease": "🚀 Major Release",
     "patchNotes": "🔧 Patch Notes",
-    "currentVersion": "Current Version"
+    "currentVersion": "Current Version",
+    "v1_10_0": {
+      "0": "✨ gs-hook: neues Universal Text Interception Framework — GDI/GetGlyphOutlineW-Extraktion, glyph-by-glyph-Ersetzung, Unreal-FText-Hook, Dual-Arch x86/x64, Anti-Cheat-Gate und passiver Modus",
+      "1": "✨ Echtzeit-Overlay: Live-Fenster (Rust + Frontend), das sich bei der Injection automatisch öffnet und den extrahierten Text über den Übersetzungs-Stack der App übersetzt",
+      "2": "✨ Universal Injector fertiggestellt: inject_translation_hook deckt alle 12 Engines ab (mit RPG-Maker-Fixes), registrierte Befehle und plattformübergreifende Unterstützung",
+      "3": "✨ Neue Hendrix-Localization-Engine für RPG Maker MV/MZ (über game_messages.csv)",
+      "4": "✨ Ren'Py-Hero-Pipeline end-to-end: Offline-Batch-Übersetzung mit Kontext, Glossar, Stimme und Wiederaufnahme (Resume)",
+      "5": "✨ Live-OCR-Fallback für die teilweise Abdeckung von RPG Maker; Lingva über Rust geroutet, um die CORS-Grenzen von Tauri zu umgehen",
+      "6": "✨ Ollama: neue Seite für erweiterte Funktionen (6 Tabs) mit 8 zusätzlichen Features und deren Übersetzungen",
+      "7": "✨ KI: Gemini/Claude-Modelle über Umgebungsvariablen wählbar, mit Unterstützung für Premium-Anbieter",
+      "8": "✨ Griechisch (el) als UI-Sprache hinzugefügt und der Changelog-Dialog neu gestaltet",
+      "9": "✨ Übersetzungen: XUnity aktualisiert 5.5.0 -> 5.6.1 und 5 neue IT-Feeds; Bilder in den News immer sichtbar mit kaskadierendem Fallback",
+      "10": "✨ Website: Sci-Fi/Cyberpunk-Redesign, FAQ-Chatbot mit Wissensdatenbank und automatisch aus den GitHub-Releases aktualisierte Version",
+      "11": "🐛 Zuverlässigere Übersetzung: Steuerzeichen der Spiele bei der Offline-Übersetzung erhalten und ein ehrliches Erfolgskriterium für Unity",
+      "12": "🐛 Stabilität & Qualität: Fixes für Community-Chat und Auto-Login, Profil-Selektor wiederhergestellt, Fixes für Benachrichtigungen/Profile (Race und Datenverlust), i18n-Bereinigung in 9 Sprachen, ESLint 78->0, Typecheck mit 0 Fehlern, grüne Rust-Suite und abgestimmte CI"
+    }
   },
   "communityChat": {
     "communityChatTitle": "Community Chat",

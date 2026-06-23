@@ -4791,7 +4791,22 @@
     "featureUpdate": "✨ Feature Update",
     "majorRelease": "🚀 Major Release",
     "patchNotes": "🔧 Patch Notes",
-    "currentVersion": "Versione Attuale"
+    "currentVersion": "Versione Attuale",
+    "v1_10_0": {
+      "0": "✨ gs-hook: nuovo Universal Text Interception Framework — estrazione GDI/GetGlyphOutlineW, sostituzione glyph-by-glyph, hook Unreal FText, dual-arch x86/x64, gate anti-cheat e modalità passiva",
+      "1": "✨ Overlay in tempo reale: finestra live (Rust + frontend) con auto-apertura all'injection e traduzione del testo estratto tramite lo stack di traduzione dell'app",
+      "2": "✨ Universal injector completato: inject_translation_hook copre tutti i 12 engine (con fix RPG Maker), comandi registrati e supporto cross-platform",
+      "3": "✨ Nuovo motore Hendrix Localization per RPG Maker MV/MZ (via game_messages.csv)",
+      "4": "✨ Pipeline Ren'Py Hero end-to-end: traduzione offline in batch con contesto, glossario, voce e ripresa (resume)",
+      "5": "✨ Fallback OCR live per la copertura parziale di RPG Maker; Lingva instradato via Rust per superare i limiti CORS di Tauri",
+      "6": "✨ Ollama: nuova pagina funzioni avanzate (6 schede) con 8 funzionalità aggiuntive e relative traduzioni",
+      "7": "✨ AI: modelli Gemini/Claude selezionabili da variabili d'ambiente, con supporto provider premium",
+      "8": "✨ Aggiunta lingua dell'interfaccia Greco (el) e redesign del dialog del changelog",
+      "9": "✨ Traduzioni: XUnity aggiornato 5.5.0 -> 5.6.1 e 5 nuovi feed ITA; immagini sempre visibili nelle news con fallback a cascata",
+      "10": "✨ Sito: redesign sci-fi/cyberpunk, chatbot FAQ con knowledge base e versione aggiornata automaticamente dalle release GitHub",
+      "11": "🐛 Traduzione più affidabile: preservati i codici di controllo dei giochi nella traduzione offline e criterio di successo onesto per Unity",
+      "12": "🐛 Stabilità e qualità: fix community chat e auto-login, ripristino selettore profili, correzioni notifiche/profili (race e perdita dati), bonifica i18n in 9 lingue, ESLint 78->0, typecheck a 0 errori, suite Rust verde e CI allineata"
+    }
   },
   "communityChat": {
     "communityChatTitle": "Community Chat",

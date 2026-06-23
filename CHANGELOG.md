@@ -1,204 +1,93 @@
-﻿# GameStringer Changelog
+# GameStringer Changelog
 
-## 🚀 v1.9.0 - 2026-04-26
+## 🚀 v1.10.0 - 2026-06-23
 
-### Unified Online Presence
-- **Presenza unificata**: sistema combinato Supabase Realtime + DB fallback
-- Heartbeat globale ogni 30s, auto-away (2+ min senza focus), auto-online al ritorno
-- Widget "Utenti Online" con username, avatar e indicatore Realtime
-- `lib/presence.ts` — modulo unificato, delega da `social.ts` e `community-chat.ts`
+- ✨ gs-hook: nuovo Universal Text Interception Framework — estrazione GDI/GetGlyphOutlineW, sostituzione glyph-by-glyph, hook Unreal FText, dual-arch x86/x64, gate anti-cheat e modalità passiva
+- ✨ Overlay in tempo reale: finestra live (Rust + frontend) con auto-apertura all'injection e traduzione del testo estratto tramite lo stack di traduzione dell'app
+- ✨ Universal injector completato: inject_translation_hook copre tutti i 12 engine (con fix RPG Maker), comandi registrati e supporto cross-platform
+- ✨ Nuovo motore Hendrix Localization per RPG Maker MV/MZ (via game_messages.csv)
+- ✨ Pipeline Ren'Py Hero end-to-end: traduzione offline in batch con contesto, glossario, voce e ripresa (resume)
+- ✨ Fallback OCR live per la copertura parziale di RPG Maker; Lingva instradato via Rust per superare i limiti CORS di Tauri
+- ✨ Ollama: nuova pagina funzioni avanzate (6 schede) con 8 funzionalità aggiuntive e relative traduzioni
+- ✨ AI: modelli Gemini/Claude selezionabili da variabili d'ambiente, con supporto provider premium
+- ✨ Aggiunta lingua dell'interfaccia Greco (el) e redesign del dialog del changelog
+- ✨ Traduzioni: XUnity aggiornato 5.5.0 -> 5.6.1 e 5 nuovi feed ITA; immagini sempre visibili nelle news con fallback a cascata
+- ✨ Sito: redesign sci-fi/cyberpunk, chatbot FAQ con knowledge base e versione aggiornata automaticamente dalle release GitHub
+- 🐛 Traduzione più affidabile: preservati i codici di controllo dei giochi nella traduzione offline e criterio di successo onesto per Unity
+- 🐛 Stabilità e qualità: fix community chat e auto-login, ripristino selettore profili, correzioni notifiche/profili (race e perdita dati), bonifica i18n in 9 lingue, ESLint 78->0, typecheck a 0 errori, suite Rust verde e CI allineata
 
-### System Tray Notifications
-- **Notifiche OS native** via Tauri per: chat, traduzioni, errori, aggiornamenti, giochi, amici, news
-- Preferenze configurabili per tipo + ore di silenzio (quiet hours)
-- Notifiche critiche (errori, aggiornamenti) bypassano quiet hours
-- Tooltip tray con conteggio notifiche non lette
-- `lib/tray-notifications.ts` — bridge frontend, `send_native_notification` + `update_tray_tooltip` in Rust
+## 🔧 v1.9.1 - 2026-04-29
 
-### Error Boundaries + Crash Recovery
-- **WidgetErrorBoundary**: recovery automatico dopo 5s (max 3 tentativi)
-- **AppErrorBoundary**: schermata errore con "Ricarica App"
-- `components/error-boundary.tsx`
+- Community Chat: fix avatars (gradient-IDs non generano più errori 404)
+- Community Chat: traduzione completa UI in 11 lingue
+- Icona di sistema: redesign neon GS logo e aggiunta icon.ico
+- Tauri: rimosso doppio start di Next.js per evitare conflitti sulla porta 3222
+- Splash Screen: aggiunto timeout di fallback (5s) per sblocco UI
 
-### Network Resilience / Offline Mode
-- **Network Monitor**: rileva online/offline + Supabase health check ogni 30s
-- Barra stato connessione (rossa/amber/verde)
-- Retry con exponential backoff (1s, 2s, 4s)
-- Coda offline: operazioni accodate e eseguite al ritorno connessione
-- `lib/network-resilience.ts` — guard anti-doppio-init, cleanup listener
+## 🔧 v1.9.0 - 2026-04-23
 
-### Character Voice Profiles (Voice Cloning)
-- **Estrazione automatica** personaggi e stile linguistico dalle stringhe di dialogo
-- 16 toni, 5 livelli formalità, 5 fasce d'età, catchphrases, speech patterns
-- Iniezione automatica nel prompt di traduzione per coerenza personaggio
-- `lib/voice-profiles.ts` + `components/settings/voice-profile-manager.tsx`
+- Community Hub UI: design sobrio e coerente — rimossi gradienti colorati, blob decorativi e ombre eccessive
+- Community Hub: KPI cards compatte, Category cards minimaliste, Trending cards uniformi
+- Friends Sidebar: larghezza ridotta (w-56), FriendCard compatte (avatar 7x7), sezioni Online/Offline più piccole
+- Scrollbar: ultra-sottili (4px), invisibili di default, appaiono solo al hover
+- Chat Persistente: bottone discreto, visibile su tutte le pagine, design elegante
+- Supabase Social Schema: schema compatibile con frontend (tools/supabase_social_compatible.sql)
+- Fix Chat Loop: aggiunto chatAttempted state per evitare chiamate ripetute a startDirectChat
+- Fix Mock Data: rimossi dati fittizi (user-123, etc.) da friends-sidebar che causavano errori UUID
+- Fix Ollama IPC: sostituiti tutti i check_ollama_status IPC con HTTP diretto a localhost:11434
+- Fix Stores: aggiunto link Stores nella sidebar sezione Risorse
+- Fix Epic Connect: Epic Games da OAuth rotto a modal credenziali
+- Fix Test Connessione: testConnection usa comandi Tauri reali invece di API simulata
+- Fix Disconnect: aggiunta cancellazione credenziali Epic/Steam nel backend Tauri
+- Fix Presence: aggiunto guard sessione in updatePresence per evitare 400 Bad Request
 
-### Fine-Tuning Infrastructure
-- **Dataset da correzioni umane** (Adaptive MT) → JSONL
-- 4 formati export: OpenAI, Ollama, Alpaca, ChatML
-- Model management per-game, integrazione Ollama
-- `lib/fine-tuning.ts` + `components/settings/fine-tuning-manager.tsx`
+## 🔧 v1.8.3 - 2026-04-18
 
-### Code Splitting / Lazy Loading
-- 8 componenti pesanti convertiti a `React.lazy` + `Suspense`
-- Avvio più rapido, meno memoria usata
+- Fix chat auto-connect coordination
 
-### Bug Fix
-- **Fix NetworkResilience doppio init**: guard `_monitorInitialized` + cleanup listener in `stopNetworkMonitor`
-- **Fix Supabase 400 user_profiles**: session check prima della query
-- **Fix tray version strings**: tooltip e menu aggiornati da v1.5.0 a v1.9.0
-- **Fix icon param**: parametro `icon` usato in `send_native_notification` Rust
-- **Fix quiet hours bypass**: notifiche critiche bypassano ore di silenzio
+## 🔧 v1.8.1 - 2026-04-14
 
-### Docs
-- Guide utente aggiornate in 11 lingue (IT, EN, DE, ES, FR, JA, KO, PL, PT, RU, ZH)
+- Fix CSP: aggiunto 'unsafe-eval' per compatibilità Next.js dev mode
+- Fix CSP: CSP permissiva in development, restrittiva in production
+- Fix CSP: aggiunto http://ipc.localhost per Tauri IPC
+- Fix i18n: corrette chiavi offlineTranslator.* nel widget Ollama dashboard
+- Fix Rust warnings: rimossi unused_mut e dead_code in 9 file backend
+- Middleware: CSP dinamica basata su NODE_ENV
 
----
+## 📝 v1.8.0 - 2026-04-09
 
-## �� v1.9.0 - 2026-04-22
+- Live Translation Overlay: traduzione in tempo reale via OCR overlay trasparente sopra qualsiasi gioco — cattura schermo → OCR multi-engine → traduzione AI (Groq/Cerebras) → overlay con animazioni gaming-style. Hotkey Ctrl+Alt+O
+- Hub Marketplace: marketplace per condividere translation pack della community — 1-click install, rating, recensioni, moderazione, profili utente con reputazione. Backend Supabase con 10 tabelle + RLS
+- Translation Memory Network: rete federata di memorie di traduzione — chi traduce contribuisce al pool globale (opt-in, privacy-first). Il prossimo utente trova stringhe gia tradotte. Integrazione automatica nel pipeline di traduzione
+- AI Dubbing Pipeline: pipeline 7-step per doppiaggio automatico — scan audio → Whisper STT → traduzione AI → sintesi vocale TTS con voice matching → duration matching → patch file audio → lip sync Rhubarb → generazione sottotitoli SRT/VTT/ASS
+- Plugin System: interfaccia PatcherPlugin per patcher community-created — detect/extract/patch/verify/restore lifecycle. Template generator per scaffold plugin. Nessuna ricompilazione Rust necessaria
+- Sicurezza: CSP rinforzata (rimosso unsafe-eval), XSS eliminato, storage API key crittografato AES-256-GCM, protezione CSRF, validazione Zod, rate limiting globale
+- Architettura: CI pipeline con tsc+eslint+vitest+npm audit, 71 nuovi test, 18 moduli estratti da file monolitici, 1197/1203 console.* migrati a logger strutturato, 893 catch tipizzati con :unknown
+- Refactoring: ai-translate-direct.ts (-429 righe, 5 moduli), game-detail-client.tsx (-636 righe, 8 componenti), translator/pro/page.tsx (-776 righe, 5 componenti)
+- Dipendenze: rimossi react-hot-toast e vdf duplicati, -42 pacchetti
 
-### Bug Fix & Stores
-- **Fix Ollama IPC**: sostituiti tutti i `check_ollama_status` IPC con HTTP diretto a localhost:11434 (main-layout, page.tsx, ollama-manager.ts, ollama-setup-wizard.tsx, ollama-manager settings) — eliminati errori `ipc.localhost ERR_CONNECTION_REFUSED`
-- **Fix Stores**: aggiunto link "Stores" nella sidebar sezione Risorse
-- **Fix Epic Connect**: Epic Games da OAuth rotto a modal credenziali (come GOG/Origin)
-- **Fix Test Connessione**: testConnection usa comandi Tauri reali invece di API simulata
-- **Fix Disconnect**: aggiunta cancellazione credenziali Epic/Steam nel backend Tauri al disconnect
-- **Fix Presence**: aggiunto guard sessione in `updatePresence` per evitare 400 Bad Request su `update_user_presence`
-- **i18n**: "Store" → "Stores" nelle traduzioni italiane
+## 📝 v1.7.0 - 2026-04-08
 
----
+- Auto-Select Engine (🧠): nuovo preset 'Auto' che seleziona dinamicamente i migliori provider AI per lingua target e genere gioco — basato su benchmark reali (DeepL per europee, Claude per CJK, boost genere RPG/Adventure)
+- Quality History: tracking sessione qualità provider per lingua, riordino automatico chain in base a successi/fallimenti
+- Gridly CSV Export/Import: formato multi-lingua compatibile Gridly/Lokalise/Crowdin (ID | source | target per ogni lingua), auto-detect delimiter e colonne lingua
+- Duration Matching: sintesi vocale con adattamento automatico velocità per mantenere la durata dell'audio originale — two-pass TTS con Web Audio API measurement
+- Rhubarb Lip Sync: generazione dati lip-sync (visemi A-X) da audio con timeline visuale interattiva, export per Unity (blend shapes) e Unreal (FaceFX)
+- Video Extractor: link diretto dalla scheda gioco + game picker dalla libreria + auto-scan
+- Lip Sync Page: nuova pagina /lip-sync con pannello completo (recognizer, timeline, stats, export multi-engine)
+- Sidebar: aggiunta voce Lip Sync nella sezione Tools
 
-## 🐛 v1.8.1 - 2026-04-14
+## 🔧 v1.6.1 - 2026-04-05
 
-### Bug Fix & Miglioramenti
-- **Fix CSP**: aggiunto `'unsafe-eval'` per compatibilità Next.js dev mode
-- **Fix CSP**: CSP permissiva in development, restrittiva in production
-- **Fix CSP**: aggiunto `http://ipc.localhost` per Tauri IPC
-- **Fix i18n**: corrette chiavi `offlineTranslator.*` nel widget Ollama dashboard
-- **Fix Rust warnings**: rimossi `unused_mut` e `dead_code` in 9 file backend
-- **Middleware**: CSP dinamica basata su `NODE_ENV`
+- CI/CD: merge job per unificare latest.json da tutte le piattaforme (Windows/Linux/macOS)
+- CI/CD: guard step che fallisce la build se il signing non produce firme minisign valide
+- CI/CD: step 'Locate latest.json' per rilevare immediatamente se tauri-action non genera il manifest updater
+- Auto-update: rotata la chiave minisign di signing (pubkey B61C7704C9F3B554) — la vecchia non ha mai firmato nulla in CI
+- Docs: aggiunta RELEASE_PROCESS.md con procedura completa (signer, secrets, verifica, rollback)
+- Rimosso latest.json orfano dalla root del repo (placeholder con firme vuote)
 
----
+## 🚀 v1.6.0 - 2026-04-04
 
-## �🚀 v1.8.0 - 2026-04-09
-
-### Live Translation Overlay
-- **Overlay OCR in tempo reale**: traduzione live del gioco tramite overlay trasparente con cattura schermo continua
-- Pipeline: cattura schermo → OCR multi-engine (Tesseract/OneOCR/PaddleOCR) → traduzione AI (Groq/Cerebras per velocità) → overlay stile gaming
-- Hotkey `Ctrl+Alt+O` per attivare/disattivare l'overlay
-- Diff detection: salta il testo invariato tra frame successivi
-- Cache traduzioni per replay istantaneo di testi già visti
-
-### Hub Marketplace
-- **Marketplace community**: piattaforma per pacchetti di traduzione con installazione 1-click
-- Backend Supabase con 10 tabelle (packs, reviews, commenti, follower, moderazione)
-- Profili utente con sistema di reputazione
-- Workflow stato pacchetti: draft → published → verified → featured
-
-### Translation Memory Network
-- **TM federata**: condivisione Translation Memory tramite Supabase
-- Traduzioni ad alta qualità (confidence > 0.8) contribuite automaticamente al pool globale (opt-in, privacy-first)
-- Testo sorgente hashato per protezione privacy
-- Auto-integrata nella pipeline `translateWithFallback()`
-- Entry con scope per gioco
-
-### AI Dubbing Pipeline
-- **Pipeline doppiaggio completa a 7 step**: scan audio → Whisper STT → traduzione AI → sintesi TTS con voci personaggio (OpenAI/ElevenLabs/Azure) → duration matching → patching file audio con backup → Rhubarb lip sync → generazione sottotitoli (SRT/VTT/ASS)
-- 16 archetipi personaggio per voci caratterizzate
-- Supporto pausa/ripresa/annullamento pipeline
-
-### Plugin System
-- **PatcherPlugin interface**: sistema plugin per patcher engine creati dalla community
-- Ciclo di vita completo: detect → extract → patch → verify → restore
-- Template generator per scaffolding plugin
-- Nessuna compilazione Rust necessaria — plugin eseguiti via JavaScript eval sandboxed
-- Distribuzione come pacchetti `.gsplugin`
-
-### Security
-- CSP rinforzata: rimosso `unsafe-eval`, `img-src`/`connect-src` ristretti a domini specifici
-- Fix XSS nella ricerca intelligente (rimosso `dangerouslySetInnerHTML`)
-- Storage chiavi API criptato con AES-256-GCM (backend Rust + client TypeScript)
-- Protezione CSRF: validazione Origin + header `X-GS-Client`
-- Validazione input Zod su 4 route API
-- Rate limiting globale middleware (configurabile per-route)
-- Tutte le 42/42 route API usano `withErrorHandler`
-
-### Architettura & Qualità Codice
-- CI pipeline: aggiunto job `frontend-checks` (tsc, eslint, vitest, npm audit)
-- ESLint config: regole `no-console`, `no-explicit-any`, `no-unused-vars`
-- 71 nuovi unit test (api-schemas, middleware, moduli traduzione)
-- 18 moduli estratti da 3 file monolitici (-1841 righe totali)
-- 1197/1203 chiamate `console.*` migrate a `clientLogger`/`logger` strutturato (99.5%)
-- 893 clausole catch tipizzate con `: unknown`
-- 25+ tipi TypeScript `any` eliminati
-- Rimosse dipendenze duplicate: react-hot-toast, vdf (-42 pacchetti)
-
-## 🚀 v1.7.0 - 2026-04-08
-
-### AI Translation Intelligence
-- **Auto-Select Engine (🧠)**: nuovo preset 'Auto' che seleziona dinamicamente i migliori provider AI in base alla lingua target e al genere del gioco
-- Ranking basato su benchmark reali: DeepL per lingue europee, Claude/Anthropic per CJK (cinese, giapponese, coreano), OpenAI come generalista
-- Boost genere: RPG/Adventure prioritizzano LLM creativi, Action/Strategy prioritizzano DeepL per accuratezza tecnica
-- Quality History: tracking qualità provider per sessione con riordino automatico della chain
-
-### Professional Localization Formats
-- **Gridly CSV Export/Import**: formato multi-lingua compatibile con Gridly, Lokalise e Crowdin
-- Struttura colonne: `string_id | source_en | context | target_it | target_de | ...`
-- Auto-detect delimiter (virgola, punto e virgola, tab) e colonne lingua
-- UTF-8 BOM per compatibilità Excel
-- Conversione bidirezionale tra formato single-target e multi-lingua
-
-### AI Voice Dubbing
-- **Duration Matching**: sintesi vocale con adattamento automatico velocità (0.5x-2.0x) per mantenere la durata dell'audio originale
-- Two-pass TTS: sintetizza → misura → calcola speed ratio → ri-sintetizza
-- Web Audio API per misurazione precisa durata audio
-- Toggle UI nel Voice Translator con confronto durata originale/sintetizzata
-- Supporto per batch synthesis con targetDuration per dialogo
-
-### Lip Sync (Rhubarb Integration)
-- **Rhubarb Lip Sync**: generazione dati visemi (A-X) da file audio con supporto WAV/OGG/MP3
-- Timeline visuale interattiva con barre colorate per ogni visema
-- Playback sync in tempo reale con playhead animato e display forma bocca attiva
-- Statistiche: durata, numero cue, media cue, rapporto parlato/silenzio
-- **Export Unity**: keyframe blend shapes compatibili con Oculus LipSync
-- **Export Unreal**: dati FaceFX phoneme per MetaHuman
-- Export raw in JSON, XML, TSV
-- Supporto recognizer fonetico (veloce) e data-based (preciso)
-- Dialog text hint per migliorare la precisione
-
-### Video Extractor Improvements
-- Link diretto "Video" nella scheda gioco (desktop + mobile) che apre il Video Extractor pre-compilato
-- Game picker "Scegli dalla Libreria" nel Video Extractor
-- Auto-scan quando si arriva dalla scheda gioco
-- Link "Scheda Gioco" per tornare alla pagina dettaglio
-
-### Navigation
-- Nuova pagina `/lip-sync` con pannello completo
-- Aggiunta voce "Lip Sync" nella sidebar sezione Tools
-- Bottone "Video" (fucsia) nella toolbar scheda gioco
-
-## 🔧 v1.6.1 - 2026-04-06
-
-- Fix pipeline auto-update: firma binari con minisign + `latest.json` multipiattaforma (Windows/macOS/Linux)
-- Upgrade tauri 2.10.2 → 2.10.3 (fix `__TAURI_BUNDLE_TYPE` marker, issue #14186)
-- Upgrade tauri-action v0.5 → v0.6.2 (fix pattern matching `.sig` files)
-- Aggiunta config `createUpdaterArtifacts: "v1Compatible"` per generare updater bundles (.nsis.zip, .app.tar.gz, .AppImage.tar.gz)
-- Rimossi step custom `merge-updater` — tauri-action v0.6.2 gestisce `latest.json` nativamente
-- Versione portable Windows (.zip) inclusa nella release
-- 140 unit test per i parser Bethesda (54) e CRI Middleware (86): BSA/BA2, STRINGS, ESP/ESM, CPK, @UTF, CRILAYLA, MSG/BMD/JSON/XML/FTD
-- Documentazione `RELEASE_PROCESS.md` riscritta con tutte le lezioni apprese
-
-## 🚀 v1.9.0 - 2026-04-04
-
-- Prediction Tool (P.T.): analisi traduzione per-gioco con difficulty score 0-100, DRM detection, encoding analysis, translation complexity, confidence score, LLM time estimates su 18 modelli, 5 chain Local/Cloud/Hybrid, export report
-- P.T.Rank / Classifica Rapida: ranking giochi per difficoltà con ordine suggerito di traduzione
-- Dry Run Scanner: scansione batch 800+ giochi senza modifica file (bottone + pannello nella library), categorizzazione ready/errori/unsupported, report JSON
-- Workflow Orchestrator: real execution engine con fast path universale per 6+ engine e progress real-time
-- "String it!" quick action: bottone one-click sulla game card (hover) per lanciare il Translation Wizard
-- "String it!" smart gate: nel dettaglio gioco controlla se il gioco è già stato analizzato da P.T. (cache 24h) e, se no, suggerisce di eseguire prima P.T. via toast con azioni "Esegui P.T. prima" / "String it! comunque"
-- Game Update Tracker: bottone "Smetti di monitorare" per disattivare il tracking di un gioco (comando backend `remove_tracked_game`), fix toast "patch danneggiata" ricorrente
-- P.T. upgrade: parsing reale stringhe, 20+ engine supportati, Gemma 4 (27B MoE A4B / E4B / E2B) nei time estimates e chains
-- Ollama Manager: auto-discovery modelli dal registry ollama.com + auto-refresh al focus/navigazione
 - Bethesda Engine Patcher: Skyrim LE/SE/AE, Fallout 3/NV/4, Oblivion, Starfield con parser BSA v103-105 + BA2 GNRL/DX10 + ESP/ESM (FULL/DESC/NAM1)
 - CRI Middleware Patcher: parser CPK + CRILAYLA + MSG/BMD/FTD (Persona 5 Royal, Yakuza, Tales of, Dragon Ball) con rilevamento Shift-JIS/UTF-8/UTF-16
 - Unity Localization Package pipeline: StringTable, SharedTableData, Addressables catalog, Smart Strings tokenizer + validator

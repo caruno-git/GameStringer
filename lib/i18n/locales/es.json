@@ -4679,7 +4679,22 @@
     "featureUpdate": "✨ Feature Update",
     "majorRelease": "🚀 Major Release",
     "patchNotes": "🔧 Patch Notes",
-    "currentVersion": "Current Version"
+    "currentVersion": "Current Version",
+    "v1_10_0": {
+      "0": "✨ gs-hook: nuevo Universal Text Interception Framework — extracción GDI/GetGlyphOutlineW, sustitución glyph-by-glyph, hook Unreal FText, dual-arch x86/x64, gate anti-cheat y modo pasivo",
+      "1": "✨ Overlay en tiempo real: ventana en vivo (Rust + frontend) que se abre automáticamente en la inyección y traduce el texto extraído mediante el stack de traducción de la app",
+      "2": "✨ Universal injector completado: inject_translation_hook cubre los 12 motores (con correcciones de RPG Maker), comandos registrados y soporte multiplataforma",
+      "3": "✨ Nuevo motor Hendrix Localization para RPG Maker MV/MZ (vía game_messages.csv)",
+      "4": "✨ Pipeline Ren'Py Hero de extremo a extremo: traducción offline por lotes con contexto, glosario, voz y reanudación (resume)",
+      "5": "✨ Fallback OCR en vivo para la cobertura parcial de RPG Maker; Lingva enrutado vía Rust para superar los límites CORS de Tauri",
+      "6": "✨ Ollama: nueva página de funciones avanzadas (6 pestañas) con 8 funcionalidades adicionales y sus traducciones",
+      "7": "✨ IA: modelos Gemini/Claude seleccionables mediante variables de entorno, con soporte de proveedores premium",
+      "8": "✨ Añadido el idioma de interfaz Griego (el) y rediseño del diálogo del changelog",
+      "9": "✨ Traducciones: XUnity actualizado 5.5.0 -> 5.6.1 y 5 nuevos feeds IT; imágenes siempre visibles en las noticias con fallback en cascada",
+      "10": "✨ Sitio web: rediseño sci-fi/cyberpunk, chatbot de FAQ con base de conocimiento y versión actualizada automáticamente desde las releases de GitHub",
+      "11": "🐛 Traducción más fiable: códigos de control de los juegos preservados en la traducción offline y un criterio de éxito honesto para Unity",
+      "12": "🐛 Estabilidad y calidad: correcciones de community chat y auto-login, selector de perfiles restaurado, correcciones de notificaciones/perfiles (race y pérdida de datos), limpieza i18n en 9 idiomas, ESLint 78->0, typecheck a 0 errores, suite Rust verde y CI alineada"
+    }
   },
   "communityChat": {
     "communityChatTitle": "Community Chat",

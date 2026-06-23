@@ -1,12 +1,12 @@
 {
-  "version": "1.9.1",
+  "version": "1.10.0",
   "major": 1,
-  "minor": 9,
-  "patch": 1,
+  "minor": 10,
+  "patch": 0,
   "prerelease": null,
   "buildNumber": 128,
-  "buildDate": "2026-04-27T06:40:46.538Z",
-  "gitHash": "114c453",
+  "buildDate": "2026-06-23T06:32:47.439Z",
+  "gitHash": "83e9991a",
   "branch": "main",
   "changelog": {
     "1.9.1": {
@@ -621,6 +621,25 @@
       "type": "patch",
       "changes": [
         "Fix chat auto-connect coordination"
+      ]
+    },
+    "1.10.0": {
+      "date": "2026-06-23",
+      "type": "minor",
+      "changes": [
+        "✨ gs-hook: nuovo Universal Text Interception Framework — estrazione GDI/GetGlyphOutlineW, sostituzione glyph-by-glyph, hook Unreal FText, dual-arch x86/x64, gate anti-cheat e modalità passiva",
+        "✨ Overlay in tempo reale: finestra live (Rust + frontend) con auto-apertura all'injection e traduzione del testo estratto tramite lo stack di traduzione dell'app",
+        "✨ Universal injector completato: inject_translation_hook copre tutti i 12 engine (con fix RPG Maker), comandi registrati e supporto cross-platform",
+        "✨ Nuovo motore Hendrix Localization per RPG Maker MV/MZ (via game_messages.csv)",
+        "✨ Pipeline Ren'Py Hero end-to-end: traduzione offline in batch con contesto, glossario, voce e ripresa (resume)",
+        "✨ Fallback OCR live per la copertura parziale di RPG Maker; Lingva instradato via Rust per superare i limiti CORS di Tauri",
+        "✨ Ollama: nuova pagina funzioni avanzate (6 schede) con 8 funzionalità aggiuntive e relative traduzioni",
+        "✨ AI: modelli Gemini/Claude selezionabili da variabili d'ambiente, con supporto provider premium",
+        "✨ Aggiunta lingua dell'interfaccia Greco (el) e redesign del dialog del changelog",
+        "✨ Traduzioni: XUnity aggiornato 5.5.0 -> 5.6.1 e 5 nuovi feed ITA; immagini sempre visibili nelle news con fallback a cascata",
+        "✨ Sito: redesign sci-fi/cyberpunk, chatbot FAQ con knowledge base e versione aggiornata automaticamente dalle release GitHub",
+        "🐛 Traduzione più affidabile: preservati i codici di controllo dei giochi nella traduzione offline e criterio di successo onesto per Unity",
+        "🐛 Stabilità e qualità: fix community chat e auto-login, ripristino selettore profili, correzioni notifiche/profili (race e perdita dati), bonifica i18n in 9 lingue, ESLint 78->0, typecheck a 0 errori, suite Rust verde e CI allineata"
       ]
     }
   }

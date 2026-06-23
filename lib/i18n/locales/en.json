@@ -4791,7 +4791,22 @@
     "featureUpdate": "✨ Feature Update",
     "majorRelease": "🚀 Major Release",
     "patchNotes": "🔧 Patch Notes",
-    "currentVersion": "Current Version"
+    "currentVersion": "Current Version",
+    "v1_10_0": {
+      "0": "✨ gs-hook: new Universal Text Interception Framework — GDI/GetGlyphOutlineW extraction, glyph-by-glyph substitution, Unreal FText hook, dual-arch x86/x64, anti-cheat gate and passive mode",
+      "1": "✨ Real-time overlay: live window (Rust + frontend) that auto-opens on injection and translates the extracted text via the app's translation stack",
+      "2": "✨ Universal injector completed: inject_translation_hook covers all 12 engines (with RPG Maker fixes), registered commands and cross-platform support",
+      "3": "✨ New Hendrix Localization engine for RPG Maker MV/MZ (via game_messages.csv)",
+      "4": "✨ Ren'Py Hero pipeline end-to-end: offline batch translation with context, glossary, voice and resume",
+      "5": "✨ Live OCR fallback for partial RPG Maker coverage; Lingva routed through Rust to bypass Tauri's CORS limits",
+      "6": "✨ Ollama: new advanced features page (6 tabs) with 8 extra features and their translations",
+      "7": "✨ AI: Gemini/Claude models selectable via environment variables, with premium provider support",
+      "8": "✨ Added Greek (el) UI language and redesigned the changelog dialog",
+      "9": "✨ Translations: XUnity updated 5.5.0 -> 5.6.1 and 5 new IT feeds; images always visible in news with cascading fallback",
+      "10": "✨ Website: sci-fi/cyberpunk redesign, FAQ chatbot with knowledge base, and version auto-updated from GitHub releases",
+      "11": "🐛 More reliable translation: game control codes preserved in offline translation and an honest success criterion for Unity",
+      "12": "🐛 Stability & quality: community chat and auto-login fixes, profile selector restored, notifications/profiles fixes (race and data loss), i18n cleanup in 9 languages, ESLint 78->0, typecheck at 0 errors, green Rust suite and aligned CI"
+    }
   },
   "communityChat": {
     "communityChatTitle": "Community Chat",

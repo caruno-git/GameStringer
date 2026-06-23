@@ -4785,7 +4785,22 @@
     "featureUpdate": "✨ Feature Update",
     "majorRelease": "🚀 Major Release",
     "patchNotes": "🔧 Patch Notes",
-    "currentVersion": "Current Version"
+    "currentVersion": "Current Version",
+    "v1_10_0": {
+      "0": "✨ gs-hook: nowy Universal Text Interception Framework — ekstrakcja GDI/GetGlyphOutlineW, podmiana glyph-by-glyph, hook Unreal FText, dual-arch x86/x64, gate anti-cheat i tryb pasywny",
+      "1": "✨ Nakładka w czasie rzeczywistym: okno na żywo (Rust + frontend) otwierające się automatycznie przy injekcji i tłumaczące wyodrębniony tekst przez stos tłumaczeniowy aplikacji",
+      "2": "✨ Universal injector ukończony: inject_translation_hook obejmuje wszystkie 12 silników (z poprawkami RPG Maker), zarejestrowane komendy i wsparcie wieloplatformowe",
+      "3": "✨ Nowy silnik Hendrix Localization dla RPG Maker MV/MZ (przez game_messages.csv)",
+      "4": "✨ Pipeline Ren'Py Hero end-to-end: tłumaczenie offline wsadowe z kontekstem, glosariuszem, głosem i wznawianiem (resume)",
+      "5": "✨ Fallback OCR na żywo dla częściowego pokrycia RPG Maker; Lingva kierowane przez Rust, aby ominąć ograniczenia CORS w Tauri",
+      "6": "✨ Ollama: nowa strona funkcji zaawansowanych (6 zakładek) z 8 dodatkowymi funkcjami i ich tłumaczeniami",
+      "7": "✨ AI: modele Gemini/Claude wybierane przez zmienne środowiskowe, ze wsparciem dostawców premium",
+      "8": "✨ Dodano grecki (el) jako język interfejsu i przeprojektowano okno changelogu",
+      "9": "✨ Tłumaczenia: XUnity zaktualizowany 5.5.0 -> 5.6.1 i 5 nowych kanałów IT; obrazy zawsze widoczne w aktualnościach z kaskadowym fallbackiem",
+      "10": "✨ Strona: przeprojektowanie sci-fi/cyberpunk, chatbot FAQ z bazą wiedzy oraz wersja aktualizowana automatycznie z wydań GitHub",
+      "11": "🐛 Bardziej niezawodne tłumaczenie: kody sterujące gier zachowane w tłumaczeniu offline oraz uczciwe kryterium sukcesu dla Unity",
+      "12": "🐛 Stabilność i jakość: poprawki community chat i auto-logowania, przywrócony selektor profili, poprawki powiadomień/profili (race i utrata danych), porządki i18n w 9 językach, ESLint 78->0, typecheck z 0 błędami, zielony zestaw testów Rust i wyrównane CI"
+    }
   },
   "communityChat": {
     "communityChatTitle": "Community Chat",
