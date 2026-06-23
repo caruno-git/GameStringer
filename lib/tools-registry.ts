@@ -44,6 +44,8 @@ export interface ToolDefinition {
   featuresKey?: string;
   addedInVersion?: string;
   isNew?: boolean;
+  /** Funzione sperimentale (Labs): scopribile ma fuori dal flusso hero, qualità non garantita. */
+  experimental?: boolean;
 }
 
 // Registry centralizzato di tutti i tool dell'app.
@@ -270,6 +272,24 @@ export function getToolsRegistry(): ToolDefinition[] {
         'Generazione e traduzione sottotitoli',
         'Supporto formati SRT, VTT, ASS',
         'Sincronizzazione automatica con audio',
+      ],
+    },
+    {
+      id: 'dubbing',
+      href: '/dubbing',
+      name: 'Fandub AI',
+      icon: AudioLines,
+      color: 'blue',
+      category: 'translation',
+      subcategory: 'audio',
+      experimental: true,
+      addedInVersion: '1.10.2',
+      features: [
+        'Traccia doppiata del gioco con voci di personaggio coerenti (Labs)',
+        'Pipeline Whisper (STT) → traduzione → TTS',
+        'Duration matching e lip sync opzionali',
+        'Profili voce per personaggio',
+        '⚠️ Sperimentale: timing e qualità delle voci possono non essere perfetti',
       ],
     },
 

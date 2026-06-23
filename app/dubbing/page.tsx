@@ -126,7 +126,7 @@ export default function DubbingPage() {
         <div className="flex items-center gap-3">
           <Mic className="h-6 w-6 text-purple-400" />
           <h1 className="text-2xl font-bold">{t('common.aiDubbingPipeline')}</h1>
-          <Badge variant="outline" className="text-purple-400 border-purple-400/50">Beta</Badge>
+          <Badge variant="outline" className="text-amber-400 border-amber-400/50">Labs · Sperimentale</Badge>
         </div>
         <div className="flex gap-2">
           {!isRunning ? (
@@ -144,6 +144,14 @@ export default function DubbingPage() {
               </Button>
             </>
           )}
+        </div>
+      </div>
+
+      {/* Labs — avviso onesto sul rischio qualità */}
+      <div className="flex items-start gap-3 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
+        <AlertCircle className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
+        <div className="text-amber-100/90">
+          <strong className="text-amber-300">Labs · funzione sperimentale.</strong> Il doppiaggio AI (Whisper → traduzione → TTS) può avere imperfezioni su <strong>timing e voci</strong>. Non fa parte del flusso &quot;un pulsante&quot; e non sostituisce il doppiaggio professionale. Tieni un backup dei file audio prima di applicare.
         </div>
       </div>
 

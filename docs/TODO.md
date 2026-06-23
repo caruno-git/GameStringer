@@ -70,7 +70,7 @@ Manutenzione (ricorrente):
 
 > Demo che fanno cadere la mascella. Non bloccano la release; vivono in Labs perché più rischiose sulla qualità.
 
-- [ ] **Fandub AI** — Generare una traccia doppiata del gioco con voci di personaggio coerenti. Infra già presente (Whisper → traduzione → TTS + profili voce). Rischio qualità su timing/voci → Labs, non flusso-hero.
+- [~] **Fandub AI** — Generare una traccia doppiata del gioco con voci di personaggio coerenti. Infra già presente (Whisper → traduzione → TTS + profili voce). Rischio qualità su timing/voci → Labs, non flusso-hero. *Esposto come Labs 23/06: pagina `app/dubbing/page.tsx` (pipeline `lib/voice/dubbing-pipeline.ts`) registrata in `tools-registry` con flag `experimental` + badge **Labs** nella Guida; banner d'avviso onesto su timing/voci sulla pagina; confermato FUORI dal flusso hero (`startAutoTranslate` non la tocca); sidebar invariata (rispetta le 19 voci). Resta: rifinitura qualità (timing/duration matching, voci) e collaudo end-to-end.*
 
 ---
 

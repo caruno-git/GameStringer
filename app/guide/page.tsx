@@ -416,6 +416,7 @@ export default function GuidePage() {
                                       </div>
                                       <span className="text-white">{tool.name}</span>
                                       {tool.isNew && <Badge className="text-2xs px-1 py-0 h-3.5 bg-amber-500/20 text-amber-400 border-amber-500/30">NEW</Badge>}
+                                      {tool.experimental && <Badge className="text-2xs px-1 py-0 h-3.5 bg-amber-500/20 text-amber-400 border-amber-500/30">Labs</Badge>}
                                     </CardTitle>
                                   </CardHeader>
                                   <CardContent className="py-1 px-3 pb-2">
