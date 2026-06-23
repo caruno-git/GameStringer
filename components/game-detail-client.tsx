@@ -29,6 +29,7 @@ import { GameMakerTranslator } from '@/components/gamemaker-translator';
 import { clientLogger } from '@/lib/client-logger';
 import { runHendrixTranslation } from '@/lib/hendrix-translate';
 import { runRenpyTranslation } from '@/lib/renpy-translate';
+import { runRpgmakerTranslation } from '@/lib/rpgmaker-translate';
 import {
   ScreenshotGallery,
   ScreenshotLightbox,
@@ -1730,6 +1731,65 @@ export default function GameDetailPage() {
           setAutoTranslateBusy(false);
           setAutoTranslateProgress('');
           autoTranslateRunningRef.current = false;
+          return;
+        }
+
+        // ── RPG Maker MV/MZ → pipeline hero file-based dedicata (col pannello) ──
+        if (isMvMz) {
+          const tgt = (targetLang || language || 'it').toLowerCase();
+          const t0 = Date.now();
+          const rmSteps = [
+            { label: '🔍 Rilevamento RPG Maker MV/MZ', status: 'pending' as const },
+            { label: '📂 Estrazione stringhe (data/*.json)', status: 'pending' as const },
+            { label: '📖 Glossario', status: 'pending' as const },
+            { label: '✨ Traduzione AI', status: 'pending' as const },
+            { label: '💾 Backup + applica ai file', status: 'pending' as const },
+          ];
+          const rmStep = (idx: number, status: 'running' | 'done' | 'error', detail?: string) =>
+            setAutoTranslateSteps(prev => prev.map((s, i) => i === idx ? { ...s, status, detail } : i < idx ? { ...s, status: 'done' } : s));
+          setAutoTranslateError(null);
+          setAutoTranslateResult(null);
+          setAutoTranslateSteps([...rmSteps]);
+          setAutoTranslateActive(true);
+          try {
+            const r = await runRpgmakerTranslation({
+              gamePath: game.installPath,
+              targetLang: tgt,
+              sourceLang: 'en',
+              gameId: game.id || (game.appid ? String(game.appid) : undefined),
+              onProgress: (p) => {
+                if (p.phase === 'detect') rmStep(0, 'running');
+                else if (p.phase === 'extract') { rmStep(0, 'done'); rmStep(1, 'running'); }
+                else if (p.phase === 'glossary') { rmStep(1, 'done'); rmStep(2, 'running'); }
+                else if (p.phase === 'translate') {
+                  rmStep(2, 'done');
+                  rmStep(3, 'running', `${p.done}/${p.total}`);
+                  setAutoTranslateProgress(p.total ? `${p.done}/${p.total}` : '');
+                } else if (p.phase === 'apply') { rmStep(3, 'done'); rmStep(4, 'running', `${p.done}/${p.total} file`); }
+                else if (p.phase === 'done') rmStep(4, 'done');
+              },
+            });
+            rmStep(4, 'done', `${r.translated}/${r.total} stringhe · ${r.files} file${r.glossaryTerms ? ` · glossario ${r.glossaryTerms}` : ''}`);
+            setAutoTranslateResult({
+              successRate: r.total ? Math.round((100 * r.translated) / r.total) : 0,
+              duration: Math.round((Date.now() - t0) / 1000),
+              deliverables: r.files,
+              errors: Math.max(0, r.total - r.translated),
+              engine: `RPG Maker ${r.version.toUpperCase()}`,
+              targetLang: tgt,
+              stringsTranslated: r.translated,
+              stringsTotal: r.total,
+            });
+            toast.success(`RPG Maker ${r.version.toUpperCase()}: ${r.translated}/${r.total} stringhe applicate a ${r.files} file. Rilancia il gioco.`);
+          } catch (e) {
+            rmStep(3, 'error', String(e));
+            setAutoTranslateError(`RPG Maker: ${String(e)} — Ollama è avviato?`);
+            toast.error('RPG Maker: errore (Ollama avviato?)', { description: String(e) });
+          } finally {
+            setAutoTranslateBusy(false);
+            setAutoTranslateProgress('');
+            autoTranslateRunningRef.current = false;
+          }
           return;
         }
       } catch { /* detect fallito → prosegui col workflow file-based normale */ }

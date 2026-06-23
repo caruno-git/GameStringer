@@ -98,7 +98,7 @@ function lsGet(key: string): string | null {
 
 // Carica il glossario del gioco e lo converte in GlossaryPair[] (cap a 80 termini,
 // priorita' a locked/synced per la coerenza di nomi/UI).
-async function loadGlossary(sourceLang: string, targetLang: string, gameId?: string): Promise<GlossaryPair[]> {
+export async function loadGlossary(sourceLang: string, targetLang: string, gameId?: string): Promise<GlossaryPair[]> {
   try {
     const gl = await invoke<SmartGlossary>('load_smart_glossary', {
       sourceLang, targetLang, gameId: gameId ?? null,
