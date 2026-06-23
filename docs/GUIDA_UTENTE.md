@@ -159,6 +159,41 @@ In fondo alla pagina, il sistema analizza il gioco e suggerisce il **metodo di t
 
 ---
 
+## Prediction Tool (P.T.)
+
+> Blocco feature AI documentato in v1.10.2. È l'analisi che conviene eseguire **prima** di tradurre: non partire alla cieca.
+
+Il P.T. è un motore di analisi che gira *prima* di qualsiasi traduzione. Scansiona la cartella del gioco, rileva l'engine e stima quanto sarà difficile e lungo tradurlo, così puoi pianificare invece di scoprire i problemi a metà.
+
+### Cosa ti dice
+
+- **Difficulty Score 0–100** — peso combinato di volume stringhe, complessità dell'engine, DRM, encoding e sfide linguistiche.
+- **Stime di tempo** su più modelli LLM (locali Ollama e cloud) per capire quanto durerà.
+- **5 catene LLM consigliate** — Locale (privacy), Cloud (qualità), Ibrida (bilanciata), Budget, Premium — ognuna con costo e punteggio di qualità stimati.
+- **Rilevamento DRM / anti-cheat** (Denuvo, VMProtect, Steam DRM, EAC, BattlEye, Vanguard): ti avvisa *prima* di toccare qualsiasi file.
+- **Analisi encoding** per-file (Shift-JIS, UTF-8/16, Big5, EUC-KR).
+- **Complessità di traduzione** (onorifici, accordo di genere, CJK, ruby/furigana, RTL).
+- **Confidence score** + **piano di workflow**: gli step esatti che verranno eseguiti al "String it!".
+- **Report esportabile** (JSON + Markdown) per condividerlo o archiviarlo.
+
+### Come si avvia
+
+Dalla pagina di dettaglio del gioco premi **"Run P.T."** (o esegui l'analisi quando il pulsante "String it!" te lo propone). Il risultato resta in **cache per 24 ore**: riaprire un gioco già analizzato è immediato.
+
+### P.T.Rank — classifica rapida
+
+Dopo aver analizzato più giochi, apri **P.T.Rank** per vederli tutti ordinati per difficoltà. Comodo per pianificare la coda: parti dai più facili e lascia per ultimi gli RPG da centinaia di migliaia di stringhe.
+
+### Dry Run Scanner
+
+Dalla pagina **Libreria** puoi lanciare il **Dry Run**: scansiona l'intera libreria (anche centinaia di giochi) **senza modificare nulla**, e produce un report che classifica ogni titolo come **Ready** (engine supportato + stringhe estraibili), **Errors** (problemi di manifest / blocco DRM) o **Unsupported** (engine sconosciuto / nessun testo). Nessun backup necessario: non viene toccato niente.
+
+### "String it!" Smart Gate
+
+Il pulsante **"String it!"** è intelligente: se il gioco è stato analizzato dal P.T. nelle ultime 24 ore parte diretto; altrimenti ti propone di eseguire prima il P.T. (con la scelta "Esegui P.T. prima" / "String it! lo stesso"). Eviti run sprecati su giochi che si rivelano bloccati da DRM o troppo brevi.
+
+---
+
 ## Neural Translator Pro
 
 ### Come Tradurre un File
