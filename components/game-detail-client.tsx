@@ -1710,21 +1710,26 @@ export default function GameDetailPage() {
           strings = extraction?.total_count || 0;
         }
         if (!isMvMz && strings <= 0) {
+          // RPG Maker classico (RPG_RT 2000/2003): nessuna stringa estraibile dai file →
+          // la traduzione automatica file-based NON è supportata. Niente dirottamento
+          // silenzioso: messaggio onesto + scelta esplicita di aprire la traduzione live OCR.
           const params = new URLSearchParams({
             game: game.title || game.name || '',
-            // RPG Maker classico (RPG_RT 2000/2003, 0 stringhe estraibili) ≈ quasi sempre
-            // giapponese (Yume Nikki, Ib, The Witch's House…) → default OCR 'ja'. Con 'en'
-            // Tesseract leggerebbe inglese su schermo JP = spazzatura. L'utente può
-            // comunque cambiare lingua sorgente dal selettore della pagina OCR.
+            // Classico ≈ quasi sempre giapponese (Yume Nikki, Ib, The Witch's House…) → OCR src 'ja'.
             src: 'ja',
             tgt: targetLang || language || 'it',
             autostart: '1',
           });
-          toast.info('RPG Maker classico: avvio traduzione live OCR (JA→' + (targetLang || language || 'it').toUpperCase() + ')');
+          setAutoTranslateActive(true);
+          setAutoTranslateError("RPG Maker classico (RPG_RT 2000/2003): questo motore non espone stringhe estraibili dai file, quindi la traduzione automatica file-based non è supportata. Per questi giochi usa la traduzione live OCR (cattura a schermo).");
+          setAutoTranslateSteps([{ label: 'RPG Maker classico rilevato', status: 'error', detail: 'Traduzione file-based non disponibile — usa OCR live' }]);
+          toast('RPG Maker classico: usa la traduzione live OCR', {
+            description: 'Niente stringhe estraibili dai file per questo motore.',
+            action: { label: 'Apri OCR', onClick: () => router.push(`/ocr-translator?${params.toString()}`) },
+          });
           setAutoTranslateBusy(false);
           setAutoTranslateProgress('');
           autoTranslateRunningRef.current = false;
-          router.push(`/ocr-translator?${params.toString()}`);
           return;
         }
       } catch { /* detect fallito → prosegui col workflow file-based normale */ }
