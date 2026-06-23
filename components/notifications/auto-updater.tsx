@@ -43,8 +43,9 @@ export function AutoUpdater() {
       // Prima verifica con Tauri updater
       const update = await checkTauriUpdate();
       if (update?.available) {
-        // Download e install automatico, poi relaunch
-        await downloadAndInstall();
+        // Passa l'update appena ottenuto: NON affidarsi allo stato del hook,
+        // che nello stesso tick è ancora stantio (causa blocco "Preparazione...").
+        await downloadAndInstall(update);
       } else {
         // Fallback: apri URL download
         if (updateInfo?.download_url) {
@@ -57,6 +58,9 @@ export function AutoUpdater() {
       if (updateInfo?.download_url) {
         window.open(updateInfo.download_url, '_blank');
       }
+    } finally {
+      // Sblocca sempre il bottone, anche su return silenzioso o errore.
+      setUpdating(false);
     }
   }, [checkTauriUpdate, downloadAndInstall, updateInfo?.download_url]);
   

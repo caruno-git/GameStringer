@@ -48,19 +48,23 @@ export const useTauriUpdater = () => {
     }
   }, []);
 
-  const downloadAndInstall = useCallback(async () => {
-    if (!state.update) {
+  const downloadAndInstall = useCallback(async (updateArg?: Update | null) => {
+    // Usa l'update passato esplicitamente (evita lo stato stantio quando
+    // check() e downloadAndInstall() vengono chiamati nello stesso tick),
+    // con fallback sullo stato.
+    const update = updateArg ?? state.update;
+    if (!update) {
       toast.error('Nessun aggiornamento disponibile');
       return;
     }
 
     setState(prev => ({ ...prev, isDownloading: true, downloadProgress: 0, error: null }));
-    
+
     try {
       let downloaded = 0;
       let contentLength = 0;
-      
-      await state.update.downloadAndInstall((event) => {
+
+      await update.downloadAndInstall((event) => {
         switch (event.event) {
           case 'Started':
             contentLength = event.data.contentLength || 0;
