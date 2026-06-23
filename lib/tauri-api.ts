@@ -52,7 +52,17 @@ export const invoke = async <T = unknown>(cmd: string, args?: Record<string, unk
       }
       return sanitized;
     };
-    clientLogger.debug(`Risultato comando ${cmd}:`, sanitizeForLog(result));
+    // Evita di scaricare in console oggetti enormi (es. 2216 giochi, cache lingue/cover):
+    // riassunto compatto per array/oggetti grandi, dettaglio solo per i piccoli.
+    const summarizeForLog = (val: unknown): unknown => {
+      if (Array.isArray(val)) return `Array(${val.length})`;
+      if (val && typeof val === 'object') {
+        const keys = Object.keys(val as Record<string, unknown>);
+        return keys.length > 12 ? `Object(${keys.length} chiavi)` : sanitizeForLog(val);
+      }
+      return val;
+    };
+    clientLogger.debug(`Risultato comando ${cmd}:`, summarizeForLog(result));
     return result as T;
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error);

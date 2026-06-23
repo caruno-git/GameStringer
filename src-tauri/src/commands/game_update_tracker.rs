@@ -112,6 +112,28 @@ fn read_steam_build_id(game_path: &Path, app_id: &str) -> Option<String> {
 // ──────────────────────────────────────────────────────────────────────────────
 // Helper: verifica integrità patch
 // ──────────────────────────────────────────────────────────────────────────────
+/// Cerca ricorsivamente (profondità limitata) un file per nome sotto `dir`.
+/// Serve perché XUnity.AutoTranslator viene installato sia direttamente in
+/// `BepInEx/plugins/` sia nella sottocartella `BepInEx/plugins/XUnity.AutoTranslator/`.
+fn file_exists_recursive(dir: &Path, filename: &str, max_depth: usize) -> bool {
+    if max_depth == 0 {
+        return false;
+    }
+    if let Ok(entries) = std::fs::read_dir(dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.is_file() {
+                if path.file_name().and_then(|n| n.to_str()) == Some(filename) {
+                    return true;
+                }
+            } else if path.is_dir() && file_exists_recursive(&path, filename, max_depth - 1) {
+                return true;
+            }
+        }
+    }
+    false
+}
+
 fn check_patch_integrity(game_path: &Path) -> (bool, String, Vec<String>) {
     let mut details = Vec::new();
 
@@ -121,7 +143,10 @@ fn check_patch_integrity(game_path: &Path) -> (bool, String, Vec<String>) {
         let winhttp = game_path.join("winhttp.dll");
         let doorstop = game_path.join("doorstop_config.ini");
         let plugins = bepinex.join("plugins");
-        let xunity_dll = plugins.join("XUnity.AutoTranslator.Plugin.Core.dll");
+        // XUnity può stare direttamente in plugins/ o nella sottocartella
+        // plugins/XUnity.AutoTranslator/ → ricerca ricorsiva (fix falso negativo).
+        let xunity_present = plugins.join("XUnity.AutoTranslator.Plugin.Core.dll").exists()
+            || file_exists_recursive(&plugins, "XUnity.AutoTranslator.Plugin.Core.dll", 3);
 
         let mut ok = true;
         if winhttp.exists() {
@@ -136,7 +161,7 @@ fn check_patch_integrity(game_path: &Path) -> (bool, String, Vec<String>) {
             details.push("✗ doorstop_config.ini mancante".to_string());
             ok = false;
         }
-        if xunity_dll.exists() {
+        if xunity_present {
             details.push("✓ XUnity.AutoTranslator presente".to_string());
         } else {
             details.push("✗ XUnity.AutoTranslator.dll mancante (plugin folder: BepInEx/plugins/)".to_string());
