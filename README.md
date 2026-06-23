@@ -33,68 +33,14 @@
 > ⚠️ **Upgrading from v1.8.x?** v1.9.0 migrated from Tauri v1 to **Tauri v2** — auto-updater won't work for this jump. Download **v1.9.1** manually: [GameStringer_1.9.1_x64-setup.exe](https://github.com/rouges78/GameStringer/releases/download/v1.9.1/GameStringer_1.9.1_x64-setup.exe). Future updates (v1.9.1 → v1.9.x) will work automatically.
 
 <p align="center">
-  <strong>🌍 Read in your language:</strong><br>
-  <a href="README_IT.md">🇮🇹 Italiano</a> ·
-  <a href="README_ES.md">🇪🇸 Español</a> ·
-  <a href="README_FR.md">🇫🇷 Français</a> ·
-  <a href="README_DE.md">🇩🇪 Deutsch</a> ·
-  <a href="README_PT.md">🇧🇷 Português</a> ·
-  <a href="README_JA.md">🇯🇵 日本語</a> ·
-  <a href="README_ZH.md">🇨🇳 中文</a> ·
-  <a href="README_KO.md">🇰🇷 한국어</a> ·
-  <a href="README_RU.md">🇷🇺 Русский</a> ·
-  <a href="README_PL.md">🇵🇱 Polski</a>
-</p>
-
----
-
-## Demo
-
-<p align="center">
-  <img src="docs/demo/demo-library.gif" alt="GameStringer Library Demo" width="720" />
-</p>
-
-<p align="center">
-  <em>🎮 Game Library — auto-detect Steam, Epic, GOG, Origin, Ubisoft, Amazon, itch.io</em>
-</p>
-
-<p align="center">
-  <img src="docs/demo/demo-translator.gif" alt="GameStringer AI Translator Demo" width="720" />
-</p>
-
-<p align="center">
-  <em>🤖 AI Translator — 20+ providers, Quality Badges 0-100, Translation Memory</em>
-</p>
-
-<p align="center">
-  <img src="docs/demo/demo-patcher.gif" alt="GameStringer Game Patcher Demo" width="720" />
-</p>
-
-<p align="center">
-  <em>🔧 One-Click Patcher — BepInEx, XUnity, UnrealLocres, Bethesda BSA/BA2, CRI CPK, auto-backup</em>
-</p>
-
-<p align="center">
-  <img src="docs/demo/demo-chat.gif" alt="GameStringer Community Chat Demo" width="720" />
-</p>
-
-<p align="center">
-  <em>💬 Community Chat — Supabase Realtime, custom rooms, online presence</em>
-</p>
-
-<p align="center">
-  <img src="docs/demo/demo-tray.gif" alt="GameStringer Tray Icon Demo" width="480" />
-</p>
-
-<p align="center">
-  <em>🖥️ System Tray — quick actions, live Ollama status, tools submenu</em>
+  <strong>🌍 Available in 11 languages</strong> — switch language directly on the <a href="https://www.gamestringer.ai">website</a> or inside the app (IT, EN, ES, FR, DE, PT, PL, RU, JA, ZH, KO).
 </p>
 
 ---
 
 ## 🎮 What is GameStringer?
 
-GameStringer is a **desktop application** (Windows & Linux) that lets you translate video games that don't have your language.
+GameStringer is a **desktop application** (Windows, Linux & macOS) that lets you translate video games that don't have your language.
 
 Most games store their text in files — JSON, XML, CSV, `.locres`, `.rpy`, BSA/BA2, CPK, Unity Localization StringTables, and many other formats. GameStringer **scans your game folder**, finds those files, sends the text through an **AI translation provider** of your choice (OpenAI, Claude, Gemini, DeepSeek, Ollama, 20+ more), and **patches the translated text back** into the game. One click, no technical knowledge needed.
 
@@ -114,9 +60,10 @@ Get the latest release from **[GitHub Releases](https://github.com/rouges78/Game
 | **Windows** | `GameStringer_1.10.2_x64-portable.zip` | No install needed |
 | **Windows** | `GameStringer_1.10.2_x64_en-US.msi` | MSI alternative |
 | **macOS** | `GameStringer_1.10.2_x64.dmg` | Intel Mac |
-| **macOS** | `GameStringer_aarch64.app.tar.gz` | Apple Silicon |
-| **Linux** | `GameStringer.AppImage` | Universal (recommended) |
-| **Linux** | `GameStringer.deb` | Debian / Ubuntu |
+| **macOS** | `GameStringer_1.10.2_aarch64.dmg` | Apple Silicon |
+| **Linux** | `GameStringer_1.10.2_amd64.AppImage` | Universal (recommended) |
+| **Linux** | `GameStringer_1.10.2_amd64.deb` | Debian / Ubuntu |
+| **Linux** | `GameStringer-1.10.2-1.x86_64.rpm` | Fedora / RHEL |
 
 **Requirements:** Windows 10+, macOS 10.15+, or Linux (Ubuntu 22.04+, Fedora 38+). 4 GB RAM (8 GB+ for local AI), 500 MB disk. Releases are **code-signed** and **auto-updated** via Tauri Updater.
 
@@ -287,7 +234,7 @@ GameStringer supports **20+ engines** with varying levels of depth:
 - **Ollama Manager**: auto-discovery of models from the ollama.com registry + auto-refresh on focus/navigation
 - **Debug Console**: integrated console with log intercept
 - **Video Extractor** (v1.7.0): extract and convert FMV video from retro/modern games (VMD, BIK, SMK, USM, ROQ) with AI upscaling (Real-ESRGAN), direct link from game detail page
-- **Plugin System**: design doc for third-party plugins (see `PLUGIN_SYSTEM.md`)
+- **Plugin System**: design doc for third-party plugins (see `docs/PLUGIN_SYSTEM.md`)
 - **Community Hub**: share and download translation memories + GitHub Discussions integration
 - **Public API v1**: REST endpoints for integration (`/api/v1/translate`, `/api/v1/batch`)
 
@@ -374,7 +321,7 @@ GameStringer supports **20+ engines** with varying levels of depth:
 - **[CHANGELOG.md](CHANGELOG.md)** — full version history
 - **[docs/VERSIONING.md](docs/VERSIONING.md)** — versioning policy
 - **[docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md)** — current roadmap
-- **[PLUGIN_SYSTEM.md](PLUGIN_SYSTEM.md)** — plugin architecture design
+- **[PLUGIN_SYSTEM.md](docs/PLUGIN_SYSTEM.md)** — plugin architecture design
 - **[LICENSE](LICENSE)** — Source-Available License v1.1
 
 ---
