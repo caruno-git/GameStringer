@@ -16,8 +16,9 @@ import { ensureArray, validateArray } from '@/lib/array-utils';
 import { toast } from 'sonner';
 import { VirtuosoGrid, Virtuoso } from 'react-virtuoso';
 import { loadLibraryFilters, saveLibraryFilters, fuzzyMatch, useDebouncedValue } from '@/lib/library-filters';
+import { getManualGames, addManualGame, type ManualGame } from '@/lib/manual-games';
 import { enrichGameTitle } from '@/lib/game-names-db';
-import { Gamepad2, ImageIcon, Search, LayoutGrid, List, SlidersHorizontal, ArrowUpDown, ChevronDown, ChevronUp, RefreshCw, Download, Languages, Sparkles, FolderOpen, Monitor, Wrench, Brain } from 'lucide-react';
+import { Gamepad2, ImageIcon, Search, LayoutGrid, List, SlidersHorizontal, ArrowUpDown, ChevronDown, ChevronUp, RefreshCw, Download, Languages, Sparkles, FolderOpen, Monitor, Wrench, Brain, MoreHorizontal } from 'lucide-react';
 import { useTranslation, translations } from '@/lib/i18n';
 import { CoverPicker } from '@/components/cover-picker';
 import { StoreGate } from '@/components/auth/store-gate';
@@ -436,20 +437,85 @@ function LibraryListView() {
   const [coverCache, setCoverCache] = useState<Record<string, string>>({});
   const [showDryRun, setShowDryRun] = useState(false);
   const libraryLoadedRef = React.useRef(false);
-  
+  const [isAddingGame, setIsAddingGame] = useState(false);
+  const [showMoreActions, setShowMoreActions] = useState(false);
+  // Giochi aggiunti manualmente dal disco (persistiti in idb, uniti al render)
+  const manualGamesRef = React.useRef<Game[]>([]);
+
+  // Unisce i giochi manuali alla lista (dedup per id), mantenendoli in cima
+  const mergeManual = (list: Game[]): Game[] => {
+    const manual = manualGamesRef.current;
+    if (!manual.length) return list;
+    const ids = new Set(list.map(g => g.id));
+    return [...manual.filter(m => !ids.has(m.id)), ...list];
+  };
+
   // Safe setter per games con validazione + salvataggio in cache globale
   const setGamesWithValidation = (value: unknown) => {
     const validGames = ensureArray<Game>(value);
-    
+
     if (!validateArray(value, 'LibraryPage.setGames')) {
       clientLogger.error(`[LibraryPage] Attempt to set games with non-array value: ${typeof value}`, 'LibraryPage', { value: value as Record<string, unknown> });
     }
-    
-    setGames(validGames);
+
+    const merged = mergeManual(validGames);
+    setGames(merged);
     // Salva nella cache globale per ripristino istantaneo al re-mount
-    if (validGames.length > 0) {
-      _libCache.games.data = validGames;
+    if (merged.length > 0) {
+      _libCache.games.data = merged;
       _libCache.games.loaded = true;
+    }
+  };
+
+  // Carica i giochi manuali all'avvio e li unisce alla lista
+  useEffect(() => {
+    getManualGames().then((m) => {
+      manualGamesRef.current = m as unknown as Game[];
+      if (m.length) setGames(prev => mergeManual(prev));
+    }).catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Handler: aggiungi un gioco selezionando la cartella dal disco
+  const handleAddGameFromDisk = async () => {
+    try {
+      const { open } = await import('@tauri-apps/plugin-dialog');
+      const folder = await open({ directory: true, title: 'Seleziona la cartella del gioco' });
+      if (!folder || typeof folder !== 'string') return;
+      setIsAddingGame(true);
+
+      const base = folder.replace(/[\\/]+$/, '').split(/[\\/]/).pop() || 'Gioco';
+
+      // Rilevamento engine best-effort (non blocca se fallisce)
+      let engine: string | null = null;
+      try {
+        const res = await invoke<{ engine_name?: string }>('detect_game_engine', { gamePath: folder });
+        engine = res?.engine_name || null;
+      } catch { /* engine sconosciuto */ }
+
+      const id = `manual-${Date.now()}`;
+      const game: ManualGame = {
+        id,
+        app_id: id,
+        title: base,
+        platform: 'Manuale',
+        header_image: null,
+        engine,
+        is_installed: true,
+        install_dir: folder,
+        added_date: Date.now(),
+        isManual: true,
+      };
+
+      const updated = await addManualGame(game);
+      manualGamesRef.current = updated as unknown as Game[];
+      setGames(prev => mergeManual(prev.filter(g => g.id !== id)));
+      toast.success(`"${base}" aggiunto alla libreria${engine ? ` (engine: ${engine})` : ''}`);
+    } catch (e: unknown) {
+      clientLogger.error('[Library] Errore aggiunta gioco manuale:', String(e));
+      toast.error('Errore durante l\'aggiunta del gioco');
+    } finally {
+      setIsAddingGame(false);
     }
   };
   // Carica filtri salvati all'avvio
@@ -659,8 +725,8 @@ function LibraryListView() {
       
       // Sort per titolo
       finalGames.sort((a, b) => a.title.localeCompare(b.title));
-      
-      setGames(finalGames);
+
+      setGames(mergeManual(finalGames));
       
       // Mostra notifica con results
       const gamesWithName = finalGames.filter(g => !g.title.startsWith('Game ') && !g.title.startsWith('Shared Game ')).length;
@@ -1630,6 +1696,15 @@ function LibraryListView() {
 
           {/* Azioni rapide */}
           <div className="flex items-center gap-2">
+            <button
+              onClick={handleAddGameFromDisk}
+              disabled={isAddingGame}
+              className="group flex items-center gap-2 px-3 py-2 bg-emerald-900/50 text-emerald-300 hover:text-white hover:bg-emerald-600/30 rounded-xl transition-all border border-emerald-700/40 hover:border-emerald-500/50 disabled:opacity-60"
+              title="Aggiungi un gioco selezionando la sua cartella dal disco"
+            >
+              <FolderOpen className={`h-4 w-4 text-emerald-400 group-hover:text-emerald-300 transition-colors ${isAddingGame ? 'animate-pulse' : ''}`} />
+              <span className="text-[11px] font-semibold tracking-wide">{isAddingGame ? 'Aggiungo…' : 'Aggiungi gioco'}</span>
+            </button>
             <ForceRefreshButton onRefreshComplete={(games: unknown[]) => handleForceRefresh(games as Game[])} />
             <button 
               onClick={testFamilySharing} 
@@ -1639,44 +1714,63 @@ function LibraryListView() {
               <RefreshCw className="h-4 w-4 group-hover:rotate-180 transition-transform duration-500" />
               <span className="text-[11px] font-semibold tracking-wide">Scan</span>
             </button>
-            <button
-              onClick={() => { window.location.href = '/prediction-tool/ranking'; }}
-              className="group flex items-center gap-2 px-3 py-2 bg-purple-900/60 text-purple-300 hover:text-white hover:bg-purple-600/30 rounded-xl transition-all border border-purple-700/40 hover:border-purple-500/50"
-              title="Classifica P.T. — Scansiona tutti i giochi installati per difficoltà di traduzione"
-            >
-              <Brain className="h-4 w-4 text-purple-400 group-hover:text-purple-300 transition-colors" />
-              <span className="text-[11px] font-semibold tracking-wide">P.T. Rank</span>
-            </button>
-            <button
-              onClick={() => setShowDryRun(prev => !prev)}
-              className={`group flex items-center gap-2 px-3 py-2 rounded-xl transition-all border ${
-                showDryRun
-                  ? 'bg-indigo-600/30 text-indigo-200 border-indigo-500/50'
-                  : 'bg-slate-900/60 text-slate-300 hover:text-white hover:bg-indigo-600/20 border-slate-700/50 hover:border-indigo-500/40'
-              }`}
-              title="Dry Run — Scansione batch di tutti i giochi per verificare la pipeline"
-            >
-              <Search className="h-4 w-4 text-indigo-400 group-hover:text-indigo-300 transition-colors" />
-              <span className="text-[11px] font-semibold tracking-wide">Dry Run</span>
-            </button>
-            <button 
-              onClick={async () => {
-                toast.info(lib.downloadingNames);
-                try {
-                  const result = await invoke<Record<string, Game>>('update_remote_game_database');
-                  const updatedGames = Object.values(result ?? {}) as Game[];
-                  setGames(updatedGames);
-                  toast.success(`${lib.databaseUpdated} ${updatedGames.length} ${lib.games}`);
-                } catch (e: unknown) {
-                  toast.error(lib.updateError + ': ' + e);
-                }
-              }} 
-              className="group flex items-center gap-2 px-3 py-2 bg-slate-900/80 text-slate-300 hover:text-white hover:bg-indigo-600/20 rounded-xl transition-all border border-slate-700/50 hover:border-indigo-500/40"
-              title={t('common.scaricaNomiCorrettiDeiGiochiDalDatabaseRemoto')}
-            >
-              <Download className="h-4 w-4 text-slate-400 group-hover:text-indigo-300 transition-colors" />
-              <span className="text-[11px] font-semibold tracking-wide">Nomi DB</span>
-            </button>
+            {/* Menu "Altro" — azioni usate raramente, raggruppate per ridurre il clutter */}
+            <div className="relative">
+              <button
+                onClick={() => setShowMoreActions(v => !v)}
+                className={`group flex items-center gap-2 px-3 py-2 rounded-xl transition-all border ${
+                  showMoreActions || showDryRun
+                    ? 'bg-indigo-600/30 text-indigo-200 border-indigo-500/50'
+                    : 'bg-slate-900/80 text-slate-300 hover:text-white hover:bg-slate-800/80 border-slate-700/50 hover:border-indigo-500/40'
+                }`}
+                title="Altri strumenti (P.T. Rank, Dry Run, Nomi DB)"
+              >
+                <MoreHorizontal className="h-4 w-4 text-slate-400 group-hover:text-indigo-300 transition-colors" />
+                <span className="text-[11px] font-semibold tracking-wide">Altro</span>
+              </button>
+              {showMoreActions && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setShowMoreActions(false)} />
+                  <div className="absolute right-0 mt-2 z-50 w-60 p-1.5 rounded-xl bg-slate-900/95 backdrop-blur border border-slate-700/60 shadow-xl shadow-black/40 flex flex-col gap-1">
+                    <button
+                      onClick={() => { setShowMoreActions(false); window.location.href = '/prediction-tool/ranking'; }}
+                      className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left text-xs text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
+                      title="Classifica P.T. — difficoltà di traduzione dei giochi installati"
+                    >
+                      <Brain className="h-4 w-4 text-purple-400" />
+                      <span className="font-semibold tracking-wide">P.T. Rank</span>
+                    </button>
+                    <button
+                      onClick={() => { setShowMoreActions(false); setShowDryRun(prev => !prev); }}
+                      className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left text-xs text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
+                      title="Dry Run — scansione batch per verificare la pipeline"
+                    >
+                      <Search className="h-4 w-4 text-indigo-400" />
+                      <span className="font-semibold tracking-wide">Dry Run{showDryRun ? ' • attivo' : ''}</span>
+                    </button>
+                    <button
+                      onClick={async () => {
+                        setShowMoreActions(false);
+                        toast.info(lib.downloadingNames);
+                        try {
+                          const result = await invoke<Record<string, Game>>('update_remote_game_database');
+                          const updatedGames = Object.values(result ?? {}) as Game[];
+                          setGames(mergeManual(updatedGames));
+                          toast.success(`${lib.databaseUpdated} ${updatedGames.length} ${lib.games}`);
+                        } catch (e: unknown) {
+                          toast.error(lib.updateError + ': ' + e);
+                        }
+                      }}
+                      className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left text-xs text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
+                      title={t('common.scaricaNomiCorrettiDeiGiochiDalDatabaseRemoto')}
+                    >
+                      <Download className="h-4 w-4 text-slate-400" />
+                      <span className="font-semibold tracking-wide">Nomi DB</span>
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>

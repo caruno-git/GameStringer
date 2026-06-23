@@ -434,8 +434,11 @@ export default function SettingsPage() {
     try {
       localStorage.setItem('gameStringerSettings', JSON.stringify(settings));
       window.dispatchEvent(new Event('gs-display-changed'));
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
+      // Persistenza su disco (fonte di verità): localStorage da solo non è
+      // affidabile tra i riavvii del webview Tauri.
+      const { persistSettingsToDisk } = await import('@/lib/settings-persistence');
+      await persistSettingsToDisk();
+
       toast.success(t('common.success'));
     } catch {
       toast.error(t('common.error'));
@@ -1011,7 +1014,12 @@ export default function SettingsPage() {
                 </div>
               </details>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <details className="group">
+                <summary className="cursor-pointer text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 select-none mb-2">
+                  <SlidersHorizontal className="h-3.5 w-3.5" />
+                  {t('settings.advancedParams') !== 'settings.advancedParams' ? t('settings.advancedParams') : 'Parametri avanzati (temperatura, token, batch)'}
+                </summary>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-3">
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <Label>Temperature: {settings.translation.temperature}</Label>
@@ -1092,6 +1100,7 @@ export default function SettingsPage() {
                   />
                 </div>
               </div>
+              </details>
             </CardContent>
           </Card>
 

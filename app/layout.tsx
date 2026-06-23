@@ -11,6 +11,7 @@ import { ProgressProvider } from '@/components/progress/progress-provider';
 import { ProgressUIManager } from '@/components/progress/progress-ui-manager';
 import { I18nProvider } from '@/lib/i18n';
 import { ScreenProvider } from '@/components/providers/screen-provider';
+import { SettingsBootGate } from '@/components/providers/settings-boot-gate';
 import { AnimatedBackground } from '@/components/ui/animated-background';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -31,6 +32,7 @@ export default function RootLayout({
         <AnimatedBackground />
         <AppErrorBoundary>
           <ThemeProvider>
+            <SettingsBootGate>
             <I18nProvider>
             <ScreenProvider>
             <Providers>
@@ -52,6 +54,7 @@ export default function RootLayout({
             </Providers>
             </ScreenProvider>
             </I18nProvider>
+            </SettingsBootGate>
           </ThemeProvider>
         </AppErrorBoundary>
       </body>
