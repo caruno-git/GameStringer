@@ -4698,6 +4698,10 @@
     "v1_10_1": {
       "0": "🐛 macOS-Build: Tauri-Feature macos-private-api für das transparente Overlay-Fenster aktiviert — die Multi-OS-Release kompiliert nun auf Apple Silicon und Intel",
       "1": "🐛 i18n: storeGate-Schlüssel in allen Sprachen vervollständigt (Locale-Integrität, grüne CI)"
+    },
+    "v1_10_2": {
+      "0": "✨ Einstellungen: Zuverlässige Speicherung von Einstellungen/API-Schlüsseln + Spiele manuell von der Festplatte hinzufügen",
+      "1": "🐛 Updater: Behebt das Hängenbleiben bei „Vorbereitung…“ — Auto-Update lädt und installiert jetzt korrekt"
     }
   },
   "communityChat": {

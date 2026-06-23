@@ -4810,6 +4810,10 @@
     "v1_10_1": {
       "0": "🐛 macOS build: enabled the Tauri macos-private-api feature for the transparent overlay window — the multi-OS release now compiles on Apple Silicon and Intel",
       "1": "🐛 i18n: completed the storeGate keys in all languages (locale integrity, green CI)"
+    },
+    "v1_10_2": {
+      "0": "✨ settings: Reliable settings/API key persistence + add games manually from disk",
+      "1": "🐛 updater: Fixes the update stuck on 'Preparing…' — auto-update now downloads and installs correctly"
     }
   },
   "communityChat": {

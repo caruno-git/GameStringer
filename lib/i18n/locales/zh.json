@@ -4698,6 +4698,10 @@
     "v1_10_1": {
       "0": "🐛 macOS 构建：为透明悬浮窗启用 Tauri 的 macos-private-api 功能 — 多 OS 发布现在可在 Apple Silicon 和 Intel 上编译",
       "1": "🐛 i18n：补齐所有语言的 storeGate 键（区域设置完整性，CI 通过）"
+    },
+    "v1_10_2": {
+      "0": "✨ 设置：可靠的设置/API 密钥持久化 + 从磁盘手动添加游戏",
+      "1": "🐛 updater：修复卡在“准备中…”的问题——自动更新现在能正确下载并安装"
     }
   },
   "communityChat": {

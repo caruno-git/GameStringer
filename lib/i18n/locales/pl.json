@@ -4804,6 +4804,10 @@
     "v1_10_1": {
       "0": "🐛 Build macOS: włączono funkcję Tauri macos-private-api dla przezroczystego okna nakładki — wydanie multi-OS kompiluje się teraz na Apple Silicon i Intel",
       "1": "🐛 i18n: uzupełniono klucze storeGate we wszystkich językach (integralność lokalizacji, zielone CI)"
+    },
+    "v1_10_2": {
+      "0": "✨ ustawienia: Niezawodne zapisywanie ustawień/kluczy API + ręczne dodawanie gier z dysku",
+      "1": "🐛 updater: Naprawia aktualizację zatrzymaną na „Przygotowywanie…” — automatyczna aktualizacja teraz pobiera się i instaluje poprawnie"
     }
   },
   "communityChat": {
