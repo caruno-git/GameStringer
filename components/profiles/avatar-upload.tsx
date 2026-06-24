@@ -223,11 +223,11 @@ export function AvatarUpload({ currentAvatar, userName, onAvatarChange, open, on
             </Button>
           )}
           <Button variant="outline" size="sm" onClick={() => onOpenChange(false)} className="border-slate-700 bg-slate-900/50 hover:bg-slate-800 text-slate-300 h-8 text-xs">
-            {t('profile.cancel')}
+            {t('common.cancel')}
           </Button>
           <Button size="sm" onClick={handleSave} disabled={!previewUrl || isLoading} className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white border-0 h-8 text-xs">
             <Check className="h-3.5 w-3.5 mr-1" />
-            {t('profile.save')}
+            {t('common.save')}
           </Button>
         </DialogFooter>
       </DialogContent>

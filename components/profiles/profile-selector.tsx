@@ -600,12 +600,22 @@ export function ProfileSelector({ onCreateProfile }: ProfileSelectorProps) {
                 <Image 
                   src="/logo.png" 
                   alt="GameStringer" 
-                  width={180} 
-                  height={180} 
-                  className="mx-auto w-[180px] h-[180px]"
+                  width={180}
+                  height={180}
+                  className="mx-auto w-[180px] h-[180px] rounded-3xl"
                   priority
                 />
               </motion.div>
+              <h1
+                className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent mt-4"
+                style={{
+                  backgroundImage: 'linear-gradient(90deg, #ff4d9e, #b14dff, #4d8dff, #ff4d9e)',
+                  backgroundSize: '200% 100%',
+                  animation: 'gradientMove 4s linear infinite',
+                }}
+              >
+                GameStringer
+              </h1>
               <p className="text-xs text-slate-500 mt-3 font-mono">v{version}</p>
               <p className="text-sm text-slate-400/80 italic mt-1.5">&quot;{t('profile.loginTagline')}&quot;</p>
             </motion.div>
