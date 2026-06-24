@@ -1,0 +1,524 @@
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import {
+  Package,
+  Download,
+  Star,
+  ArrowLeft,
+  Search,
+  CheckCircle2,
+  Globe,
+  Loader2,
+  FileText,
+  ShieldCheck,
+  Upload,
+  UploadCloud,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { toast } from 'sonner';
+import { useTranslation } from '@/lib/i18n';
+import { useProfiles } from '@/hooks/use-profiles';
+import { communityHubService, type TranslationPack } from '@/lib/social/community-hub-service';
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function formatBytes(bytes: number): string {
+  if (!bytes) return '—';
+  const u = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${u[i]}`;
+}
+
+// Solo le classi colore; le etichette di stato arrivano da i18n (patchHubPage.status*).
+const STATUS_CLS: Record<TranslationPack['status'], string> = {
+  draft: 'bg-slate-700/40 text-slate-400',
+  published: 'bg-amber-500/15 text-amber-300',
+  verified: 'bg-emerald-500/15 text-emerald-300',
+  featured: 'bg-orange-500/15 text-orange-300',
+};
+const STATUS_KEY: Record<TranslationPack['status'], string> = {
+  draft: 'statusDraft',
+  published: 'statusPublished',
+  verified: 'statusVerified',
+  featured: 'statusFeatured',
+};
+
+function Stars({ rating }: { rating: number }) {
+  return (
+    <span className="inline-flex items-center gap-0.5 text-amber-400">
+      <Star className="h-3.5 w-3.5 fill-amber-400" />
+      <span className="text-xs font-medium text-slate-300">{rating.toFixed(1)}</span>
+    </span>
+  );
+}
+
+// ─── Pack card (browse) ─────────────────────────────────────────────────────────
+
+function PackCard({ pack, onOpen }: { pack: TranslationPack; onOpen: (id: string) => void }) {
+  const { t } = useTranslation();
+  return (
+    <button
+      onClick={() => onOpen(pack.id)}
+      className="group text-left rounded-xl border border-slate-800/60 bg-slate-900/40 hover:bg-slate-900/70 hover:border-amber-500/30 transition-all p-4 flex flex-col gap-3"
+    >
+      <div className="flex items-start justify-between gap-2">
+        <div className="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center flex-shrink-0">
+          <Package className="h-4.5 w-4.5 text-amber-400" />
+        </div>
+        <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${STATUS_CLS[pack.status]}`}>
+          {t(`patchHubPage.${STATUS_KEY[pack.status]}`)}
+        </span>
+      </div>
+      <div className="min-w-0">
+        <h3 className="text-sm font-semibold text-slate-200 truncate group-hover:text-amber-200">{pack.name}</h3>
+        <p className="text-xs text-slate-500 truncate">{pack.gameName}</p>
+      </div>
+      <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
+        <Globe className="h-3 w-3" />
+        <span className="uppercase">{pack.sourceLanguage}</span>
+        <span>→</span>
+        <span className="uppercase font-medium text-slate-300">{pack.targetLanguage}</span>
+        <span className="text-slate-600">·</span>
+        <span>v{pack.version}</span>
+      </div>
+      {/* Completion bar */}
+      <div className="h-1.5 rounded-full bg-slate-800 overflow-hidden">
+        <div
+          className="h-full bg-gradient-to-r from-amber-500 to-orange-500"
+          style={{ width: `${Math.min(100, pack.completionPercentage)}%` }}
+        />
+      </div>
+      <div className="flex items-center justify-between text-[11px] text-slate-500">
+        <span>{pack.completionPercentage}% {t('patchHubPage.translated')}</span>
+        <span className="flex items-center gap-2">
+          <Stars rating={pack.rating} />
+          <span className="flex items-center gap-0.5"><Download className="h-3 w-3" />{pack.downloads.toLocaleString()}</span>
+        </span>
+      </div>
+    </button>
+  );
+}
+
+// ─── Detail view (?id=X) ────────────────────────────────────────────────────────
+
+function PackDetail({ packId, onBack }: { packId: string; onBack: () => void }) {
+  const { t } = useTranslation();
+  const [pack, setPack] = useState<TranslationPack | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState(false);
+  const [installed, setInstalled] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    setLoading(true);
+    communityHubService
+      .getPackDetails(packId)
+      .then((p) => {
+        if (!alive) return;
+        setPack(p);
+        setInstalled(communityHubService.isPackInstalled(packId));
+      })
+      .catch(() => alive && setPack(null))
+      .finally(() => alive && setLoading(false));
+    return () => { alive = false; };
+  }, [packId]);
+
+  const handleDownload = async () => {
+    if (!pack) return;
+    setDownloading(true);
+    try {
+      // NB: installPath verrà collegato alla selezione gioco del Patcher (prossimo step).
+      await communityHubService.downloadPack(pack.id, '');
+      setInstalled(true);
+      toast.success(t('patchHubPage.downloadedToast'));
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : t('patchHubPage.downloadFailed'));
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64 text-amber-400">
+        <Loader2 className="h-6 w-6 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!pack) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 text-slate-500 gap-3">
+        <Package className="h-8 w-8 opacity-30" />
+        <p className="text-sm">{t('patchHubPage.notFound')}</p>
+        <Button variant="outline" size="sm" onClick={onBack}><ArrowLeft className="h-3.5 w-3.5 mr-1" /> {t('patchHubPage.notFoundBack')}</Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-3xl mx-auto">
+      <Button variant="ghost" size="sm" onClick={onBack} className="mb-4 text-slate-400 hover:text-amber-300">
+        <ArrowLeft className="h-3.5 w-3.5 mr-1" /> {t('patchHubPage.title')}
+      </Button>
+
+      <div className="flex items-start gap-4 mb-5">
+        <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center flex-shrink-0">
+          <Package className="h-6 w-6 text-amber-400" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h1 className="text-xl font-semibold text-slate-200">{pack.name}</h1>
+            <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${STATUS_CLS[pack.status]}`}>
+              {t(`patchHubPage.${STATUS_KEY[pack.status]}`)}
+            </span>
+            {pack.author.verifiedTranslator && (
+              <span className="inline-flex items-center gap-1 text-[10px] text-emerald-300">
+                <ShieldCheck className="h-3 w-3" /> {t('patchHubPage.verifiedTranslator')}
+              </span>
+            )}
+          </div>
+          <p className="text-sm text-slate-500 mt-0.5">
+            {pack.gameName} · <span className="uppercase">{pack.sourceLanguage}→{pack.targetLanguage}</span> · v{pack.version} · {t('patchHubPage.by')} {pack.author.username}
+          </p>
+        </div>
+      </div>
+
+      {/* Stats row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+        {[
+          { label: t('patchHubPage.statCompletion'), value: `${pack.completionPercentage}%` },
+          { label: t('patchHubPage.statRating'), value: `${pack.rating.toFixed(1)} (${pack.ratingCount})` },
+          { label: t('patchHubPage.statDownloads'), value: pack.downloads.toLocaleString() },
+          { label: t('patchHubPage.statSize'), value: formatBytes(pack.size) },
+        ].map((s) => (
+          <div key={s.label} className="rounded-lg border border-slate-800/60 bg-slate-900/40 px-3 py-2.5">
+            <div className="text-base font-semibold text-slate-200 leading-none">{s.value}</div>
+            <div className="text-[10px] text-slate-500 uppercase tracking-wider mt-1">{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Download / Apply */}
+      <div className="flex items-center gap-2 mb-6">
+        {installed ? (
+          <div className="inline-flex items-center gap-2 text-sm text-emerald-300">
+            <CheckCircle2 className="h-4 w-4" /> {t('patchHubPage.downloaded')}
+          </div>
+        ) : (
+          <Button
+            onClick={handleDownload}
+            disabled={downloading}
+            className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white"
+          >
+            {downloading ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> : <Download className="h-4 w-4 mr-1.5" />}
+            {t('patchHubPage.download')}
+          </Button>
+        )}
+      </div>
+
+      {pack.description && (
+        <section className="mb-6">
+          <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{t('patchHubPage.descriptionLabel')}</h2>
+          <p className="text-sm text-slate-300 whitespace-pre-line leading-relaxed">{pack.description}</p>
+        </section>
+      )}
+
+      {/* Files */}
+      {pack.files?.length > 0 && (
+        <section className="mb-6">
+          <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{t('patchHubPage.filesLabel')} ({pack.files.length})</h2>
+          <div className="space-y-1.5">
+            {pack.files.map((f) => (
+              <div key={f.path} className="flex items-center justify-between rounded-lg border border-slate-800/60 bg-slate-900/40 px-3 py-2 text-xs">
+                <span className="flex items-center gap-2 text-slate-300 min-w-0">
+                  <FileText className="h-3.5 w-3.5 text-amber-400 flex-shrink-0" />
+                  <span className="truncate">{f.name}</span>
+                  <span className="text-slate-600 uppercase">{f.type}</span>
+                </span>
+                <span className="text-slate-500 flex-shrink-0">{formatBytes(f.size)}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Changelog */}
+      {pack.changelog?.length > 0 && (
+        <section>
+          <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{t('patchHubPage.changelogLabel')}</h2>
+          <div className="space-y-3">
+            {pack.changelog.map((c) => (
+              <div key={c.version} className="text-xs">
+                <div className="text-slate-300 font-medium">v{c.version} <span className="text-slate-600 font-normal">· {new Date(c.date).toLocaleDateString()}</span></div>
+                <ul className="mt-1 ml-4 list-disc text-slate-400 space-y-0.5">
+                  {c.changes.map((ch, i) => <li key={i}>{ch}</li>)}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  );
+}
+
+// ─── Publish dialog ─────────────────────────────────────────────────────────
+
+function slugify(s: string): string {
+  return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+}
+
+function PublishDialog({ open, onOpenChange, onPublished }: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  onPublished: (packId: string) => void;
+}) {
+  const { t } = useTranslation();
+  const { currentProfile } = useProfiles();
+  const [name, setName] = useState('');
+  const [gameName, setGameName] = useState('');
+  const [sourceLanguage, setSourceLanguage] = useState('en');
+  const [targetLanguage, setTargetLanguage] = useState('it');
+  const [description, setDescription] = useState('');
+  const [tags, setTags] = useState('');
+  const [files, setFiles] = useState<File[]>([]);
+  const [submitting, setSubmitting] = useState(false);
+
+  const reset = () => {
+    setName(''); setGameName(''); setDescription(''); setTags(''); setFiles([]);
+    setSourceLanguage('en'); setTargetLanguage('it');
+  };
+
+  const canSubmit = name.trim() && gameName.trim() && files.length > 0 && !submitting;
+
+  const handleSubmit = async () => {
+    if (!currentProfile) {
+      toast.error(t('patchHubPage.publishLoginRequired'));
+      return;
+    }
+    if (!canSubmit) return;
+    setSubmitting(true);
+    try {
+      const author = {
+        id: currentProfile.id,
+        username: currentProfile.name || currentProfile.id,
+        avatar: currentProfile.avatar_path || undefined,
+        reputation: 0,
+        totalContributions: 0,
+        verifiedTranslator: false,
+      };
+      const pack = await communityHubService.createPack({
+        name: name.trim(),
+        gameId: slugify(gameName),
+        gameName: gameName.trim(),
+        sourceLanguage,
+        targetLanguage,
+        description: description.trim(),
+        tags: tags.split(',').map((x) => x.trim()).filter(Boolean),
+        files,
+        author,
+      });
+      await communityHubService.publishPack(pack.id);
+      toast.success(t('patchHubPage.publishedToast'));
+      reset();
+      onOpenChange(false);
+      onPublished(pack.id);
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : t('patchHubPage.publishFailed'));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <UploadCloud className="h-5 w-5 text-amber-400" /> {t('patchHubPage.publishTitle')}
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-3">
+          <div>
+            <Label className="text-xs">{t('patchHubPage.fieldName')}</Label>
+            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('patchHubPage.fieldNamePlaceholder')} className="mt-1" />
+          </div>
+          <div>
+            <Label className="text-xs">{t('patchHubPage.fieldGame')}</Label>
+            <Input value={gameName} onChange={(e) => setGameName(e.target.value)} placeholder={t('patchHubPage.fieldGamePlaceholder')} className="mt-1" />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label className="text-xs">{t('patchHubPage.fieldSource')}</Label>
+              <Input value={sourceLanguage} onChange={(e) => setSourceLanguage(e.target.value)} placeholder="en" className="mt-1" />
+            </div>
+            <div>
+              <Label className="text-xs">{t('patchHubPage.fieldTarget')}</Label>
+              <Input value={targetLanguage} onChange={(e) => setTargetLanguage(e.target.value)} placeholder="it" className="mt-1" />
+            </div>
+          </div>
+          <div>
+            <Label className="text-xs">{t('patchHubPage.descriptionLabel')}</Label>
+            <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t('patchHubPage.fieldDescriptionPlaceholder')} className="mt-1" rows={3} />
+          </div>
+          <div>
+            <Label className="text-xs">{t('patchHubPage.fieldTags')}</Label>
+            <Input value={tags} onChange={(e) => setTags(e.target.value)} placeholder={t('patchHubPage.fieldTagsPlaceholder')} className="mt-1" />
+          </div>
+          <div>
+            <Label className="text-xs">{t('patchHubPage.fieldFiles')}</Label>
+            <label className="mt-1 flex items-center gap-2 px-3 py-2 rounded-md border border-dashed border-slate-700 bg-slate-900/40 cursor-pointer hover:border-amber-500/40 transition-colors">
+              <Upload className="h-4 w-4 text-amber-400" />
+              <span className="text-xs text-slate-400">
+                {files.length > 0 ? `${files.length} ${t('patchHubPage.filesSelected')}` : t('patchHubPage.filesPlaceholder')}
+              </span>
+              <input
+                type="file"
+                multiple
+                className="hidden"
+                onChange={(e) => setFiles(Array.from(e.target.files || []))}
+              />
+            </label>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>{t('patchHubPage.cancel')}</Button>
+          <Button
+            onClick={handleSubmit}
+            disabled={!canSubmit}
+            className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white"
+          >
+            {submitting ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> : <UploadCloud className="h-4 w-4 mr-1.5" />}
+            {t('patchHubPage.publishConfirm')}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// ─── Page ────────────────────────────────────────────────────────────────────
+
+export default function PatchHubPage() {
+  const { t } = useTranslation();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id');
+
+  const [packs, setPacks] = useState<TranslationPack[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'downloads' | 'rating' | 'updated' | 'completion'>('downloads');
+  const [publishOpen, setPublishOpen] = useState(false);
+
+  const load = useCallback(() => {
+    setLoading(true);
+    communityHubService
+      .searchPacks({ query: query || undefined, sortBy, sortOrder: 'desc', limit: 60 })
+      .then((r) => setPacks(r.packs))
+      .catch(() => setPacks([]))
+      .finally(() => setLoading(false));
+  }, [query, sortBy]);
+
+  useEffect(() => {
+    if (id) return; // in detail view, skip list load
+    const timer = setTimeout(load, 250); // debounce ricerca
+    return () => clearTimeout(timer);
+  }, [id, load]);
+
+  const openPack = (packId: string) => router.push(`/patch-hub?id=${encodeURIComponent(packId)}`);
+  const backToList = () => router.push('/patch-hub');
+
+  // Detail view (route dinamica via query param, da regola progetto)
+  if (id) {
+    return (
+      <div className="h-full overflow-y-auto px-6 py-6 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+        <PackDetail packId={id} onBack={backToList} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="h-full overflow-y-auto px-6 py-5 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+      {/* Header */}
+      <div className="flex items-center justify-between gap-3 mb-5">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center">
+            <Package className="h-5 w-5 text-amber-400" />
+          </div>
+          <div>
+            <h1 className="text-xl font-semibold text-slate-200">{t('patchHubPage.title')}</h1>
+            <p className="text-slate-500 text-xs mt-0.5">{t('patchHubPage.subtitle')}</p>
+          </div>
+        </div>
+        <Button
+          onClick={() => setPublishOpen(true)}
+          className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white"
+        >
+          <UploadCloud className="h-4 w-4 mr-1.5" /> {t('patchHubPage.publish')}
+        </Button>
+      </div>
+
+      <PublishDialog
+        open={publishOpen}
+        onOpenChange={setPublishOpen}
+        onPublished={(packId) => { load(); openPack(packId); }}
+      />
+
+      {/* Toolbar: search + sort */}
+      <div className="flex items-center gap-2 mb-5">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t('patchHubPage.searchPlaceholder')}
+            className="pl-8 h-9"
+          />
+        </div>
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+          className="h-9 rounded-md bg-slate-900 border border-slate-700 text-xs text-slate-300 px-2"
+        >
+          <option value="downloads">{t('patchHubPage.sortDownloads')}</option>
+          <option value="rating">{t('patchHubPage.sortRating')}</option>
+          <option value="updated">{t('patchHubPage.sortUpdated')}</option>
+          <option value="completion">{t('patchHubPage.sortCompletion')}</option>
+        </select>
+      </div>
+
+      {/* Grid */}
+      {loading ? (
+        <div className="flex items-center justify-center h-64 text-amber-400">
+          <Loader2 className="h-6 w-6 animate-spin" />
+        </div>
+      ) : packs.length === 0 ? (
+        <div className="flex flex-col items-center justify-center h-64 text-slate-500 gap-2">
+          <Package className="h-8 w-8 opacity-30" />
+          <p className="text-sm">{t('patchHubPage.emptyTitle')}</p>
+          <p className="text-xs text-slate-600">{t('patchHubPage.emptyHint')}</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {packs.map((p) => (
+            <PackCard key={p.id} pack={p} onOpen={openPack} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

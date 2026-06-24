@@ -9,7 +9,7 @@ import {
   Download,
   Flame,
 } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n';
 import { ForumHome, ThreadView, NewThread } from '@/components/forum';
 import { FriendsSidebar, NotificationsPanel, OnlineIndicator, ChatPanel } from '@/components/social';
@@ -65,6 +65,7 @@ function KpiCard({ icon: Icon, label, value, accent }: KpiCardProps) {
 export default function CommunityHubPage() {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const { currentProfile } = useProfiles();
 
   const initialCategory = searchParams.get('category') || undefined;
@@ -152,6 +153,16 @@ export default function CommunityHubPage() {
                   <div className="flex items-center gap-2">
                     <OnlineIndicator />
                     {userId && <NotificationsPanel userId={userId} />}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => router.push('/patch-hub')}
+                      className="text-slate-400 hover:text-amber-300 hover:bg-amber-500/10 transition-all"
+                      title={t('patchHub.title') || 'Patch Hub'}
+                      aria-label="Patch Hub"
+                    >
+                      <Package className="h-5 w-5" />
+                    </Button>
                     <Button
                       variant="ghost"
                       size="icon"

@@ -395,7 +395,7 @@ export function CommunityChat() {
     const handleRetrySync = async () => {
       setIsLoading(true);
       try {
-        const uid = await autoSyncGSToSupabase();
+        const uid = await autoSyncGSToSupabase({ force: true });
         if (uid) {
           setUserId(uid);
           const chatRooms = await fetchRooms();

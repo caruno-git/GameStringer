@@ -6,7 +6,6 @@ import {
   MessageSquare,
   Send,
   Hash,
-  Plus,
   Reply,
   Edit3,
   Trash2,
@@ -19,7 +18,6 @@ import {
   X,
   Minimize2,
   Maximize2,
-  ChevronDown,
   Languages,
   RefreshCw,
   AlertCircle,
@@ -32,22 +30,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { toast } from 'sonner';
 import { useTranslation } from '@/lib/i18n';
 import {
@@ -59,7 +41,6 @@ import {
   sendMessage,
   editMessage,
   deleteMessage,
-  createRoom,
   subscribeToRoom,
   subscribeToPresence,
   updatePresence,
@@ -72,6 +53,13 @@ import {
 import { getSupabase } from '@/lib/social/community-hub-backend';
 import { translateChatMessage } from '@/lib/ai/ai-translate-direct';
 import { clientLogger } from '@/lib/client-logger';
+
+// Chat = modello "DM + Lobby unica": niente più stanze pubbliche multiple.
+// Sceglie la stanza generale come Lobby, con fallback alla prima disponibile.
+function pickLobby(rooms: ChatRoom[]): ChatRoom | null {
+  if (!rooms.length) return null;
+  return rooms.find((r) => r.type === 'general') ?? rooms[0];
+}
 
 // ─── Room icon helper ───────────────────────────────────────────
 
@@ -111,7 +99,6 @@ export function PersistentChat() {
   const [expanded, setExpanded] = useState(false);
   const [enabled, setEnabled] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  const [rooms, setRooms] = useState<ChatRoom[]>([]);
   const [activeRoom, setActiveRoom] = useState<ChatRoom | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [onlineUsers, setOnlineUsers] = useState<UserPresence[]>([]);
@@ -121,11 +108,6 @@ export function PersistentChat() {
   const [isSending, setIsSending] = useState(false);
   const [replyTo, setReplyTo] = useState<ChatMessage | null>(null);
   const [editingMsg, setEditingMsg] = useState<ChatMessage | null>(null);
-  const [showNewRoom, setShowNewRoom] = useState(false);
-  const [newRoomName, setNewRoomName] = useState('');
-  const [newRoomDesc, setNewRoomDesc] = useState('');
-  const [newRoomType, setNewRoomType] = useState<ChatRoom['type']>('general');
-  const [showRooms, setShowRooms] = useState(false);
   const [showOnlineUsers, setShowOnlineUsers] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [translatedMessages, setTranslatedMessages] = useState<Record<string, string>>({});
@@ -179,13 +161,13 @@ export function PersistentChat() {
             setLoadError('Impossibile caricare le stanze. Riprova più tardi.');
             return [] as ChatRoom[];
           }) ?? [] as ChatRoom[];
-          setRooms(chatRooms);
-          if (chatRooms.length > 0 && !activeRoom) {
-            setActiveRoom(chatRooms[0]);
+          const lobby = pickLobby(chatRooms);
+          if (lobby && !activeRoom) {
+            setActiveRoom(lobby);
           }
-          
+
           // Clear error on success
-          if (chatRooms.length > 0) setLoadError(null);
+          if (lobby) setLoadError(null);
           
           updatePresence('online').catch(() => {});
           unsubPresenceRef.current = await timeout(subscribeToPresence((users) => {
@@ -498,23 +480,6 @@ export function PersistentChat() {
     }
   }, [autoTranslate, messages, userId, translatedMessages, translatingIds, detectLangTag, handleTranslateMessage]);
 
-  // ─── Create room ────────────────────────────────────────────
-  const handleCreateRoom = async () => {
-    if (!newRoomName.trim()) return;
-    try {
-      const room = await createRoom(newRoomName.trim(), newRoomDesc.trim(), newRoomType);
-      setRooms((prev) => [room, ...prev]);
-      setActiveRoom(room);
-      setShowNewRoom(false);
-      setNewRoomName('');
-      setNewRoomDesc('');
-      toast.success(t('common.stanzaCreata'));
-    } catch (e: unknown) {
-      const errMsg = e instanceof Error ? e.message : 'Errore creazione stanza';
-      toast.error(errMsg);
-    }
-  };
-
   // Don't render if chat backend not configured
   if (!enabled) return null;
 
@@ -690,12 +655,12 @@ export function PersistentChat() {
               className="text-xs h-7"
               onClick={async () => {
                 setIsLoading(true);
-                const uid = await autoSyncGSToSupabase();
+                const uid = await autoSyncGSToSupabase({ force: true });
                 if (uid) {
                   setUserId(uid);
                   const chatRooms = await fetchRooms();
-                  setRooms(chatRooms);
-                  if (chatRooms.length > 0) setActiveRoom(chatRooms[0]);
+                  const lobby = pickLobby(chatRooms);
+                  if (lobby) setActiveRoom(lobby);
                   updatePresence('online');
                 }
                 setIsLoading(false);
@@ -709,50 +674,22 @@ export function PersistentChat() {
         {/* ── Chat content ── */}
         {!isLoading && userId && !showOnlineUsers && (
           <>
-            {/* Room selector bar */}
+            {/* Lobby header — chat = DM + Lobby unica, niente selettore stanze */}
             <div className="flex items-center gap-1.5 px-2 py-1.5 border-b border-slate-700/30 bg-slate-850/30">
-              <button
-                onClick={() => setShowRooms(!showRooms)}
-                className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-slate-800/60 hover:bg-slate-700/60 transition-colors text-xs text-slate-300"
-              >
+              <div className="flex items-center gap-1.5 px-2 py-1 text-xs text-slate-300">
                 {activeRoom && getRoomIcon(activeRoom.type)}
-                <span className="font-medium truncate max-w-[180px]">{activeRoom?.name || 'Stanze'}</span>
-                <ChevronDown className={`h-3 w-3 text-slate-500 transition-transform ${showRooms ? 'rotate-180' : ''}`} />
-              </button>
+                <span className="font-medium truncate max-w-[180px]">{t('communityChat.lobby')}</span>
+              </div>
               <Button
                 variant="ghost"
                 size="xs"
                 className={`w-6 p-0 ml-auto ${autoTranslate ? 'text-cyan-400' : 'text-slate-500'}`}
                 onClick={toggleAutoTranslate}
-                title={autoTranslate ? 'Disattiva auto-traduzione' : 'Auto-traduci messaggi'}
+                title={autoTranslate ? t('communityChat.autoTranslateOn') : t('communityChat.autoTranslateOff')}
               >
                 <Languages className="h-3 w-3" />
               </Button>
-              <Button variant="ghost" size="xs" className="w-6 p-0" onClick={() => setShowNewRoom(true)}>
-                <Plus className="h-3 w-3 text-slate-500" />
-              </Button>
             </div>
-
-            {/* Room dropdown */}
-            {showRooms && (
-              <div className="border-b border-slate-700/30 bg-slate-800/50 max-h-40 overflow-y-auto">
-                {rooms.map((room) => (
-                  <button
-                    key={room.id}
-                    onClick={() => { setActiveRoom(room); setShowRooms(false); }}
-                    className={`w-full flex items-center gap-2 px-3 py-1.5 text-left text-xs transition-colors ${
-                      activeRoom?.id === room.id
-                        ? 'bg-slate-700/50 text-slate-100'
-                        : 'text-slate-400 hover:bg-slate-700/30 hover:text-slate-200'
-                    }`}
-                  >
-                    {getRoomIcon(room.type)}
-                  <span className="truncate">{t(`communityChat.${room.name.toLowerCase()}Room`) !== `communityChat.${room.name.toLowerCase()}Room` ? t(`communityChat.${room.name.toLowerCase()}Room`) : room.name}</span>
-                    {room.isPinned && <span className="text-micro">📌</span>}
-                  </button>
-                ))}
-              </div>
-            )}
 
             {/* Messages */}
             <ScrollArea className="flex-1 px-2 py-1.5">
@@ -885,41 +822,6 @@ export function PersistentChat() {
           </>
         )}
       </div>
-
-      {/* ── Create Room Dialog ── */}
-      <Dialog open={showNewRoom} onOpenChange={setShowNewRoom}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>{t('common.nuovaStanza')}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3">
-            <div>
-              <Label className="text-xs">Nome</Label>
-              <Input value={newRoomName} onChange={(e) => setNewRoomName(e.target.value)} placeholder="es. Hollow Knight IT" className="mt-1" />
-            </div>
-            <div>
-              <Label className="text-xs">{t('common.descrizione')}</Label>
-              <Textarea value={newRoomDesc} onChange={(e) => setNewRoomDesc(e.target.value)} placeholder="Di cosa si parla?" className="mt-1" rows={2} />
-            </div>
-            <div>
-              <Label className="text-xs">{t('common.tipo')}</Label>
-              <Select value={newRoomType} onValueChange={(v: string) => setNewRoomType(v as ChatRoom['type'])}>
-                <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="general">💬 {t('communityChat.generalRoom')}</SelectItem>
-                  <SelectItem value="game">🎮 {t('communityChat.gameRoom')}</SelectItem>
-                  <SelectItem value="translation_request">🌍 {t('communityChat.translationRoom')}</SelectItem>
-                  <SelectItem value="feedback">🐛 {t('communityChat.feedbackRoom')}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowNewRoom(false)}>{t('common.annulla')}</Button>
-            <Button onClick={handleCreateRoom} disabled={!newRoomName.trim()}>{t('common.creaStanza')}</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </>
   );
 }

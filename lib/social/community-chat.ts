@@ -204,7 +204,10 @@ function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
 // in parallelo PRIMA che il breaker scatti. Condividiamo un'unica sync in volo.
 let _syncInFlight: Promise<string | null> | null = null;
 
-export function autoSyncGSToSupabase(): Promise<string | null> {
+export function autoSyncGSToSupabase(opts?: { force?: boolean }): Promise<string | null> {
+  // Azione utente esplicita (pulsante "Accedi"): azzera il circuit-breaker così il
+  // click ritenta SEMPRE una connessione reale, anche durante il cooldown post-outage.
+  if (opts?.force) resetBreaker();
   if (_syncInFlight) return _syncInFlight;
   _syncInFlight = _runAutoSync().finally(() => { _syncInFlight = null; });
   return _syncInFlight;
