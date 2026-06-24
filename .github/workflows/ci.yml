@@ -43,6 +43,13 @@ jobs:
       - name: ESLint
         run: npm run lint
 
+      # Gate anti testo hardcoded (ratchet vs scripts/.i18n-baseline.json).
+      # Fallisce se il numero di stringhe hardcoded user-facing AUMENTA →
+      # ogni nuova stringa UI deve passare da t()/i18n. Abbassare la baseline
+      # man mano che si bonifica: npm run i18n:check:update.
+      - name: i18n no-hardcoded guard
+        run: npm run i18n:check
+
       # Gate BLOCCANTE dal 2026-06-11 (suite bonificata: 464 passed,
       # 0 failed, 37 skip documentati — vedi i TODO nei singoli file).
       - name: Unit tests

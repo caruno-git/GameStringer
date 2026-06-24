@@ -480,7 +480,7 @@ function LibraryListView() {
   const handleAddGameFromDisk = async () => {
     try {
       const { open } = await import('@tauri-apps/plugin-dialog');
-      const folder = await open({ directory: true, title: 'Seleziona la cartella del gioco' });
+      const folder = await open({ directory: true, title: t('heroJob.selectFolder') });
       if (!folder || typeof folder !== 'string') return;
       setIsAddingGame(true);
 
@@ -510,10 +510,14 @@ function LibraryListView() {
       const updated = await addManualGame(game);
       manualGamesRef.current = updated as unknown as Game[];
       setGames(prev => mergeManual(prev.filter(g => g.id !== id)));
-      toast.success(`"${base}" aggiunto alla libreria${engine ? ` (engine: ${engine})` : ''}`);
+      toast.success(
+        engine
+          ? t('heroJob.gameAddedEngine').replace('{name}', base).replace('{engine}', engine)
+          : t('heroJob.gameAdded').replace('{name}', base)
+      );
     } catch (e: unknown) {
       clientLogger.error('[Library] Errore aggiunta gioco manuale:', String(e));
-      toast.error('Errore durante l\'aggiunta del gioco');
+      toast.error(t('heroJob.addGameError'));
     } finally {
       setIsAddingGame(false);
     }
@@ -730,7 +734,7 @@ function LibraryListView() {
       
       // Mostra notifica con results
       const gamesWithName = finalGames.filter(g => !g.title.startsWith('Game ') && !g.title.startsWith('Shared Game ')).length;
-      toast.success('🎮 Family Sharing scan completed!', {
+      toast.success(t('libraryPage.scanDone'), {
         description: `Found ${finalGames.length} total games (${gamesWithName} with name)`,
         duration: 5000,
       });
@@ -739,7 +743,7 @@ function LibraryListView() {
       
     } catch (error: unknown) {
       clientLogger.error(`[LIBRARY] ❌ error scan: ${String(error)}`);
-      toast.error('Error during scan', {
+      toast.error(t('libraryPage.scanError'), {
         description: String(error),
       });
     } finally {
@@ -1306,22 +1310,20 @@ function LibraryListView() {
                 {game.platform || 'Unknown'}
               </span>
               {game.isShared && (
-                <span className="text-micro font-bold px-2 py-0.5 rounded shadow-md backdrop-blur-md bg-orange-500/90 text-white border border-orange-400/30">
-                  Shared
-                </span>
+                <span className="text-micro font-bold px-2 py-0.5 rounded shadow-md backdrop-blur-md bg-orange-500/90 text-white border border-orange-400/30">{t('libraryPage.shared')}</span>
               )}
             </div>
 
             {/* Badge Engine/VR/Installed in alto a sinistra */}
             <div className="absolute top-2 left-2 flex flex-wrap gap-1 z-20">
               {game.is_installed && (
-                <span className="bg-emerald-500/90 text-emerald-50 text-2xs w-5 h-5 flex items-center justify-center rounded shadow-md backdrop-blur-md border border-emerald-400/30 font-bold" title="Installato">✓</span>
+                <span className="bg-emerald-500/90 text-emerald-50 text-2xs w-5 h-5 flex items-center justify-center rounded shadow-md backdrop-blur-md border border-emerald-400/30 font-bold" title={t('libraryPage.installedBadge')}>✓</span>
               )}
               {game.engine && game.engine !== 'Unknown' && (
                 <span className="bg-sky-600/90 text-sky-50 text-micro px-1.5 py-0.5 flex items-center rounded shadow-md backdrop-blur-md border border-sky-400/30 font-semibold truncate max-w-[80px]" title={game.engine}>{game.engine}</span>
               )}
               {game.is_vr && (
-                <span className="bg-violet-600/90 text-violet-50 text-micro px-1.5 py-0.5 flex items-center rounded shadow-md backdrop-blur-md border border-violet-400/30 font-bold" title="VR Support">VR</span>
+                <span className="bg-violet-600/90 text-violet-50 text-micro px-1.5 py-0.5 flex items-center rounded shadow-md backdrop-blur-md border border-violet-400/30 font-bold" title={t('libraryPage.vrSupport')}>{t('libraryPage.vrBadge')}</span>
               )}
             </div>
 
@@ -1336,20 +1338,20 @@ function LibraryListView() {
                     const gameId = game.app_id || game.id;
                     if (store.includes('steam')) {
                       invoke('install_steam_game', { appId: gameId })
-                        .then(() => toast.success('Installazione avviata', { description: `Steam si aprirà per installare ${game.title}` }))
-                        .catch((err: string) => toast.error('Errore', { description: err }));
+                        .then(() => toast.success(t('libraryPage.installStarted'), { description: t('libraryPage.installStartedDesc').replace('{{game}}', game.title) }))
+                        .catch((err: string) => toast.error(t('libraryPage.genericError'), { description: err }));
                     } else if (store.includes('epic')) {
                       invoke('install_epic_game', { appName: gameId, gameTitle: game.title })
-                        .then(() => toast.success('Epic Games Launcher aperto', { description: `Clicca su "Installa" per ${game.title}` }))
-                        .catch((err: string) => toast.error('Errore', { description: err }));
+                        .then(() => toast.success(t('libraryPage.epicOpened'), { description: `Clicca su "Installa" per ${game.title}` }))
+                        .catch((err: string) => toast.error(t('libraryPage.genericError'), { description: err }));
                     } else if (store.includes('gog')) {
                       invoke('install_gog_game', { gameId: gameId, gameTitle: game.title })
-                        .then(() => toast.success('GOG Galaxy aperto', { description: `Clicca su "Installa" per ${game.title}` }))
-                        .catch((err: string) => toast.error('Errore', { description: err }));
+                        .then(() => toast.success(t('libraryPage.gogOpened'), { description: `Clicca su "Installa" per ${game.title}` }))
+                        .catch((err: string) => toast.error(t('libraryPage.genericError'), { description: err }));
                     }
                   }}
                   className="bg-emerald-600/90 hover:bg-emerald-500 p-2 rounded-lg text-white transition-all shadow-lg hover:shadow-emerald-500/50 hover:scale-110 border border-emerald-400/30"
-                  title="Installa gioco"
+                  title={t('libraryPage.installGame')}
                 >
                   <Download className="h-4 w-4" />
                 </button>
@@ -1371,7 +1373,7 @@ function LibraryListView() {
               <button
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.location.href = `/community-hub?query=${encodeURIComponent(game.title)}`; }}
                 className="bg-violet-600/90 hover:bg-violet-500 p-2 rounded-lg text-white transition-all shadow-lg hover:shadow-violet-500/50 hover:scale-110 border border-violet-400/30"
-                title="Community"
+                title={t('libraryPage.community')}
               >
                 <Languages className="h-4 w-4" />
               </button>
@@ -1385,7 +1387,7 @@ function LibraryListView() {
               <button
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCoverPickerGame(game); }}
                 className="bg-slate-700/90 hover:bg-slate-600 p-2 rounded-lg text-white transition-all shadow-lg hover:shadow-slate-500/50 hover:scale-110 border border-slate-500/30"
-                title="Cambia cover"
+                title={t('libraryPage.changeCover')}
               >
                 <ImageIcon className="h-4 w-4" />
               </button>
@@ -1488,7 +1490,7 @@ function LibraryListView() {
     }
 
     if (error) {
-      return <div className="text-red-500 text-center mt-10">Error: {error}</div>;
+      return <div className="text-red-500 text-center mt-10">{t('libraryPage.errorLabel')} {error}</div>;
     }
 
     if (filteredGames.length === 0) {
@@ -1501,22 +1503,22 @@ function LibraryListView() {
         <div className="text-center py-10">
           <p className="text-gray-400 mb-2">
             {searchTerm
-              ? `No games found for "${searchTerm}".`
-              : "Your library is empty."}
+              ? t('libraryPage.noGamesFound').replace('{{q}}', searchTerm)
+              : t('libraryPage.libraryEmpty')}
           </p>
           {searchTerm && hasActiveFilters && (
             <p className="text-sm text-yellow-500 mb-2">
-              ⚠️ You have active filters that may be hiding some games.
+              {t('libraryPage.filtersWarning')}
             </p>
           )}
           {searchTerm && safeGames.length > 0 && (
             <p className="text-sm text-gray-500">
-              {safeGames.length} games in library. Try removing filters or refining your search.
+              {t('libraryPage.gamesInLibraryHint').replace('{{count}}', String(safeGames.length))}
             </p>
           )}
           {!searchTerm && (
             <p className="text-sm text-gray-500">
-              Use the Refresh button to add games to your library.
+              {t('libraryPage.refreshHint')}
             </p>
           )}
         </div>
@@ -1570,7 +1572,7 @@ function LibraryListView() {
                       {game.is_installed && (
                         <span className="flex items-center gap-1 text-2xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-md border border-emerald-500/20">
                           <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                          Installed
+                          {t('libraryPage.installedBadge')}
                         </span>
                       )}
                       {game.is_vr && (
@@ -1700,19 +1702,19 @@ function LibraryListView() {
               onClick={handleAddGameFromDisk}
               disabled={isAddingGame}
               className="group flex items-center gap-2 px-3 py-2 bg-emerald-900/50 text-emerald-300 hover:text-white hover:bg-emerald-600/30 rounded-xl transition-all border border-emerald-700/40 hover:border-emerald-500/50 disabled:opacity-60"
-              title="Aggiungi un gioco selezionando la sua cartella dal disco"
+              title={t('heroJob.addGameTooltip')}
             >
               <FolderOpen className={`h-4 w-4 text-emerald-400 group-hover:text-emerald-300 transition-colors ${isAddingGame ? 'animate-pulse' : ''}`} />
-              <span className="text-[11px] font-semibold tracking-wide">{isAddingGame ? 'Aggiungo…' : 'Aggiungi gioco'}</span>
+              <span className="text-[11px] font-semibold tracking-wide">{isAddingGame ? t('heroJob.addingGame') : t('heroJob.addGame')}</span>
             </button>
             <ForceRefreshButton onRefreshComplete={(games: unknown[]) => handleForceRefresh(games as Game[])} />
             <button 
               onClick={testFamilySharing} 
               className="group flex items-center gap-2 px-3 py-2 bg-slate-900/80 text-slate-300 hover:text-indigo-300 hover:bg-slate-800/80 rounded-xl transition-all border border-slate-700/50 hover:border-indigo-500/30"
-              title="Riscansiona tutti i giochi installati + Family Sharing"
+              title={t('libraryPage.rescanTitle')}
             >
               <RefreshCw className="h-4 w-4 group-hover:rotate-180 transition-transform duration-500" />
-              <span className="text-[11px] font-semibold tracking-wide">Scan</span>
+              <span className="text-[11px] font-semibold tracking-wide">{t('libraryPage.scanLabel')}</span>
             </button>
             {/* Menu "Altro" — azioni usate raramente, raggruppate per ridurre il clutter */}
             <div className="relative">
@@ -1723,10 +1725,10 @@ function LibraryListView() {
                     ? 'bg-indigo-600/30 text-indigo-200 border-indigo-500/50'
                     : 'bg-slate-900/80 text-slate-300 hover:text-white hover:bg-slate-800/80 border-slate-700/50 hover:border-indigo-500/40'
                 }`}
-                title="Altri strumenti (P.T. Rank, Dry Run, Nomi DB)"
+                title={t('heroJob.moreTooltip')}
               >
                 <MoreHorizontal className="h-4 w-4 text-slate-400 group-hover:text-indigo-300 transition-colors" />
-                <span className="text-[11px] font-semibold tracking-wide">Altro</span>
+                <span className="text-[11px] font-semibold tracking-wide">{t('heroJob.more')}</span>
               </button>
               {showMoreActions && (
                 <>
@@ -1735,7 +1737,7 @@ function LibraryListView() {
                     <button
                       onClick={() => { setShowMoreActions(false); window.location.href = '/prediction-tool/ranking'; }}
                       className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left text-xs text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
-                      title="Classifica P.T. — difficoltà di traduzione dei giochi installati"
+                      title={t('libraryPage.ptRankTitle')}
                     >
                       <Brain className="h-4 w-4 text-purple-400" />
                       <span className="font-semibold tracking-wide">P.T. Rank</span>
@@ -1743,10 +1745,10 @@ function LibraryListView() {
                     <button
                       onClick={() => { setShowMoreActions(false); setShowDryRun(prev => !prev); }}
                       className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left text-xs text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
-                      title="Dry Run — scansione batch per verificare la pipeline"
+                      title={t('libraryPage.dryRunTitle')}
                     >
                       <Search className="h-4 w-4 text-indigo-400" />
-                      <span className="font-semibold tracking-wide">Dry Run{showDryRun ? ' • attivo' : ''}</span>
+                      <span className="font-semibold tracking-wide">Dry Run{showDryRun ? t('libraryPage.dryRunActive') : ''}</span>
                     </button>
                     <button
                       onClick={async () => {
@@ -1765,7 +1767,7 @@ function LibraryListView() {
                       title={t('common.scaricaNomiCorrettiDeiGiochiDalDatabaseRemoto')}
                     >
                       <Download className="h-4 w-4 text-slate-400" />
-                      <span className="font-semibold tracking-wide">Nomi DB</span>
+                      <span className="font-semibold tracking-wide">{t('libraryPage.dbNames')}</span>
                     </button>
                   </div>
                 </>
@@ -1845,14 +1847,14 @@ function LibraryListView() {
             <button
               onClick={() => setViewMode('grid')}
               className={`p-1.5 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-indigo-500/20 text-indigo-400 shadow-sm' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'}`}
-              title="Grid view"
+              title={t('libraryPage.gridView')}
             >
               <LayoutGrid className="h-4 w-4" />
             </button>
             <button
               onClick={() => setViewMode('list')}
               className={`p-1.5 rounded-lg transition-all ${viewMode === 'list' ? 'bg-indigo-500/20 text-indigo-400 shadow-sm' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'}`}
-              title="List view"
+              title={t('libraryPage.listView')}
             >
               <List className="h-4 w-4" />
             </button>
@@ -1952,7 +1954,7 @@ function LibraryListView() {
                 onClick={() => { setSelectedStatus([]); setSelectedEngines([]); setSelectedTags([]); setSelectedPlatforms([]); }}
                 className="text-xs font-semibold text-slate-400 hover:text-red-400 transition-colors px-3 py-1.5 rounded-lg hover:bg-red-500/10"
               >
-                ✕ Azzera tutti i filtri
+                {t('libraryPage.clearAllFilters')}
               </button>
             </div>
           )}

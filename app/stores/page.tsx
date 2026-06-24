@@ -240,7 +240,32 @@ export default function StoresPage() {
   const [testResults, setTestResults] = useState<Record<string, { connected?: boolean; error?: string; message?: string }>>({});
   const [xboxDetected, setXboxDetected] = useState<boolean | null>(_storesCache.xboxDetected);
   const [amazonDetected, setAmazonDetected] = useState<boolean | null>(_storesCache.amazonDetected);
-  
+
+  // Store auto-rilevati (Xbox/Amazon) che l'utente ha disconnesso manualmente.
+  // La rilevazione di sistema li riproporrebbe sempre: questo elenco li nasconde
+  // finché non vengono riattivati. Persistito in localStorage.
+  const IGNORED_STORES_KEY = 'gs_ignored_detected_stores';
+  const [ignoredStores, setIgnoredStores] = useState<string[]>([]);
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(IGNORED_STORES_KEY);
+      if (raw) setIgnoredStores(JSON.parse(raw));
+    } catch { /* ignora */ }
+  }, []);
+  const persistIgnored = (list: string[]) => {
+    setIgnoredStores(list);
+    try { localStorage.setItem(IGNORED_STORES_KEY, JSON.stringify(list)); } catch { /* ignora */ }
+  };
+  const ignoreDetectedStore = (id: string) => {
+    setIgnoredStores(prev => {
+      if (prev.includes(id)) return prev;
+      const next = [...prev, id];
+      try { localStorage.setItem(IGNORED_STORES_KEY, JSON.stringify(next)); } catch { /* ignora */ }
+      return next;
+    });
+  };
+  const reenableDetectedStore = (id: string) => persistIgnored(ignoredStores.filter(s => s !== id));
+
   useEffect(() => {
     if (_storesCache.detectionDone) return;
     _storesCache.detectionDone = true;
@@ -293,9 +318,9 @@ export default function StoresPage() {
       return ubisoftConnected || isProviderConnected('ubisoft-credentials');
     }
 
-    // Amazon: auto-detect O credenziali
+    // Amazon: auto-detect O credenziali (rispetta la disconnessione manuale)
     if (providerId === 'amazon') {
-      return amazonDetected === true || isProviderConnected('amazon-credentials');
+      return (amazonDetected === true && !ignoredStores.includes('amazon')) || isProviderConnected('amazon-credentials');
     }
     
     // Check for other store providers
@@ -407,6 +432,12 @@ export default function StoresPage() {
     const backendProviderId = getBackendProviderId(providerId);
     
     try {
+      // Store auto-rilevati (Xbox/Amazon): nascondili manualmente, altrimenti la
+      // rilevazione di sistema li riproporrebbe subito come connessi.
+      if (autoDetectProviders.includes(providerId)) {
+        ignoreDetectedStore(providerId);
+      }
+
       // Cancella Credentials dal backend Tauri per Ubisoft
       if (providerId === 'ubisoft') {
         await invoke('clear_ubisoft_credentials');
@@ -445,27 +476,14 @@ export default function StoresPage() {
         }
       }
       
-      const response = await fetch('/api/auth/disconnect', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-GS-Client': 'gamestringer' },
-        body: JSON.stringify({ providerId: backendProviderId }),
-      });
+      // Disconnessione gestita localmente: l'auth vive in localStorage e le
+      // credenziali sono già state cancellate via Tauri sopra. Nessuna chiamata
+      // a /api/auth/disconnect (route inesistente → ritornava 501).
+      await signOut(backendProviderId);
+      if (providerId === 'ubisoft') setUbisoftConnected(false);
 
-      if (response.ok) {
-        toast.success(`Account ${providerId} scollegato.`);
-        
-        // Aggiorna stato locale
-        if (providerId === 'steam') {
-          await signOut('steam-credentials');
-        } else if (providerId === 'ubisoft') {
-          await signOut('ubisoft-credentials');
-        }
-        
-        await update();
-      } else {
-        const result = await response.json() as { error?: string };
-        toast.error(`error durante la disconnection: ${result.error}`);
-      }
+      toast.success(`Account ${providerId} scollegato.`);
+      await update();
     } catch (error: unknown) {
       clientLogger.error(`Disconnect error: ${String(error)}`);
       toast.error(error instanceof Error ? error.message : 'error durante la disconnection');
@@ -767,8 +785,8 @@ export default function StoresPage() {
           const isConnectable = connectableProviders.includes(store.id);
           const isAutoDetect = autoDetectProviders.includes(store.id);
           const currentLoading = loadingProvider === store.id;
-          const xboxActive = store.id === 'xbox' && xboxDetected === true;
-          const amazonActive = store.id === 'amazon' && amazonDetected === true;
+          const xboxActive = store.id === 'xbox' && xboxDetected === true && !ignoredStores.includes('xbox');
+          const amazonActive = store.id === 'amazon' && amazonDetected === true && !ignoredStores.includes('amazon');
           const connected = store.id === 'xbox' ? xboxActive
             : isConnected(store.id);
           const isDetecting = (store.id === 'xbox' && xboxDetected === null);
@@ -854,22 +872,25 @@ export default function StoresPage() {
                         <ExternalLink className="h-3 w-3" />
                       </Button>
                     )}
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-7 w-7"
-                      disabled={testingProvider === store.id}
-                      onClick={() => testConnection(store.id)}
-                      title="Test"
-                    >
-                      {testingProvider === store.id ? (
-                        <Loader2 className="h-3 w-3 animate-spin" />
-                      ) : testResults[store.id]?.connected ? (
-                        <CheckCircle2 className="h-3 w-3 text-green-500" />
-                      ) : (
-                        <AlertCircle className="h-3 w-3" />
-                      )}
-                    </Button>
+                    {/* Store auto-rilevati hanno già il proprio pulsante Test: evita il doppione */}
+                    {!isAutoDetect && (
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-7 w-7"
+                        disabled={testingProvider === store.id}
+                        onClick={() => testConnection(store.id)}
+                        title="Test"
+                      >
+                        {testingProvider === store.id ? (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : testResults[store.id]?.connected ? (
+                          <CheckCircle2 className="h-3 w-3 text-green-500" />
+                        ) : (
+                          <AlertCircle className="h-3 w-3" />
+                        )}
+                      </Button>
+                    )}
                   </>
                 ) : isConnectable ? (
                   <>
@@ -906,6 +927,16 @@ export default function StoresPage() {
                       </>
                     )}
                   </>
+                ) : isAutoDetect && ignoredStores.includes(store.id) ? (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex-1 h-7 text-2xs border-orange-500/50 text-orange-400 hover:bg-orange-500/10 hover:border-orange-400"
+                    onClick={() => reenableDetectedStore(store.id)}
+                  >
+                    <Plug className="h-3 w-3 mr-1" />
+                    {t('stores.connect')}
+                  </Button>
                 ) : (
                   <Button size="sm" variant="outline" className="flex-1 h-7 text-2xs border-orange-500/30 text-orange-300/50" disabled={true}>
                     {t('stores.notAvailable')}

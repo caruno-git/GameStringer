@@ -561,7 +561,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                   <span 
                     className="text-lg font-extrabold tracking-tight bg-clip-text text-transparent"
                     style={{
-                      backgroundImage: 'linear-gradient(90deg, #a78bfa, #818cf8, #38bdf8, #a78bfa)',
+                      backgroundImage: 'linear-gradient(90deg, #ff4d9e, #b14dff, #4d8dff, #ff4d9e)',
                       backgroundSize: '200% 100%',
                       animation: 'gradientMove 4s linear infinite'
                     }}

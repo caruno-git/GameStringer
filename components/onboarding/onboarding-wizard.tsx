@@ -10,23 +10,14 @@ import {
   ChevronLeft,
   Check,
   Rocket,
-  Library,
-  Languages,
-  Users,
-  Cpu,
-  Download,
-  Wand2,
-  FileText,
-  Workflow,
-  ScanEye,
-  Layers
+  Library
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Dialog,
   DialogContent,
@@ -34,7 +25,6 @@ import {
 } from '@/components/ui/dialog';
 import { VisuallyHidden } from 'radix-ui';
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
 import { useTranslation } from '@/lib/i18n';
 
 interface OnboardingStep {
@@ -47,7 +37,7 @@ interface OnboardingStep {
 }
 
 const ONBOARDING_KEY = 'gamestringer_onboarding_completed';
-const ONBOARDING_VERSION = 3; // Increment ONLY when onboarding content actually changes
+const ONBOARDING_VERSION = 4; // Increment ONLY when onboarding content actually changes
 const TUTORIAL_KEY = 'gamestringer-tutorial-completed'; // Chiave condivisa con InteractiveTutorial
 
 export function OnboardingWizard() {
@@ -106,128 +96,74 @@ export function OnboardingWizard() {
     setIsOpen(false);
   };
 
+  // Imposta la lingua di destinazione e la persiste subito (così ha effetto)
+  const setTargetLanguage = (lang: string) => {
+    setPreferences(p => ({ ...p, preferredLanguage: lang }));
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem('gameStringerSettings');
+        const s = raw ? JSON.parse(raw) : {};
+        s.translation = { ...(s.translation || {}), defaultTargetLang: lang };
+        localStorage.setItem('gameStringerSettings', JSON.stringify(s));
+        import('@/lib/settings-persistence').then(m => m.persistSettingsToDisk()).catch(() => {});
+      } catch { /* ignora */ }
+    }
+  };
+
+  // Completa l'onboarding e naviga verso la destinazione scelta
+  const goTo = (href: string) => {
+    completeOnboarding();
+    if (typeof window !== 'undefined') window.location.href = href;
+  };
+
+  const TARGET_LANGS: { code: string; label: string }[] = [
+    { code: 'it', label: '🇮🇹 Italiano' },
+    { code: 'en', label: '🇬🇧 English' },
+    { code: 'es', label: '🇪🇸 Español' },
+    { code: 'fr', label: '🇫🇷 Français' },
+    { code: 'de', label: '🇩🇪 Deutsch' },
+    { code: 'pt', label: '🇵🇹 Português' },
+    { code: 'pl', label: '🇵🇱 Polski' },
+    { code: 'ru', label: '🇷🇺 Русский' },
+    { code: 'zh', label: '🇨🇳 中文' },
+    { code: 'ja', label: '🇯🇵 日本語' },
+    { code: 'ko', label: '🇰🇷 한국어' },
+    { code: 'el', label: '🇬🇷 Ελληνικά' },
+  ];
+
+  // Onboarding azionabile a 3 passi: lingua → AI/key → gioco.
+  // Riusa solo chiavi i18n esistenti (nessuna nuova chiave nei locale).
   const steps: OnboardingStep[] = [
     {
-      id: 'welcome',
-      title: t('onboarding.welcome.title'),
+      id: 'language',
+      title: t('settings.targetLang'),
       description: t('onboarding.welcome.description'),
-      icon: Rocket,
-      color: 'text-purple-500',
-      content: (
-        <div className="space-y-6 text-center">
-          <div className="w-28 h-28 mx-auto">
-            <Image 
-              src="/logo.png" 
-              alt="GameStringer" 
-              width={112} 
-              height={112} 
-              className="drop-shadow-2xl w-28 h-28"
-              priority
-            />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold mb-2">{t('onboarding.welcome.title')}</h2>
-            <p className="text-muted-foreground">
-              {t('onboarding.welcome.content')}
-            </p>
-          </div>
-          <div className="grid grid-cols-3 gap-4 pt-4">
-            <div className="p-4 bg-muted/50 rounded-lg">
-              <Brain className="h-8 w-8 mx-auto mb-2 text-violet-500" />
-              <p className="text-sm font-medium">{t('onboarding.tools.aiTranslator')}</p>
-            </div>
-            <div className="p-4 bg-muted/50 rounded-lg">
-              <Users className="h-8 w-8 mx-auto mb-2 text-orange-500" />
-              <p className="text-sm font-medium">{t('onboarding.community.title')}</p>
-            </div>
-            <div className="p-4 bg-muted/50 rounded-lg">
-              <Gamepad2 className="h-8 w-8 mx-auto mb-2 text-teal-500" />
-              <p className="text-sm font-medium">{t('onboarding.tools.multiLlm')}</p>
-            </div>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: 'library',
-      title: t('onboarding.library.title'),
-      description: t('onboarding.library.description'),
-      icon: Library,
-      color: 'text-teal-500',
+      icon: Globe,
+      color: 'text-blue-500',
       content: (
         <div className="space-y-6">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-teal-500/10 rounded-xl flex items-center justify-center">
-              <Gamepad2 className="h-8 w-8 text-teal-500" />
+            <div className="w-16 h-16 bg-blue-500/10 rounded-xl flex items-center justify-center">
+              <Globe className="h-8 w-8 text-blue-500" />
             </div>
             <div>
-              <h3 className="text-xl font-bold">{t('onboarding.library.title')}</h3>
-              <p className="text-muted-foreground">{t('onboarding.library.subtitle')}</p>
+              <h3 className="text-xl font-bold">{t('settings.targetLang')}</h3>
+              <p className="text-muted-foreground">{t('onboarding.welcome.description')}</p>
             </div>
           </div>
-          
-          <div className="space-y-3">
-            <p className="text-sm">{t('onboarding.library.detectInfo')}</p>
-            <div className="grid grid-cols-2 gap-2">
-              {['Steam', 'Epic Games', 'GOG Galaxy', 'Origin', 'Ubisoft Connect', 'Battle.net', 'itch.io'].map(store => (
-                <div key={store} className="flex items-center gap-2 p-2 bg-muted/50 rounded">
-                  <Check className="h-4 w-4 text-green-500" />
-                  <span className="text-sm">{store}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
-            <div>
-              <Label className="font-medium">{t('onboarding.library.scanOnStartup')}</Label>
-              <p className="text-xs text-muted-foreground">{t('onboarding.library.scanOnStartupDesc')}</p>
-            </div>
-            <Switch
-              checked={preferences.scanLibraryOnStart}
-              onCheckedChange={(checked) => setPreferences(p => ({ ...p, scanLibraryOnStart: checked }))}
-            />
-          </div>
-        </div>
-      )
-    },
-    {
-      id: 'tools',
-      title: t('onboarding.tools.title'),
-      description: t('onboarding.tools.description'),
-      icon: Languages,
-      color: 'text-violet-500',
-      content: (
-        <div className="space-y-4">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-violet-500/10 rounded-xl flex items-center justify-center">
-              <Languages className="h-8 w-8 text-violet-500" />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold">{t('onboarding.tools.title')}</h3>
-              <p className="text-muted-foreground">{t('onboarding.tools.subtitle')}</p>
-            </div>
-          </div>
-
+          <p className="text-sm text-muted-foreground">{t('onboarding.welcome.content')}</p>
           <div className="space-y-2">
-            {[
-              { icon: Sparkles, name: t('onboarding.tools.aiTranslator'), desc: t('onboarding.tools.aiTranslatorDesc'), color: 'text-purple-500' },
-              { icon: Workflow, name: t('onboarding.tools.aiPipeline'), desc: t('onboarding.tools.aiPipelineDesc'), color: 'text-pink-500' },
-              { icon: FileText, name: t('onboarding.tools.unityCsvTranslator'), desc: t('onboarding.tools.unityCsvTranslatorDesc'), color: 'text-green-500' },
-              { icon: ScanEye, name: t('onboarding.tools.ocrMultiEngine'), desc: t('onboarding.tools.ocrMultiEngineDesc'), color: 'text-cyan-500' },
-              { icon: Wand2, name: t('onboarding.tools.unityPatcher'), desc: t('onboarding.tools.unityPatcherDesc'), color: 'text-emerald-500' },
-              { icon: Cpu, name: t('onboarding.tools.ueTranslator'), desc: t('onboarding.tools.ueTranslatorDesc'), color: 'text-blue-500' },
-              { icon: Layers, name: t('onboarding.tools.batchOffline'), desc: t('onboarding.tools.batchOfflineDesc'), color: 'text-amber-500' },
-              { icon: Gamepad2, name: t('onboarding.tools.danganronpaPatcher'), desc: t('onboarding.tools.danganronpaPatcherDesc'), color: 'text-orange-500' },
-            ].map(tool => (
-              <div key={tool.name} className="flex items-center gap-3 p-2 bg-muted/30 rounded-lg">
-                <tool.icon className={cn("h-4 w-4", tool.color)} />
-                <div className="flex-1">
-                  <p className="text-xs font-medium">{tool.name}</p>
-                  <p className="text-2xs text-muted-foreground">{tool.desc}</p>
-                </div>
-              </div>
-            ))}
+            <Label>{t('settings.targetLang')}</Label>
+            <Select value={preferences.preferredLanguage} onValueChange={setTargetLanguage}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {TARGET_LANGS.map(l => (
+                  <SelectItem key={l.code} value={l.code}>{l.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       )
@@ -274,99 +210,58 @@ export function OnboardingWizard() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
-            <div>
-              <Label className="font-medium">{t('onboarding.ai.enableAi')}</Label>
-              <p className="text-xs text-muted-foreground">{t('onboarding.ai.enableAiDesc')}</p>
-            </div>
-            <Switch
-              checked={preferences.enableAI}
-              onCheckedChange={(checked) => setPreferences(p => ({ ...p, enableAI: checked }))}
-            />
-          </div>
+          <Button variant="outline" className="w-full" onClick={() => goTo('/settings')}>
+            {t('nav.settings')}
+            <ChevronRight className="h-4 w-4 ml-1" />
+          </Button>
         </div>
       )
     },
     {
-      id: 'community',
-      title: t('onboarding.community.title'),
-      description: t('onboarding.community.description'),
-      icon: Users,
-      color: 'text-orange-500',
+      id: 'library',
+      title: t('onboarding.library.title'),
+      description: t('onboarding.library.description'),
+      icon: Library,
+      color: 'text-teal-500',
       content: (
         <div className="space-y-6">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-orange-500/10 rounded-xl flex items-center justify-center">
-              <Globe className="h-8 w-8 text-orange-500" />
+            <div className="w-16 h-16 bg-teal-500/10 rounded-xl flex items-center justify-center">
+              <Gamepad2 className="h-8 w-8 text-teal-500" />
             </div>
             <div>
-              <h3 className="text-xl font-bold">{t('onboarding.community.title')}</h3>
-              <p className="text-muted-foreground">{t('onboarding.community.subtitle')}</p>
+              <h3 className="text-xl font-bold">{t('onboarding.library.title')}</h3>
+              <p className="text-muted-foreground">{t('onboarding.library.subtitle')}</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Card className="border-orange-500/20">
-              <CardContent className="p-4 text-center">
-                <Download className="h-8 w-8 mx-auto mb-2 text-orange-500" />
-                <p className="font-medium">{t('onboarding.community.downloadPack')}</p>
-                <p className="text-xs text-muted-foreground">{t('onboarding.community.downloadPackDesc')}</p>
-              </CardContent>
-            </Card>
-            <Card className="border-orange-500/20">
-              <CardContent className="p-4 text-center">
-                <Users className="h-8 w-8 mx-auto mb-2 text-orange-500" />
-                <p className="font-medium">{t('onboarding.community.contribute')}</p>
-                <p className="text-xs text-muted-foreground">{t('onboarding.community.contributeDesc')}</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="p-4 bg-muted/30 rounded-lg">
-            <h4 className="font-medium mb-2">{t('onboarding.community.hubTitle')}</h4>
-            <p className="text-sm text-muted-foreground">
-              {t('onboarding.community.hubInfo')}
-            </p>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: 'ready',
-      title: t('onboarding.ready.title'),
-      description: t('onboarding.ready.description'),
-      icon: Rocket,
-      color: 'text-green-500',
-      content: (
-        <div className="space-y-6 text-center">
-          <div className="w-24 h-24 mx-auto bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center">
-            <Check className="h-12 w-12 text-white" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold mb-2">{t('onboarding.ready.subtitle')}</h2>
-            <p className="text-muted-foreground">
-              {t('onboarding.ready.content')}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 pt-4">
-            <div className="p-4 bg-teal-500/10 rounded-lg border border-teal-500/20">
-              <Gamepad2 className="h-6 w-6 mx-auto mb-2 text-teal-500" />
-              <p className="text-sm font-medium">{t('onboarding.ready.exploreLibrary')}</p>
-              <p className="text-xs text-muted-foreground">{t('onboarding.ready.exploreLibraryDesc')}</p>
-            </div>
-            <div className="p-4 bg-violet-500/10 rounded-lg border border-violet-500/20">
-              <Sparkles className="h-6 w-6 mx-auto mb-2 text-violet-500" />
-              <p className="text-sm font-medium">{t('onboarding.ready.startTranslating')}</p>
-              <p className="text-xs text-muted-foreground">{t('onboarding.ready.startTranslatingDesc')}</p>
+          <div className="space-y-3">
+            <p className="text-sm">{t('onboarding.library.detectInfo')}</p>
+            <div className="grid grid-cols-2 gap-2">
+              {['Steam', 'Epic Games', 'GOG Galaxy', 'Origin', 'Ubisoft Connect', 'Battle.net', 'itch.io'].map(store => (
+                <div key={store} className="flex items-center gap-2 p-2 bg-muted/50 rounded">
+                  <Check className="h-4 w-4 text-green-500" />
+                  <span className="text-sm">{store}</span>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="pt-4">
-            <p className="text-xs text-muted-foreground">
-              {t('onboarding.ready.guideNote')}
-            </p>
+          <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
+            <div>
+              <Label className="font-medium">{t('onboarding.library.scanOnStartup')}</Label>
+              <p className="text-xs text-muted-foreground">{t('onboarding.library.scanOnStartupDesc')}</p>
+            </div>
+            <Switch
+              checked={preferences.scanLibraryOnStart}
+              onCheckedChange={(checked) => setPreferences(p => ({ ...p, scanLibraryOnStart: checked }))}
+            />
           </div>
+
+          <Button variant="outline" className="w-full" onClick={() => goTo('/library')}>
+            {t('onboarding.ready.exploreLibrary')}
+            <ChevronRight className="h-4 w-4 ml-1" />
+          </Button>
         </div>
       )
     }

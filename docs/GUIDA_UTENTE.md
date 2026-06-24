@@ -67,7 +67,7 @@ GameStringer è un sistema avanzato per la traduzione automatica e manuale di vi
 
 - **Motori di gioco**: Unity, Unreal Engine, RPG Maker, Ren'Py, Godot, Telltale, Wolf RPG, Kirikiri e altri
 - **Formati file**: CSV, JSON, XML, PO/POT, YAML, TXT, SRT, VTT, ASS/SSA e altri
-- **Provider AI**: Claude, Gemini, GPT, DeepSeek, Mistral, Groq, Ollama, **Qwen 3**, **NLLB-200** (18+ provider)
+- **Provider AI**: Claude, Gemini, GPT, DeepSeek, Mistral, Groq, Ollama, **LM Studio** (locale), **Alocai ModelWiz** (MT gaming), **Qwen 3**, **NLLB-200** (18+ provider)
 - **Lingue**: 200+ lingue supportate (con NLLB-200)
 - **UI Multilingua**: IT, EN, ES, FR, DE, JA, ZH, KO, PT, RU, PL (11 lingue)
 - **Store Gaming**: Steam, Epic Games, GOG, Origin, Battle.net, Ubisoft, itch.io, Amazon Games
@@ -579,6 +579,46 @@ Usa qualsiasi modello installato in Ollama per traduzioni.
 - `llama3.2` - Buon bilanciamento qualità/velocità
 - `mistral` - Ottimo per lingue europee
 - `gemma2` - Veloce e leggero
+
+### LM Studio (locale, gratuito)
+
+Provider **locale** alternativo a Ollama: esegue qualsiasi modello GGUF tramite l'app desktop [LM Studio](https://lmstudio.ai), che espone un server con **API OpenAI-compatible**. Gratuito, **nessuna API key**, completamente offline e privato (nessun dato esce dal PC).
+
+**Requisiti (tutti e tre necessari)**:
+
+1. App **LM Studio installata** (scaricabile da [lmstudio.ai](https://lmstudio.ai)).
+2. **Server locale avviato**: in LM Studio apri la scheda *Developer / Local Server* e premi **Start Server** (porta predefinita `1234`).
+3. **Un modello caricato** in memoria: scarica un modello dalla scheda *Discover* e caricalo con **Load**. ⚠️ Non basta averlo scaricato: deve essere *caricato*, altrimenti GameStringer mostra «Nessun modello caricato in LM Studio» e salta il provider.
+
+**Configurazione** in *Impostazioni → Traduzione → LM Studio*:
+
+| Campo | Default | Note |
+|-------|---------|------|
+| **URL** | `http://localhost:1234` | Cambialo solo se hai spostato porta o usi LM Studio su un'altra macchina in rete. |
+| **Modello** | *(vuoto)* | Se lasciato vuoto, GameStringer **rileva automaticamente** il modello attualmente caricato via `/v1/models`. Compilalo solo per forzare un modello specifico. |
+
+**Come funziona**: GameStringer verifica la raggiungibilità su `/v1/models`, poi traduce chiamando `/v1/chat/completions` — **una richiesta per stringa** (come Ollama). Per file grandi conviene un modello veloce/quantizzato.
+
+**Se non risponde**: se il server è spento, irraggiungibile o senza modello caricato, il provider viene **saltato automaticamente** (circuit-breaker) e la catena di traduzione passa al provider successivo. Non blocca il lavoro.
+
+### Alocai ModelWiz (MT specializzato gaming)
+
+Provider di **traduzione automatica neurale specializzato per videogiochi**, prodotto commerciale di [Alocai](https://www.alocai.com/download-modelwiz). Può girare **on-premise** (server locale) oppure in **cloud** con API key. A differenza dei modelli generici, è addestrato sul dominio *gaming* e supporta il **batch nativo**.
+
+**Requisiti**: avere ModelWiz installato/avviato (on-premise) **oppure** un endpoint cloud Alocai con la relativa API key. È un prodotto a parte di Alocai — vedi [alocai.com/download-modelwiz](https://www.alocai.com/download-modelwiz).
+
+**Configurazione** in *Impostazioni → Traduzione → Alocai ModelWiz*:
+
+| Campo | Default | Note |
+|-------|---------|------|
+| **URL** | `http://localhost:8080` | Endpoint del server ModelWiz, locale o cloud. |
+| **API Key** | *(vuota)* | **Opzionale**. Necessaria solo per l'endpoint cloud o se il tuo server la richiede; inviata come `Authorization: Bearer`. Per l'uso on-premise senza autenticazione lasciala vuota. |
+
+**Come funziona**: verifica lo stato su `/api/health`, poi invia tutte le stringhe in **un'unica richiesta batch** a `/api/translate` con `domain: "gaming"` e l'eventuale suggerimento di glossario. Questo lo rende **più efficiente** dei provider che fanno una chiamata per stringa (Ollama, LM Studio). Se il batch fallisce, ripiega automaticamente sulla traduzione stringa-per-stringa.
+
+**Se non risponde**: come per gli altri provider locali, se irraggiungibile viene **saltato** (circuit-breaker) e la catena passa al successivo.
+
+> **Nota sui provider locali** — LM Studio e ModelWiz sono integrazioni reali e complete, non placeholder. «Non fanno niente» solo quando il rispettivo server non è in esecuzione: in quel caso vengono saltati in silenzio e resta attivo, ad esempio, Ollama. Per usarli davvero il server corrispondente deve essere avviato e (per LM Studio) avere un modello caricato.
 
 ---
 

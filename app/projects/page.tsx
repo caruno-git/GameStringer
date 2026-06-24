@@ -219,8 +219,12 @@ async function loadAllProjects(): Promise<UnifiedProject[]> {
     clientLogger.warn('[Projects] Dizionari Tauri non disponibili:', e);
   }
 
+  // /api/* non esiste in Tauri (tutto via invoke): salta i fetch legacy per non
+  // generare 501 in console. Restano attivi solo in un eventuale build web.
+  const _hasApi = typeof window !== 'undefined' && !('__TAURI_INTERNALS__' in window);
+
   // 3. Translation Memory via API
-  try {
+  if (_hasApi) try {
     const resp = await fetch('/api/translations');
     if (resp.ok) {
       const data = (await resp.json()) as TransApiItem[];
@@ -268,7 +272,7 @@ async function loadAllProjects(): Promise<UnifiedProject[]> {
   }
 
   // 4. Games con translationStats (solo se non già presenti)
-  try {
+  if (_hasApi) try {
     const resp = await fetch('/api/games');
     if (resp.ok) {
       const data = (await resp.json()) as GameApiItem[];
@@ -461,6 +465,12 @@ export default function ProjectsPage() {
   const reload = async () => {
     setLoading(true);
     try {
+      // Backfill: ricrea i progetti dai checkpoint Visionaire già salvati (giochi
+      // su cui hai già lavorato prima che Progetti li registrasse).
+      try {
+        const { backfillVisionaireProjects } = await import('@/lib/backfill-visionaire-projects');
+        await backfillVisionaireProjects();
+      } catch { /* backfill best-effort */ }
       const data = await loadAllProjects();
       setProjects(data);
     } catch (e: unknown) {

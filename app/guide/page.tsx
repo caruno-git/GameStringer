@@ -453,6 +453,49 @@ export default function GuidePage() {
           <ScrollArea className="h-full">
             <div className="space-y-4 pr-3 pb-6">
 
+              {/* ── CARD 0: Novità v1.10 ───────────────────────────────── */}
+              <Card className="border-blue-500/30 bg-gradient-to-br from-blue-950/20 to-slate-900/30">
+                <CardHeader className="py-2 px-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Rocket className="w-4 h-4 text-blue-400" />
+                    {g.novTitle}
+                    <Badge variant="outline" className="ml-auto text-2xs border-blue-500/40 text-blue-300">v1.10</Badge>
+                  </CardTitle>
+                  <CardDescription className="text-xs">{g.novDesc}</CardDescription>
+                </CardHeader>
+                <CardContent className="p-3 space-y-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div className="rounded border border-slate-700/40 bg-slate-900/40 p-2">
+                      <div className="flex items-center gap-1.5 text-2xs font-semibold text-blue-300 mb-1">
+                        <Cpu className="h-3 w-3" /> {g.novCloudT}
+                      </div>
+                      <p className="text-2xs text-muted-foreground">{g.novCloudDPre} <NavLink href="/settings">{t('nav.settings')}</NavLink> {g.novCloudDPost}</p>
+                    </div>
+                    <div className="rounded border border-slate-700/40 bg-slate-900/40 p-2">
+                      <div className="flex items-center gap-1.5 text-2xs font-semibold text-blue-300 mb-1">
+                        <Layers className="h-3 w-3" /> {g.novBgT}
+                      </div>
+                      <p className="text-2xs text-muted-foreground">{g.novBgD}</p>
+                    </div>
+                    <div className="rounded border border-slate-700/40 bg-slate-900/40 p-2">
+                      <div className="flex items-center gap-1.5 text-2xs font-semibold text-blue-300 mb-1">
+                        <Trophy className="h-3 w-3" /> {g.novProjT}
+                      </div>
+                      <p className="text-2xs text-muted-foreground">{g.novProjDPre} <NavLink href="/projects">{t('nav.projects')}</NavLink> {g.novProjDPost}</p>
+                    </div>
+                    <div className="rounded border border-slate-700/40 bg-slate-900/40 p-2">
+                      <div className="flex items-center gap-1.5 text-2xs font-semibold text-blue-300 mb-1">
+                        <CheckCircle2 className="h-3 w-3" /> {g.novTrayT}
+                      </div>
+                      <p className="text-2xs text-muted-foreground">{g.novTrayD}</p>
+                    </div>
+                  </div>
+
+                  <Tip variant="success">{g.novTipAddPre} <NavLink href="/library">{t('nav.library')}</NavLink> {g.novTipAddPost}</Tip>
+                  <Tip variant="info">{g.novTipSettings}</Tip>
+                </CardContent>
+              </Card>
+
               {/* ── CARD 1: Prediction Tool ────────────────────────────── */}
               <Card className="border-purple-500/30 bg-gradient-to-br from-purple-950/20 to-slate-900/30">
                 <CardHeader className="py-2 px-3">
@@ -853,6 +896,28 @@ export default function GuidePage() {
                     <p>{g.ollamaHttpStep2Line1}</p>
                   </Step>
                   <Tip variant="info">{g.ollamaHttpTip}</Tip>
+                </CardContent>
+              </Card>
+
+              {/* ── CARD 12b: Provider locali — LM Studio & ModelWiz ─────── */}
+              <Card className="border-teal-500/30 bg-gradient-to-br from-teal-950/20 to-slate-900/30">
+                <CardHeader className="py-2 px-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Cpu className="w-4 h-4 text-teal-400" />
+                    {g.localProvidersTitle}
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    {g.localProvidersDesc}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-0">
+                  <Step number={1} title={g.localProvidersStep1Title}>
+                    <p>{g.localProvidersStep1Line1}</p>
+                  </Step>
+                  <Step number={2} title={g.localProvidersStep2Title}>
+                    <p>{g.localProvidersStep2Line1}</p>
+                  </Step>
+                  <Tip variant="info">{g.localProvidersTip}</Tip>
                 </CardContent>
               </Card>
 
