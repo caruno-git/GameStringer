@@ -93,6 +93,7 @@ let _unreadCounts: Record<TrayNotificationType, number> = {
   news: 0,
 };
 let _totalUnread = 0;
+let _activeTranslations = 0; // job di traduzione attualmente in corso (badge tray)
 let _isWindowFocused = true;
 const _listeners: Set<(counts: Record<TrayNotificationType, number>, total: number) => void> = new Set();
 
@@ -211,9 +212,29 @@ export async function sendTrayNotification(notification: TrayNotification): Prom
 /**
  * Aggiorna il tooltip del tray icon con i conteggi correnti
  */
+/** Aggiorna il numero di traduzioni in corso (badge/tooltip tray) */
+export async function setActiveTranslations(n: number): Promise<void> {
+  _activeTranslations = Math.max(0, n);
+  notifyCountListeners();
+  await updateTrayTooltip();
+}
+export async function incrementActiveTranslations(): Promise<void> {
+  await setActiveTranslations(_activeTranslations + 1);
+}
+export async function decrementActiveTranslations(): Promise<void> {
+  await setActiveTranslations(_activeTranslations - 1);
+}
+export function getActiveTranslations(): number {
+  return _activeTranslations;
+}
+
 export async function updateTrayTooltip(): Promise<void> {
   const parts: string[] = ['GameStringer'];
-  
+
+  if (_activeTranslations > 0) {
+    parts.push(`🔄 ${_activeTranslations} traduzion${_activeTranslations === 1 ? 'e' : 'i'} in corso`);
+  }
+
   if (_totalUnread > 0) {
     parts.push(`— ${_totalUnread} notific${_totalUnread === 1 ? 'a' : 'he'}`);
   }

@@ -570,12 +570,20 @@ export async function discoverNewModels(
 
   for (const url of searchUrls) {
     try {
-      const res = await fetch(url, {
-        signal: AbortSignal.timeout(8000),
-        headers: { 'Accept': 'text/html', 'User-Agent': 'GameStringer/1.4' },
-      });
-      if (!res.ok) continue;
-      const html = await res.text();
+      // Instrada via Rust (fetch_url_content): il fetch diretto dal webview Tauri
+      // verso ollama.com è bloccato da CORS. Fallback al fetch browser in dev.
+      let html = '';
+      try {
+        const { invoke } = await import('@/lib/tauri-api');
+        html = await invoke<string>('fetch_url_content', { url });
+      } catch {
+        const res = await fetch(url, {
+          signal: AbortSignal.timeout(8000),
+          headers: { 'Accept': 'text/html', 'User-Agent': 'GameStringer/1.4' },
+        });
+        if (res.ok) html = await res.text();
+      }
+      if (!html) continue;
       const parsed = parseOllamaSearchPage(html);
       for (const model of parsed) {
         if (!allModels.some(m => m.name === model.name)) {

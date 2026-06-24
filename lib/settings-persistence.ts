@@ -36,14 +36,28 @@ export async function hydrateSettingsFromDisk(): Promise<void> {
   try {
     // load_app_settings ritorna {} se non esiste ancora alcun file.
     const disk = await invoke<Record<string, unknown>>('load_app_settings');
-    if (disk && typeof disk === 'object' && Object.keys(disk).length > 0) {
-      localStorage.setItem(LS_KEY, JSON.stringify(disk));
-    } else {
-      // Migrazione una-tantum: localStorage esistente → disco
-      const existing = localStorage.getItem(LS_KEY);
-      if (existing) {
-        await invoke('save_app_settings', { settings: JSON.parse(existing) });
+    const hasDisk = !!disk && typeof disk === 'object' && Object.keys(disk).length > 0;
+
+    let local: Record<string, unknown> = {};
+    try { local = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); } catch { /* corrotto → {} */ }
+
+    if (hasDisk) {
+      // Deep-merge: il disco è la fonte di verità, MA non cancella chiavi presenti
+      // solo in localStorage e non ancora persistite (evita di perdere API key
+      // inserite ma non ancora salvate su disco da una versione precedente).
+      const d = disk as Record<string, Record<string, unknown> | unknown>;
+      const merged: Record<string, unknown> = { ...local, ...d };
+      for (const cat of ['translation', 'system', 'performance', 'display']) {
+        const lc = (local as Record<string, unknown>)[cat] as Record<string, unknown> | undefined;
+        const dc = (d as Record<string, unknown>)[cat] as Record<string, unknown> | undefined;
+        if (lc || dc) merged[cat] = { ...(lc || {}), ...(dc || {}) };
       }
+      localStorage.setItem(LS_KEY, JSON.stringify(merged));
+      // Riallinea il disco al blob completo (così la prossima hydration è coerente).
+      await invoke('save_app_settings', { settings: merged }).catch(() => {});
+    } else if (Object.keys(local).length > 0) {
+      // Migrazione una-tantum: localStorage esistente → disco
+      await invoke('save_app_settings', { settings: local });
     }
   } catch (e: unknown) {
     // Non-Tauri o errore disco: si prosegue col solo localStorage.
