@@ -19,6 +19,7 @@ import { LanguageFlags, getCountryCode } from '@/components/ui/language-flags';
 import { activityHistory } from '@/lib/activity-history';
 import { TranslationRecommendation } from '@/components/translation-recommendation';
 import { useTranslation } from '@/lib/i18n';
+import { useProgress } from '@/components/progress/progress-provider';
 import { CoverPicker } from '@/components/cover-picker';
 import { HltbStats } from '@/components/hltb-stats';
 import { toast } from 'sonner';
@@ -30,6 +31,7 @@ import { clientLogger } from '@/lib/client-logger';
 import { runHendrixTranslation } from '@/lib/hendrix-translate';
 import { runRenpyTranslation } from '@/lib/renpy-translate';
 import { runRpgmakerTranslation } from '@/lib/rpgmaker-translate';
+import { startHeroTracking } from '@/lib/hero-job-tracking';
 import {
   ScreenshotGallery,
   ScreenshotLightbox,
@@ -97,6 +99,7 @@ interface Game {
 
 export default function GameDetailPage() {
   const { t, language } = useTranslation();
+  const progress = useProgress();
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -1604,6 +1607,19 @@ export default function GameDetailPage() {
       if (engH.includes('hendrix')) {
         const tgt = (targetLang || language || 'it').toLowerCase();
         const tgtName: Record<string, string> = { it: 'Italiano', en: 'English', fr: 'Français', es: 'Español', sp: 'Español', de: 'Deutsch', pt: 'Português', ja: '日本語', cn: '中文', zh: '中文', ru: 'Русский' };
+        // Tracking trasversale: guardia + progress globale + tray + Progetti
+        const hTracker = startHeroTracking(progress, {
+          engineId: 'hendrix', engineLabel: 'Hendrix', gamePath: game.installPath,
+          gameId: game.id || game.appid?.toString() || gameId, gameName: game.name || game.title,
+          gameImage: game.headerImage || game.coverUrl, sourceLang: 'en', targetLang: tgt,
+          opTitle: t('heroJob.jobTitle').replace('{name}', game.name || game.title || 'Hendrix'),
+          opDesc: t('heroJob.jobDescBg').replace('{engine}', 'Hendrix'),
+        });
+        if (!hTracker) {
+          toast.info(t('heroJob.alreadyRunning'));
+          setAutoTranslateBusy(false); autoTranslateRunningRef.current = false;
+          return;
+        }
         const toastId = toast.loading('Hendrix: estrazione stringhe...');
         try {
           const r = await runHendrixTranslation({
@@ -1611,13 +1627,15 @@ export default function GameDetailPage() {
             targetLang: tgt,
             targetName: tgtName[tgt] || tgt.toUpperCase(),
             onProgress: (p) => {
-              if (p.phase === 'translate') toast.loading(`Hendrix: traduzione ${p.done}/${p.total}... (ripresa salvata)`, { id: toastId });
+              if (p.phase === 'translate') { toast.loading(`Hendrix: traduzione ${p.done}/${p.total}... (ripresa salvata)`, { id: toastId }); hTracker.onProgress(p.done, p.total); }
               else if (p.phase === 'apply') toast.loading('Hendrix: applico la colonna lingua...', { id: toastId });
               else if (p.phase === 'enable') toast.loading('Hendrix: abilito plugin e lingua...', { id: toastId });
             },
           });
+          await hTracker.done(r.applied, r.total);
           toast.success(`Tradotto: ${r.applied}/${r.total} stringhe in ${tgtName[tgt] || tgt}. Rilancia il gioco.`, { id: toastId });
         } catch (e) {
+          await hTracker.fail(e);
           toast.error('Hendrix: errore (Ollama avviato?)', { id: toastId, description: String(e) });
         } finally {
           setAutoTranslateBusy(false);
@@ -1647,6 +1665,19 @@ export default function GameDetailPage() {
         ];
         const rpStep = (idx: number, status: 'running' | 'done' | 'error', detail?: string) =>
           setAutoTranslateSteps(prev => prev.map((s, i) => i === idx ? { ...s, status, detail } : i < idx ? { ...s, status: 'done' } : s));
+        // Tracking trasversale: guardia + progress globale + tray + Progetti
+        const rpTracker = startHeroTracking(progress, {
+          engineId: 'renpy', engineLabel: "Ren'Py", gamePath: game.installPath,
+          gameId: game.id || game.appid?.toString() || gameId, gameName: game.name || game.title,
+          gameImage: game.headerImage || game.coverUrl, sourceLang: 'en', targetLang: tgt,
+          opTitle: t('heroJob.jobTitle').replace('{name}', game.name || game.title || "Ren'Py"),
+          opDesc: t('heroJob.jobDescBg').replace('{engine}', "Ren'Py"),
+        });
+        if (!rpTracker) {
+          toast.info(t('heroJob.alreadyRunning'));
+          setAutoTranslateBusy(false); autoTranslateRunningRef.current = false;
+          return;
+        }
         setAutoTranslateError(null);
         setAutoTranslateResult(null);
         setAutoTranslateSteps([...rpSteps]);
@@ -1664,6 +1695,7 @@ export default function GameDetailPage() {
                 rpStep(1, 'done');
                 rpStep(2, 'running', `${p.done}/${p.total}`);
                 setAutoTranslateProgress(p.total ? `${p.done}/${p.total}` : '');
+                rpTracker.onProgress(p.done, p.total);
               } else if (p.phase === 'generate') { rpStep(2, 'done'); rpStep(3, 'running'); }
               else if (p.phase === 'done') rpStep(3, 'done');
             },
@@ -1679,12 +1711,130 @@ export default function GameDetailPage() {
             stringsTranslated: r.translated,
             stringsTotal: r.total,
           });
+          await rpTracker.done(r.translated, r.total);
           toast.success(`Ren'Py: ${r.translated}/${r.total} stringhe tradotte. Avvia il gioco e seleziona ${tgt.toUpperCase()}.`);
         } catch (e) {
           rpStep(2, 'error', String(e));
           setAutoTranslateError(`Ren'Py: ${String(e)} — Ollama è avviato?`);
+          await rpTracker.fail(e);
           toast.error("Ren'Py: errore (Ollama avviato?)", { description: String(e) });
         } finally {
+          setAutoTranslateBusy(false);
+          setAutoTranslateProgress('');
+          autoTranslateRunningRef.current = false;
+        }
+        return;
+      }
+    }
+
+    // ── Visionaire Studio (.vis / game.veb) → pipeline file-based nativa ──
+    // Estrae le stringhe dal binario, traduce via Ollama e applica con
+    // patch_vis_strings (backup .gs_bak automatico). Checkpoint/resume su idb.
+    {
+      const engV = (game.engine || engineInfo?.engine || detectEngineByName(game.name || game.title || '') || '').toLowerCase();
+      if (engV.includes('visionaire')) {
+        const tgt = (targetLang || language || 'it').toLowerCase();
+        const t0 = Date.now();
+        // Guardia anti-duplicato GLOBALE (sopravvive a navigazione/smontaggio): se la
+        // traduzione di questo gioco è già in corso in background, non rilanciarla.
+        const _vg = globalThis as unknown as { __gsVisRunning?: Set<string> };
+        if (!_vg.__gsVisRunning) _vg.__gsVisRunning = new Set<string>();
+        const VIS_RUNNING = _vg.__gsVisRunning;
+        if (VIS_RUNNING.has(game.installPath)) {
+          toast.info(t('heroJob.alreadyRunning'));
+          setAutoTranslateBusy(false);
+          autoTranslateRunningRef.current = false;
+          return;
+        }
+        VIS_RUNNING.add(game.installPath);
+        const visOpId = `visionaire-${game.installPath}`;
+        // Backend automatico: cloud (Gemini→fallback) se è configurata una API key,
+        // altrimenti Ollama offline. Il cloud è molto più veloce su grandi volumi.
+        let useCloud = false;
+        try {
+          const s = JSON.parse(localStorage.getItem('gameStringerSettings') || '{}');
+          const tr = s.translation || {};
+          useCloud = !!(tr.apiKey || tr.openaiApiKey || tr.deepseekApiKey || tr.anthropicApiKey || tr.groqApiKey || tr.mistralApiKey || tr.openrouterApiKey);
+        } catch { /* nessuna key → Ollama */ }
+        const visBackend: 'cloud' | 'ollama' = useCloud ? 'cloud' : 'ollama';
+        const vSteps = [
+          { label: `📂 ${t('heroJob.stepScan')}`, status: 'pending' as const },
+          { label: `📜 ${t('heroJob.stepExtract')}`, status: 'pending' as const },
+          { label: `✨ ${visBackend === 'cloud' ? t('heroJob.stepTranslateCloud') : t('heroJob.stepTranslateOllama')}`, status: 'pending' as const },
+          { label: `🩹 ${t('heroJob.stepApplyPatch')}`, status: 'pending' as const },
+        ];
+        const vStep = (idx: number, status: 'running' | 'done' | 'error', detail?: string) =>
+          setAutoTranslateSteps(prev => prev.map((s, i) => i === idx ? { ...s, status, detail } : i < idx ? { ...s, status: 'done' } : s));
+        setAutoTranslateError(null);
+        setAutoTranslateResult(null);
+        setAutoTranslateSteps([...vSteps]);
+        setAutoTranslateActive(true);
+        // Operazione GLOBALE: gli aggiornamenti vanno al ProgressProvider montato nel
+        // layout, quindi restano visibili e continuano anche cambiando pagina.
+        progress.startOperation(visOpId, {
+          title: t('heroJob.jobTitle').replace('{name}', game.name || game.title || 'Visionaire'),
+          description: t('heroJob.jobDescBg').replace('{engine}', `Visionaire Studio · ${visBackend === 'cloud' ? 'Cloud' : 'Ollama'}`),
+          isBackground: true,
+          canMinimize: true,
+        });
+        // Badge tray: +1 traduzione in corso
+        import('@/lib/notifications/tray-notifications').then(m => m.incrementActiveTranslations()).catch(() => {});
+        try {
+          const { runVisionaireTranslation } = await import('@/lib/visionaire-translate');
+          const r = await runVisionaireTranslation({
+            gamePath: game.installPath,
+            targetLang: tgt,
+            backend: visBackend,
+            gameId: game.id || game.appid?.toString() || gameId,
+            gameName: game.name || game.title,
+            gameImage: game.headerImage || game.coverUrl,
+            onProgress: (p) => {
+              if (p.phase === 'scan') vStep(0, 'running');
+              else if (p.phase === 'extract') { vStep(0, 'done'); vStep(1, 'running'); }
+              else if (p.phase === 'translate') {
+                vStep(1, 'done');
+                vStep(2, 'running', `${p.done}/${p.total}`);
+                setAutoTranslateProgress(p.total ? `${p.done}/${p.total}` : '');
+                progress.updateProgress(visOpId, p.total ? (p.done / p.total) * 100 : 0, `${p.done}/${p.total}`);
+              } else if (p.phase === 'apply') { vStep(2, 'done'); vStep(3, 'running'); progress.updateProgress(visOpId, 99, 'Applicazione patch...'); }
+              else if (p.phase === 'done') vStep(3, 'done');
+            },
+          });
+          vStep(3, 'done', `${r.translated}/${r.total} stringhe`);
+          setAutoTranslateResult({
+            successRate: r.total ? Math.round((100 * r.translated) / r.total) : 0,
+            duration: Math.round((Date.now() - t0) / 1000),
+            deliverables: 1,
+            errors: Math.max(0, r.total - r.translated),
+            engine: 'Visionaire Studio',
+            targetLang: tgt,
+            stringsTranslated: r.translated,
+            stringsTotal: r.total,
+          });
+          progress.completeOperation(visOpId, { translated: r.translated, total: r.total });
+          // Notifica tray (anche con finestra ridotta a icona) + aggiorna badge attivi
+          try {
+            const tray = await import('@/lib/notifications/tray-notifications');
+            await tray.decrementActiveTranslations();
+            await tray.notifyTranslationCompleted(game.name || game.title || 'Gioco', r.translated);
+          } catch { /* tray non disponibile */ }
+          toast.success(t('heroJob.visDone').replace('{n}', String(r.translated)).replace('{total}', String(r.total)));
+        } catch (e) {
+          vStep(2, 'error', String(e));
+          const hint = visBackend === 'cloud' ? t('heroJob.hintApiKey') : t('heroJob.hintOllama');
+          const _detail = (e instanceof Error ? e.message : String(e)) || '';
+          const _full = `${t('heroJob.visError').replace('{hint}', hint)}${_detail ? ' — ' + _detail : ''}`;
+          clientLogger.error('[Visionaire] traduzione fallita:', e);
+          setAutoTranslateError(_full);
+          progress.failOperation(visOpId, new Error(_full));
+          try {
+            const tray = await import('@/lib/notifications/tray-notifications');
+            await tray.decrementActiveTranslations();
+            await tray.notifyTranslationFailed(game.name || game.title || 'Gioco', String(e));
+          } catch { /* tray non disponibile */ }
+          toast.error(t('heroJob.visError').replace('{hint}', hint), { description: String(e) });
+        } finally {
+          VIS_RUNNING.delete(game.installPath);
           setAutoTranslateBusy(false);
           setAutoTranslateProgress('');
           autoTranslateRunningRef.current = false;
@@ -1747,6 +1897,19 @@ export default function GameDetailPage() {
           ];
           const rmStep = (idx: number, status: 'running' | 'done' | 'error', detail?: string) =>
             setAutoTranslateSteps(prev => prev.map((s, i) => i === idx ? { ...s, status, detail } : i < idx ? { ...s, status: 'done' } : s));
+          // Tracking trasversale: guardia + progress globale + tray + Progetti
+          const rmTracker = startHeroTracking(progress, {
+            engineId: 'rpgmaker', engineLabel: 'RPG Maker', gamePath: game.installPath,
+            gameId: game.id || game.appid?.toString() || gameId, gameName: game.name || game.title,
+            gameImage: game.headerImage || game.coverUrl, sourceLang: 'en', targetLang: tgt,
+            opTitle: t('heroJob.jobTitle').replace('{name}', game.name || game.title || 'RPG Maker'),
+            opDesc: t('heroJob.jobDescBg').replace('{engine}', 'RPG Maker'),
+          });
+          if (!rmTracker) {
+            toast.info(t('heroJob.alreadyRunning'));
+            setAutoTranslateBusy(false); autoTranslateRunningRef.current = false;
+            return;
+          }
           setAutoTranslateError(null);
           setAutoTranslateResult(null);
           setAutoTranslateSteps([...rmSteps]);
@@ -1765,6 +1928,7 @@ export default function GameDetailPage() {
                   rmStep(2, 'done');
                   rmStep(3, 'running', `${p.done}/${p.total}`);
                   setAutoTranslateProgress(p.total ? `${p.done}/${p.total}` : '');
+                  rmTracker.onProgress(p.done, p.total);
                 } else if (p.phase === 'apply') { rmStep(3, 'done'); rmStep(4, 'running', `${p.done}/${p.total} file`); }
                 else if (p.phase === 'done') rmStep(4, 'done');
               },
@@ -1780,10 +1944,12 @@ export default function GameDetailPage() {
               stringsTranslated: r.translated,
               stringsTotal: r.total,
             });
+            await rmTracker.done(r.translated, r.total);
             toast.success(`RPG Maker ${r.version.toUpperCase()}: ${r.translated}/${r.total} stringhe applicate a ${r.files} file. Rilancia il gioco.`);
           } catch (e) {
             rmStep(3, 'error', String(e));
             setAutoTranslateError(`RPG Maker: ${String(e)} — Ollama è avviato?`);
+            await rmTracker.fail(e);
             toast.error('RPG Maker: errore (Ollama avviato?)', { description: String(e) });
           } finally {
             setAutoTranslateBusy(false);

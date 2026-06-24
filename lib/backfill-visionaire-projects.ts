@@ -1,0 +1,76 @@
+'use client';
+
+/**
+ * Backfill dei progetti Visionaire dai checkpoint già salvati in IndexedDB.
+ *
+ * I job di traduzione Visionaire salvano un checkpoint sotto la chiave
+ * `gs_vis_ckpt_<gamePath>_<lang>` (index → testo tradotto). Per i giochi su cui
+ * si è già lavorato PRIMA che la pagina Progetti registrasse i progetti, qui
+ * ricostruiamo le voci così ricompaiono in "Progetti" senza rifare nulla.
+ *
+ * Idempotente: usa projectService.createOrGetProject (dedup per gameId+lingua).
+ */
+
+import { keys, get } from 'idb-keyval';
+import { invoke } from '@/lib/tauri-api';
+import { projectService } from '@/lib/services/translation-projects';
+
+const PREFIX = 'gs_vis_ckpt_';
+
+export async function backfillVisionaireProjects(): Promise<number> {
+  let allKeys: IDBValidKey[] = [];
+  try {
+    allKeys = await keys();
+  } catch {
+    return 0;
+  }
+
+  let created = 0;
+  for (const k of allKeys) {
+    if (typeof k !== 'string' || !k.startsWith(PREFIX)) continue;
+
+    // chiave = gs_vis_ckpt_<gamePath>_<lang> ; gamePath può contenere '_' e ':'\
+    const rest = k.slice(PREFIX.length);
+    const li = rest.lastIndexOf('_');
+    if (li <= 0) continue;
+    const gamePath = rest.slice(0, li);
+    const lang = rest.slice(li + 1);
+
+    let ckpt: Record<number, string> | undefined;
+    try {
+      ckpt = await get<Record<number, string>>(k);
+    } catch {
+      continue;
+    }
+    const translated = ckpt ? Object.keys(ckpt).length : 0;
+    if (translated <= 0) continue;
+
+    // Totale reale via scan (best-effort: il gioco potrebbe non essere più installato)
+    let total = translated;
+    try {
+      const info = await invoke<{ total_strings?: number }>('scan_vis_strings', { gamePath });
+      if (info?.total_strings && info.total_strings > 0) total = info.total_strings;
+    } catch { /* gioco non disponibile: usa translated come totale */ }
+
+    const name = gamePath.replace(/[\\/]+$/, '').split(/[\\/]/).pop() || gamePath;
+    const gameId = `vis-${gamePath}`;
+
+    try {
+      const proj = await projectService.createOrGetProject({
+        gameId,
+        gameName: name,
+        engine: 'Visionaire Studio',
+        sourceLanguage: 'en',
+        targetLanguage: lang,
+        files: [{ path: gamePath, name: 'data.vis', type: 'visionaire', strings: total }],
+      });
+      proj.totalStrings = total;
+      proj.translatedStrings = translated;
+      proj.progress = total > 0 ? Math.min(100, Math.round((translated / total) * 100)) : 0;
+      if (proj.progress >= 100) proj.status = 'completed';
+      await projectService.saveProject(proj);
+      created++;
+    } catch { /* progetto non disponibile */ }
+  }
+  return created;
+}
