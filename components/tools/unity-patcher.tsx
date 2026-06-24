@@ -94,6 +94,7 @@ export function UnityPatcher() {
     { code: 'ko', name: '한국어' },
     { code: 'pl', name: 'Polski' },
     { code: 'tr', name: 'Türkçe' },
+    { code: 'el', name: 'Ελληνικά' },
   ];
 
   // Helper functions (definite prima degli useEffect che le usano)

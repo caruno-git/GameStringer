@@ -59,6 +59,7 @@ const TARGET_LANGUAGES = [
   { code: 'pl', name: 'Polski', flag: '🇵🇱' },
   { code: 'ru', name: 'Русский', flag: '🇷🇺' },
   { code: 'zh', name: '中文', flag: '🇨🇳' },
+  { code: 'el', name: 'Ελληνικά', flag: '🇬🇷' },
   { code: 'ko', name: '한국어', flag: '��' },
 ];
 

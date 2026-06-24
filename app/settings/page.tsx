@@ -192,7 +192,7 @@ function SupabaseSettingsCard() {
             <div className="relative">
               <pre className="text-micro bg-slate-900 border border-slate-700 rounded-md p-3 max-h-48 overflow-y-auto custom-scrollbar font-mono text-slate-300 whitespace-pre-wrap">
                 {SUPABASE_MIGRATION_SQL.trim().substring(0, 2000)}
-                {SUPABASE_MIGRATION_SQL.length > 2000 ? '\n\n... (copia per vedere tutto)' : ''}
+                {SUPABASE_MIGRATION_SQL.length > 2000 ? t('settingsPage.copyToSeeAll') : ''}
               </pre>
               <Button size="sm" variant="outline" onClick={handleCopySql} className="absolute top-2 right-2 h-6 text-micro gap-1">
                 {t('common.copySql')}
@@ -288,7 +288,7 @@ function CacheStatsCard() {
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">{t('settingsPage.diskSpace')}</span>
-            <span>{(stats?.disk_total_gb || 0).toFixed(0)} GB totali</span>
+            <span>{(stats?.disk_total_gb || 0).toFixed(0)} {t('settingsPage.gbTotal')}</span>
           </div>
           <div className="h-3 bg-slate-700 rounded-full overflow-hidden">
             <div 
@@ -297,7 +297,7 @@ function CacheStatsCard() {
             />
           </div>
           <p className="text-xs text-muted-foreground text-center">
-            {diskUsedPercent.toFixed(1)}% utilizzato • {(stats?.disk_free_gb || 0).toFixed(1)} GB disponibili
+            {diskUsedPercent.toFixed(1)}% {t('settingsPage.diskUsed')} • {(stats?.disk_free_gb || 0).toFixed(1)} {t('settingsPage.gbAvailable')}
           </p>
         </div>
       </CardContent>
@@ -476,14 +476,14 @@ export default function SettingsPage() {
     saveRssFeeds(updated);
     setNewFeedUrl('');
     setNewFeedName('');
-    toast.success('Feed RSS aggiunto');
+    toast.success(t('settingsPage.rssFeedAdded'));
   };
 
   const handleRemoveRssFeed = (index: number) => {
     const updated = rssFeeds.filter((_, i) => i !== index);
     setRssFeeds(updated);
     saveRssFeeds(updated);
-    toast.success('Feed rimosso');
+    toast.success(t('settingsPage.feedRemoved'));
   };
 
   const handleToggleRssFeed = (index: number) => {
@@ -704,7 +704,7 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-xs text-muted-foreground">
-                LM Studio è un&apos;app desktop per eseguire LLM locali con API OpenAI-compatible. Gratuito, nessuna API key necessaria.
+                {t('settingsPage.lmStudioDesc')}
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -722,15 +722,14 @@ export default function SettingsPage() {
                   <Input
                     value={settings.translation?.lmStudioModel || ''}
                     onChange={(e) => updateSetting('translation', 'lmStudioModel', e.target.value)}
-                    placeholder="Auto-detect dal server"
+                    placeholder={t('settingsPage.autoDetectFromServer')}
                     className="font-mono text-xs"
                   />
                   <p className="text-2xs text-muted-foreground">{t('settingsPage.leaveEmpty')}</p>
                 </div>
               </div>
               <p className="text-2xs text-muted-foreground">
-                Scarica LM Studio da <a href="https://lmstudio.ai" target="_blank" rel="noopener" className="underline">lmstudio.ai</a> — 
-                Carica un modello GGUF, avvia il server locale, e GameStringer lo userà automaticamente.
+                {t('settingsPage.lmStudioDownload1')}<a href="https://lmstudio.ai" target="_blank" rel="noopener" className="underline">lmstudio.ai</a>{t('settingsPage.lmStudioDownload2')}
               </p>
             </CardContent>
           </Card>
@@ -745,7 +744,7 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-xs text-muted-foreground">
-                ModelWiz è un MT neurale specializzato per videogiochi di Alocai. Supporta on-premise (locale) o cloud con API key.
+                {t('settingsPage.modelwizDesc')}
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -756,23 +755,22 @@ export default function SettingsPage() {
                     placeholder="http://localhost:8080"
                     className="font-mono text-xs"
                   />
-                  <p className="text-2xs text-muted-foreground">URL del server ModelWiz (locale o cloud)</p>
+                  <p className="text-2xs text-muted-foreground">{t('settingsPage.modelwizUrlHint')}</p>
                 </div>
                 <div className="space-y-2">
-                  <Label>API Key (opzionale)</Label>
+                  <Label>{t('settingsPage.apiKeyOptional')}</Label>
                   <Input
                     type="password"
                     value={settings.translation?.modelwizApiKey || ''}
                     onChange={(e) => updateSetting('translation', 'modelwizApiKey', e.target.value)}
-                    placeholder="Solo per cloud Alocai"
+                    placeholder={t('settingsPage.onlyForAlocaiCloud')}
                     className="font-mono text-xs"
                   />
-                  <p className="text-2xs text-muted-foreground">Necessaria solo per endpoint cloud Alocai</p>
+                  <p className="text-2xs text-muted-foreground">{t('settingsPage.modelwizApiKeyHint')}</p>
                 </div>
               </div>
               <p className="text-2xs text-muted-foreground">
-                Scarica ModelWiz da <a href="https://www.alocai.com/download-modelwiz" target="_blank" rel="noopener" className="underline">alocai.com/download-modelwiz</a> — 
-                Avvia il server locale e GameStringer lo userà automaticamente nella catena di traduzione.
+                {t('settingsPage.modelwizDownload1')}<a href="https://www.alocai.com/download-modelwiz" target="_blank" rel="noopener" className="underline">alocai.com/download-modelwiz</a>{t('settingsPage.modelwizDownload2')}
               </p>
             </CardContent>
           </Card>
@@ -840,7 +838,7 @@ export default function SettingsPage() {
                     <Button
                       variant="outline"
                       size="icon"
-                      aria-label="Mostra/Nascondi"
+                      aria-label={t('common.mostraNascondi')}
                       onClick={() => setShowApiKeys(prev => ({ ...prev, translation: !prev.translation }))}
                     >
                       {showApiKeys.translation ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -850,7 +848,7 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="groq-api-key">🔑 Groq API Key (Llama 3.3 70B — Gratuito)</Label>
+                  <Label htmlFor="groq-api-key">{t('settingsPage.groqApiKeyLabel')}</Label>
                   <div className="flex space-x-2">
                     <Input
                       id="groq-api-key"
@@ -863,7 +861,7 @@ export default function SettingsPage() {
                     <Button
                       variant="outline"
                       size="icon"
-                      aria-label="Mostra/Nascondi"
+                      aria-label={t('common.mostraNascondi')}
                       onClick={() => setShowApiKeys(prev => ({ ...prev, groq: !prev.groq }))}
                     >
                       {showApiKeys.groq ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -886,13 +884,13 @@ export default function SettingsPage() {
                     <Button
                       variant="outline"
                       size="icon"
-                      aria-label="Mostra/Nascondi"
+                      aria-label={t('common.mostraNascondi')}
                       onClick={() => setShowApiKeys(prev => ({ ...prev, deepseek: !prev.deepseek }))}
                     >
                       {showApiKeys.deepseek ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground">~$0.14/1M tokens, nessun rate limit aggressivo — <a href="https://platform.deepseek.com/api_keys" target="_blank" rel="noopener" className="underline">{t('settingsPage.getKey')}</a></p>
+                  <p className="text-xs text-muted-foreground">{t('settingsPage.deepseekHint')}<a href="https://platform.deepseek.com/api_keys" target="_blank" rel="noopener" className="underline">{t('settingsPage.getKey')}</a></p>
                 </div>
 
                 <div className="space-y-2">
@@ -909,7 +907,7 @@ export default function SettingsPage() {
                     <Button
                       variant="outline"
                       size="icon"
-                      aria-label="Mostra/Nascondi"
+                      aria-label={t('common.mostraNascondi')}
                       onClick={() => setShowApiKeys(prev => ({ ...prev, openai: !prev.openai }))}
                     >
                       {showApiKeys.openai ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -932,7 +930,7 @@ export default function SettingsPage() {
                     <Button
                       variant="outline"
                       size="icon"
-                      aria-label="Mostra/Nascondi"
+                      aria-label={t('common.mostraNascondi')}
                       onClick={() => setShowApiKeys(prev => ({ ...prev, anthropic: !prev.anthropic }))}
                     >
                       {showApiKeys.anthropic ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -944,14 +942,14 @@ export default function SettingsPage() {
 
               <details className="group">
                 <summary className="cursor-pointer text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors">
-                  🔧 Altri Provider LLM (Mistral, Cohere, Together, Fireworks, OpenRouter, Cerebras)
+                  {t('settingsPage.otherLlmProviders')}
                 </summary>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
                   <div className="space-y-1">
                     <Label htmlFor="mistral-api-key" className="text-xs">{t('settingsPage.mistralAi')}</Label>
                     <div className="flex space-x-1">
                       <Input id="mistral-api-key" type={showApiKeys.mistral ? "text" : "password"} value={settings.translation.mistralApiKey} onChange={(e) => updateSetting('translation', 'mistralApiKey', e.target.value)} placeholder="..." className="font-mono text-xs h-8" />
-                      <Button variant="outline" size="icon" aria-label="Mostra/Nascondi" className="h-8 w-8" onClick={() => setShowApiKeys(prev => ({ ...prev, mistral: !prev.mistral }))}>{showApiKeys.mistral ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}</Button>
+                      <Button variant="outline" size="icon" aria-label={t('common.mostraNascondi')} className="h-8 w-8" onClick={() => setShowApiKeys(prev => ({ ...prev, mistral: !prev.mistral }))}>{showApiKeys.mistral ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}</Button>
                     </div>
                     <p className="text-2xs text-muted-foreground">{t('settingsPage.freeTier')}<a href="https://console.mistral.ai/api-keys" target="_blank" rel="noopener" className="underline">{t('settingsPage.key')}</a></p>
                   </div>
@@ -959,7 +957,7 @@ export default function SettingsPage() {
                     <Label htmlFor="cohere-api-key" className="text-xs">Cohere</Label>
                     <div className="flex space-x-1">
                       <Input id="cohere-api-key" type={showApiKeys.cohere ? "text" : "password"} value={settings.translation.cohereApiKey} onChange={(e) => updateSetting('translation', 'cohereApiKey', e.target.value)} placeholder="..." className="font-mono text-xs h-8" />
-                      <Button variant="outline" size="icon" aria-label="Mostra/Nascondi" className="h-8 w-8" onClick={() => setShowApiKeys(prev => ({ ...prev, cohere: !prev.cohere }))}>{showApiKeys.cohere ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}</Button>
+                      <Button variant="outline" size="icon" aria-label={t('common.mostraNascondi')} className="h-8 w-8" onClick={() => setShowApiKeys(prev => ({ ...prev, cohere: !prev.cohere }))}>{showApiKeys.cohere ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}</Button>
                     </div>
                     <p className="text-2xs text-muted-foreground">{t('settingsPage.freeTrial')}<a href="https://dashboard.cohere.com/api-keys" target="_blank" rel="noopener" className="underline">{t('settingsPage.key')}</a></p>
                   </div>
@@ -967,15 +965,15 @@ export default function SettingsPage() {
                     <Label htmlFor="together-api-key" className="text-xs">{t('settingsPage.togetherAi')}</Label>
                     <div className="flex space-x-1">
                       <Input id="together-api-key" type={showApiKeys.together ? "text" : "password"} value={settings.translation.togetherApiKey} onChange={(e) => updateSetting('translation', 'togetherApiKey', e.target.value)} placeholder="..." className="font-mono text-xs h-8" />
-                      <Button variant="outline" size="icon" aria-label="Mostra/Nascondi" className="h-8 w-8" onClick={() => setShowApiKeys(prev => ({ ...prev, together: !prev.together }))}>{showApiKeys.together ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}</Button>
+                      <Button variant="outline" size="icon" aria-label={t('common.mostraNascondi')} className="h-8 w-8" onClick={() => setShowApiKeys(prev => ({ ...prev, together: !prev.together }))}>{showApiKeys.together ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}</Button>
                     </div>
-                    <p className="text-2xs text-muted-foreground">$25 free credit — <a href="https://api.together.xyz/settings/api-keys" target="_blank" rel="noopener" className="underline">{t('settingsPage.key')}</a></p>
+                    <p className="text-2xs text-muted-foreground">{t('settingsPage.together25Credit')}<a href="https://api.together.xyz/settings/api-keys" target="_blank" rel="noopener" className="underline">{t('settingsPage.key')}</a></p>
                   </div>
                   <div className="space-y-1">
                     <Label htmlFor="fireworks-api-key" className="text-xs">{t('settingsPage.fireworksAi')}</Label>
                     <div className="flex space-x-1">
                       <Input id="fireworks-api-key" type={showApiKeys.fireworks ? "text" : "password"} value={settings.translation.fireworksApiKey} onChange={(e) => updateSetting('translation', 'fireworksApiKey', e.target.value)} placeholder="..." className="font-mono text-xs h-8" />
-                      <Button variant="outline" size="icon" aria-label="Mostra/Nascondi" className="h-8 w-8" onClick={() => setShowApiKeys(prev => ({ ...prev, fireworks: !prev.fireworks }))}>{showApiKeys.fireworks ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}</Button>
+                      <Button variant="outline" size="icon" aria-label={t('common.mostraNascondi')} className="h-8 w-8" onClick={() => setShowApiKeys(prev => ({ ...prev, fireworks: !prev.fireworks }))}>{showApiKeys.fireworks ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}</Button>
                     </div>
                     <p className="text-2xs text-muted-foreground">{t('settingsPage.freeTier')}<a href="https://fireworks.ai/account/api-keys" target="_blank" rel="noopener" className="underline">{t('settingsPage.key')}</a></p>
                   </div>
@@ -983,7 +981,7 @@ export default function SettingsPage() {
                     <Label htmlFor="openrouter-api-key" className="text-xs">OpenRouter</Label>
                     <div className="flex space-x-1">
                       <Input id="openrouter-api-key" type={showApiKeys.openrouter ? "text" : "password"} value={settings.translation.openrouterApiKey} onChange={(e) => updateSetting('translation', 'openrouterApiKey', e.target.value)} placeholder="sk-or-..." className="font-mono text-xs h-8" />
-                      <Button variant="outline" size="icon" aria-label="Mostra/Nascondi" className="h-8 w-8" onClick={() => setShowApiKeys(prev => ({ ...prev, openrouter: !prev.openrouter }))}>{showApiKeys.openrouter ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}</Button>
+                      <Button variant="outline" size="icon" aria-label={t('common.mostraNascondi')} className="h-8 w-8" onClick={() => setShowApiKeys(prev => ({ ...prev, openrouter: !prev.openrouter }))}>{showApiKeys.openrouter ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}</Button>
                     </div>
                     <p className="text-2xs text-muted-foreground">{t('settingsPage.modelliGratuitiInclusi')}<a href="https://openrouter.ai/keys" target="_blank" rel="noopener" className="underline">{t('settingsPage.key')}</a></p>
                   </div>
@@ -991,7 +989,7 @@ export default function SettingsPage() {
                     <Label htmlFor="cerebras-api-key" className="text-xs">Cerebras</Label>
                     <div className="flex space-x-1">
                       <Input id="cerebras-api-key" type={showApiKeys.cerebras ? "text" : "password"} value={settings.translation.cerebrasApiKey} onChange={(e) => updateSetting('translation', 'cerebrasApiKey', e.target.value)} placeholder="csk-..." className="font-mono text-xs h-8" />
-                      <Button variant="outline" size="icon" aria-label="Mostra/Nascondi" className="h-8 w-8" onClick={() => setShowApiKeys(prev => ({ ...prev, cerebras: !prev.cerebras }))}>{showApiKeys.cerebras ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}</Button>
+                      <Button variant="outline" size="icon" aria-label={t('common.mostraNascondi')} className="h-8 w-8" onClick={() => setShowApiKeys(prev => ({ ...prev, cerebras: !prev.cerebras }))}>{showApiKeys.cerebras ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}</Button>
                     </div>
                     <p className="text-2xs text-muted-foreground">{t('settingsPage.freeTierUltraveloce')}<a href="https://cloud.cerebras.ai/platform" target="_blank" rel="noopener" className="underline">{t('settingsPage.key')}</a></p>
                   </div>
@@ -999,17 +997,17 @@ export default function SettingsPage() {
                     <Label htmlFor="deepl-api-key" className="text-xs">DeepL</Label>
                     <div className="flex space-x-1">
                       <Input id="deepl-api-key" type={showApiKeys.deepl ? "text" : "password"} value={settings.translation.deeplApiKey} onChange={(e) => updateSetting('translation', 'deeplApiKey', e.target.value)} placeholder="..." className="font-mono text-xs h-8" />
-                      <Button variant="outline" size="icon" aria-label="Mostra/Nascondi" className="h-8 w-8" onClick={() => setShowApiKeys(prev => ({ ...prev, deepl: !prev.deepl }))}>{showApiKeys.deepl ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}</Button>
+                      <Button variant="outline" size="icon" aria-label={t('common.mostraNascondi')} className="h-8 w-8" onClick={() => setShowApiKeys(prev => ({ ...prev, deepl: !prev.deepl }))}>{showApiKeys.deepl ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}</Button>
                     </div>
-                    <p className="text-2xs text-muted-foreground">500K chars/mese gratis — <a href="https://www.deepl.com/pro-api" target="_blank" rel="noopener" className="underline">{t('settingsPage.key')}</a></p>
+                    <p className="text-2xs text-muted-foreground">{t('settingsPage.deepl500k')}<a href="https://www.deepl.com/pro-api" target="_blank" rel="noopener" className="underline">{t('settingsPage.key')}</a></p>
                   </div>
                   <div className="space-y-1">
                     <Label htmlFor="qwen-api-key" className="text-xs">{t('settingsPage.qwen3AlibabaDashscope')}</Label>
                     <div className="flex space-x-1">
                       <Input id="qwen-api-key" type={showApiKeys.qwen ? "text" : "password"} value={settings.translation.qwenApiKey} onChange={(e) => updateSetting('translation', 'qwenApiKey', e.target.value)} placeholder="sk-..." className="font-mono text-xs h-8" />
-                      <Button variant="outline" size="icon" aria-label="Mostra/Nascondi" className="h-8 w-8" onClick={() => setShowApiKeys(prev => ({ ...prev, qwen: !prev.qwen }))}>{showApiKeys.qwen ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}</Button>
+                      <Button variant="outline" size="icon" aria-label={t('common.mostraNascondi')} className="h-8 w-8" onClick={() => setShowApiKeys(prev => ({ ...prev, qwen: !prev.qwen }))}>{showApiKeys.qwen ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}</Button>
                     </div>
-                    <p className="text-2xs text-muted-foreground">1M token/mese gratis, top multilingue — <a href="https://dashscope.console.aliyun.com/apiKey" target="_blank" rel="noopener" className="underline">{t('settingsPage.key')}</a></p>
+                    <p className="text-2xs text-muted-foreground">{t('settingsPage.qwen1m')}<a href="https://dashscope.console.aliyun.com/apiKey" target="_blank" rel="noopener" className="underline">{t('settingsPage.key')}</a></p>
                   </div>
                 </div>
               </details>
@@ -1017,7 +1015,7 @@ export default function SettingsPage() {
               <details className="group">
                 <summary className="cursor-pointer text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 select-none mb-2">
                   <SlidersHorizontal className="h-3.5 w-3.5" />
-                  {t('settings.advancedParams') !== 'settings.advancedParams' ? t('settings.advancedParams') : 'Parametri avanzati (temperatura, token, batch)'}
+                  {t('heroJob.advancedParams')}
                 </summary>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-3">
                 <div className="space-y-2">
@@ -1192,23 +1190,23 @@ export default function SettingsPage() {
             <CardHeader className="p-0 pb-4">
               <CardTitle as="h2" className="flex items-center gap-2 text-base">
                 <Rss className="h-5 w-5 text-orange-500" />
-                Feed RSS Dashboard
+                {t('settingsPage.rssFeedDashboard')}
               </CardTitle>
               <p className="text-xs text-muted-foreground mt-1">
-                Configura i feed RSS da mostrare nel ticker della dashboard
+                {t('settingsPage.rssDesc')}
               </p>
             </CardHeader>
             <CardContent className="p-0 space-y-4">
               {/* Add new feed */}
               <div className="flex gap-2">
                 <Input
-                  placeholder="Nome feed (es. Steam News)"
+                  placeholder={t('settingsPage.feedNamePlaceholder')}
                   value={newFeedName}
                   onChange={(e) => setNewFeedName(e.target.value)}
                   className="flex-1 h-9 text-sm"
                 />
                 <Input
-                  placeholder="URL feed RSS"
+                  placeholder={t('settingsPage.feedUrlPlaceholder')}
                   value={newFeedUrl}
                   onChange={(e) => setNewFeedUrl(e.target.value)}
                   className="flex-[2] h-9 text-sm"
@@ -1241,7 +1239,7 @@ export default function SettingsPage() {
                 ))}
                 {rssFeeds.length === 0 && (
                   <p className="text-sm text-muted-foreground text-center py-4">
-                    Nessun feed configurato. Aggiungi un feed RSS per iniziare.
+                    {t('settingsPage.noFeeds')}
                   </p>
                 )}
               </div>
@@ -1250,7 +1248,7 @@ export default function SettingsPage() {
               <div className="flex justify-end pt-2">
                 <Button variant="outline" size="sm" onClick={handleResetRssFeeds} className="gap-1.5">
                   <RotateCcw className="h-3.5 w-3.5" />
-                  Ripristina default
+                  {t('settingsPage.restoreDefaults')}
                 </Button>
               </div>
             </CardContent>
@@ -1349,7 +1347,7 @@ export default function SettingsPage() {
                       }`}
                     >
                       <Type className={`mx-auto mb-1 ${size === 'small' ? 'h-3 w-3' : size === 'large' ? 'h-5 w-5' : 'h-4 w-4'}`} />
-                      <p className="text-[11px] font-medium">{size === 'small' ? 'Piccolo (14px)' : size === 'medium' ? 'Medio (16px)' : 'Grande (18px)'}</p>
+                      <p className="text-[11px] font-medium">{size === 'small' ? t('settingsPage.fontSmall') : size === 'medium' ? t('settingsPage.fontMedium') : t('settingsPage.fontLarge')}</p>
                     </button>
                   ))}
                 </div>

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useCallback, useRef, useEffect, type ComponentType } from "react"
+import { TARGET_LANGUAGES } from "@/lib/translation/target-languages"
 import { get, set, del } from 'idb-keyval'
 import { useSearchParams } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -183,28 +184,7 @@ function isCodeString(value: string): boolean {
 // LANGUAGE OPTIONS
 // ============================================================================
 
-const LANGUAGES = [
-  { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-  { code: 'en', name: 'English', flag: '🇬🇧' },
-  { code: 'fr', name: 'Français', flag: '🇫🇷' },
-  { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-  { code: 'es', name: 'Español', flag: '🇪🇸' },
-  { code: 'pt', name: 'Português', flag: '🇵🇹' },
-  { code: 'pt-br', name: 'Português (BR)', flag: '🇧🇷' },
-  { code: 'ja', name: '日本語', flag: '🇯🇵' },
-  { code: 'ko', name: '한국어', flag: '🇰🇷' },
-  { code: 'zh', name: '中文 (简)', flag: '🇨🇳' },
-  { code: 'zh-tw', name: '中文 (繁)', flag: '🇹🇼' },
-  { code: 'ru', name: 'Русский', flag: '🇷🇺' },
-  { code: 'pl', name: 'Polski', flag: '🇵🇱' },
-  { code: 'nl', name: 'Nederlands', flag: '🇳🇱' },
-  { code: 'sv', name: 'Svenska', flag: '🇸🇪' },
-  { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
-  { code: 'ar', name: 'العربية', flag: '🇸🇦' },
-  { code: 'th', name: 'ไทย', flag: '🇹🇭' },
-  { code: 'vi', name: 'Tiếng Việt', flag: '🇻🇳' },
-  { code: 'id', name: 'Bahasa Indonesia', flag: '🇮🇩' },
-]
+const LANGUAGES = TARGET_LANGUAGES
 
 // ============================================================================
 // COMPONENT
@@ -546,7 +526,7 @@ export default function AutoTranslatePage() {
 
     try {
       // 1. Trova l'exe del gioco nella cartella di installazione
-      setBepinexSteps(prev => [...prev, 'Ricerca eseguibile del gioco...'])
+      setBepinexSteps(prev => [...prev, t('autoTranslatePage.searchingExe')])
       let gameExeName = ''
 
       try {
@@ -568,13 +548,13 @@ export default function AutoTranslatePage() {
         // Fallback: usa il nome del gioco + .exe
         const gameName = gameInfo.gameName?.replace(/[^a-zA-Z0-9]/g, '') || 'Game'
         gameExeName = `${gameName}.exe`
-        setBepinexSteps(prev => [...prev, `⚠ Exe non trovato, provo con: ${gameExeName}`])
+        setBepinexSteps(prev => [...prev, t('autoTranslatePage.exeNotFound').replace('{name}', gameExeName)])
       } else {
-        setBepinexSteps(prev => [...prev, `✓ Trovato: ${gameExeName}`])
+        setBepinexSteps(prev => [...prev, t('autoTranslatePage.exeFound').replace('{name}', gameExeName)])
       }
 
       // 2. Chiama install_unity_autotranslator
-      setBepinexSteps(prev => [...prev, 'Installazione BepInEx + XUnity AutoTranslator...'])
+      setBepinexSteps(prev => [...prev, t('autoTranslatePage.installingBepinex')])
       
       const result = await invoke<{ success: boolean; message: string; steps_completed: string[] }>(
         'install_unity_autotranslator', {
@@ -590,16 +570,16 @@ export default function AutoTranslatePage() {
       }
 
       if (result.success) {
-        setBepinexSteps(prev => [...prev, '', '🎉 Installazione completata!', '📌 Ora avvia il gioco UNA VOLTA per generare i file di traduzione.', '📌 Poi torna qui e clicca "Ri-Scansiona" per trovare i nuovi file.'])
+        setBepinexSteps(prev => [...prev, '', t('autoTranslatePage.installComplete'), t('autoTranslatePage.installStep1'), t('autoTranslatePage.installStep2')])
         setBepinexStatus('installed')
       } else {
-        setBepinexError(result.message || 'Installazione fallita')
+        setBepinexError(result.message || t('autoTranslatePage.installFailed'))
         setBepinexStatus('error')
       }
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : String(err)
       setBepinexError(errMsg)
-      setBepinexSteps(prev => [...prev, `❌ Errore: ${errMsg}`])
+      setBepinexSteps(prev => [...prev, t('autoTranslatePage.errorWithMsg').replace('{msg}', errMsg)])
       setBepinexStatus('error')
     }
   }, [gameInfo, targetLang])
@@ -859,7 +839,7 @@ export default function AutoTranslatePage() {
           currentFile: fi + 1, totalFiles: files.length,
           currentBatch: bi + 1, totalBatches,
           translatedStrings: globalTranslated, totalStrings: totalStrCount,
-          currentStep: `Traduzione ${file.name} (batch ${bi + 1}/${totalBatches})`,
+          currentStep: t('autoTranslatePage.translatingBatch').replace('{file}', file.name).replace('{n}', String(bi + 1)).replace('{total}', String(totalBatches)),
           percent: Math.round((globalTranslated / totalStrCount) * 100),
           startTime, errors,
         })
@@ -908,7 +888,7 @@ export default function AutoTranslatePage() {
               globalTranslated++
             }
             if (consecutiveFailedBatches >= 3) {
-              errors.push('Tutti i provider di traduzione sono bloccati o non configurati. Traduzione fermata automaticamente.')
+              errors.push(t('autoTranslatePage.allProvidersBlocked'))
               abortRef.current = true
               clientLogger.error('[AutoTranslate] Auto-stop: 3 batch consecutivi senza traduzioni')
             }
@@ -939,7 +919,7 @@ export default function AutoTranslatePage() {
               consecutiveFailedBatches++
               clientLogger.warn(`[AutoTranslate] Batch con 0 output (${consecutiveFailedBatches}/5) — provider: ${result.provider}`)
               if (consecutiveFailedBatches >= 5) {
-                errors.push('Tutti i provider di traduzione sono bloccati o non configurati. Traduzione fermata automaticamente.')
+                errors.push(t('autoTranslatePage.allProvidersBlocked'))
                 abortRef.current = true
                 clientLogger.error('[AutoTranslate] Auto-stop: 5 batch consecutivi senza output')
               }
@@ -951,14 +931,14 @@ export default function AutoTranslatePage() {
             }
           }
         } catch (err: unknown) {
-          errors.push(`${file.name} batch ${bi + 1}: ${err instanceof Error ? err.message : 'Errore'}`)
+          errors.push(`${file.name} batch ${bi + 1}: ${err instanceof Error ? err.message : t('common.error')}`)
           for (const s of batch) {
             fileTranslations.push({ key: s.key, original: s.value, translation: '', qaScore: 0, qaPassed: false, isEdited: false })
             globalTranslated++
           }
           consecutiveFailedBatches++
           if (consecutiveFailedBatches >= 3) {
-            errors.push('Troppi errori consecutivi. Traduzione fermata automaticamente.')
+            errors.push(t('autoTranslatePage.tooManyErrors'))
             abortRef.current = true
           }
         }
@@ -976,7 +956,7 @@ export default function AutoTranslatePage() {
     saveCheckpoint(allTranslated)
     const wasStopped = abortRef.current
     const actualTranslated = [...allTranslated.values()].flat().filter(t => t.translation).length
-    setProgress(prev => prev ? { ...prev, percent: wasStopped ? Math.round((actualTranslated / totalStrCount) * 100) : 100, currentStep: wasStopped ? `Stopped — ${actualTranslated} strings saved` : 'Completed!' } : null)
+    setProgress(prev => prev ? { ...prev, percent: wasStopped ? Math.round((actualTranslated / totalStrCount) * 100) : 100, currentStep: wasStopped ? t('autoTranslatePage.stoppedSaved').replace('{n}', String(actualTranslated)) : t('autoTranslatePage.completed') } : null)
     setIsTranslating(false)
     
     // 🎯 Aggiorna progetto con progresso finale
@@ -999,8 +979,8 @@ export default function AutoTranslatePage() {
         operationId: gameInfo?.gameId || 'auto-translate',
         success: !wasStopped,
         details: wasStopped
-          ? `Translation paused: ${actualTranslated}/${totalStrCount} strings (${Math.round((actualTranslated / totalStrCount) * 100)}%)`
-          : `Translation completed: ${actualTranslated} strings translated for ${gameTitle}`,
+          ? t('autoTranslatePage.notifyPaused').replace('{n}', String(actualTranslated)).replace('{total}', String(totalStrCount)).replace('{pct}', String(Math.round((actualTranslated / totalStrCount) * 100)))
+          : t('autoTranslatePage.notifyCompleted').replace('{n}', String(actualTranslated)).replace('{game}', gameTitle),
       })
     } catch {}
     // Tray notification bridge event
@@ -1008,7 +988,7 @@ export default function AutoTranslatePage() {
       window.dispatchEvent(new CustomEvent('bg-translation-event', {
         detail: {
           type: wasStopped ? 'job_failed' : 'job_completed',
-          job: { gameName: gameTitle || 'Gioco', translatedCount: actualTranslated, errors: wasStopped ? ['Fermata utente'] : [] }
+          job: { gameName: gameTitle || t('common.game'), translatedCount: actualTranslated, errors: wasStopped ? [t('autoTranslatePage.stoppedByUser')] : [] }
         }
       }));
     }
@@ -1194,7 +1174,7 @@ export default function AutoTranslatePage() {
         const fullPath = `${desktopPath}\\${filename}`
         await invoke('save_binary_file', { filePath: fullPath, base64Content: base64 })
         clientLogger.debug(`[ZIP] Salvato su Desktop: ${fullPath}`)
-        alert(`ZIP salvato sul Desktop:\n${fullPath}`)
+        alert(t('autoTranslatePage.zipSavedDesktop').replace('{path}', fullPath))
         return
       } catch (tauriErr) {
         clientLogger.debug(`[ZIP] Tauri non disponibile, fallback browser: ${String(tauriErr)}`)
@@ -1232,14 +1212,14 @@ export default function AutoTranslatePage() {
     // Per non-UE serve patchResult; per UE leggiamo direttamente dal translation_session.json
     if (!isUE && !patchResult) return
     const translatedFiles = patchResult?.files.filter(f => f.type === 'translated') || []
-    if (!isUE && translatedFiles.length === 0) { addTestLog('Nessun file tradotto da applicare'); return }
+    if (!isUE && translatedFiles.length === 0) { addTestLog(t('autoTranslatePage.tpLogNoFiles')); return }
 
     setTestPatchStatus('backing_up')
     setTestPatchLogs([])
     setTestBackupPaths(new Map())
     setTestPatchApplied(false)
-    addTestLog('Avvio test patch...')
-    addTestLog(isUE ? '🎮 Rilevato: Unreal Engine — creazione .pak' : '📁 Modalità: sovrascrittura file diretta')
+    addTestLog(t('autoTranslatePage.tpLogStart'))
+    addTestLog(isUE ? t('autoTranslatePage.tpLogDetectedUE') : t('autoTranslatePage.tpLogModeDirect'))
 
     if (isUE) {
       // ================================================================
@@ -1250,16 +1230,16 @@ export default function AutoTranslatePage() {
       setTestPatchStatus('backing_up')
       const backups = new Map<string, string>()
       try {
-        addTestLog('Rimozione patch precedenti...')
+        addTestLog(t('autoTranslatePage.tpLogRemovingPrev'))
         try {
           const removeResult = await invoke<string>('remove_unreal_translation', { gamePath: gameInfo.installPath })
-          addTestLog(`🧹 ${removeResult}`)
-        } catch { addTestLog('ℹ️ Nessuna patch precedente da rimuovere') }
+          addTestLog(t('autoTranslatePage.tpLogCleanupResult').replace('{result}', String(removeResult)))
+        } catch { addTestLog(t('autoTranslatePage.tpLogNoPrevPatch')) }
         backups.set('__unreal_pak__', '__unreal__')
         setTestBackupPaths(new Map(backups))
-        addTestLog('✅ Pronto per nuova patch')
+        addTestLog(t('autoTranslatePage.tpLogReadyNew'))
       } catch (err: unknown) {
-        addTestLog(`❌ Errore fase cleanup: ${err}`)
+        addTestLog(t('autoTranslatePage.tpLogErrCleanup').replace('{err}', String(err)))
         setTestPatchStatus('error')
         return
       }
@@ -1267,7 +1247,7 @@ export default function AutoTranslatePage() {
       // STEP 2: Applica — raccoglie traduzioni e chiama apply_unreal_translation
       setTestPatchStatus('applying')
       try {
-        addTestLog('Raccolta traduzioni per .pak...')
+        addTestLog(t('autoTranslatePage.tpLogCollecting'))
 
         // Per UE: leggi direttamente il translation_session.json che contiene le traduzioni
         // nel formato corretto (namespace, key, original, translated)
@@ -1290,7 +1270,7 @@ export default function AutoTranslatePage() {
                 })
               }
             }
-            addTestLog(`Letto translation_session.json: ${session.entries.length} entries, ${translations.length} tradotte`)
+            addTestLog(t('autoTranslatePage.tpLogReadSession').replace('{entries}', String(session.entries.length)).replace('{translated}', String(translations.length)))
           }
         } catch (sessionErr) {
           clientLogger.warn(`[TestPatch] translation_session.json non trovato, fallback a translatedStrings: ${String(sessionErr)}`)
@@ -1298,7 +1278,7 @@ export default function AutoTranslatePage() {
 
         // Fallback: usa translatedStrings del wizard (se non trovato il session file)
         if (translations.length === 0) {
-          addTestLog('Fallback: uso traduzioni dal wizard...')
+          addTestLog(t('autoTranslatePage.tpLogFallbackWizard'))
           for (const [, strings] of translatedStrings.entries()) {
             for (const s of strings) {
               const final = s.isEdited ? (s.editedTranslation || s.translation) : s.translation
@@ -1326,10 +1306,10 @@ export default function AutoTranslatePage() {
           }
         }
 
-        addTestLog(`Trovate ${translations.length} traduzioni effettive`)
+        addTestLog(t('autoTranslatePage.tpLogFoundTranslations').replace('{count}', String(translations.length)))
 
         if (translations.length === 0) {
-          addTestLog('❌ Nessuna traduzione effettiva da applicare')
+          addTestLog(t('autoTranslatePage.tpLogNoActual'))
           setTestPatchStatus('error')
           return
         }
@@ -1342,48 +1322,48 @@ export default function AutoTranslatePage() {
           const chunkMap = JSON.parse(chunkMapContent)
           const fileCount = Object.keys(chunkMap).filter(k => k !== '__meta').length
           useIoStore = true
-          addTestLog(`📦 Rilevato: IoStore (${fileCount} DataTable UAsset) — binary patching`)
+          addTestLog(t('autoTranslatePage.tpLogDetectedIoStore').replace('{count}', String(fileCount)))
         } catch {
-          addTestLog('📦 Formato: .locres standard — creazione .pak traduzione')
+          addTestLog(t('autoTranslatePage.tpLogFormatLocres'))
         }
 
         if (useIoStore) {
           // IoStore: patcha i .uasset binari e crea container .utoc/.ucas override
-          addTestLog('Patching DataTable UAsset e creazione IoStore override...')
+          addTestLog(t('autoTranslatePage.tpLogPatchingDataTable'))
           const pakResult = await invoke<{ success: boolean; pak_path: string; entries_count: number; message: string }>(
             'apply_datatable_translation',
             { gamePath: gameInfo.installPath, translations, targetLanguage: targetLang }
           )
 
           if (pakResult.success) {
-            addTestLog(`✅ IoStore creato: ${pakResult.message}`)
-            addTestLog(`📦 Path: ${pakResult.pak_path}`)
+            addTestLog(t('autoTranslatePage.tpLogIoStoreCreated').replace('{msg}', String(pakResult.message)))
+            addTestLog(t('autoTranslatePage.tpLogPath').replace('{path}', String(pakResult.pak_path)))
             setTestPatchApplied(true)
           } else {
-            addTestLog(`❌ Errore IoStore: ${pakResult.message}`)
+            addTestLog(t('autoTranslatePage.tpLogErrIoStore').replace('{msg}', String(pakResult.message)))
             setTestPatchStatus('error')
             return
           }
         } else {
           // Locres standard: crea .pak con .locres tradotto
-          addTestLog('Creazione file .pak traduzione...')
+          addTestLog(t('autoTranslatePage.tpLogCreatingPak'))
           const pakResult = await invoke<{ success: boolean; pak_path: string; entries_count: number; message: string }>(
             'apply_unreal_translation',
             { gamePath: gameInfo.installPath, translations, targetLanguage: targetLang }
           )
 
           if (pakResult.success) {
-            addTestLog(`✅ .pak creato: ${pakResult.message}`)
-            addTestLog(`📦 Path: ${pakResult.pak_path}`)
+            addTestLog(t('autoTranslatePage.tpLogPakCreated').replace('{msg}', String(pakResult.message)))
+            addTestLog(t('autoTranslatePage.tpLogPath').replace('{path}', String(pakResult.pak_path)))
             setTestPatchApplied(true)
           } else {
-            addTestLog(`❌ Errore creazione .pak: ${pakResult.message}`)
+            addTestLog(t('autoTranslatePage.tpLogErrPakCreate').replace('{msg}', String(pakResult.message)))
             setTestPatchStatus('error')
             return
           }
         }
       } catch (err: unknown) {
-        addTestLog(`❌ Errore applicazione traduzione UE: ${err}`)
+        addTestLog(t('autoTranslatePage.tpLogErrApplyUE').replace('{err}', String(err)))
         setTestPatchStatus('error')
         return
       }
@@ -1395,7 +1375,7 @@ export default function AutoTranslatePage() {
       // STEP 1: Backup dei file originali
       const backups = new Map<string, string>()
       try {
-        addTestLog(`Backup di ${translatedFiles.length} file originali...`)
+        addTestLog(t('autoTranslatePage.tpLogBackupStart').replace('{count}', String(translatedFiles.length)))
         for (const file of translatedFiles) {
           const fullPath = `${gameInfo.installPath}\\${file.path.replace(/\//g, '\\')}`
           try {
@@ -1404,21 +1384,21 @@ export default function AutoTranslatePage() {
               const originalContent = await invoke<string>('read_text_file', { path: fullPath })
               await invoke('write_text_file', { path: backupPath, content: originalContent })
               backups.set(fullPath, backupPath)
-              addTestLog(`✅ Backup: ${file.path}`)
+              addTestLog(t('autoTranslatePage.tpLogBackupOk').replace('{path}', String(file.path)))
             } catch {
-              addTestLog(`⚠️ File non esistente (nuovo): ${file.path}`)
+              addTestLog(t('autoTranslatePage.tpLogFileNew').replace('{path}', String(file.path)))
               backups.set(fullPath, '__new__')
             }
           } catch (err: unknown) {
-            addTestLog(`❌ Errore backup ${file.path}: ${err}`)
+            addTestLog(t('autoTranslatePage.tpLogErrBackup').replace('{path}', String(file.path)).replace('{err}', String(err)))
             setTestPatchStatus('error')
             return
           }
         }
         setTestBackupPaths(new Map(backups))
-        addTestLog(`Backup completato: ${backups.size} file salvati`)
+        addTestLog(t('autoTranslatePage.tpLogBackupDone').replace('{count}', String(backups.size)))
       } catch (err: unknown) {
-        addTestLog(`❌ Errore fase backup: ${err}`)
+        addTestLog(t('autoTranslatePage.tpLogErrBackupPhase').replace('{err}', String(err)))
         setTestPatchStatus('error')
         return
       }
@@ -1426,22 +1406,22 @@ export default function AutoTranslatePage() {
       // STEP 2: Applica i file tradotti
       setTestPatchStatus('applying')
       try {
-        addTestLog('Applicazione file tradotti...')
+        addTestLog(t('autoTranslatePage.tpLogApplyingFiles'))
         for (const file of translatedFiles) {
           const fullPath = `${gameInfo.installPath}\\${file.path.replace(/\//g, '\\')}`
           try {
             await invoke('write_text_file', { path: fullPath, content: file.content })
-            addTestLog(`✅ Applicato: ${file.path}`)
+            addTestLog(t('autoTranslatePage.tpLogAppliedOk').replace('{path}', String(file.path)))
           } catch (err: unknown) {
-            addTestLog(`❌ Errore scrittura ${file.path}: ${err}`)
+            addTestLog(t('autoTranslatePage.tpLogErrWrite').replace('{path}', String(file.path)).replace('{err}', String(err)))
             setTestPatchStatus('error')
             return
           }
         }
         setTestPatchApplied(true)
-        addTestLog('Patch applicata con successo!')
+        addTestLog(t('autoTranslatePage.tpLogApplySuccess'))
       } catch (err: unknown) {
-        addTestLog(`❌ Errore fase applicazione: ${err}`)
+        addTestLog(t('autoTranslatePage.tpLogErrApplyPhase').replace('{err}', String(err)))
         setTestPatchStatus('error')
         return
       }
@@ -1450,7 +1430,7 @@ export default function AutoTranslatePage() {
     // STEP 3: Lancia il gioco (comune a entrambi i percorsi)
     setTestPatchStatus('launching')
     try {
-      addTestLog('Avvio gioco...')
+      addTestLog(t('autoTranslatePage.tpLogLaunching'))
       const platform = (gameInfo.platform || 'Steam').toLowerCase()
       const gameId = gameInfo.gameId.replace(/^steam_/, '').replace(/^epic_/, '').replace(/^gog_/, '')
       let launchResult: { success: boolean; message: string }
@@ -1462,22 +1442,22 @@ export default function AutoTranslatePage() {
       } else if (platform === 'gog') {
         launchResult = await invoke<{ success: boolean; message: string }>('launch_gog_game', { gameId })
       } else {
-        launchResult = { success: false, message: 'Piattaforma non supportata per avvio automatico' }
+        launchResult = { success: false, message: t('autoTranslatePage.tpLogPlatformUnsupported') }
       }
 
       if (launchResult.success) {
-        addTestLog(`✅ Gioco avviato: ${launchResult.message}`)
+        addTestLog(t('autoTranslatePage.tpLogGameLaunched').replace('{msg}', String(launchResult.message)))
       } else {
-        addTestLog(`⚠️ Avvio gioco: ${launchResult.message}`)
+        addTestLog(t('autoTranslatePage.tpLogGameLaunchWarn').replace('{msg}', String(launchResult.message)))
       }
     } catch (err: unknown) {
-      addTestLog(`⚠️ Errore avvio gioco: ${err}`)
+      addTestLog(t('autoTranslatePage.tpLogErrLaunch').replace('{err}', String(err)))
     }
 
     // STEP 4: Monitoraggio in tempo reale
     setTestPatchStatus('monitoring')
-    addTestLog('Monitoraggio attivo — verifica che il gioco funzioni correttamente')
-    addTestLog('Quando hai finito di testare, clicca "Ripristina Originali" o "Mantieni Patch"')
+    addTestLog(t('autoTranslatePage.tpLogMonitoringActive'))
+    addTestLog(t('autoTranslatePage.tpLogMonitorHint'))
 
     if (!isUE) {
       // Monitor file solo per non-UE (per UE il .pak è stabile)
@@ -1491,25 +1471,25 @@ export default function AutoTranslatePage() {
             try {
               const currentContent = await invoke<string>('read_text_file', { path: fullPath })
               if (currentContent !== file.content) {
-                addTestLog(`⚠️ File modificato esternamente: ${file.path}`)
+                addTestLog(t('autoTranslatePage.tpLogFileModifiedExt').replace('{path}', String(file.path)))
                 allOk = false
               }
             } catch {
-              addTestLog(`⚠️ File non più accessibile: ${file.path}`)
+              addTestLog(t('autoTranslatePage.tpLogFileNotAccessible').replace('{path}', String(file.path)))
               allOk = false
             }
           }
           if (allOk && monitorCount % 6 === 0) {
-            addTestLog(`✅ Controllo #${monitorCount}: tutti i file OK`)
+            addTestLog(t('autoTranslatePage.tpLogCheckOk').replace('{n}', String(monitorCount)))
           }
         } catch {}
       }, 5000)
       testMonitorRef.current = monitorInterval
     } else {
-      addTestLog('ℹ️ .pak Unreal Engine installato — il monitoraggio file non è necessario')
-      addTestLog('Verifica nel gioco che i testi siano in italiano')
+      addTestLog(t('autoTranslatePage.tpLogPakNoMonitor'))
+      addTestLog(t('autoTranslatePage.tpLogVerifyInGame'))
     }
-  }, [patchResult, gameInfo, addTestLog, translatedStrings, targetLang, isUnrealEngine])
+  }, [patchResult, gameInfo, addTestLog, translatedStrings, targetLang, isUnrealEngine, t])
 
   const handleRestorePatch = useCallback(async () => {
     // Ferma il monitoraggio
@@ -1519,7 +1499,7 @@ export default function AutoTranslatePage() {
     }
 
     setTestPatchStatus('restoring')
-    addTestLog('Ripristino file originali...')
+    addTestLog(t('autoTranslatePage.tpLogRestoring'))
 
     // Controlla se è Unreal Engine
     const isUE = testBackupPaths.has('__unreal_pak__')
@@ -1527,18 +1507,18 @@ export default function AutoTranslatePage() {
     if (isUE) {
       // Per UE: rimuovi i file di traduzione (.pak, .utoc, .ucas)
       try {
-        addTestLog('Rimozione file traduzione...')
+        addTestLog(t('autoTranslatePage.tpLogRemovingTransFiles'))
         const result = await invoke<string>('remove_unreal_translation', { gamePath: gameInfo?.installPath || '' })
-        addTestLog(`✅ ${result}`)
+        addTestLog(t('autoTranslatePage.tpLogResultOk').replace('{result}', String(result)))
       } catch (err: unknown) {
         const errStr = String(err)
         if (errStr.includes('bloccati') || errStr.includes('os error 32') || errStr.includes('utilizzato da un altro processo')) {
-          addTestLog(`⚠️ ${errStr}`)
-          addTestLog('💡 Chiudi il gioco e clicca "Ripristina Originali" di nuovo')
+          addTestLog(t('autoTranslatePage.tpLogWarnRaw').replace('{msg}', String(errStr)))
+          addTestLog(t('autoTranslatePage.tpLogCloseGameRetry'))
           setTestPatchStatus('error')
           return
         }
-        addTestLog(`❌ Errore rimozione: ${err}`)
+        addTestLog(t('autoTranslatePage.tpLogErrRemove').replace('{err}', String(err)))
       }
     } else {
       // Per non-UE: ripristina file originali dai backup
@@ -1546,24 +1526,24 @@ export default function AutoTranslatePage() {
       for (const [fullPath, backupPath] of testBackupPaths.entries()) {
         try {
           if (backupPath === '__new__') {
-            addTestLog(`ℹ️ File nuovo, skip: ${fullPath}`)
+            addTestLog(t('autoTranslatePage.tpLogNewFileSkip').replace('{path}', String(fullPath)))
             continue
           }
           const backupContent = await invoke<string>('read_text_file', { path: backupPath })
           await invoke('write_text_file', { path: fullPath, content: backupContent })
           try { await invoke('secure_delete_file', { filepath: backupPath }) } catch {}
           restored++
-          addTestLog(`✅ Ripristinato: ${fullPath.split('\\').pop()}`)
+          addTestLog(t('autoTranslatePage.tpLogRestoredOk').replace('{name}', String(fullPath.split('\\').pop())))
         } catch (err: unknown) {
-          addTestLog(`❌ Errore ripristino ${fullPath}: ${err}`)
+          addTestLog(t('autoTranslatePage.tpLogErrRestore').replace('{path}', String(fullPath)).replace('{err}', String(err)))
         }
       }
-      addTestLog(`Ripristino completato: ${restored} file ripristinati`)
+      addTestLog(t('autoTranslatePage.tpLogRestoreDone').replace('{count}', String(restored)))
     }
 
     setTestPatchApplied(false)
     setTestPatchStatus('done')
-  }, [testBackupPaths, addTestLog, gameInfo])
+  }, [testBackupPaths, addTestLog, gameInfo, t])
 
   const handleKeepPatch = useCallback(() => {
     // Ferma il monitoraggio
@@ -1585,11 +1565,11 @@ export default function AutoTranslatePage() {
     }
 
     setTestPatchStatus('done')
-    addTestLog('Patch mantenuta! I file tradotti sono ora permanenti nella cartella del gioco.')
+    addTestLog(t('autoTranslatePage.tpLogPatchKept'))
     if (testBackupPaths.has('__unreal_pak__')) {
-      addTestLog('ℹ️ Il file .pak rimarrà nella cartella Paks del gioco.')
+      addTestLog(t('autoTranslatePage.tpLogPakStays'))
     }
-  }, [testBackupPaths, addTestLog])
+  }, [testBackupPaths, addTestLog, t])
 
   const handleReset = useCallback(() => {
     setStep('select_game'); setFiles([]); setTranslatedStrings(new Map()); setProgress(null)
@@ -1642,7 +1622,7 @@ export default function AutoTranslatePage() {
           {step !== 'select_game' && (
             <Button variant="outline" size="sm" onClick={handleReset}
               className="h-7 text-xs bg-white/10 border-white/20 text-white hover:bg-white/20">
-              <RefreshCw className="h-3 w-3 mr-1" /> Restart
+              <RefreshCw className="h-3 w-3 mr-1" /> {t('autoTranslatePage.restart')}
             </Button>
           )}
         </div>
@@ -1692,20 +1672,20 @@ export default function AutoTranslatePage() {
                     <div className="flex-1">
                       <h3 className="text-sm font-semibold text-amber-200">{t('autoTranslatePage.progressFound')}</h3>
                       <p className="text-xs text-amber-300/70 mt-0.5">
-                        {savedCheckpoint.translatedCount}/{savedCheckpoint.totalCount} strings already translated
+                        {savedCheckpoint.translatedCount}/{savedCheckpoint.totalCount} {t('autoTranslatePage.checkpointStringsTranslated')}
                         ({savedCheckpoint.targetLang.toUpperCase()})
-                        — saved on {new Date(savedCheckpoint.savedAt).toLocaleString('en-US', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                        — {t('autoTranslatePage.savedOn')} {new Date(savedCheckpoint.savedAt).toLocaleString('en-US', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
                     <div className="flex gap-2">
                       <Button size="xs" className="text-xs bg-amber-600 hover:bg-amber-700" onClick={handleResumeTranslation}>
-                        <Eye className="h-3 w-3 mr-1" /> Review
+                        <Eye className="h-3 w-3 mr-1" /> {t('autoTranslatePage.review')}
                       </Button>
                       <Button size="xs" className="text-xs bg-emerald-600 hover:bg-emerald-700" onClick={() => handleStartTranslation(true)}>
                         <Play className="h-3 w-3 mr-1" /> Resume
                       </Button>
                       <Button size="sm" variant="outline" className="h-8 text-xs border-amber-500/30 text-amber-300 hover:bg-amber-500/20" onClick={clearCheckpoint}>
-                        <XCircle className="h-3 w-3 mr-1" /> Restart
+                        <XCircle className="h-3 w-3 mr-1" /> {t('autoTranslatePage.restart')}
                       </Button>
                     </div>
                   </div>
@@ -1730,19 +1710,19 @@ export default function AutoTranslatePage() {
                   <div className="text-right shrink-0">
                     {isLoadingGame ? (
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Loader2 className="h-5 w-5 animate-spin text-primary" /> Scanning files...
+                        <Loader2 className="h-5 w-5 animate-spin text-primary" /> {t('autoTranslatePage.scanningFiles')}
                       </div>
                     ) : files.length > 0 ? (
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2 justify-end">
                           <FileText className="h-4 w-4 text-emerald-400" />
                           <span className="text-2xl font-black text-emerald-400">{files.length}</span>
-                          <span className="text-xs text-muted-foreground">files</span>
+                          <span className="text-xs text-muted-foreground">{t('autoTranslatePage.files')}</span>
                         </div>
                         <div className="flex items-center gap-2 justify-end">
                           <Languages className="h-4 w-4 text-violet-400" />
                           <span className="text-2xl font-black text-violet-400">{totalStrings.toLocaleString()}</span>
-                          <span className="text-xs text-muted-foreground">strings</span>
+                          <span className="text-xs text-muted-foreground">{t('autoTranslatePage.strings')}</span>
                         </div>
                       </div>
                     ) : null}
@@ -1763,7 +1743,7 @@ export default function AutoTranslatePage() {
                   <Separator className="my-4" />
                   <p className="text-xs text-muted-foreground">{t('autoTranslatePage.orLoadManually')}</p>
                   <Button variant="outline" size="sm" className="mt-2 h-7 text-xs" onClick={() => fileInputRef.current?.click()}>
-                    <Upload className="h-3 w-3 mr-1" /> Load Files
+                    <Upload className="h-3 w-3 mr-1" /> {t('autoTranslatePage.loadFiles')}
                   </Button>
                   <input ref={fileInputRef} type="file" accept=".json,.csv,.po,.pot,.xlf,.xliff,.resx,.strings,.ini,.xml,.properties,.yaml,.yml,.txt" multiple onChange={handleManualUpload} className="hidden" />
                 </CardContent>
@@ -1795,7 +1775,7 @@ export default function AutoTranslatePage() {
                     </div>
                     <div className="flex-1">
                       <p className="text-xs font-medium text-orange-300">{t('autoTranslatePage.tryBinaryPatcher')}</p>
-                      <p className="text-2xs text-orange-300/60">Per giochi con engine custom, il testo potrebbe essere dentro il .exe o .dll. Il Binary Patcher lo estrae e traduce direttamente.</p>
+                      <p className="text-2xs text-orange-300/60">{t('autoTranslatePage.tryBinaryPatcherDesc')}</p>
                     </div>
                     <ChevronRight className="h-4 w-4 text-orange-400/60" />
                   </CardContent>
@@ -1809,19 +1789,19 @@ export default function AutoTranslatePage() {
                 <CardHeader className="py-3 px-4">
                   <CardTitle className="text-sm flex items-center gap-2">
                     <Zap className="h-4 w-4 text-orange-400" />
-                    Unity {isIL2CPP ? '(IL2CPP)' : '(Mono)'} detected
+                    Unity {isIL2CPP ? '(IL2CPP)' : '(Mono)'} {t('autoTranslatePage.detected')}
                     {hasBepInExInstalled && !isIL2CPP && (
-                      <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 text-2xs ml-1">BepInEx installato</Badge>
+                      <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 text-2xs ml-1">{t('autoTranslatePage.bepinexInstalled')}</Badge>
                     )}
                   </CardTitle>
                   <CardDescription className="text-xs">
                     {isIL2CPP 
-                      ? 'Questo gioco usa IL2CPP — i testi sono dentro gli asset binari Unity. Usa il Unity CSV Translator per scansionare, tradurre e iniettare le traduzioni con Resize Injection (zero troncamento).'
+                      ? t('autoTranslatePage.il2cppDesc')
                       : hasBepInExInstalled && xunityStringCount > 0
-                        ? `BepInEx è già installato con ${xunityStringCount} stringhe catturate. Puoi tradurle con AI oppure usare il Unity CSV Translator per una copertura completa.`
+                        ? t('autoTranslatePage.bepinexInstalledWithStrings').replace('{count}', String(xunityStringCount))
                         : hasBepInExInstalled
-                          ? 'BepInEx è installato ma non ci sono ancora stringhe catturate. Avvia il gioco per catturarle, oppure usa il Unity CSV Translator per tradurre tutto subito.'
-                          : 'Metodo consigliato: Unity CSV Translator — inietta le traduzioni direttamente negli asset binari Unity con copertura completa e zero troncamento.'
+                          ? t('autoTranslatePage.bepinexInstalledNoStrings')
+                          : t('autoTranslatePage.recommendedMethodDesc')
                     }
                   </CardDescription>
                 </CardHeader>
@@ -1831,10 +1811,9 @@ export default function AutoTranslatePage() {
                     <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-start gap-2">
                       <AlertTriangle className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-xs font-semibold text-amber-300">BepInEx non compatibile</p>
+                        <p className="text-xs font-semibold text-amber-300">{t('autoTranslatePage.bepinexNotCompatible')}</p>
                         <p className="text-2xs text-amber-300/70 mt-0.5">
-                          I giochi Unity IL2CPP non supportano BepInEx 5.x + XUnity AutoTranslator. L&apos;installazione causerebbe crash all&apos;avvio del gioco.
-                          Usa il <strong>Unity CSV Translator</strong> che inietta le traduzioni direttamente negli asset binari.
+                          {t('autoTranslatePage.il2cppWarningPre')}<strong>Unity CSV Translator</strong>{t('autoTranslatePage.il2cppWarningPost')}
                         </p>
                       </div>
                     </div>
@@ -1845,10 +1824,9 @@ export default function AutoTranslatePage() {
                     <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-start gap-2">
                       <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
                       <div className="flex-1">
-                        <p className="text-xs font-semibold text-emerald-300">{xunityStringCount} stringhe catturate da XUnity</p>
+                        <p className="text-xs font-semibold text-emerald-300">{xunityStringCount} {t('autoTranslatePage.stringsCapturedByXunity')}</p>
                         <p className="text-2xs text-emerald-300/70 mt-0.5">
-                          Le stringhe sono in <code className="text-micro bg-white/5 px-1 rounded">BepInEx/Translation/</code>. 
-                          Per qualità migliore, usa il <strong>Unity CSV Translator</strong> che traduce <em>tutte</em> le stringhe (non solo quelle apparse a schermo).
+                          {t('autoTranslatePage.capturedLocPre')}<code className="text-micro bg-white/5 px-1 rounded">BepInEx/Translation/</code>{t('autoTranslatePage.capturedLocMid')}<strong>Unity CSV Translator</strong>{t('autoTranslatePage.capturedLocPost')}
                         </p>
                       </div>
                     </div>
@@ -1856,7 +1834,7 @@ export default function AutoTranslatePage() {
 
                   {/* Primary: Unity CSV Translator — SEMPRE visibile, consigliato */}
                   <div className="space-y-1.5">
-                    <p className="text-2xs font-medium text-orange-300/80 uppercase tracking-wider">Metodo consigliato</p>
+                    <p className="text-2xs font-medium text-orange-300/80 uppercase tracking-wider">{t('autoTranslatePage.recommendedMethod')}</p>
                     <Button 
                       onClick={() => {
                         if (gameInfo?.installPath) {
@@ -1867,10 +1845,10 @@ export default function AutoTranslatePage() {
                       size="sm" className="h-9 w-full bg-orange-600 hover:bg-orange-500 gap-2"
                     >
                       <Globe className="h-4 w-4" />
-                      Apri Unity CSV Translator
+                      {t('autoTranslatePage.openUnityCsvTranslator')}
                     </Button>
                     <p className="text-2xs text-muted-foreground">
-                      Scansiona tutti gli asset, traduce con AI (Gemini/Claude) e inietta le traduzioni con Resize Injection. Copertura completa, zero troncamento.
+                      {t('autoTranslatePage.unityCsvDesc')}
                     </p>
                   </div>
 
@@ -1879,8 +1857,8 @@ export default function AutoTranslatePage() {
                   <div className="pt-2 border-t border-white/5">
                     <p className="text-2xs text-muted-foreground/80 mb-2">
                       {hasBepInExInstalled 
-                        ? 'Oppure continua con BepInEx + XUnity (traduzione live durante il gameplay):'
-                        : 'Alternativa: BepInEx + XUnity AutoTranslator (traduzione live, richiede di avviare il gioco):'
+                        ? t('autoTranslatePage.bepinexAltContinue')
+                        : t('autoTranslatePage.bepinexAltStart')
                       }
                     </p>
                   {/* Steps log */}
@@ -1897,7 +1875,7 @@ export default function AutoTranslatePage() {
                           )}>{s}</p>
                         ))}
                         {bepinexStatus === 'installing' && (
-                          <p className="text-blue-400 animate-pulse">⏳ Installazione in corso...</p>
+                          <p className="text-blue-400 animate-pulse">{t('autoTranslatePage.installingInProgress')}</p>
                         )}
                       </div>
                     </ScrollArea>
@@ -1915,31 +1893,31 @@ export default function AutoTranslatePage() {
                     {bepinexStatus === 'idle' && !hasBepInExInstalled && (
                       <Button onClick={installBepInEx} variant="outline" size="xs" className="text-xs">
                         <Download className="h-3 w-3 mr-1" />
-                        Install BepInEx + XUnity
+                        {t('autoTranslatePage.installBepinexXunity')}
                       </Button>
                     )}
                     {bepinexStatus === 'idle' && hasBepInExInstalled && (
                       <Button onClick={rescanAfterBepInEx} variant="outline" size="xs" className="text-xs">
                         <RefreshCw className="h-3 w-3 mr-1" />
-                        Ri-Scansiona stringhe XUnity
+                        {t('autoTranslatePage.rescanXunityStrings')}
                       </Button>
                     )}
                     {bepinexStatus === 'installing' && (
                       <Button disabled size="xs" className="text-xs">
                         <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                        Installing...
+                        {t('autoTranslatePage.installing')}
                       </Button>
                     )}
                     {(bepinexStatus === 'installed' || bepinexStatus === 'error') && (
                       <Button onClick={rescanAfterBepInEx} variant="outline" size="xs" className="text-xs">
                         <RefreshCw className="h-3 w-3 mr-1" />
-                        Re-Scan files
+                        {t('autoTranslatePage.rescanFiles')}
                       </Button>
                     )}
                     {bepinexStatus === 'error' && (
                       <Button onClick={installBepInEx} variant="outline" size="sm" className="h-8">
                         <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
-                        Retry
+                        {t('common.retry')}
                       </Button>
                     )}
                   </div>
@@ -1966,8 +1944,8 @@ export default function AutoTranslatePage() {
                 <Card className="lg:col-span-2">
                   <CardHeader className="py-2.5 px-4">
                     <CardTitle className="text-sm flex items-center justify-between">
-                      <span>{files.length} translatable files</span>
-                      <Badge className="bg-violet-500/15 text-violet-400 border-violet-500/30 text-xs">{totalStrings.toLocaleString()} strings</Badge>
+                      <span>{files.length} {t('autoTranslatePage.translatableFiles')}</span>
+                      <Badge className="bg-violet-500/15 text-violet-400 border-violet-500/30 text-xs">{totalStrings.toLocaleString()} {t('autoTranslatePage.strings')}</Badge>
                     </CardTitle>
                   </CardHeader>
                   <ScrollArea className="h-[220px]">
@@ -1996,7 +1974,7 @@ export default function AutoTranslatePage() {
                 <Card>
                   <CardHeader className="py-2 px-4">
                     <CardTitle className="text-xs flex items-center gap-1.5">
-                      <Languages className="h-3.5 w-3.5" /> Language & Options
+                      <Languages className="h-3.5 w-3.5" /> {t('autoTranslatePage.languageOptions')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="px-4 pb-4 space-y-3">
@@ -2009,7 +1987,7 @@ export default function AutoTranslatePage() {
                         </select>
                       </div>
                       <div>
-                        <Label className="text-2xs">To</Label>
+                        <Label className="text-2xs">{t('common.to')}</Label>
                         <select value={targetLang} onChange={(e) => setTargetLang(e.target.value)}
                           className="w-full h-7 text-xs bg-background border rounded px-2 mt-0.5">
                           {LANGUAGES.map(l => <option key={l.code} value={l.code}>{l.flag} {l.name}</option>)}
@@ -2026,7 +2004,7 @@ export default function AutoTranslatePage() {
                           </div>
                         </TooltipTrigger>
                         <TooltipContent side="left" className="max-w-[220px] text-xs">
-                          <p>Analizza automaticamente il contesto di ogni stringa (schermata, speaker, tono) per migliorare la qualità della traduzione AI.</p>
+                          <p>{t('autoTranslatePage.contextHarvestTooltip')}</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -2042,7 +2020,7 @@ export default function AutoTranslatePage() {
                       className="w-full h-10 text-sm font-bold bg-gradient-to-r from-violet-500 to-indigo-500 hover:from-violet-600 hover:to-indigo-600"
                     >
                       <Zap className="h-4 w-4 mr-2" />
-                      Translate {totalStrings} strings
+                      {t('autoTranslatePage.translateNStrings').replace('{count}', String(totalStrings))}
                     </Button>
                     <Button
                       onClick={handleSendToBackground}
@@ -2051,11 +2029,11 @@ export default function AutoTranslatePage() {
                       className="w-full h-8 text-xs border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/20 hover:text-indigo-200"
                     >
                       <Activity className="h-3.5 w-3.5 mr-1.5" />
-                      Traduci in Background
+                      {t('autoTranslatePage.translateInBackground')}
                     </Button>
                     <p className="text-2xs text-muted-foreground text-center">
-                      Estimation: ~{(() => { const s = Math.ceil(totalStrings / 20 * 3); return s >= 60 ? `${Math.floor(s/60)}m ${s%60}s` : `${s}s` })()}
-                      {' '}({Math.ceil(totalStrings / 20)} batches)
+                      {t('autoTranslatePage.estimation')}{(() => { const s = Math.ceil(totalStrings / 20 * 3); return s >= 60 ? `${Math.floor(s/60)}m ${s%60}s` : `${s}s` })()}
+                      {' '}({Math.ceil(totalStrings / 20)} {t('autoTranslatePage.batches')})
                     </p>
                   </CardContent>
                 </Card>
@@ -2075,7 +2053,7 @@ export default function AutoTranslatePage() {
                       </div>
                       <div className="flex-1">
                         <p className="text-xs font-medium text-orange-300">{t('autoTranslatePage.fewStrings')}</p>
-                        <p className="text-2xs text-orange-300/60">Il testo di gioco potrebbe essere dentro il .exe o .dll. Il Binary Patcher lo estrae e traduce direttamente dal binario.</p>
+                        <p className="text-2xs text-orange-300/60">{t('autoTranslatePage.binaryPatcherHintDesc')}</p>
                       </div>
                       <ChevronRight className="h-4 w-4 text-orange-400/60 flex-none" />
                     </CardContent>
@@ -2178,9 +2156,9 @@ export default function AutoTranslatePage() {
                 {/* Pipeline visuale */}
                 <div className="flex items-center justify-center gap-1.5 py-1">
                   {[
-                    { icon: Sparkles, label: 'Context', active: useContextHarvest },
-                    { icon: Languages, label: 'AI Translate', active: true },
-                    { icon: Shield, label: 'QA Check', active: true },
+                    { icon: Sparkles, label: 'autoTranslatePage.contextStep', active: useContextHarvest },
+                    { icon: Languages, label: 'autoTranslatePage.aiTranslateStep', active: true },
+                    { icon: Shield, label: 'autoTranslatePage.qaCheckStep', active: true },
                   ].map((s, i) => (
                     <div key={i} className="flex items-center gap-1.5">
                       <div className={cn(
@@ -2188,7 +2166,7 @@ export default function AutoTranslatePage() {
                         s.active ? "bg-primary/15 text-primary" : "bg-muted/50 text-muted-foreground"
                       )}>
                         <s.icon className="h-3 w-3" />
-                        <span>{s.label}</span>
+                        <span>{t(s.label)}</span>
                       </div>
                       {i < 2 && <ChevronRight className="h-3 w-3 text-muted-foreground/40" />}
                     </div>
@@ -2559,17 +2537,17 @@ export default function AutoTranslatePage() {
                     <CardHeader className="py-3 px-4">
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-sm flex items-center gap-2">
-                          {testPatchStatus === 'backing_up' && <><Loader2 className="h-4 w-4 animate-spin text-blue-400" /> Backup in corso...</>}
-                          {testPatchStatus === 'applying' && <><Loader2 className="h-4 w-4 animate-spin text-blue-400" /> Applicazione patch...</>}
-                          {testPatchStatus === 'launching' && <><Loader2 className="h-4 w-4 animate-spin text-violet-400" /> Avvio gioco...</>}
+                          {testPatchStatus === 'backing_up' && <><Loader2 className="h-4 w-4 animate-spin text-blue-400" /> {t('autoTranslatePage.backingUp')}</>}
+                          {testPatchStatus === 'applying' && <><Loader2 className="h-4 w-4 animate-spin text-blue-400" /> {t('autoTranslatePage.applyingPatch')}</>}
+                          {testPatchStatus === 'launching' && <><Loader2 className="h-4 w-4 animate-spin text-violet-400" /> {t('autoTranslatePage.launchingGame')}</>}
                           {testPatchStatus === 'monitoring' && <><Shield className="h-4 w-4 text-violet-400 animate-pulse" />{t('common.monitoraggioAttivo')}</>}
-                          {testPatchStatus === 'restoring' && <><Loader2 className="h-4 w-4 animate-spin text-amber-400" /> Ripristino...</>}
+                          {testPatchStatus === 'restoring' && <><Loader2 className="h-4 w-4 animate-spin text-amber-400" /> {t('autoTranslatePage.restoring')}</>}
                           {testPatchStatus === 'done' && <><CheckCircle2 className="h-4 w-4 text-emerald-400" />{t('common.testCompletato')}</>}
                           {testPatchStatus === 'error' && <><XCircle className="h-4 w-4 text-red-400" />{t('qaCheck.error')}</>}
                         </CardTitle>
                         {testPatchApplied && (
                           <Badge className="bg-violet-500/20 text-violet-300 border-violet-500/30 text-micro">
-                            Patch attiva
+                            {t('autoTranslatePage.patchActive')}
                           </Badge>
                         )}
                       </div>
@@ -2578,10 +2556,10 @@ export default function AutoTranslatePage() {
                       {/* Status pipeline */}
                       <div className="flex items-center justify-center gap-1 text-2xs">
                         {[
-                          { id: 'backing_up', label: 'Backup', icon: Save },
-                          { id: 'applying', label: 'Applica', icon: Wrench },
-                          { id: 'launching', label: 'Avvia', icon: Play },
-                          { id: 'monitoring', label: 'Monitor', icon: Shield },
+                          { id: 'backing_up', label: 'common.backup', icon: Save },
+                          { id: 'applying', label: 'autoTranslatePage.applyStep', icon: Wrench },
+                          { id: 'launching', label: 'autoTranslatePage.launchStep', icon: Play },
+                          { id: 'monitoring', label: 'autoTranslatePage.monitorStep', icon: Shield },
                         ].map((s, i) => {
                           const statusOrder = ['backing_up', 'applying', 'launching', 'monitoring']
                           const currentIdx = statusOrder.indexOf(testPatchStatus)
@@ -2598,7 +2576,7 @@ export default function AutoTranslatePage() {
                                 "border-muted-foreground/20 text-muted-foreground/50"
                               )}>
                                 <s.icon className={cn("h-3 w-3", isActive && "animate-pulse")} />
-                                <span>{s.label}</span>
+                                <span>{t(s.label)}</span>
                               </div>
                             </div>
                           )
@@ -2630,14 +2608,14 @@ export default function AutoTranslatePage() {
                             size="sm"
                             className="border-amber-500/50 text-amber-300 hover:bg-amber-500/10"
                           >
-                            <RefreshCw className="h-3.5 w-3.5 mr-1.5" /> Ripristina Originali
+                            <RefreshCw className="h-3.5 w-3.5 mr-1.5" /> {t('autoTranslatePage.restoreOriginals')}
                           </Button>
                           <Button
                             onClick={handleKeepPatch}
                             size="sm"
                             className="bg-emerald-600 hover:bg-emerald-500"
                           >
-                            <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" /> Mantieni Patch
+                            <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" /> {t('autoTranslatePage.keepPatch')}
                           </Button>
                         </div>
                       )}
@@ -2649,14 +2627,14 @@ export default function AutoTranslatePage() {
                             variant="destructive"
                             size="sm"
                           >
-                            <RefreshCw className="h-3.5 w-3.5 mr-1.5" /> Ripristina Originali
+                            <RefreshCw className="h-3.5 w-3.5 mr-1.5" /> {t('autoTranslatePage.restoreOriginals')}
                           </Button>
                         </div>
                       )}
 
                       {testPatchStatus === 'done' && (
                         <p className="text-2xs text-center text-muted-foreground">
-                          Puoi chiudere questo pannello o avviare un nuovo test.
+                          {t('autoTranslatePage.testDoneHint')}
                         </p>
                       )}
                     </CardContent>

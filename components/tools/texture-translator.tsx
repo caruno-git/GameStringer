@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
+import { TARGET_LANGUAGES } from '@/lib/translation/target-languages';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -63,16 +64,7 @@ interface TextureFile {
   modified: boolean;
 }
 
-const SUPPORTED_LANGUAGES = [
-  { code: 'en', name: 'English', flag: '🇬🇧' },
-  { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-  { code: 'es', name: 'Español', flag: '🇪🇸' },
-  { code: 'fr', name: 'Français', flag: '🇫🇷' },
-  { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-  { code: 'ja', name: '日本語', flag: '🇯🇵' },
-  { code: 'zh', name: '中文', flag: '🇨🇳' },
-  { code: 'ko', name: '한국어', flag: '🇰🇷' },
-];
+const SUPPORTED_LANGUAGES = TARGET_LANGUAGES;
 
 const FONT_OPTIONS = [
   { id: 'arial', name: 'Arial' },

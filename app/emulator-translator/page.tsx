@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { TARGET_LANGUAGES } from '@/lib/translation/target-languages';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -64,15 +65,7 @@ const SOURCE_LANGUAGES = [
   { code: 'ko', name: '한국어', flag: '🇰🇷' },
 ];
 
-const TARGET_LANGUAGES = [
-  { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-  { code: 'en', name: 'English', flag: '🇬🇧' },
-  { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-  { code: 'fr', name: 'Français', flag: '🇫🇷' },
-  { code: 'es', name: 'Español', flag: '🇪🇸' },
-  { code: 'pt', name: 'Português', flag: '🇵🇹' },
-  { code: 'ru', name: 'Русский', flag: '🇷🇺' },
-];
+// TARGET_LANGUAGES imported from '@/lib/translation/target-languages'
 
 export default function EmulatorTranslatorPage() {
   const { t: _t } = useTranslation();

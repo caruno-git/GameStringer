@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { TARGET_LANGUAGES } from "@/lib/translation/target-languages";
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
 import {
@@ -67,18 +68,7 @@ interface FileStatus {
   error?: string;
 }
 
-const LANGUAGES = [
-  { code: "it", name: "Italiano", flag: "🇮🇹" },
-  { code: "en", name: "English", flag: "🇬🇧" },
-  { code: "es", name: "Español", flag: "🇪🇸" },
-  { code: "fr", name: "Français", flag: "🇫🇷" },
-  { code: "de", name: "Deutsch", flag: "🇩🇪" },
-  { code: "pt", name: "Português", flag: "🇵🇹" },
-  { code: "ru", name: "Русский", flag: "🇷🇺" },
-  { code: "ja", name: "日本語", flag: "🇯🇵" },
-  { code: "ko", name: "한국어", flag: "🇰🇷" },
-  { code: "zh", name: "中文", flag: "🇨🇳" },
-];
+const LANGUAGES = TARGET_LANGUAGES;
 
 const FILE_TYPE_COLORS: Record<string, string> = {
   Json: "bg-yellow-500/20 text-yellow-600",

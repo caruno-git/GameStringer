@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
+import { TARGET_LANGUAGES } from "@/lib/translation/target-languages";
 import {
   FileText,
   Download,
@@ -56,20 +57,7 @@ interface SubtitleTranslatorProps {
   onTranslate?: (texts: string[], targetLang: string) => Promise<string[]>;
 }
 
-const LANGUAGES = [
-  { code: "it", name: "Italiano", flag: "🇮🇹" },
-  { code: "en", name: "English", flag: "🇬🇧" },
-  { code: "es", name: "Español", flag: "🇪🇸" },
-  { code: "fr", name: "Français", flag: "🇫🇷" },
-  { code: "de", name: "Deutsch", flag: "🇩🇪" },
-  { code: "pt", name: "Português", flag: "🇵🇹" },
-  { code: "ru", name: "Русский", flag: "🇷🇺" },
-  { code: "ja", name: "日本語", flag: "🇯🇵" },
-  { code: "ko", name: "한국어", flag: "🇰🇷" },
-  { code: "zh", name: "中文", flag: "🇨🇳" },
-  { code: "pl", name: "Polski", flag: "🇵🇱" },
-  { code: "tr", name: "Türkçe", flag: "🇹🇷" },
-];
+const LANGUAGES = TARGET_LANGUAGES;
 
 const OUTPUT_FORMATS = [
   { value: "srt", label: "SRT (SubRip)" },

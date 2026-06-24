@@ -35,6 +35,7 @@ const TARGET_LANGUAGES = [
   { code: 'korean', label: '🇰🇷 한국어' },
   { code: 'russian', label: '🇷🇺 Русский' },
   { code: 'arabic', label: '🇸🇦 العربية' },
+  { code: 'greek', label: '🇬🇷 Ελληνικά' },
 ];
 
 const VISION_PROVIDERS = [
