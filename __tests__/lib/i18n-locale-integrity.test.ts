@@ -66,16 +66,23 @@ const en = flatten(enJson as Json);
 // "Completo"→"Complete", il cognato corretto es/pt "Completo" (= it) viene ora
 // conteggiato come leftover. Baseline: es 36→37, pt 47→48. Sono cognati romanzi
 // legittimi, non italiano non tradotto.
+// 2026-06-25 Bonifica it.json namespace `common` (tappa 1): tradotti in italiano
+// gli 86 valori ancora in inglese e corretti su en.json i 51 valori ancora in
+// italiano (172 chiavi common.* dove it==en). Rendendo it.json correttamente
+// italiano, i cognati romanzi già tradotti es/pt che coincidono con l'IT
+// (Sistema, Centro, Alto, Data, Categoria, Tipo, Tema, Formato, Progresso…)
+// diventano leftover. Baseline: es 37→40, pt 48→53. fr/de/pl tenuti invariati
+// trattando "Patch Community"/"Provider AI" come termini universali (en==it).
 const locales: { name: string; json: Json; maxMissing: number; maxLeftover: number }[] = [
   { name: 'en', json: enJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ru', json: ruJson as Json, maxMissing: 0, maxLeftover: 0 },
-  { name: 'es', json: esJson as Json, maxMissing: 0, maxLeftover: 37 },
+  { name: 'es', json: esJson as Json, maxMissing: 0, maxLeftover: 40 },
   { name: 'fr', json: frJson as Json, maxMissing: 0, maxLeftover: 2 },
   { name: 'de', json: deJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ja', json: jaJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'zh', json: zhJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ko', json: koJson as Json, maxMissing: 0, maxLeftover: 0 },
-  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 48 },
+  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 53 },
   { name: 'pl', json: plJson as Json, maxMissing: 0, maxLeftover: 11 },
 ];
 
