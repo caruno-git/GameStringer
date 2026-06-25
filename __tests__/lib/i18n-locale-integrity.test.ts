@@ -94,6 +94,10 @@ const en = flatten(enJson as Json);
 // extensionManagerComp; 80 chiavi it==en). Cognati esposti: es +5 (Componente,
 // Tono, Neutro, Tipo, Tema), pt +8 (Componente, Nome, Neutro, Tipo, Tema, Data),
 // pl +1 (Data). Baseline: es 52→57, pt 66→74, pl 13→14. fr/de invariati.
+// 2026-06-25 Bonifica it.json tappa 6 (namespace minori: translationRecommendation,
+// translationHistoryPanel, ttsPreview, pixelFontPreview, translationInsights,
+// onboarding, userProfile, guidePage, predictionToolPage; 76 chiavi it==en).
+// Cognato esposto: pt +1 (Tempo). Baseline: pt 74→75. es/fr/de/pl invariati.
 const locales: { name: string; json: Json; maxMissing: number; maxLeftover: number }[] = [
   { name: 'en', json: enJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ru', json: ruJson as Json, maxMissing: 0, maxLeftover: 0 },
@@ -103,7 +107,7 @@ const locales: { name: string; json: Json; maxMissing: number; maxLeftover: numb
   { name: 'ja', json: jaJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'zh', json: zhJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ko', json: koJson as Json, maxMissing: 0, maxLeftover: 0 },
-  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 74 },
+  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 75 },
   { name: 'pl', json: plJson as Json, maxMissing: 0, maxLeftover: 14 },
 ];
 
