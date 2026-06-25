@@ -5339,6 +5339,7 @@
     "downloadedToast": "Το patch λήφθηκε — εφαρμόστε το από τον Patcher στο επιλεγμένο παιχνίδι.",
     "downloadFailed": "Η λήψη απέτυχε",
     "publishLoginRequired": "Συνδεθείτε με ένα προφίλ για δημοσίευση.",
+    "publishOnlineLoginRequired": "Sign in to the Community Hub to publish online. The pack was saved as a local draft.",
     "publishedToast": "Το patch δημοσιεύτηκε στο Patch Hub.",
     "publishFailed": "Η δημοσίευση απέτυχε",
     "publishTitle": "Δημοσίευση patch",

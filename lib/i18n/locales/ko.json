@@ -5339,6 +5339,7 @@
     "downloadedToast": "patch를 다운로드했습니다 — 선택한 게임에 Patcher에서 적용하세요.",
     "downloadFailed": "다운로드 실패",
     "publishLoginRequired": "게시하려면 프로필로 로그인하세요.",
+    "publishOnlineLoginRequired": "Sign in to the Community Hub to publish online. The pack was saved as a local draft.",
     "publishedToast": "patch가 Patch Hub에 게시되었습니다.",
     "publishFailed": "게시 실패",
     "publishTitle": "patch 게시",

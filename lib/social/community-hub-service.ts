@@ -36,6 +36,8 @@ export const RETRO_PLATFORMS: { id: RetroPlatform; name: string; icon: string }[
 
 export interface TranslationPack {
   id: string;
+  /** UUID del record remoto su Supabase, valorizzato dopo la pubblicazione online. */
+  remoteId?: string;
   name: string;
   gameId: string;
   gameName: string;
@@ -654,17 +656,43 @@ class CommunityHubService {
   }
 
   /**
-   * Pubblica pack (cambia status)
+   * Pubblica pack: online su Supabase se il backend è abilitato e l'utente è
+   * loggato al Community Hub, altrimenti solo localmente (bozza condivisibile).
+   *
+   * @param packId  id locale del pack creato con createPack()
+   * @param files   file originali da caricare su Supabase Storage (necessari per
+   *                la pubblicazione online; ignorati nel fallback locale)
    */
-  async publishPack(packId: string): Promise<boolean> {
+  async publishPack(packId: string, files: File[] = []): Promise<boolean> {
     const index = this.localPacks.findIndex(p => p.id === packId);
-    if (index >= 0) {
-      this.localPacks[index].status = 'published';
-      this.localPacks[index].updatedAt = new Date().toISOString();
+    if (index < 0) return false;
+    const localPack = this.localPacks[index];
+
+    const backend = await import('./community-hub-backend').catch(() => null);
+
+    if (backend && backend.isBackendEnabled()) {
+      // Pubblicazione online: richiede una sessione Community Hub attiva.
+      // Eventuali errori (auth / upload) vengono propagati al chiamante,
+      // lasciando il pack come bozza locale così l'utente non perde il lavoro.
+      const user = await backend.getCurrentUser();
+      if (!user) {
+        // Sentinella tradotta dalla UI (vedi patchHubPage.publishOnlineLoginRequired).
+        throw new Error('community-hub:online-login-required');
+      }
+      const remote = await backend.publishPack(localPack, files);
+      // Riconcilia il record locale con quello remoto (in moderazione lato server).
+      localPack.remoteId = remote.id;
+      localPack.status = 'published';
+      localPack.updatedAt = new Date().toISOString();
       this.saveLocalData();
       return true;
     }
-    return false;
+
+    // Backend disabilitato → pubblicazione solo locale.
+    localPack.status = 'published';
+    localPack.updatedAt = new Date().toISOString();
+    this.saveLocalData();
+    return true;
   }
 
   /**

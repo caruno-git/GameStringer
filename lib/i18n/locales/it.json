@@ -5339,6 +5339,7 @@
     "downloadedToast": "Patch scaricata — applicala dal Patcher sul gioco selezionato.",
     "downloadFailed": "Download fallito",
     "publishLoginRequired": "Accedi con un profilo per pubblicare.",
+    "publishOnlineLoginRequired": "Accedi al Community Hub per pubblicare online. Il pack è salvato come bozza locale.",
     "publishedToast": "Patch pubblicata nel Patch Hub.",
     "publishFailed": "Pubblicazione fallita",
     "publishTitle": "Pubblica una patch",

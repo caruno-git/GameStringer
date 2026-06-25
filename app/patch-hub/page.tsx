@@ -331,13 +331,20 @@ function PublishDialog({ open, onOpenChange, onPublished }: {
         files,
         author,
       });
-      await communityHubService.publishPack(pack.id);
+      await communityHubService.publishPack(pack.id, files);
       toast.success(t('patchHubPage.publishedToast'));
       reset();
       onOpenChange(false);
-      onPublished(pack.id);
+      // Dopo la pubblicazione online il record canonico è quello remoto (UUID
+      // Supabase); apri quello se disponibile, altrimenti l'id locale (bozza).
+      onPublished(pack.remoteId ?? pack.id);
     } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : t('patchHubPage.publishFailed'));
+      const msg = e instanceof Error ? e.message : '';
+      if (msg === 'community-hub:online-login-required') {
+        toast.error(t('patchHubPage.publishOnlineLoginRequired'));
+      } else {
+        toast.error(msg || t('patchHubPage.publishFailed'));
+      }
     } finally {
       setSubmitting(false);
     }

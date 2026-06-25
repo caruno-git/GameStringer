@@ -5233,6 +5233,7 @@
     "downloadedToast": "patch 已下载 — 在所选游戏上通过 Patcher 应用。",
     "downloadFailed": "下载失败",
     "publishLoginRequired": "请使用个人资料登录后发布。",
+    "publishOnlineLoginRequired": "Sign in to the Community Hub to publish online. The pack was saved as a local draft.",
     "publishedToast": "patch 已发布到 Patch Hub。",
     "publishFailed": "发布失败",
     "publishTitle": "发布 patch",

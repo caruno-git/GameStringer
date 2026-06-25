@@ -5339,6 +5339,7 @@
     "downloadedToast": "Patch скачан — примените его через Patcher к выбранной игре.",
     "downloadFailed": "Ошибка загрузки",
     "publishLoginRequired": "Войдите с профилем, чтобы опубликовать.",
+    "publishOnlineLoginRequired": "Sign in to the Community Hub to publish online. The pack was saved as a local draft.",
     "publishedToast": "Patch опубликован в Patch Hub.",
     "publishFailed": "Не удалось опубликовать",
     "publishTitle": "Опубликовать patch",

@@ -5233,6 +5233,7 @@
     "downloadedToast": "patch をダウンロードしました — 選択したゲームに Patcher から適用してください。",
     "downloadFailed": "ダウンロード失敗",
     "publishLoginRequired": "公開するにはプロフィールでログインしてください。",
+    "publishOnlineLoginRequired": "Sign in to the Community Hub to publish online. The pack was saved as a local draft.",
     "publishedToast": "patch を Patch Hub に公開しました。",
     "publishFailed": "公開に失敗しました",
     "publishTitle": "patch を公開",
