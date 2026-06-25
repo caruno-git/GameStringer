@@ -552,7 +552,7 @@
     "savedCovers": "Saved Covers",
     "rss": "RSS",
     "lmStudioLocale": "LM Studio (Locale)",
-    "portaDefault1234": "Porta default: 1234",
+    "portaDefault1234": "Default port: 1234",
     "freeTier15Rpm1mTpm": "Free tier: 15 RPM / 1M TPM —",
     "gratuitoVelocissimo": "Free, super fast —",
     "payperuseGpt4o": "Pay-per-use, GPT-4o —",
@@ -1102,7 +1102,7 @@
     "setupWizardAi": "Setup Wizard AI",
     "configuraLaiLocaleInPochiClick": "Set up local AI in just a few clicks",
     "verificoSeOllamaÈInstallato": "Checking whether Ollama is installed...",
-    "ollamaInEsecuzione": "Ollama in esecuzione",
+    "ollamaInEsecuzione": "Ollama running",
     "aiLocaleConfigurata": "Local AI Configured!"
   },
   "qualityScoringDashboardComp": {
@@ -1225,7 +1225,7 @@
   },
   "steamFamilySharingComp": {
     "gestioneFamilySharing": "Family Sharing management",
-    "steamIdAggiunti": "Steam ID Aggiunti:",
+    "steamIdAggiunti": "Steam IDs added:",
     "accountCondivisi": "Shared Accounts",
     "giochiCondivisi": "Shared Games"
   },
@@ -1657,7 +1657,7 @@
     "percorsoFileNonSpecificato": "File path not specified",
     "ilPercorsoNonÈUnFile": "The path is not a file",
     "databaseUnavailable": "Datebase unavailable",
-    "steamConnessoCorrettamente": "Steam connesso correttamente",
+    "steamConnessoCorrettamente": "Steam connected successfully",
     "epicGamesConnessoCorrettamente": "Epic Games connected successfully",
     "ubisoftConnectConnessoCorrettamente": "Ubisoft Connect connected successfully",
     "rockstarSocialClubConnessoCorrettamente": "Rockstar Social Club connected successfully",
