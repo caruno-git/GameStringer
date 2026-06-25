@@ -61,16 +61,21 @@ const en = flatten(enJson as Json);
 // 2026-06-25 Fase A+B prediction-tool (namespace predictionToolPage, 73 chiavi):
 // es 35→36 (binary "Binario") e pt 45→47 (time "Tempo"/"tempo") per cognati
 // romanzi corretti identici all'IT. de/ja/zh/ko/ru/fr/pl invariati.
+// 2026-06-25 Bonifica authoring EN (en.json): corretti 56 valori ancora in
+// italiano in en.json. Effetto collaterale atteso: fissando en.completo
+// "Completo"→"Complete", il cognato corretto es/pt "Completo" (= it) viene ora
+// conteggiato come leftover. Baseline: es 36→37, pt 47→48. Sono cognati romanzi
+// legittimi, non italiano non tradotto.
 const locales: { name: string; json: Json; maxMissing: number; maxLeftover: number }[] = [
   { name: 'en', json: enJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ru', json: ruJson as Json, maxMissing: 0, maxLeftover: 0 },
-  { name: 'es', json: esJson as Json, maxMissing: 0, maxLeftover: 36 },
+  { name: 'es', json: esJson as Json, maxMissing: 0, maxLeftover: 37 },
   { name: 'fr', json: frJson as Json, maxMissing: 0, maxLeftover: 2 },
   { name: 'de', json: deJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ja', json: jaJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'zh', json: zhJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ko', json: koJson as Json, maxMissing: 0, maxLeftover: 0 },
-  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 47 },
+  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 48 },
   { name: 'pl', json: plJson as Json, maxMissing: 0, maxLeftover: 11 },
 ];
 
