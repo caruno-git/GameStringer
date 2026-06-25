@@ -517,37 +517,76 @@ class CommunityHubService {
   }
 
   /**
-   * Scarica e installa pack
+   * Scarica un pack e lo salva nella libreria pack locale come .gspack.
+   *
+   * Quando il backend Supabase è abilitato, scarica TUTTI i file dallo Storage,
+   * li impacchetta in un .gspack (riusando l'ecosistema gspack) e lo salva su
+   * disco via comando Tauri `save_gspack`, registrandolo tra i pack installati.
+   * In assenza di backend (pack showcase/locale) registra solo l'installazione.
+   *
+   * @returns il percorso del .gspack salvato su disco, o null se non salvato.
    */
-  async downloadPack(packId: string, installPath: string): Promise<boolean> {
+  async downloadPack(packId: string, installPath: string): Promise<string | null> {
     const pack = await this.getPackDetails(packId);
     if (!pack) {
       throw new Error('Pack non trovato');
     }
 
-    // Download da backend Supabase se disponibile
-    try {
-      const { isBackendEnabled, downloadPack: downloadFromBackend } = await import('./community-hub-backend');
-      if (isBackendEnabled()) {
-        await downloadFromBackend(packId);
-      }
-    } catch {}
+    let savedPath: string | null = installPath || null;
 
-    // Salva info installazione
+    const backend = await import('./community-hub-backend').catch(() => null);
+    if (backend && backend.isBackendEnabled()) {
+      // Scarica i file reali e ricostruisci un .gspack nella libreria locale.
+      const files = await backend.downloadPackFiles(packId);
+      const { createGspack, installPack } = await import('@/lib/gspack-manager');
+      const { data, filename, manifest } = createGspack({
+        gameName: pack.gameName,
+        gameAppId: pack.gameAppId,
+        platform: pack.platform || 'pc',
+        engine: undefined,
+        sourceLanguage: pack.sourceLanguage,
+        targetLanguage: pack.targetLanguage,
+        authorName: pack.author?.username || 'Community',
+        packName: pack.name,
+        description: pack.description || '',
+        quality: 'final',
+        includeGlossary: false,
+        includeNotes: false,
+        files: files.map((f) => ({
+          path: f.name,
+          content: f.content,
+          format: (f.name.split('.').pop() || 'txt').toLowerCase(),
+        })),
+      });
+
+      // Salva su disco (solo in ambiente Tauri; in web safeInvoke ritorna mock).
+      try {
+        const { safeInvoke } = await import('@/lib/tauri-wrapper');
+        const info = await safeInvoke<{ path: string } | null>('save_gspack', { content: data, filename });
+        if (info?.path) savedPath = info.path;
+      } catch (e) {
+        clientLogger.warn('[CommunityHub] save_gspack fallito:', String(e));
+      }
+
+      // Registra nel registro gspack (visibile dalla libreria pack esistente).
+      installPack(manifest, files.length);
+    }
+
+    // Registro installazioni del service.
     this.installedPacks.set(packId, {
       packId,
       installedAt: new Date().toISOString(),
-      path: installPath
+      path: savedPath || ''
     });
-    
-    // Incrementa downloads
+
+    // Incrementa downloads locale.
     const localIndex = this.localPacks.findIndex(p => p.id === packId);
     if (localIndex >= 0) {
       this.localPacks[localIndex].downloads++;
     }
-    
+
     this.saveLocalData();
-    return true;
+    return savedPath;
   }
 
   /**

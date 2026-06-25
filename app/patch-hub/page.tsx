@@ -139,7 +139,8 @@ function PackDetail({ packId, onBack }: { packId: string; onBack: () => void }) 
     if (!pack) return;
     setDownloading(true);
     try {
-      // NB: installPath verrà collegato alla selezione gioco del Patcher (prossimo step).
+      // Scarica i file dal backend e salva il .gspack nella libreria pack locale.
+      // L'applicazione al gioco avviene poi dal dettaglio gioco (import .gspack).
       await communityHubService.downloadPack(pack.id, '');
       setInstalled(true);
       toast.success(t('patchHubPage.downloadedToast'));

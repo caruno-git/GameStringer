@@ -398,6 +398,43 @@ export async function downloadPack(packId: string): Promise<Blob> {
   return data;
 }
 
+export interface DownloadedPackFile {
+  name: string;
+  path: string;
+  content: string;
+}
+
+/**
+ * Scarica TUTTI i file di un pack da Supabase Storage come testo.
+ * A differenza di downloadPack() (solo il primo file come Blob), serve a
+ * ricostruire l'intero pacchetto per salvarlo localmente (.gspack) e applicarlo.
+ * Incrementa il contatore download una sola volta per l'intero pack.
+ */
+export async function downloadPackFiles(packId: string): Promise<DownloadedPackFile[]> {
+  const supabase = await getSupabase();
+
+  const { data: files, error: filesErr } = await supabase
+    .from('pack_files')
+    .select('*')
+    .eq('pack_id', packId);
+  if (filesErr) throw new Error(`Errore lettura file: ${filesErr.message}`);
+  if (!files || files.length === 0) throw new Error('Nessun file nel pack');
+
+  const out: DownloadedPackFile[] = [];
+  for (const f of files) {
+    const { data, error } = await supabase.storage.from('translation-packs').download(f.path);
+    if (error || !data) {
+      clientLogger.warn(`Download fallito per ${f.name}: ${error?.message || 'no data'}`);
+      continue;
+    }
+    out.push({ name: f.name, path: f.path, content: await data.text() });
+  }
+  if (out.length === 0) throw new Error('Download dei file del pack fallito');
+
+  await supabase.rpc('increment_downloads', { pack_id: packId });
+  return out;
+}
+
 export async function getDownloadUrl(packId: string, fileName: string): Promise<string> {
   const supabase = await getSupabase();
   const { data: files } = await supabase.from('pack_files').select('path').eq('pack_id', packId).eq('name', fileName);
