@@ -1101,7 +1101,7 @@ export default function PredictionToolPage() {
         <div className="relative max-w-6xl mx-auto px-6 py-6">
           <button onClick={() => window.history.back()}
             className="flex items-center gap-1 text-slate-500 hover:text-slate-300 text-sm mb-4 transition-colors">
-            <ChevronLeft className="w-4 h-4" /> Torna alla Libreria
+            <ChevronLeft className="w-4 h-4" /> {t('predictionToolPage.backToLibrary')}
           </button>
           <div className="flex items-center gap-4">
             <div className="p-3 rounded-2xl bg-gradient-to-br from-purple-600/20 to-indigo-600/20 border border-purple-500/20">
@@ -1174,7 +1174,7 @@ export default function PredictionToolPage() {
           </div>
           {!installDir && (
             <p className="text-xs text-orange-400/80 mt-3 flex items-center gap-1">
-              <AlertTriangle className="w-3 h-3" /> Il gioco non è installato. Installalo per analizzare i file.
+              <AlertTriangle className="w-3 h-3" /> {t('predictionToolPage.gameNotInstalled')}
             </p>
           )}
         </div>
@@ -1190,8 +1190,8 @@ export default function PredictionToolPage() {
         {loading && (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
             <Loader2 className="w-12 h-12 text-purple-400 animate-spin" />
-            <p className="text-slate-400 text-sm">Scansione profonda dei file di gioco...</p>
-            <p className="text-slate-600 text-xs">Analisi motore, lingue, formati, volume testo</p>
+            <p className="text-slate-400 text-sm">{t('predictionToolPage.deepScanning')}</p>
+            <p className="text-slate-600 text-xs">{t('predictionToolPage.deepScanningSub')}</p>
           </div>
         )}
 
@@ -1207,11 +1207,11 @@ export default function PredictionToolPage() {
                 <div className="mt-4 flex items-center gap-2">
                   {result.gsSupported ? (
                     <span className="flex items-center gap-1 text-xs text-green-400 bg-green-500/10 px-2 py-1 rounded-lg">
-                      <CheckCircle className="w-3 h-3" /> Supportato da GS
+                      <CheckCircle className="w-3 h-3" /> {t('predictionToolPage.gsSupported')}
                     </span>
                   ) : (
                     <span className="flex items-center gap-1 text-xs text-orange-400 bg-orange-500/10 px-2 py-1 rounded-lg">
-                      <AlertTriangle className="w-3 h-3" /> Supporto limitato
+                      <AlertTriangle className="w-3 h-3" /> {t('predictionToolPage.limitedSupport')}
                     </span>
                   )}
                 </div>
@@ -1224,7 +1224,7 @@ export default function PredictionToolPage() {
                 <StatCard icon={BarChart3} label={t('common.stringheStimate')} value={result.textStats.estimatedStrings.toLocaleString()} color="text-purple-400" />
                 <StatCard icon={Languages} label={t('common.lingueTrovate')} value={String(result.detectedLanguages.length)} color="text-emerald-400" />
                 <StatCard icon={Layers} label={t('common.formatiTraducibili')} value={String(translatableFormats.length)} sub={`su ${result.fileFormats.length} formati`} color="text-yellow-400" />
-                <StatCard icon={HardDrive} label="Metodo" value={result.gsSupported ? 'GS Nativo' : 'Manuale'} sub={result.recommendedMethod.slice(0, 50)} color="text-pink-400" />
+                <StatCard icon={HardDrive} label={t('predictionToolPage.method')} value={result.gsSupported ? 'GS Nativo' : 'Manuale'} sub={result.recommendedMethod.slice(0, 50)} color="text-pink-400" />
               </div>
             </div>
 
@@ -1232,7 +1232,7 @@ export default function PredictionToolPage() {
             {result.warnings.length > 0 && (
               <div className="bg-amber-900/10 border border-amber-500/20 rounded-xl p-4 space-y-2">
                 <h3 className="text-xs font-semibold text-amber-400 uppercase tracking-wider flex items-center gap-2">
-                  <AlertTriangle className="w-3.5 h-3.5" /> Avvisi
+                  <AlertTriangle className="w-3.5 h-3.5" /> {t('predictionToolPage.warnings')}
                 </h3>
                 {result.warnings.map((w, i) => (
                   <p key={i} className="text-xs text-amber-300/70 pl-5">• {w}</p>
@@ -1245,7 +1245,7 @@ export default function PredictionToolPage() {
               {/* Confidence Score */}
               <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5">
                 <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
-                  <Gauge className="w-4 h-4 text-indigo-400" /> Affidabilità Predizione
+                  <Gauge className="w-4 h-4 text-indigo-400" /> {t('predictionToolPage.predictionReliability')}
                 </h3>
                 <div className="flex items-center gap-4 mb-3">
                   <div className={`text-3xl font-black ${
@@ -1267,11 +1267,11 @@ export default function PredictionToolPage() {
               {/* DRM Info */}
               <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5">
                 <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
-                  <Lock className="w-4 h-4 text-rose-400" /> DRM / Anti-Cheat
+                  <Lock className="w-4 h-4 text-rose-400" /> {t('predictionToolPage.drmAntiCheat')}
                 </h3>
                 {!result.drmInfo.hasDrm ? (
                   <div className="flex items-center gap-2 text-green-400 text-sm">
-                    <CheckCircle className="w-4 h-4" /> Nessun DRM rilevato
+                    <CheckCircle className="w-4 h-4" /> {t('predictionToolPage.noDrmDetected')}
                   </div>
                 ) : (
                   <div className="space-y-2">
@@ -1286,7 +1286,7 @@ export default function PredictionToolPage() {
                     </div>
                     {result.drmInfo.affectsTranslation && (
                       <p className="text-xs text-red-300/70 flex items-center gap-1">
-                        <AlertTriangle className="w-3 h-3" /> Potrebbe interferire con la traduzione
+                        <AlertTriangle className="w-3 h-3" /> {t('predictionToolPage.mayInterfereTranslation')}
                       </p>
                     )}
                   </div>
@@ -1300,16 +1300,16 @@ export default function PredictionToolPage() {
               {/* Encoding */}
               <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5">
                 <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
-                  <Type className="w-4 h-4 text-sky-400" /> Encoding File
+                  <Type className="w-4 h-4 text-sky-400" /> {t('predictionToolPage.fileEncoding')}
                 </h3>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-slate-400">Encoding Primario</span>
+                    <span className="text-xs text-slate-400">{t('predictionToolPage.primaryEncoding')}</span>
                     <span className="text-xs font-mono text-slate-200 bg-slate-700/50 px-2 py-0.5 rounded">{result.encodingInfo.primaryEncoding}</span>
                   </div>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {result.encodingInfo.hasUnicode && (
-                      <span className="text-2xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-full">Unicode</span>
+                      <span className="text-2xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-full">{t('predictionToolPage.unicode')}</span>
                     )}
                     {result.encodingInfo.hasCjk && (
                       <span className="text-2xs bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full">CJK</span>
@@ -1321,7 +1321,7 @@ export default function PredictionToolPage() {
                       <span className="text-2xs bg-slate-600/30 text-slate-400 border border-slate-600/30 px-2 py-0.5 rounded-full">BOM</span>
                     )}
                     {!result.encodingInfo.hasUnicode && !result.encodingInfo.hasCjk && !result.encodingInfo.hasRtl && (
-                      <span className="text-2xs text-slate-500">Solo caratteri ASCII/Latin</span>
+                      <span className="text-2xs text-slate-500">{t('predictionToolPage.asciiLatinOnly')}</span>
                     )}
                   </div>
                 </div>
@@ -1330,11 +1330,11 @@ export default function PredictionToolPage() {
               {/* Translation Complexity */}
               <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5">
                 <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
-                  <Hash className="w-4 h-4 text-fuchsia-400" /> Complessità Traduzione
+                  <Hash className="w-4 h-4 text-fuchsia-400" /> {t('predictionToolPage.translationComplexity')}
                 </h3>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div className="bg-slate-900/40 rounded-lg px-3 py-2">
-                    <span className="text-slate-500">Variabili</span>
+                    <span className="text-slate-500">{t('predictionToolPage.variables')}</span>
                     <p className="text-slate-200 font-bold">{result.translationComplexity.variableCount.toLocaleString()}</p>
                   </div>
                   <div className="bg-slate-900/40 rounded-lg px-3 py-2">
@@ -1342,17 +1342,17 @@ export default function PredictionToolPage() {
                     <p className="text-slate-200 font-bold">{result.translationComplexity.markupCount.toLocaleString()}</p>
                   </div>
                   <div className="bg-slate-900/40 rounded-lg px-3 py-2">
-                    <span className="text-slate-500">Lung. Media</span>
-                    <p className="text-slate-200 font-bold">{result.translationComplexity.avgStringLength} chars</p>
+                    <span className="text-slate-500">{t('predictionToolPage.avgLength')}</span>
+                    <p className="text-slate-200 font-bold">{result.translationComplexity.avgStringLength} {t('predictionToolPage.chars')}</p>
                   </div>
                   <div className="bg-slate-900/40 rounded-lg px-3 py-2">
-                    <span className="text-slate-500">Corte/Lunghe</span>
+                    <span className="text-slate-500">{t('predictionToolPage.shortLong')}</span>
                     <p className="text-slate-200 font-bold">{result.translationComplexity.shortStringsPercent}% / {result.translationComplexity.longStringsPercent}%</p>
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-1.5 mt-3">
                   {result.translationComplexity.hasPlurals && (
-                    <span className="text-2xs bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded-full">Plurali</span>
+                    <span className="text-2xs bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded-full">{t('predictionToolPage.plurals')}</span>
                   )}
                   {result.translationComplexity.hasGenderForms && (
                     <span className="text-2xs bg-pink-500/10 text-pink-400 border border-pink-500/20 px-2 py-0.5 rounded-full">{t('common.genere')}</span>
@@ -1367,7 +1367,7 @@ export default function PredictionToolPage() {
             {/* Translation Quality */}
             <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5">
               <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-purple-400" /> Qualità Traduzione Stimata
+                <TrendingUp className="w-4 h-4 text-purple-400" /> {t('predictionToolPage.estimatedTranslationQuality')}
               </h3>
               <div className="flex items-center gap-4 mb-3">
                 <div className="flex-1">
@@ -1391,7 +1391,7 @@ export default function PredictionToolPage() {
             {/* Existing Translation Tools */}
             <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5">
               <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
-                <Wrench className="w-4 h-4 text-blue-400" /> Strumenti di Traduzione Esistenti
+                <Wrench className="w-4 h-4 text-blue-400" /> {t('predictionToolPage.existingTranslationTools')}
               </h3>
               
               {/* Translation Files */}
@@ -1412,7 +1412,7 @@ export default function PredictionToolPage() {
                       </div>
                     ))}
                     {result.existingTools.translationFiles.length > 5 && (
-                      <p className="text-xs text-slate-500 italic">...e altri {result.existingTools.translationFiles.length - 5} file</p>
+                      <p className="text-xs text-slate-500 italic">{t('predictionToolPage.andOthers')} {result.existingTools.translationFiles.length - 5} {t('predictionToolPage.files')}</p>
                     )}
                   </div>
                 </div>
@@ -1421,7 +1421,7 @@ export default function PredictionToolPage() {
               {/* Localization Tools */}
               {result.existingTools.localizationTools.length > 0 && (
                 <div className="mb-4">
-                  <h4 className="text-xs font-medium text-green-300 mb-2">Sistemi di Localizzazione</h4>
+                  <h4 className="text-xs font-medium text-green-300 mb-2">{t('predictionToolPage.localizationSystems')}</h4>
                   <div className="flex flex-wrap gap-1">
                     {result.existingTools.localizationTools.map((tool, i) => (
                       <span key={i} className="text-2xs bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5 rounded-full">
@@ -1461,7 +1461,7 @@ export default function PredictionToolPage() {
               {/* Recommendations */}
               {result.existingTools.recommendations.length > 0 && (
                 <div>
-                  <h4 className="text-xs font-medium text-yellow-300 mb-2">Raccomandazioni</h4>
+                  <h4 className="text-xs font-medium text-yellow-300 mb-2">{t('predictionToolPage.recommendations')}</h4>
                   <div className="space-y-1">
                     {result.existingTools.recommendations.map((rec, i) => (
                       <div key={i} className="flex items-start gap-2">
@@ -1477,26 +1477,26 @@ export default function PredictionToolPage() {
               {!result.existingTools.hasTranslationFiles && 
                result.existingTools.localizationTools.length === 0 && 
                !result.existingTools.hasCommunityPatches && (
-                <p className="text-xs text-slate-500 italic">Nessuno strumento di traduzione esistente rilevato. La traduzione dovrà essere creata da zero.</p>
+                <p className="text-xs text-slate-500 italic">{t('predictionToolPage.noExistingTools')}</p>
               )}
             </div>
 
             {/* Selected Tools */}
             <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5">
               <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
-                <Zap className="w-4 h-4 text-yellow-400" /> Tool Selezionati Automaticamente
+                <Zap className="w-4 h-4 text-yellow-400" /> {t('predictionToolPage.autoSelectedTools')}
               </h3>
               
               {/* Primary Text Tool */}
               {result.selectedTools.primaryTextTool && (
                 <div className="mb-4">
-                  <h4 className="text-xs font-medium text-green-300 mb-2">Tool Primario - Estrazione Testo</h4>
+                  <h4 className="text-xs font-medium text-green-300 mb-2">{t('predictionToolPage.primaryToolTextExtraction')}</h4>
                   <div className="bg-slate-900/50 rounded-lg p-3">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-slate-200">{result.selectedTools.primaryTextTool.name}</span>
                       <div className="flex items-center gap-2">
                         <span className="text-2xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">
-                          Score: {result.selectedTools.primaryTextTool.compatibilityScore}
+                          {t('predictionToolPage.scoreLabel')} {result.selectedTools.primaryTextTool.compatibilityScore}
                         </span>
                         <span className="text-2xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full">
                           {result.selectedTools.primaryTextTool.cost}
@@ -1518,7 +1518,7 @@ export default function PredictionToolPage() {
                       <div key={i} className="flex items-center justify-between bg-slate-900/30 rounded-lg px-3 py-2">
                         <div>
                           <span className="text-xs text-slate-300">{tool.name}</span>
-                          <span className="text-2xs text-slate-500 ml-2">Score: {tool.compatibilityScore}</span>
+                          <span className="text-2xs text-slate-500 ml-2">{t('predictionToolPage.scoreLabel')} {tool.compatibilityScore}</span>
                         </div>
                         <span className="text-2xs bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full">
                           {tool.cost}
@@ -1532,7 +1532,7 @@ export default function PredictionToolPage() {
               {/* Archive Tools */}
               {result.selectedTools.archiveTools.length > 0 && (
                 <div className="mb-4">
-                  <h4 className="text-xs font-medium text-purple-300 mb-2">Tool Archivi</h4>
+                  <h4 className="text-xs font-medium text-purple-300 mb-2">{t('predictionToolPage.archiveTools')}</h4>
                   <div className="space-y-1">
                     {result.selectedTools.archiveTools.map((tool, i) => (
                       <div key={i} className="flex items-center justify-between bg-slate-900/30 rounded-lg px-3 py-2">
@@ -1549,18 +1549,18 @@ export default function PredictionToolPage() {
               {/* Audio/Graphics Tools */}
               {(result.selectedTools.audioTools.length > 0 || result.selectedTools.graphicsTools.length > 0) && (
                 <div className="mb-4">
-                  <h4 className="text-xs font-medium text-cyan-300 mb-2">Tool Multimedia</h4>
+                  <h4 className="text-xs font-medium text-cyan-300 mb-2">{t('predictionToolPage.multimediaTools')}</h4>
                   <div className="grid grid-cols-2 gap-2">
                     {result.selectedTools.audioTools.slice(0, 2).map((tool, i) => (
                       <div key={`audio-${i}`} className="bg-slate-900/30 rounded-lg px-3 py-2">
                         <span className="text-xs text-slate-300">{tool.name}</span>
-                        <span className="text-2xs text-cyan-400 block mt-1">Audio</span>
+                        <span className="text-2xs text-cyan-400 block mt-1">{t('predictionToolPage.audio')}</span>
                       </div>
                     ))}
                     {result.selectedTools.graphicsTools.slice(0, 2).map((tool, i) => (
                       <div key={`graphics-${i}`} className="bg-slate-900/30 rounded-lg px-3 py-2">
                         <span className="text-xs text-slate-300">{tool.name}</span>
-                        <span className="text-2xs text-pink-400 block mt-1">Grafica</span>
+                        <span className="text-2xs text-pink-400 block mt-1">{t('predictionToolPage.graphics')}</span>
                       </div>
                     ))}
                   </div>
@@ -1570,7 +1570,7 @@ export default function PredictionToolPage() {
               {/* Workflow Recommendations */}
               {result.selectedTools.workflowRecommendations.length > 0 && (
                 <div>
-                  <h4 className="text-xs font-medium text-yellow-300 mb-2">Workflow Consigliato</h4>
+                  <h4 className="text-xs font-medium text-yellow-300 mb-2">{t('predictionToolPage.recommendedWorkflow')}</h4>
                   <div className="space-y-1">
                     {result.selectedTools.workflowRecommendations.slice(0, 4).map((rec, i) => (
                       <div key={i} className="flex items-start gap-2">
@@ -1585,7 +1585,7 @@ export default function PredictionToolPage() {
               {/* Selection Score */}
               <div className="mt-4 pt-3 border-t border-slate-700/50">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-400">Score Selezione Tool</span>
+                  <span className="text-xs text-slate-400">{t('predictionToolPage.toolSelectionScore')}</span>
                   <div className="flex items-center gap-2">
                     <div className="w-16 h-2 bg-slate-700 rounded-full overflow-hidden">
                       <div 
@@ -1602,7 +1602,7 @@ export default function PredictionToolPage() {
             {/* LLM Chains */}
             <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5">
               <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
-                <Brain className="w-4 h-4 text-blue-400" /> Chain LLM Ottimizzate
+                <Brain className="w-4 h-4 text-blue-400" /> {t('predictionToolPage.optimizedLlmChains')}
               </h3>
               
               {/* Top 3 Chains */}
@@ -1674,7 +1674,7 @@ export default function PredictionToolPage() {
 
                     {/* Confidence */}
                     <div className="mt-2 pt-2 border-t border-slate-700/50 flex items-center justify-between">
-                      <span className="text-xs text-slate-400">Confidence</span>
+                      <span className="text-xs text-slate-400">{t('predictionToolPage.confidence')}</span>
                       <div className="flex items-center gap-2">
                         <div className="w-10 h-1.5 bg-slate-700 rounded-full overflow-hidden">
                           <div 
@@ -1722,7 +1722,7 @@ export default function PredictionToolPage() {
             {/* Multimedia Analysis */}
             <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5">
               <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
-                <Music className="w-4 h-4 text-cyan-400" /> Analisi Multimedia
+                <Music className="w-4 h-4 text-cyan-400" /> {t('predictionToolPage.multimediaAnalysis')}
               </h3>
               
               {/* Multimedia Stats Grid */}
@@ -1730,7 +1730,7 @@ export default function PredictionToolPage() {
                 <div className="bg-slate-900/50 rounded-lg p-3">
                   <div className="flex items-center gap-2 mb-1">
                     <Music className="w-3 h-3 text-cyan-400" />
-                    <span className="text-xs font-medium text-slate-300">Audio</span>
+                    <span className="text-xs font-medium text-slate-300">{t('predictionToolPage.audio')}</span>
                   </div>
                   <div className="text-lg font-bold text-white">{result.multimediaAnalysis.audioStats.totalAudioFiles}</div>
                   <div className="text-xs text-slate-400">{result.multimediaAnalysis.audioStats.totalAudioSizeMb.toFixed(1)} MB</div>
@@ -1739,7 +1739,7 @@ export default function PredictionToolPage() {
                 <div className="bg-slate-900/50 rounded-lg p-3">
                   <div className="flex items-center gap-2 mb-1">
                     <Image className="w-3 h-3 text-emerald-400" />
-                    <span className="text-xs font-medium text-slate-300">Grafica</span>
+                    <span className="text-xs font-medium text-slate-300">{t('predictionToolPage.graphics')}</span>
                   </div>
                   <div className="text-lg font-bold text-white">{result.multimediaAnalysis.graphicsStats.totalGraphicsFiles}</div>
                   <div className="text-xs text-slate-400">{result.multimediaAnalysis.graphicsStats.totalGraphicsSizeMb.toFixed(1)} MB</div>
@@ -1748,18 +1748,18 @@ export default function PredictionToolPage() {
                 <div className="bg-slate-900/50 rounded-lg p-3">
                   <div className="flex items-center gap-2 mb-1">
                     <Clock className="w-3 h-3 text-purple-400" />
-                    <span className="text-xs font-medium text-slate-300">Tempo</span>
+                    <span className="text-xs font-medium text-slate-300">{t('predictionToolPage.time')}</span>
                   </div>
                   <div className="text-lg font-bold text-white">
                     {(result.multimediaAnalysis.multimediaEstimates.audioEditingHours + result.multimediaAnalysis.multimediaEstimates.graphicsEditingHours).toFixed(1)}h
                   </div>
-                  <div className="text-xs text-slate-400">Editing stimato</div>
+                  <div className="text-xs text-slate-400">{t('predictionToolPage.estimatedEditing')}</div>
                 </div>
                 
                 <div className="bg-slate-900/50 rounded-lg p-3">
                   <div className="flex items-center gap-2 mb-1">
                     <DollarSign className="w-3 h-3 text-yellow-400" />
-                    <span className="text-xs font-medium text-slate-300">Costi</span>
+                    <span className="text-xs font-medium text-slate-300">{t('predictionToolPage.costs')}</span>
                   </div>
                   <div className="text-lg font-bold text-white">${result.multimediaAnalysis.multimediaEstimates.toolCostsUsd.toFixed(0)}</div>
                   <div className="text-xs text-slate-400">{t('common.toolProfessionali')}</div>
@@ -1768,19 +1768,19 @@ export default function PredictionToolPage() {
 
               {/* Audio Details */}
               <div className="mb-4">
-                <h4 className="text-xs font-medium text-cyan-300 mb-2">Audio ({result.multimediaAnalysis.audioStats.totalAudioFiles} file)</h4>
+                <h4 className="text-xs font-medium text-cyan-300 mb-2">{t('predictionToolPage.audioParen')}{result.multimediaAnalysis.audioStats.totalAudioFiles} {t('predictionToolPage.filesParen')}</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   <div className="bg-slate-900/30 rounded-lg p-2">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-slate-400">Localizzabili</span>
+                      <span className="text-xs text-slate-400">{t('predictionToolPage.localizable')}</span>
                       <span className="text-xs font-mono text-cyan-400">{result.multimediaAnalysis.audioStats.localizableAudioFiles}</span>
                     </div>
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-slate-400">Musica/Ambient</span>
+                      <span className="text-xs text-slate-400">{t('predictionToolPage.musicAmbient')}</span>
                       <span className="text-xs font-mono text-slate-300">{result.multimediaAnalysis.audioStats.musicAmbientFiles}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-slate-400">Compressi</span>
+                      <span className="text-xs text-slate-400">{t('predictionToolPage.compressed')}</span>
                       <span className="text-xs font-mono text-orange-400">{result.multimediaAnalysis.audioStats.compressedAudioFiles}</span>
                     </div>
                   </div>
@@ -1799,11 +1799,11 @@ export default function PredictionToolPage() {
                       </div>
                     </div>
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-slate-400">Durata tot.</span>
-                      <span className="text-xs font-mono text-slate-300">{result.multimediaAnalysis.audioStats.estimatedTotalMinutes.toFixed(0)} min</span>
+                      <span className="text-xs text-slate-400">{t('predictionToolPage.totalDuration')}</span>
+                      <span className="text-xs font-mono text-slate-300">{result.multimediaAnalysis.audioStats.estimatedTotalMinutes.toFixed(0)} {t('predictionToolPage.min')}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-slate-400">Streaming</span>
+                      <span className="text-xs text-slate-400">{t('predictionToolPage.streaming')}</span>
                       <span className="text-xs font-mono text-purple-400">{result.multimediaAnalysis.audioStats.streamingAudioFiles}</span>
                     </div>
                   </div>
@@ -1812,7 +1812,7 @@ export default function PredictionToolPage() {
 
               {/* Graphics Details */}
               <div className="mb-4">
-                <h4 className="text-xs font-medium text-emerald-300 mb-2">Grafica ({result.multimediaAnalysis.graphicsStats.totalGraphicsFiles} file)</h4>
+                <h4 className="text-xs font-medium text-emerald-300 mb-2">{t('predictionToolPage.graphicsParen')}{result.multimediaAnalysis.graphicsStats.totalGraphicsFiles} {t('predictionToolPage.filesParen')}</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   <div className="bg-slate-900/30 rounded-lg p-2">
                     <div className="flex items-center justify-between mb-1">
@@ -1820,11 +1820,11 @@ export default function PredictionToolPage() {
                       <span className="text-xs font-mono text-emerald-400">{result.multimediaAnalysis.graphicsStats.textContainingGraphics}</span>
                     </div>
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-slate-400">UI/Interfaccia</span>
+                      <span className="text-xs text-slate-400">{t('predictionToolPage.uiInterface')}</span>
                       <span className="text-xs font-mono text-slate-300">{result.multimediaAnalysis.graphicsStats.uiInterfaceFiles}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-slate-400">Texture/Sprite</span>
+                      <span className="text-xs text-slate-400">{t('predictionToolPage.textureSprite')}</span>
                       <span className="text-xs font-mono text-slate-300">{result.multimediaAnalysis.graphicsStats.textureSpriteFiles}</span>
                     </div>
                   </div>
@@ -1835,11 +1835,11 @@ export default function PredictionToolPage() {
                       <span className="text-xs font-mono text-orange-400">{result.multimediaAnalysis.graphicsStats.embeddedTextFiles}</span>
                     </div>
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-slate-400">Animati</span>
+                      <span className="text-xs text-slate-400">{t('predictionToolPage.animated')}</span>
                       <span className="text-xs font-mono text-purple-400">{result.multimediaAnalysis.graphicsStats.animatedFiles}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-slate-400">Risoluzione</span>
+                      <span className="text-xs text-slate-400">{t('predictionToolPage.resolution')}</span>
                       <span className="text-xs font-mono text-slate-300">{result.multimediaAnalysis.graphicsStats.predominantResolution}</span>
                     </div>
                   </div>
@@ -1848,12 +1848,12 @@ export default function PredictionToolPage() {
 
               {/* Recommended Tools */}
               <div className="mb-4">
-                <h4 className="text-xs font-medium text-purple-300 mb-2">Tool Raccomandati</h4>
+                <h4 className="text-xs font-medium text-purple-300 mb-2">{t('predictionToolPage.recommendedTools')}</h4>
                 <div className="space-y-2">
                   {/* Audio Tools */}
                   {result.multimediaAnalysis.recommendedTools.audioTools.length > 0 && (
                     <div className="bg-slate-900/30 rounded-lg p-2">
-                      <div className="text-xs font-medium text-cyan-300 mb-1">Audio</div>
+                      <div className="text-xs font-medium text-cyan-300 mb-1">{t('predictionToolPage.audio')}</div>
                       <div className="flex flex-wrap gap-1">
                         {result.multimediaAnalysis.recommendedTools.audioTools.slice(0, 3).map((tool, i) => (
                           <div key={i} className="flex items-center gap-1 bg-slate-800/50 rounded px-2 py-1">
@@ -1870,7 +1870,7 @@ export default function PredictionToolPage() {
                   {/* Graphics Tools */}
                   {result.multimediaAnalysis.recommendedTools.graphicsTools.length > 0 && (
                     <div className="bg-slate-900/30 rounded-lg p-2">
-                      <div className="text-xs font-medium text-emerald-300 mb-1">Grafica</div>
+                      <div className="text-xs font-medium text-emerald-300 mb-1">{t('predictionToolPage.graphics')}</div>
                       <div className="flex flex-wrap gap-1">
                         {result.multimediaAnalysis.recommendedTools.graphicsTools.slice(0, 3).map((tool, i) => (
                           <div key={i} className="flex items-center gap-1 bg-slate-800/50 rounded px-2 py-1">
@@ -1922,7 +1922,7 @@ export default function PredictionToolPage() {
               {/* Complexity Score */}
               <div className="pt-3 border-t border-slate-700/50">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-400">Complessità Multimediale</span>
+                  <span className="text-xs text-slate-400">{t('predictionToolPage.multimediaComplexity')}</span>
                   <div className="flex items-center gap-2">
                     <div className="w-16 h-2 bg-slate-700 rounded-full overflow-hidden">
                       <div 
@@ -1941,10 +1941,10 @@ export default function PredictionToolPage() {
               {/* Languages */}
               <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5">
                 <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-emerald-400" /> Lingue Rilevate
+                  <Globe className="w-4 h-4 text-emerald-400" /> {t('predictionToolPage.detectedLanguages')}
                 </h3>
                 {result.detectedLanguages.length === 0 ? (
-                  <p className="text-xs text-slate-500 italic">Nessuna lingua rilevata nei file — le stringhe potrebbero essere in file binari</p>
+                  <p className="text-xs text-slate-500 italic">{t('predictionToolPage.noLanguageDetected')}</p>
                 ) : (
                   <div className="space-y-2">
                     {result.detectedLanguages.map(lang => (
@@ -1957,7 +1957,7 @@ export default function PredictionToolPage() {
                           )}
                         </div>
                         <div className="text-right">
-                          <span className="text-xs text-slate-400">{lang.fileCount} file</span>
+                          <span className="text-xs text-slate-400">{lang.fileCount} {t('predictionToolPage.files')}</span>
                           {lang.totalSizeKb > 0 && (
                             <span className="text-xs text-slate-500 ml-2">{lang.totalSizeKb} KB</span>
                           )}
@@ -1971,7 +1971,7 @@ export default function PredictionToolPage() {
               {/* File Formats */}
               <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5">
                 <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-blue-400" /> Formati File
+                  <FileText className="w-4 h-4 text-blue-400" /> {t('predictionToolPage.fileFormats')}
                 </h3>
                 <div className="space-y-1.5 max-h-[300px] overflow-y-auto pr-2">
                   {result.fileFormats.map(fmt => (
@@ -1986,7 +1986,7 @@ export default function PredictionToolPage() {
                 </div>
                 <div className="flex gap-3 mt-3 pt-3 border-t border-slate-700/50 text-2xs text-slate-500">
                   <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500" />{t('common.traducibile')}</span>
-                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-slate-600" /> Binario</span>
+                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-slate-600" /> {t('predictionToolPage.binary')}</span>
                 </div>
               </div>
             </div>
@@ -1995,7 +1995,7 @@ export default function PredictionToolPage() {
             {result.textStats.largestFiles.length > 0 && (
               <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5">
                 <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
-                  <HardDrive className="w-4 h-4 text-yellow-400" /> File di Testo più Grandi
+                  <HardDrive className="w-4 h-4 text-yellow-400" /> {t('predictionToolPage.largestTextFiles')}
                 </h3>
                 <div className="space-y-1.5">
                   {result.textStats.largestFiles.map((f, i) => (
@@ -2015,7 +2015,7 @@ export default function PredictionToolPage() {
             {/* Row 4: Time Estimates per Model */}
             <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5">
               <h3 className="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
-                <Clock className="w-4 h-4 text-purple-400" /> Stima Tempo per Modello
+                <Clock className="w-4 h-4 text-purple-400" /> {t('predictionToolPage.timeEstimatePerModel')}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                 {result.timeEstimates.map(te => (
@@ -2029,7 +2029,7 @@ export default function PredictionToolPage() {
                       <p className="text-lg font-black text-slate-200">
                         {te.estimatedHours < 1 ? `${Math.round(te.estimatedHours * 60)}m` : `${te.estimatedHours.toFixed(1)}h`}
                       </p>
-                      <p className="text-2xs text-slate-500">{te.speedStringsPerMin}/min</p>
+                      <p className="text-2xs text-slate-500">{te.speedStringsPerMin}{t('predictionToolPage.perMin')}</p>
                     </div>
                     <div className="mt-2">
                       <p className="text-2xs text-slate-500 mb-0.5">{t('common.qualità')}</p>
@@ -2043,7 +2043,7 @@ export default function PredictionToolPage() {
             {/* Row 5: Chain Estimates */}
             <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5">
               <h3 className="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
-                <Zap className="w-4 h-4 text-yellow-400" /> Chain di Traduzione
+                <Zap className="w-4 h-4 text-yellow-400" /> {t('predictionToolPage.translationChain')}
               </h3>
               <div className="space-y-3">
                 {result.chainEstimates.map(ce => {
@@ -2062,7 +2062,7 @@ export default function PredictionToolPage() {
                             <span className="text-sm font-bold text-slate-200">{ce.chainName}</span>
                             {isRecommended && (
                               <span className="text-2xs bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded-full flex items-center gap-1">
-                                <Star className="w-2.5 h-2.5" /> Consigliato
+                                <Star className="w-2.5 h-2.5" /> {t('predictionToolPage.recommended')}
                               </span>
                             )}
                           </div>
@@ -2073,15 +2073,15 @@ export default function PredictionToolPage() {
                             <p className="text-sm font-bold text-slate-200">
                               {ce.estimatedHours < 1 ? `${Math.round(ce.estimatedHours * 60)}m` : `${ce.estimatedHours.toFixed(1)}h`}
                             </p>
-                            <p className="text-2xs text-slate-500">tempo</p>
+                            <p className="text-2xs text-slate-500">{t('predictionToolPage.timeShort')}</p>
                           </div>
                           <div className="w-16">
                             <QualityBar score={ce.qualityScore} />
-                            <p className="text-2xs text-slate-500 text-center">qualità</p>
+                            <p className="text-2xs text-slate-500 text-center">{t('predictionToolPage.qualityShort')}</p>
                           </div>
                           <div>
                             <p className="text-xs font-semibold text-emerald-400">{ce.costEstimate}</p>
-                            <p className="text-2xs text-slate-500">costo</p>
+                            <p className="text-2xs text-slate-500">{t('predictionToolPage.costShort')}</p>
                           </div>
                         </div>
                       </div>
@@ -2107,12 +2107,12 @@ export default function PredictionToolPage() {
             {/* Row 6: Recommended Method */}
             <div className="bg-gradient-to-r from-purple-900/20 to-indigo-900/20 border border-purple-500/20 rounded-2xl p-5">
               <h3 className="text-sm font-semibold text-purple-300 mb-2 flex items-center gap-2">
-                <Info className="w-4 h-4" /> Metodo Consigliato
+                <Info className="w-4 h-4" /> {t('predictionToolPage.recommendedMethod')}
               </h3>
               <p className="text-sm text-slate-300">{result.recommendedMethod}</p>
               {result.textStats.localizationFolders.length > 0 && (
                 <div className="mt-3">
-                  <p className="text-2xs text-slate-500 uppercase tracking-wider mb-1">Cartelle Localizzazione Trovate</p>
+                  <p className="text-2xs text-slate-500 uppercase tracking-wider mb-1">{t('predictionToolPage.localizationFoldersFound')}</p>
                   <div className="flex flex-wrap gap-1.5">
                     {result.textStats.localizationFolders.map((f, i) => (
                       <span key={i} className="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono">{f}</span>

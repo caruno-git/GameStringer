@@ -58,16 +58,19 @@ const en = flatten(enJson as Json);
 // gspack.qualityFinal "Finale". (common.notifications non conta più: corretto il
 // refuso "Notificationtions"→"Notifications" in en.json, quindi en==it.)
 // de/ja/zh/ko/ru restano a 0 anche dopo il bulk.
+// 2026-06-25 Fase A+B prediction-tool (namespace predictionToolPage, 73 chiavi):
+// es 35→36 (binary "Binario") e pt 45→47 (time "Tempo"/"tempo") per cognati
+// romanzi corretti identici all'IT. de/ja/zh/ko/ru/fr/pl invariati.
 const locales: { name: string; json: Json; maxMissing: number; maxLeftover: number }[] = [
   { name: 'en', json: enJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ru', json: ruJson as Json, maxMissing: 0, maxLeftover: 0 },
-  { name: 'es', json: esJson as Json, maxMissing: 0, maxLeftover: 35 },
+  { name: 'es', json: esJson as Json, maxMissing: 0, maxLeftover: 36 },
   { name: 'fr', json: frJson as Json, maxMissing: 0, maxLeftover: 2 },
   { name: 'de', json: deJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ja', json: jaJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'zh', json: zhJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ko', json: koJson as Json, maxMissing: 0, maxLeftover: 0 },
-  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 45 },
+  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 47 },
   { name: 'pl', json: plJson as Json, maxMissing: 0, maxLeftover: 11 },
 ];
 
