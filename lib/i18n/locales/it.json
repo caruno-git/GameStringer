@@ -129,7 +129,7 @@
     "restoreOriginals": "Ripristina Originali",
     "keepPatch": "Mantieni Patch",
     "testDoneHint": "Puoi chiudere questo pannello o avviare un nuovo test.",
-    "heroTitle": "One-Click Translate & Patch",
+    "heroTitle": "Traduci e Patcha con un clic",
     "heroSubtitle": "Traduzione automatica con AI",
     "progressFound": "Traduzione in corso trovata!",
     "selectGame": "Seleziona un gioco dalla Libreria",
@@ -239,7 +239,7 @@
     "texts": "Testi",
     "script": "Script",
     "font": "Font",
-    "unknown": "Unknown"
+    "unknown": "Sconosciuto"
   },
   "unityCsvPage": {
     "subtitle": "Estrai e traduci tabelle SimpleLocalization da giochi Unity",
@@ -572,8 +572,8 @@
     "branch": "Branch:"
   },
   "mtpePage": {
-    "sourceLanguage": "Source language",
-    "targetLanguage": "Target language",
+    "sourceLanguage": "Lingua sorgente",
+    "targetLanguage": "Lingua di destinazione",
     "aiProvider": "AI Provider",
     "gemini20": "Gemini 2.0",
     "claudeSonnet": "Claude Sonnet",
@@ -587,7 +587,7 @@
     "provaACercareConUnAltroTermine": "Prova a cercare con un altro termine",
     "file": "File",
     "strategieAlternative": "Strategie alternative:",
-    "communityTranslationAvailable": "Community Translation Available!",
+    "communityTranslationAvailable": "Traduzione Community disponibile!",
     "traduzioneCompletata": "Traduzione Completata!"
   },
   "libraryPage": {
@@ -620,7 +620,7 @@
     "listView": "Vista elenco",
     "clearAllFilters": "✕ Azzera tutti i filtri",
     "nessunaLinguaRilevata": "Nessuna lingua rilevata",
-    "shared": "Shared",
+    "shared": "Condiviso",
     "aggiornaDb": "Aggiorna DB"
   },
   "unityBundlePage": {
@@ -629,9 +629,9 @@
     "importDumpCtrlv": "Import Dump → Ctrl+V"
   },
   "activityPage": {
-    "filterBy": "Filter by:",
-    "noActivityRecorded": "No activity recorded",
-    "yourActionsWillBeTrackedHere": "Your actions will be tracked here"
+    "filterBy": "Filtra per:",
+    "noActivityRecorded": "Nessuna attività registrata",
+    "yourActionsWillBeTrackedHere": "Le tue azioni verranno registrate qui"
   },
   "storesPage": {
     "familySharing": "Family Sharing",
@@ -1195,7 +1195,7 @@
     "linguaSorgente": "Lingua sorgente:",
     "linguaTarget": "Lingua target:",
     "ultimaTraduzione": "Ultima traduzione",
-    "activityLast7Days": "Activity last 7 days"
+    "activityLast7Days": "Attività ultimi 7 giorni"
   },
   "advancedFiltersComp": {
     "nome": "Nome",
@@ -1206,9 +1206,9 @@
   },
   "epicModalComp": {
     "legendary": "Legendary",
-    "legendaryStatus": "Legendary Status",
-    "checkingStatus": "Checking status...",
-    "whatIsLegendary": "What is Legendary?"
+    "legendaryStatus": "Stato Legendary",
+    "checkingStatus": "Controllo stato...",
+    "whatIsLegendary": "Cos'è Legendary?"
   },
   "notificationCenterComp": {
     "notifications": "Notifiche",
@@ -1237,9 +1237,9 @@
     "error": "Errore:"
   },
   "authIndicatorComp": {
-    "notAuthenticated": "Not authenticated",
-    "sessionExpired": "Session expired",
-    "authenticated": "Authenticated"
+    "notAuthenticated": "Non autenticato",
+    "sessionExpired": "Sessione scaduta",
+    "authenticated": "Autenticato"
   },
   "keyboardShortcutsHelpComp": {
     "keyboardShortcuts": "Scorciatoie da tastiera",
@@ -1257,19 +1257,19 @@
   },
   "errorBoundaryComp": {
     "errorId": "Error ID:",
-    "message": "Message:",
+    "message": "Messaggio:",
     "stackTrace": "Stack Trace:",
     "componentStack": "Component Stack:"
   },
   "errorFallbackComp": {
     "errorId": "Error ID:",
-    "message": "Message:",
+    "message": "Messaggio:",
     "componentStack": "Component Stack:"
   },
   "infoTooltipComp": {
-    "howTranslationWorks": "How translation works",
+    "howTranslationWorks": "Come funziona la traduzione",
     "unityPatcher": "Unity Patcher",
-    "batchTranslation": "Batch Translation",
+    "batchTranslation": "Traduzione batch",
     "apiKeyRichiesta": "API Key richiesta"
   },
   "audioPatcherComp": {
@@ -1278,10 +1278,10 @@
     "testoDaSintetizzareXtts": "Testo da Sintetizzare (XTTS)"
   },
   "translationImportDialogComp": {
-    "importTranslations": "Import Translations",
-    "game": "Game",
-    "translationFile": "Translation file",
-    "detectedFileFormat": "Detected file format:"
+    "importTranslations": "Importa traduzioni",
+    "game": "Gioco",
+    "translationFile": "File traduzione",
+    "detectedFileFormat": "Formato file rilevato:"
   },
   "globalProgressWidgetComp": {
     "progressoGlobale": "Progresso Globale",
@@ -1308,12 +1308,12 @@
   },
   "emotionBadgeComp": {
     "markers": "Markers:",
-    "emotionAnalysis": "Emotion Analysis",
+    "emotionAnalysis": "Analisi emozioni",
     "lineeGuidaTraduzione": "Linee guida traduzione:"
   },
   "dragDropZoneComp": {
-    "browseFiles": "Browse Files",
-    "dropToUpload": "Drop to upload"
+    "browseFiles": "Sfoglia file",
+    "dropToUpload": "Rilascia per caricare"
   },
   "donationDialogComp": {
     "grazieThankYou": "Grazie! / Thank you!",
@@ -1322,22 +1322,22 @@
   "translationStatsComp": {
     "progressoGenerale": "Progresso Generale",
     "perLingua": "Per Lingua",
-    "perGame": "Per game"
+    "perGame": "Per gioco"
   },
   "protectedRouteComp": {
     "gamestringer": "GameStringer",
-    "loadingAuthentication": "Loading authentication..."
+    "loadingAuthentication": "Caricamento autenticazione..."
   },
   "injektUiEnhancedComp": {
-    "savedPositions": "Saved positions",
-    "injectedTranslations": "Injected Translations"
+    "savedPositions": "Posizioni salvate",
+    "injectedTranslations": "Traduzioni iniettate"
   },
   "defaultProfileAlertComp": {
     "username": "Username:",
     "password": "Password:"
   },
   "profileManagerComp": {
-    "activeProfile": "Active profile",
+    "activeProfile": "Profilo attivo",
     "chiudi": "Chiudi"
   },
   "profileWrapperComp": {
@@ -2380,7 +2380,7 @@
     "resetPassword": "Reimposta Password",
     "done": "Fatto",
     "removeAvatar": "Rimuovi",
-    "recoveryKey": "Recovery Key",
+    "recoveryKey": "Chiave di recupero",
     "saveKeyDesc": "Salva questa chiave per recuperare la password di",
     "savedKeyConfirm": "Ho salvato questa chiave in un posto sicuro",
     "copy": "Copia",
@@ -3389,7 +3389,7 @@
     "qualityScore": "Punteggio Qualità",
     "fluency": "Fluidità",
     "accuracy": "Precisione",
-    "consistency": "Consist.",
+    "consistency": "Coeren.",
     "style": "Stile",
     "alternative": "Alternativa:"
   },
@@ -3554,7 +3554,7 @@
     "character": "Personaggio (opzionale)",
     "characterPlaceholder": "Nome personaggio",
     "enterText": "Inserisci il testo da tradurre...",
-    "alternative": "Alternative",
+    "alternative": "Alternativa",
     "translating": "Traduzione...",
     "translateWithAI": "Traduci con AI",
     "translation": "Traduzione",
@@ -4625,12 +4625,12 @@
     "v1_6_0": {
       "0": "Bethesda Engine Patcher: Skyrim LE/SE/AE, Fallout 3/NV/4, Oblivion, Starfield con parser BSA v103-105 + BA2 GNRL/DX10 + ESP/ESM (FULL/DESC/NAM1)",
       "1": "CRI Middleware Patcher: parser CPK + CRILAYLA + MSG/BMD/FTD (Persona 5 Royal, Yakuza, Tales of, Dragon Ball) con rilevamento Shift-JIS/UTF-8/UTF-16",
-      "2": "Unity Localization Package pipeline: StringTable, SharedTableData, Addressables catalog, Smart Strings tokenizer + validator",
+      "2": "Pipeline Unity Localization Package: StringTable, SharedTableData, catalogo Addressables, tokenizer + validatore Smart Strings",
       "3": "Universal PO export (gettext .po) per tutti i patcher con metadata project/language/source/engine",
       "4": "Wizard Stepper condiviso per flussi multi-step nei patcher",
       "5": "a11y: aria-label su icon button, CardTitle semantic headings, focus-visible su primitives, skip-to-content link, landmark main, sr-only italiano",
       "6": "a11y: prefers-reduced-motion e forced-colors (Windows High Contrast) rispettati",
-      "7": "Design system: Card variants via cva (default/muted/highlight/success/error/warning), Button size xs + icon-sm",
+      "7": "Design system: varianti Card via cva (default/muted/highlight/success/error/warning), Button size xs + icon-sm",
       "8": "OCR Image Processor: wiring a backend Tauri Tesseract (sostituisce stub simulateOCR)",
       "9": "Text utilities: text-micro (9px) + text-2xs (10px) per eliminare classi Tailwind arbitrarie",
       "10": "Fix: prevent console flash loop su spawn processi Windows quando l'app è in tray (helper process_util::no_window_command)"
@@ -4656,7 +4656,7 @@
       "3": "System Monitor: monitoraggio VRAM/RAM in tempo reale (backend Rust)",
       "4": "Ollama Setup Wizard: installazione guidata AI locale step-by-step",
       "5": "Debug Console: console di debug con intercept console integrato",
-      "6": "Plugin System: design doc PLUGIN_SYSTEM.md",
+      "6": "Plugin System: documento di design PLUGIN_SYSTEM.md",
       "7": "GitHub Discussions: 12 discussioni create (Announcements, General, Ideas, Q&A, Show and tell, Polls)",
       "8": "Community Hub: fix fetch discussions con REST API pubblica (no token richiesto)",
       "9": "Sidebar: Vision LLM aggiunto, Workshop rinominato in Steam Workshop",

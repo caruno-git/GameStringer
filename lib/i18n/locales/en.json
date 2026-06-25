@@ -327,7 +327,7 @@
     "clickToAdd": "Click to add translated files",
     "supportedFormats": "JSON, CSV, PO, XML, YAML, .locres, .pak, etc.",
     "validation": "Validation",
-    "visibilitagrave": "Visibilit&agrave;"
+    "visibilitagrave": "Visibility"
   },
   "renpyPatcherPage": {
     "title": "Ren'Py Patcher",
@@ -586,7 +586,7 @@
     "noGameTrovato": "No game found",
     "provaACercareConUnAltroTermine": "Try searching with a different term",
     "file": "File",
-    "strategieAlternative": "Strategie alternative:",
+    "strategieAlternative": "Alternative strategies:",
     "communityTranslationAvailable": "Community Translation Available!",
     "traduzioneCompletata": "Translation Complete!"
   },
@@ -638,12 +638,12 @@
     "steamgriddbApiKey": "SteamGridDB API Key"
   },
   "ocrTranslatorPage": {
-    "notaVlm": "Nota VLM:",
+    "notaVlm": "VLM note:",
     "ctrlshiftt": "Ctrl+Shift+T"
   },
   "batchPage": {
     "editor": "Editor",
-    "glossario": "Glossario"
+    "glossario": "Glossary"
   },
   "qualityScoringPage": {
     "qualityScoringHva": "Quality Scoring H/V/A"
@@ -860,7 +860,7 @@
     "note": "Notes",
     "originale": "Original",
     "traduzione": "Translation",
-    "contestoOpzionale": "Contesto (opzionale)"
+    "contestoOpzionale": "Context (optional)"
   },
   "retroOcrPanelComp": {
     "retrogameOcr": "Retro-Game OCR",
@@ -894,14 +894,14 @@
     "panoramicaDelleTueAttività": "Overview of your activity",
     "traduzioni": "Translations",
     "stringhe": "Strings",
-    "parole": "Parole",
+    "parole": "Words",
     "progress": "Progress",
     "oggi": "Today",
-    "settimana": "Settimana",
-    "mese": "Mese",
+    "settimana": "Week",
+    "mese": "Month",
     "completati": "Completed",
-    "inCorso": "In corso",
-    "totali": "Totali"
+    "inCorso": "In progress",
+    "totali": "Total"
   },
   "securityDialogComp": {
     "currentPassword": "Current Password",
@@ -1014,9 +1014,9 @@
     "translation": "Translation"
   },
   "wadExtractorComp": {
-    "tradotto": "Tradotto",
+    "tradotto": "Translated",
     "percorsoWadOpzionale": "WAD path (optional)",
-    "comandoEstrazione": "Comando estrazione:",
+    "comandoEstrazione": "Extraction command:",
     "workflow": "Workflow",
     "nessunTestoWadCaricato": "No WAD text loaded",
     "nessunRisultato": "No results",
@@ -1059,11 +1059,11 @@
     "tutti": "All"
   },
   "mtpeWorkflowComp": {
-    "progressoMtpe": "Progresso MTPE",
+    "progressoMtpe": "MTPE Progress",
     "fluidità": "Fluency",
-    "accuratezza": "Accuratezza",
-    "coerenza": "Coerenza",
-    "stile": "Stile",
+    "accuratezza": "Accuracy",
+    "coerenza": "Consistency",
+    "stile": "Style",
     "revisioneCompletata": "Review completed!"
   },
   "pixelFontPreviewComp": {
@@ -1106,11 +1106,11 @@
     "aiLocaleConfigurata": "Local AI Configured!"
   },
   "qualityScoringDashboardComp": {
-    "totale": "Totale",
+    "totale": "Total",
     "nessunaStringaTrovata": "No strings found",
-    "progetti": "Progetti",
+    "progetti": "Projects",
     "stringheTotali": "Total strings",
-    "scoreMedio": "Score medio",
+    "scoreMedio": "Avg score",
     "qualitàMedia": "Average quality",
     "progettiDiTraduzione": "Translation Projects",
     "nessunProgettoDiTraduzione": "No translation projects"
@@ -1130,7 +1130,7 @@
     "timeline": "Timeline",
     "lingue": "Languages",
     "performance": "Performance",
-    "recenti": "Recenti",
+    "recenti": "Recent",
     "traduzioniNelTempo": "Translations over time",
     "distribuzioneLingue": "Language distribution",
     "ultimeTraduzioni": "Latest translations",
@@ -1146,10 +1146,10 @@
     "apiKey": "API Key"
   },
   "steamModalComp": {
-    "connettiSteam": "Connetti Steam",
+    "connettiSteam": "Connect Steam",
     "accediConIlTuoAccountSteam": "Sign in with your Steam account",
-    "accountSteamCollegato": "Account Steam collegato!",
-    "importando": "Importando...",
+    "accountSteamCollegato": "Steam account connected!",
+    "importando": "Importing...",
     "inAttesaDelLoginSteam": "Waiting for Steam login...",
     "utilizziamoSteamOpenidPerUnaut": "We use Steam OpenID for secure authentication.",
     "nonMemorizziamoMaiLaTuaPasswor": "We never store your Steam password."
@@ -1158,9 +1158,9 @@
     "nessunaGpuNvidiaRilevata": "No NVIDIA GPU detected"
   },
   "coverPickerComp": {
-    "incollaUrlImmagine": "Incolla URL immagine",
+    "incollaUrlImmagine": "Paste image URL",
     "anteprima": "Preview",
-    "cercandoSuIgdb": "Cercando su IGDB...",
+    "cercandoSuIgdb": "Searching on IGDB...",
     "nessunaCoverTrovataSuIgdb": "No cover found on IGDB",
     "caricamentoCover": "Loading cover...",
     "apiKeyRichiesta": "API Key Required"
@@ -1175,11 +1175,11 @@
   },
   "exportDialogComp": {
     "exportCompletato": "Export Complete!",
-    "formato": "Formato:",
+    "formato": "Format:",
     "traduzioni": "Translations:",
-    "dimensione": "Dimensione:",
-    "formato2": "Formato",
-    "opzioni": "Opzioni"
+    "dimensione": "Size:",
+    "formato2": "Format",
+    "opzioni": "Options"
   },
   "offlineIndicatorComp": {
     "online": "Online",
@@ -1219,12 +1219,12 @@
   },
   "loreAssistantComp": {
     "loreAssistant": "Lore Assistant",
-    "dialoghiMemorizzati": "Dialoghi memorizzati:",
-    "personaggiRilevati": "Personaggi rilevati:",
+    "dialoghiMemorizzati": "Stored dialogues:",
+    "personaggiRilevati": "Detected characters:",
     "chiediQualsiasiCosaSullaLoreDe": "Ask anything about the game's lore."
   },
   "steamFamilySharingComp": {
-    "gestioneFamilySharing": "Gestione Family Sharing",
+    "gestioneFamilySharing": "Family Sharing management",
     "steamIdAggiunti": "Steam ID Aggiunti:",
     "accountCondivisi": "Shared Accounts",
     "giochiCondivisi": "Shared Games"
@@ -1250,7 +1250,7 @@
     "enter": "Enter"
   },
   "themeCustomizerComp": {
-    "personalizzaTema": "Personalizza Tema",
+    "personalizzaTema": "Customize Theme",
     "scegliOCreaIlTuoTemaPersonaliz": "Choose or create your custom theme",
     "iTuoiTemiSalvati": "Your saved themes",
     "anteprima": "Preview"
@@ -3379,7 +3379,7 @@
     "title": "Multi-LLM Compare",
     "subtitle": "Compare translations from multiple AI models in parallel",
     "providers": "providers",
-    "providerAI": "Provider AI",
+    "providerAI": "AI Provider",
     "enterText": "Enter text to translate...",
     "comparing": "Comparing...",
     "compare": "Compare",

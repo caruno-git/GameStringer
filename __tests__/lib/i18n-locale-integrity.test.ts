@@ -105,16 +105,19 @@ const en = flatten(enJson as Json);
 // vramManager, unityInkTranslator, ollama; 102 chiavi it==en). Cognati esposti:
 // es +3 (Preciso, Nota, Tipo), pt +4 (Preciso, Nota, Vai a, Tipo), pl +1
 // (Temperatura). Baseline: es 57→60, pt 75→79, pl 14→15. fr/de invariati.
+// 2026-06-25 Bonifica it.json tappa 8 (coda lunga: ~40 namespace minori,
+// 245 chiavi it==en di cui 72 tradotte e 173 universali tenute identiche).
+// Cognati esposti: es +4, pt +4. Baseline: es 60→64, pt 79→83. fr/de/pl invariati.
 const locales: { name: string; json: Json; maxMissing: number; maxLeftover: number }[] = [
   { name: 'en', json: enJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ru', json: ruJson as Json, maxMissing: 0, maxLeftover: 0 },
-  { name: 'es', json: esJson as Json, maxMissing: 0, maxLeftover: 60 },
+  { name: 'es', json: esJson as Json, maxMissing: 0, maxLeftover: 64 },
   { name: 'fr', json: frJson as Json, maxMissing: 0, maxLeftover: 2 },
   { name: 'de', json: deJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ja', json: jaJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'zh', json: zhJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ko', json: koJson as Json, maxMissing: 0, maxLeftover: 0 },
-  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 79 },
+  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 83 },
   { name: 'pl', json: plJson as Json, maxMissing: 0, maxLeftover: 15 },
 ];
 
