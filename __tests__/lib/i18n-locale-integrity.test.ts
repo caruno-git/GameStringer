@@ -45,21 +45,28 @@ const it = flatten(itJson as Json);
 const en = flatten(enJson as Json);
 
 // Baseline aggiornata il 2026-06-23 dopo il completamento delle traduzioni
-// (es/fr/de/pt/pl/ja/zh/ko portati a copertura quasi piena). Può solo SCENDERE.
+// (es/fr/de/pt/pl/ja/zh/ko portati a copertura quasi piena). Può solo SCENDERE,
+// tranne quando la bonifica traduce correttamente in un cognato identico all'IT.
 // I leftover residui di es/pt/fr/pl sono cognati legittimi: parole corrette nella
 // lingua target ma identiche all'italiano (es. "Sistema", "Data", "Tipo", "Tema",
-// "Formato", "Temperatura", "Lista", "Legenda", "Filtro"). L'euristica non può
-// distinguerli dall'italiano non tradotto, quindi restano in baseline.
+// "Formato", "Temperatura", "Lista", "Legenda", "Filtro", "Grande"). L'euristica
+// non può distinguerli dall'italiano non tradotto, quindi restano in baseline.
+// 2026-06-24 Fase B i18n: es 33→35, pt 43→45 per i cognati legittimi introdotti
+// traducendo i placeholder (es. settingsPage.fontLarge = "Grande (18px)").
+// 2026-06-25 Fase B i18n (completamento bulk 10 lingue): fr 2→3 per cognati
+// romanzi corretti identici all'IT (common.notifications "Notifications" — en
+// corrotto "Notificationtions"; library.notInstalled "Non inst."; gspack.qualityFinal
+// "Finale"). de/ja/zh/ko/ru restano a 0 anche dopo il bulk.
 const locales: { name: string; json: Json; maxMissing: number; maxLeftover: number }[] = [
   { name: 'en', json: enJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ru', json: ruJson as Json, maxMissing: 0, maxLeftover: 0 },
-  { name: 'es', json: esJson as Json, maxMissing: 0, maxLeftover: 33 },
-  { name: 'fr', json: frJson as Json, maxMissing: 0, maxLeftover: 2 },
+  { name: 'es', json: esJson as Json, maxMissing: 0, maxLeftover: 35 },
+  { name: 'fr', json: frJson as Json, maxMissing: 0, maxLeftover: 3 },
   { name: 'de', json: deJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ja', json: jaJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'zh', json: zhJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ko', json: koJson as Json, maxMissing: 0, maxLeftover: 0 },
-  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 43 },
+  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 45 },
   { name: 'pl', json: plJson as Json, maxMissing: 0, maxLeftover: 11 },
 ];
 
