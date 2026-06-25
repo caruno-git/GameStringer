@@ -73,17 +73,22 @@ const en = flatten(enJson as Json);
 // (Sistema, Centro, Alto, Data, Categoria, Tipo, Tema, Formato, Progresso…)
 // diventano leftover. Baseline: es 37→40, pt 48→53. fr/de/pl tenuti invariati
 // trattando "Patch Community"/"Provider AI" come termini universali (en==it).
+// 2026-06-25 Bonifica it.json tappa 2 (namespace visibili: nav, settingsPage,
+// settings, translatorProPage, glossaryPage, translationSearchComp,
+// communityHubComp; 123 chiavi it==en). Nuovi cognati romanzi esposti es/pt/pl
+// (Coreano, Tipo, Italiano, Temperatura, Sistema, Vota, "Formato …"). Baseline:
+// es 40→46, pt 53→58, pl 11→12. fr/de invariati.
 const locales: { name: string; json: Json; maxMissing: number; maxLeftover: number }[] = [
   { name: 'en', json: enJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ru', json: ruJson as Json, maxMissing: 0, maxLeftover: 0 },
-  { name: 'es', json: esJson as Json, maxMissing: 0, maxLeftover: 40 },
+  { name: 'es', json: esJson as Json, maxMissing: 0, maxLeftover: 46 },
   { name: 'fr', json: frJson as Json, maxMissing: 0, maxLeftover: 2 },
   { name: 'de', json: deJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ja', json: jaJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'zh', json: zhJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ko', json: koJson as Json, maxMissing: 0, maxLeftover: 0 },
-  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 53 },
-  { name: 'pl', json: plJson as Json, maxMissing: 0, maxLeftover: 11 },
+  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 58 },
+  { name: 'pl', json: plJson as Json, maxMissing: 0, maxLeftover: 12 },
 ];
 
 describe('integrità dei locale i18n', () => {
