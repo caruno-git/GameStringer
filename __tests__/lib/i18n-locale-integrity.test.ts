@@ -98,17 +98,24 @@ const en = flatten(enJson as Json);
 // translationHistoryPanel, ttsPreview, pixelFontPreview, translationInsights,
 // onboarding, userProfile, guidePage, predictionToolPage; 76 chiavi it==en).
 // Cognato esposto: pt +1 (Tempo). Baseline: pt 74→75. es/fr/de/pl invariati.
+// 2026-06-25 Bonifica it.json tappa 7 (namespace minori: translationBridgePage,
+// multiLlmComparison, glossaryManager, confidenceHeatmap, itchioModal,
+// globalSearch, offlineIndicator, notificationCenter, storeManager,
+// keyboardShortcutsHelp, gamePatcher, subtitleTranslator, retroRom, qaCheck,
+// vramManager, unityInkTranslator, ollama; 102 chiavi it==en). Cognati esposti:
+// es +3 (Preciso, Nota, Tipo), pt +4 (Preciso, Nota, Vai a, Tipo), pl +1
+// (Temperatura). Baseline: es 57→60, pt 75→79, pl 14→15. fr/de invariati.
 const locales: { name: string; json: Json; maxMissing: number; maxLeftover: number }[] = [
   { name: 'en', json: enJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ru', json: ruJson as Json, maxMissing: 0, maxLeftover: 0 },
-  { name: 'es', json: esJson as Json, maxMissing: 0, maxLeftover: 57 },
+  { name: 'es', json: esJson as Json, maxMissing: 0, maxLeftover: 60 },
   { name: 'fr', json: frJson as Json, maxMissing: 0, maxLeftover: 2 },
   { name: 'de', json: deJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ja', json: jaJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'zh', json: zhJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ko', json: koJson as Json, maxMissing: 0, maxLeftover: 0 },
-  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 75 },
-  { name: 'pl', json: plJson as Json, maxMissing: 0, maxLeftover: 14 },
+  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 79 },
+  { name: 'pl', json: plJson as Json, maxMissing: 0, maxLeftover: 15 },
 ];
 
 describe('integrità dei locale i18n', () => {

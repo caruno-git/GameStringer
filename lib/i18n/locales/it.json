@@ -484,7 +484,7 @@
     "cacheHit": "Cache Hit",
     "uptime": "Uptime",
     "testoDaCercare": "Testo da cercare",
-    "targetLanguage": "Target language",
+    "targetLanguage": "Lingua di destinazione",
     "lingueAttive": "Lingue attive:",
     "tempoMedioRisposta": "Tempo medio risposta",
     "cacheHits": "Cache Hits",
@@ -1005,13 +1005,13 @@
     "nota": "Nota:"
   },
   "glossaryManagerComp": {
-    "addTerm": "Add Term",
+    "addTerm": "Aggiungi termine",
     "caseSensitive": "Case sensitive",
     "contesto": "Contesto",
     "note": "Note",
-    "editTerm": "Edit Term",
-    "original": "Original",
-    "translation": "Translation"
+    "editTerm": "Modifica termine",
+    "original": "Originale",
+    "translation": "Traduzione"
   },
   "wadExtractorComp": {
     "tradotto": "Tradotto",
@@ -1137,12 +1137,12 @@
     "piùRecente": "Più recente"
   },
   "itchioModalComp": {
-    "connectItchioAccount": "Connect itch.io Account",
-    "toGetYourApiKey": "To get your API key:",
-    "goTo": "Go to",
-    "clickOnGenerateNewApiKey": "Click on \"Generate new API key\"",
-    "giveTheKeyANameEgGamestringer": "Give the key a name (e.g. \"GameStringer\")",
-    "copyTheGeneratedKey": "Copy the generated key",
+    "connectItchioAccount": "Collega account itch.io",
+    "toGetYourApiKey": "Per ottenere la tua API key:",
+    "goTo": "Vai a",
+    "clickOnGenerateNewApiKey": "Clicca su \"Generate new API key\"",
+    "giveTheKeyANameEgGamestringer": "Dai un nome alla chiave (es. \"GameStringer\")",
+    "copyTheGeneratedKey": "Copia la chiave generata",
     "apiKey": "API Key"
   },
   "steamModalComp": {
@@ -1166,12 +1166,12 @@
     "apiKeyRichiesta": "API Key Richiesta"
   },
   "globalSearchComp": {
-    "globalSearch": "Global search",
-    "navigate": "Navigate",
+    "globalSearch": "Ricerca globale",
+    "navigate": "Naviga",
     "enter": "Enter",
-    "open": "Open",
+    "open": "Apri",
     "ctrlk": "Ctrl+K",
-    "search": "Search"
+    "search": "Cerca"
   },
   "exportDialogComp": {
     "exportCompletato": "Export Completato!",
@@ -1184,10 +1184,10 @@
   "offlineIndicatorComp": {
     "online": "Online",
     "offline": "Offline",
-    "translations": "Translations",
-    "games": "Games",
+    "translations": "Traduzioni",
+    "games": "Giochi",
     "packs": "Packs",
-    "offlineFeatures": "Offline Features"
+    "offlineFeatures": "Funzioni offline"
   },
   "statsDashboardComp": {
     "statisticheTraduzione": "Statistiche Traduzione",
@@ -1211,11 +1211,11 @@
     "whatIsLegendary": "What is Legendary?"
   },
   "notificationCenterComp": {
-    "notifications": "Notifications",
-    "sortBy": "Sort by",
-    "filters": "Filters",
-    "type": "Type",
-    "priority": "Priority"
+    "notifications": "Notifiche",
+    "sortBy": "Ordina per",
+    "filters": "Filtri",
+    "type": "Tipo",
+    "priority": "Priorità"
   },
   "loreAssistantComp": {
     "loreAssistant": "Lore Assistant",
@@ -1230,11 +1230,11 @@
     "giochiCondivisi": "Giochi Condivisi"
   },
   "storeManagerComp": {
-    "storeManagement": "Store Management",
-    "manageConnectionsToYourGameSto": "Manage connections to your game stores",
-    "status": "Status:",
-    "games": "Games:",
-    "error": "Error:"
+    "storeManagement": "Gestione store",
+    "manageConnectionsToYourGameSto": "Gestisci le connessioni ai tuoi store di giochi",
+    "status": "Stato:",
+    "games": "Giochi:",
+    "error": "Errore:"
   },
   "authIndicatorComp": {
     "notAuthenticated": "Not authenticated",
@@ -1242,11 +1242,11 @@
     "authenticated": "Authenticated"
   },
   "keyboardShortcutsHelpComp": {
-    "keyboardShortcuts": "Keyboard Shortcuts",
-    "close": "Close",
+    "keyboardShortcuts": "Scorciatoie da tastiera",
+    "close": "Chiudi",
     "esc": "Esc",
-    "navigate": "Navigate",
-    "select": "Select",
+    "navigate": "Naviga",
+    "select": "Seleziona",
     "enter": "Enter"
   },
   "themeCustomizerComp": {
@@ -3475,13 +3475,13 @@
     "error": "Errore"
   },
   "subtitleTranslator": {
-    "title": "Subtitle Translator",
+    "title": "Traduttore sottotitoli",
     "subtitle": "Traduci sottotitoli video in qualsiasi lingua",
     "formats": "SRT • VTT • ASS",
     "languages": "lingue",
     "aiFree": "AI + Gratuita",
     "multiFormat": "Multi-formato",
-    "importExport": "Import/export",
+    "importExport": "Importa/esporta",
     "timingPreserved": "Timing preservato",
     "sync": "Sincronizzazione",
     "integratedEditor": "Editor integrato",
@@ -3652,10 +3652,10 @@
     "fontInjection": "Font injection",
     "loadRom": "Carica ROM",
     "dragOrClick": "Trascina un file ROM o clicca per selezionare",
-    "tableFile": "Table File",
+    "tableFile": "File tabella",
     "loadTbl": "Carica .TBL",
     "export": "Esporta",
-    "entries": "entries",
+    "entries": "voci",
     "externalTools": "Tool Esterni",
     "noSpecificTool": "Nessun tool specifico",
     "extractText": "Estrai Testo",
@@ -3753,7 +3753,7 @@
     "errors": "errori",
     "warnings": "warning",
     "error": "Errore",
-    "warning": "Warning",
+    "warning": "Avviso",
     "info": "Info",
     "suggestion": "Suggerimento",
     "fixApplied": "Correzioni applicate",
@@ -5088,7 +5088,7 @@
     "files": "file.",
     "exportPack": "Esporta Pack",
     "newGame": "Nuovo Gioco",
-    "export": "Export",
+    "export": "Esporta",
     "translated": "Tradotte",
     "missing": "Mancanti",
     "totalStrings": "Totali",
@@ -5234,7 +5234,7 @@
     "parameters": "Parametri",
     "advancedParameters": "Parametri Avanzati",
     "parametersDesc": "Affina la traduzione con temperature, top_p, top_k e altro",
-    "temperature": "Temperature",
+    "temperature": "Temperatura",
     "temperatureDesc": "Valori bassi = più preciso, alti = più creativo",
     "topP": "Top P",
     "topK": "Top K",

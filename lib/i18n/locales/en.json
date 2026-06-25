@@ -489,7 +489,7 @@
     "tempoMedioRisposta": "Average response time",
     "cacheHits": "Cache Hits",
     "cacheMisses": "Cache Misses",
-    "errori": "Errori"
+    "errori": "Errors"
   },
   "settingsPage": {
     "copyToSeeAll": "\\n\\n... (copy to see all)",
@@ -998,11 +998,11 @@
   "multiLlmComparisonSettingsComp": {
     "multillmComparison": "Multi-LLM Comparison",
     "abilitaMultillmComparison": "Enable Multi-LLM Comparison",
-    "veloce": "Veloce",
-    "bilanciato": "Bilanciato",
-    "preciso": "Preciso",
-    "providerGiudice": "Provider giudice",
-    "nota": "Nota:"
+    "veloce": "Fast",
+    "bilanciato": "Balanced",
+    "preciso": "Precise",
+    "providerGiudice": "Judge provider",
+    "nota": "Note:"
   },
   "glossaryManagerComp": {
     "addTerm": "Add Term",
@@ -1048,14 +1048,14 @@
     "default": "Default"
   },
   "confidenceHeatmapComp": {
-    "mancante": "Mancante",
-    "punteggioMedio": "Punteggio Medio",
-    "problemiFrequenti": "Problemi Frequenti",
+    "mancante": "Missing",
+    "punteggioMedio": "Average Score",
+    "problemiFrequenti": "Frequent Issues",
     "dettaglioTraduzione": "Translation details",
     "originale": "Original",
     "traduzione": "Translation",
-    "problemiRilevati": "Problemi Rilevati",
-    "suggerimenti": "Suggerimenti",
+    "problemiRilevati": "Issues Detected",
+    "suggerimenti": "Suggestions",
     "tutti": "All"
   },
   "mtpeWorkflowComp": {
