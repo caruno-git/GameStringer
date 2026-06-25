@@ -83,17 +83,28 @@ const en = flatten(enJson as Json);
 // visualTranslationEditorComp; 63 chiavi it==en). Cognati esposti: es +1 (Tono),
 // pt +1 (Comportamento). Baseline: es 46→47, pt 58→59. fr/de/pl invariati
 // (providerVision "PROVIDER VISION" tenuto universale en==it).
+// 2026-06-25 Bonifica it.json tappa 4 (profili & sicurezza: translationProfile
+// Manager, securityDialog, profileSettingsDialog, modProfileManager,
+// secretsDashboard, profileSecurityDialog, characterProfileManager; 92 chiavi
+// it==en). Cognati esposti: es +5 (Italiano, Coreano, "Demo: usa…", Lista, Tono),
+// pt +7 (Italiano, Russo, Coreano, Processo, Nome, "Demo: usa…", Lista), pl +1
+// (Lista). Baseline: es 47→52, pt 59→66, pl 12→13. fr/de invariati.
+// 2026-06-25 Bonifica it.json tappa 5 (logging/audio/info/context: logging
+// DashboardComp, audioTranslation, infoPage, gameContextEditorComp,
+// extensionManagerComp; 80 chiavi it==en). Cognati esposti: es +5 (Componente,
+// Tono, Neutro, Tipo, Tema), pt +8 (Componente, Nome, Neutro, Tipo, Tema, Data),
+// pl +1 (Data). Baseline: es 52→57, pt 66→74, pl 13→14. fr/de invariati.
 const locales: { name: string; json: Json; maxMissing: number; maxLeftover: number }[] = [
   { name: 'en', json: enJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ru', json: ruJson as Json, maxMissing: 0, maxLeftover: 0 },
-  { name: 'es', json: esJson as Json, maxMissing: 0, maxLeftover: 47 },
+  { name: 'es', json: esJson as Json, maxMissing: 0, maxLeftover: 57 },
   { name: 'fr', json: frJson as Json, maxMissing: 0, maxLeftover: 2 },
   { name: 'de', json: deJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ja', json: jaJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'zh', json: zhJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ko', json: koJson as Json, maxMissing: 0, maxLeftover: 0 },
-  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 59 },
-  { name: 'pl', json: plJson as Json, maxMissing: 0, maxLeftover: 12 },
+  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 74 },
+  { name: 'pl', json: plJson as Json, maxMissing: 0, maxLeftover: 14 },
 ];
 
 describe('integrità dei locale i18n', () => {
