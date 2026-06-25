@@ -459,6 +459,23 @@ Real-time community chat integrated into the Community Hub, powered by Supabase 
 
 ---
 
+## Patch Hub (Community Translation Packs)
+
+The Patch Hub is a Steam Workshop–style marketplace for sharing and downloading community translation packs, backed by the GameStringer community server. Open it from the **Patch Hub** entry in the sidebar (orange/amber section).
+
+### Browsing packs
+The main view lists published packs with search and sorting (most downloaded, top rated, recently updated, completion). Each card shows the game, source→target languages, completion %, rating and download count. Click a pack to open its detail page with stats, description, included files and changelog.
+
+### Downloading a pack
+On a pack's detail page, click **Download**. GameStringer fetches all of the pack's files from the community server and saves them locally as a `.gspack` bundle in your pack library (`Documents/GameStringer/packs`). From there you can manage the pack and import it from a game's detail page to apply the translation.
+
+### Publishing a pack
+Click **Publish patch** to open the publish form. Fill in the pack name, game, source and target language, an optional description and tags, and attach your translation file(s). When you are signed in to the Community Hub, the pack is uploaded to the community server and enters a moderation queue before it becomes publicly visible. If you are not signed in, the pack is kept as a local draft — sign in and publish again to share it online.
+
+> Publishing online requires a Community Hub account (separate from your local profile). Browsing and downloading work without an account.
+
+---
+
 ## What's New v1.8.1
 
 ### Live Translation Overlay

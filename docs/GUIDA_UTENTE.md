@@ -694,6 +694,26 @@ La **campanella** nella navbar ora gestisce gli aggiornamenti:
 
 ---
 
+## Patch Hub (Pacchetti di traduzione della community)
+
+Il Patch Hub è un marketplace in stile Steam Workshop per condividere e scaricare pacchetti di traduzione della community, basato sul server community di GameStringer. Si apre dalla voce **Patch Hub** nella sidebar (sezione arancione/amber).
+
+### Sfogliare i pack
+
+La vista principale elenca i pack pubblicati con ricerca e ordinamento (più scaricati, più votati, aggiornati di recente, completamento). Ogni card mostra il gioco, le lingue sorgente→target, la percentuale di completamento, il rating e il numero di download. Clicca un pack per aprirne la pagina di dettaglio con statistiche, descrizione, file inclusi e changelog.
+
+### Scaricare un pack
+
+Nella pagina di dettaglio di un pack, clicca **Download**. GameStringer scarica tutti i file del pack dal server community e li salva localmente come bundle `.gspack` nella tua libreria pack (`Documenti/GameStringer/packs`). Da lì puoi gestire il pack e importarlo dalla pagina di dettaglio del gioco per applicare la traduzione.
+
+### Pubblicare un pack
+
+Clicca **Pubblica patch** per aprire il form di pubblicazione. Inserisci nome del pack, gioco, lingua sorgente e target, una descrizione e dei tag opzionali, e allega i file di traduzione. Se hai eseguito l'accesso al Community Hub, il pack viene caricato sul server community ed entra in una coda di moderazione prima di diventare pubblicamente visibile. Se non hai eseguito l'accesso, il pack resta come bozza locale: accedi e ripubblica per condividerlo online.
+
+> La pubblicazione online richiede un account Community Hub (separato dal profilo locale). Sfogliare e scaricare funzionano anche senza account.
+
+---
+
 ## Esportazione Patch
 
 Il Unity Patcher installa automaticamente BepInEx e XUnity.AutoTranslator sui giochi Unity.

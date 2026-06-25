@@ -446,6 +446,23 @@ Echtzeit-Community-Chat im Community Hub, betrieben mit Supabase Realtime.
 
 ---
 
+## Patch Hub (Community-Übersetzungspakete)
+
+Der Patch Hub ist ein Marktplatz im Stil des Steam Workshop zum Teilen und Herunterladen von Community-Übersetzungspaketen, der vom GameStringer-Community-Server bereitgestellt wird. Öffnen Sie ihn über den Eintrag **Patch Hub** in der Seitenleiste (orange/bernsteinfarbener Bereich).
+
+### Pakete durchsuchen
+Die Hauptansicht listet veröffentlichte Pakete mit Suche und Sortierung auf (am häufigsten heruntergeladen, am besten bewertet, kürzlich aktualisiert, Fertigstellungsgrad). Jede Karte zeigt das Spiel, die Quell- und Zielsprache (Quelle→Ziel), den Fertigstellungsgrad in %, die Bewertung und die Anzahl der Downloads. Klicken Sie auf ein Paket, um seine Detailseite mit Statistiken, Beschreibung, enthaltenen Dateien und Änderungsprotokoll zu öffnen.
+
+### Ein Paket herunterladen
+Klicken Sie auf der Detailseite eines Pakets auf **Download** (Herunterladen). GameStringer ruft alle Dateien des Pakets vom Community-Server ab und speichert sie lokal als `.gspack`-Bündel in Ihrer Paketbibliothek (`Documents/GameStringer/packs`). Von dort aus können Sie das Paket verwalten und es von der Detailseite eines Spiels aus importieren, um die Übersetzung anzuwenden.
+
+### Ein Paket veröffentlichen
+Klicken Sie auf **Publish patch** (Patch veröffentlichen), um das Veröffentlichungsformular zu öffnen. Geben Sie den Paketnamen, das Spiel, die Quell- und Zielsprache, eine optionale Beschreibung und Tags ein und fügen Sie Ihre Übersetzungsdatei(en) an. Wenn Sie im Community Hub angemeldet sind, wird das Paket auf den Community-Server hochgeladen und durchläuft eine Moderationswarteschlange, bevor es öffentlich sichtbar wird. Wenn Sie nicht angemeldet sind, wird das Paket als lokaler Entwurf gespeichert — melden Sie sich an und veröffentlichen Sie erneut, um es online zu teilen.
+
+> Für die Online-Veröffentlichung ist ein Community-Hub-Konto erforderlich (getrennt von Ihrem lokalen Profil). Das Durchsuchen und Herunterladen funktioniert ohne Konto.
+
+---
+
 ## Neu in v1.8.1
 
 ### Live-Übersetzungs-Overlay

@@ -446,6 +446,23 @@ Chat en temps réel intégré au Community Hub, propulsé par Supabase Realtime.
 
 ---
 
+## Patch Hub (Packs de traduction communautaires)
+
+Le Patch Hub est une place de marché de style Steam Workshop permettant de partager et de télécharger des packs de traduction communautaires, adossée au serveur communautaire GameStringer. Ouvrez-le depuis l'entrée **Patch Hub** dans la barre latérale (section orange/ambre).
+
+### Parcourir les packs
+La vue principale liste les packs publiés avec recherche et tri (les plus téléchargés, les mieux notés, récemment mis à jour, taux de complétion). Chaque carte indique le jeu, les langues source→cible, le pourcentage de complétion, la note et le nombre de téléchargements. Cliquez sur un pack pour ouvrir sa page de détail avec les statistiques, la description, les fichiers inclus et le journal des modifications.
+
+### Télécharger un pack
+Sur la page de détail d'un pack, cliquez sur **Download** (Télécharger). GameStringer récupère tous les fichiers du pack depuis le serveur communautaire et les enregistre localement sous forme d'un ensemble `.gspack` dans votre bibliothèque de packs (`Documents/GameStringer/packs`). De là, vous pouvez gérer le pack et l'importer depuis la page de détail d'un jeu pour appliquer la traduction.
+
+### Publier un pack
+Cliquez sur **Publish patch** (Publier le correctif) pour ouvrir le formulaire de publication. Renseignez le nom du pack, le jeu, la langue source et cible, une description et des tags facultatifs, puis joignez votre ou vos fichiers de traduction. Lorsque vous êtes connecté au Community Hub, le pack est téléversé sur le serveur communautaire et entre dans une file de modération avant de devenir visible publiquement. Si vous n'êtes pas connecté, le pack est conservé comme brouillon local — connectez-vous et publiez à nouveau pour le partager en ligne.
+
+> La publication en ligne nécessite un compte Community Hub (distinct de votre profil local). La navigation et le téléchargement fonctionnent sans compte.
+
+---
+
 ## Nouveautés v1.8.1
 
 ### Overlay de Traduction en Direct

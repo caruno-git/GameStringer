@@ -446,6 +446,23 @@ Czat w czasie rzeczywistym zintegrowany z Community Hub, oparty na Supabase Real
 
 ---
 
+## Patch Hub (Społecznościowe paczki tłumaczeń)
+
+Patch Hub to rynek w stylu Steam Workshop służący do udostępniania i pobierania społecznościowych paczek tłumaczeń, obsługiwany przez serwer społeczności GameStringer. Otwórz go z pozycji **Patch Hub** na pasku bocznym (pomarańczowa/bursztynowa sekcja).
+
+### Przeglądanie paczek
+Widok główny wyświetla opublikowane paczki z wyszukiwaniem i sortowaniem (najczęściej pobierane, najwyżej oceniane, ostatnio zaktualizowane, ukończenie). Każda karta pokazuje grę, języki źródłowy→docelowy, procent ukończenia, ocenę oraz liczbę pobrań. Kliknij paczkę, aby otworzyć jej stronę szczegółów ze statystykami, opisem, dołączonymi plikami i dziennikiem zmian.
+
+### Pobieranie paczki
+Na stronie szczegółów paczki kliknij **Download** (Pobierz). GameStringer pobiera wszystkie pliki paczki z serwera społeczności i zapisuje je lokalnie jako pakiet `.gspack` w Twojej bibliotece paczek (`Documents/GameStringer/packs`). Stamtąd możesz zarządzać paczką i zaimportować ją ze strony szczegółów gry, aby zastosować tłumaczenie.
+
+### Publikowanie paczki
+Kliknij **Publish patch** (Opublikuj łatkę), aby otworzyć formularz publikacji. Wypełnij nazwę paczki, grę, język źródłowy i docelowy, opcjonalny opis i tagi oraz dołącz swój plik (pliki) tłumaczenia. Gdy jesteś zalogowany do Community Hub, paczka zostaje przesłana na serwer społeczności i trafia do kolejki moderacji, zanim stanie się publicznie widoczna. Jeśli nie jesteś zalogowany, paczka jest zapisywana jako lokalna wersja robocza — zaloguj się i opublikuj ponownie, aby udostępnić ją online.
+
+> Publikowanie online wymaga konta Community Hub (oddzielnego od Twojego profilu lokalnego). Przeglądanie i pobieranie działają bez konta.
+
+---
+
 ## Nowości v1.8.1
 
 ### Nakładka tłumaczenia na żywo

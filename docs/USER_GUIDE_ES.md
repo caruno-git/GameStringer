@@ -413,6 +413,23 @@ Chat en tiempo real integrado en el Community Hub, impulsado por Supabase Realti
 - **Crear salas personalizadas**: salas dedicadas para proyectos o juegos
 - **Auto-login**: conexión automática vía perfil GameStringer
 
+## Patch Hub (Packs de traducción de la comunidad)
+
+El Patch Hub es un mercado al estilo de Steam Workshop para compartir y descargar packs de traducción de la comunidad, respaldado por el servidor de la comunidad de GameStringer. Ábrelo desde la entrada **Patch Hub** en la barra lateral (sección naranja/ámbar).
+
+### Explorar packs
+La vista principal lista los packs publicados con búsqueda y ordenación (más descargados, mejor valorados, actualizados recientemente, nivel de completado). Cada tarjeta muestra el juego, los idiomas origen→destino, el % de completado, la valoración y el número de descargas. Haz clic en un pack para abrir su página de detalle con estadísticas, descripción, archivos incluidos y registro de cambios.
+
+### Descargar un pack
+En la página de detalle de un pack, haz clic en **Download** (Descargar). GameStringer obtiene todos los archivos del pack desde el servidor de la comunidad y los guarda localmente como un paquete `.gspack` en tu biblioteca de packs (`Documents/GameStringer/packs`). Desde ahí puedes gestionar el pack e importarlo desde la página de detalle de un juego para aplicar la traducción.
+
+### Publicar un pack
+Haz clic en **Publish patch** (Publicar parche) para abrir el formulario de publicación. Rellena el nombre del pack, el juego, el idioma de origen y de destino, una descripción y etiquetas opcionales, y adjunta tu(s) archivo(s) de traducción. Cuando has iniciado sesión en el Community Hub, el pack se sube al servidor de la comunidad y entra en una cola de moderación antes de hacerse públicamente visible. Si no has iniciado sesión, el pack se guarda como borrador local: inicia sesión y publica de nuevo para compartirlo en línea.
+
+> Publicar en línea requiere una cuenta del Community Hub (independiente de tu perfil local). Explorar y descargar funcionan sin cuenta.
+
+---
+
 ## Novedades v1.9.0
 
 ### Parcheador Bethesda Engine
