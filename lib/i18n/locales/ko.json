@@ -5049,6 +5049,19 @@
       "12": "🐛 현지화: 완전한 러시아어 번역을 포함하여 모든 로케일에 걸친 대대적인 번역 정리 및 일관성 수정",
       "13": "⚡ 번역 프롬프트: 중복 제거된 용어집 힌트와 문자열별로 묶인 컨텍스트 힌트",
       "14": "♻️ API: 웹 가져오기에서 네이티브 Tauri 호출로의 시범 마이그레이션"
+    },
+    "v1_11_1": {
+      "0": "✨ site: Add engine-coverage, safety and product-facts infographics (11 languages)",
+      "1": "✨ onboarding: Add 'How to translate' step to first-run wizard (12 languages), bump onboarding version to 5",
+      "2": "✨ site: Recolor brand to violet palette, add Patch Hub flow + AI spectrum infographics",
+      "3": "✨ site: Add 'Under the hood' section (11 langs), fix language dropdown contrast, correct 'open source' to 'source-available'",
+      "4": "✨ site: Add 'Under the hood' technical section (11 languages) + fix language dropdown contrast",
+      "5": "🐛 supabase: Idempotent forum policies + allow community users to create threads/posts",
+      "6": "🐛 supabase: Make forum schema policies idempotent so Supabase Preview re-runs cleanly",
+      "7": "🐛 chat: Route community-chat translation via fetch_url_content to bypass Tauri CORS",
+      "8": "🐛 site: Show real logo in footer instead of empty placeholder",
+      "9": "🐛 supabase: Make forum schema policies idempotent (DROP POLICY IF EXISTS) so Supabase Preview re-runs cleanly",
+      "10": "• site: Translate Patch Hub flow + AI spectrum to all 11 languages"
     }
   },
   "communityChat": {

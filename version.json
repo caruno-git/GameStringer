@@ -1,12 +1,12 @@
 {
-  "version": "1.11.0",
+  "version": "1.11.1",
   "major": 1,
   "minor": 11,
-  "patch": 0,
+  "patch": 1,
   "prerelease": null,
   "buildNumber": 128,
-  "buildDate": "2026-06-25T22:50:17.738Z",
-  "gitHash": "a2a72ee8",
+  "buildDate": "2026-06-26T05:23:14.753Z",
+  "gitHash": "8da3e018",
   "branch": "main",
   "changelog": {
     "1.9.1": {
@@ -696,6 +696,23 @@
         "• en: Traduce 175 stringhe italiane rimaste in en.json + fix typo notifications; ripristina baseline fr 2",
         "• Fase B bulk - traduzione completa 10 lingue (~9418 chiavi, copertura 90-97%); fix el changelog.v1_10_2 + ru Dry Run; baseline fr 2->3",
         "• Bonifica hardcoded library/guide/projects/stores + onboarding + selettore greco UI; guard i18n-no-hardcoded in CI"
+      ]
+    },
+    "1.11.1": {
+      "date": "2026-06-26",
+      "type": "patch",
+      "changes": [
+        "✨ site: Add engine-coverage, safety and product-facts infographics (11 languages)",
+        "✨ onboarding: Add 'How to translate' step to first-run wizard (12 languages), bump onboarding version to 5",
+        "✨ site: Recolor brand to violet palette, add Patch Hub flow + AI spectrum infographics",
+        "✨ site: Add 'Under the hood' section (11 langs), fix language dropdown contrast, correct 'open source' to 'source-available'",
+        "✨ site: Add 'Under the hood' technical section (11 languages) + fix language dropdown contrast",
+        "🐛 supabase: Idempotent forum policies + allow community users to create threads/posts",
+        "🐛 supabase: Make forum schema policies idempotent so Supabase Preview re-runs cleanly",
+        "🐛 chat: Route community-chat translation via fetch_url_content to bypass Tauri CORS",
+        "🐛 site: Show real logo in footer instead of empty placeholder",
+        "🐛 supabase: Make forum schema policies idempotent (DROP POLICY IF EXISTS) so Supabase Preview re-runs cleanly",
+        "• site: Translate Patch Hub flow + AI spectrum to all 11 languages"
       ]
     }
   }

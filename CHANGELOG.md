@@ -1,22 +1,55 @@
 # GameStringer Changelog
 
+## 🔧 v1.11.1 - 2026-06-26
+
+- ✨ site: Add engine-coverage, safety and product-facts infographics (11 languages)
+- ✨ onboarding: Add 'How to translate' step to first-run wizard (12 languages), bump onboarding version to 5
+- ✨ site: Recolor brand to violet palette, add Patch Hub flow + AI spectrum infographics
+- ✨ site: Add 'Under the hood' section (11 langs), fix language dropdown contrast, correct 'open source' to 'source-available'
+- ✨ site: Add 'Under the hood' technical section (11 languages) + fix language dropdown contrast
+- 🐛 supabase: Idempotent forum policies + allow community users to create threads/posts
+- 🐛 supabase: Make forum schema policies idempotent so Supabase Preview re-runs cleanly
+- 🐛 chat: Route community-chat translation via fetch_url_content to bypass Tauri CORS
+- 🐛 site: Show real logo in footer instead of empty placeholder
+- 🐛 supabase: Make forum schema policies idempotent (DROP POLICY IF EXISTS) so Supabase Preview re-runs cleanly
+- • site: Translate Patch Hub flow + AI spectrum to all 11 languages
+
 ## 🚀 v1.11.0 - 2026-06-25
 
-- ✨ Patch Hub: publish your translation packs to the community and download community packs to your local library (.gspack)
-- ✨ Visionaire Studio engine: dedicated auto-translate pipeline with hero job tracking
-- ✨ RPG Maker MV/MZ: dedicated file-based pipeline with glossary, in-place backup & apply, and resume
-- ✨ Ren'Py: Character Voice Profiles (tone, personality) injected into the auto-translate prompt
-- ✨ Unified job status and progress across all engines, with honest messaging for unsupported engines
-- ✨ Labs: Fandub AI available as an experimental feature
-- ✨ Full UI localization in 12 languages (Greek added) with a centralized language list
-- ✨ Redesigned website with engine infographics and 11-language localization
-- 🐛 Community: resilient chat and Lobby with CORS/login fallback, quieter forum errors when the backend is unreachable
-- 🐛 Update tracker: fixed false "patch not intact" for XUnity installed in a subfolder (recursive DLL search)
-- 🐛 News/RSS: fetched via Tauri to avoid CORS proxies in the webview
-- 🐛 Profiles: avatar upload and profile selector fixes
-- 🐛 Localization: extensive translation cleanup and consistency fixes across all locales, including a complete Russian translation
-- ⚡ Translation prompt: deduplicated glossary hints and clustered per-string context hints
-- ♻️ API: pilot migration from web fetch to native Tauri calls
+- ✨ patch-hub: Download packs to local .gspack library
+- ✨ patch-hub: Wire pack publishing to Supabase backend
+- ✨ visionaire: Motore di traduzione Visionaire + hook in startAutoTranslate + hero job tracking
+- ✨ community: Patch Hub + resilienza chat/Lobby community (CORS/login fallback)
+- ✨ i18n: Greco target ovunque + centralizza lista lingue; bonifica hardcoded settings/auto-translate
+- ✨ labs: Espone Fandub AI come Labs (flag experimental + badge in Guida, avviso onesto timing/voci); fuori dal flusso hero, sidebar invariata
+- ✨ rpgmaker-mvmz: Pipeline hero file-based dedicata (orchestratore + branch stepper, glossario, backup+apply in place, resume); chore(qa): validate-rpgmaker + checklist
+- ✨ rpgmaker: RPG Maker classico -> messaggio onesto + scelta OCR esplicita (no dirottamento silenzioso); hero file-based limitato a MV/MZ
+- ✨ hero-ux: Stato/progress unificati su tutti i motori + Ren'Py nel pannello stepper + messaggio onesto motori non supportati; chore(qa): script validate-renpy-tl + checklist aggiornata
+- ✨ renpy: Inietta i Character Voice Profile (tono/personalita/pattern) nel prompt auto-translate oltre al nome parlante; auto-estrazione se assenti; docs(todo) esito verifica glossario/voci/multi-LLM
+- ✨ i18n: Completa traduzioni es/fr/de/pt/pl/ja/zh/ko (EN->lingua); aggiorna baseline locale-integrity
+- ✨ sito: Redesign con infografiche del motore + i18n 11 lingue; docs(README/GUIDA/ARCHITETTURA) aggiornati; pulizia varianti sito legacy
+- 🐛 i18n: Bonifica authoring EN, 161 stringhe semi-tradotte in en.json
+- 🐛 profiles: Aggiornamenti avatar-upload e profile-selector
+- 🐛 forum: Declassa a debug gli errori di backend irraggiungibile (522/timeout) - niente warn rumoroso quando il progetto community e' giu' (gestito con fallback vuoto)
+- 🐛 update-tracker: Patch_intact falso negativo per XUnity in sottocartella (BepInEx/plugins/XUnity.AutoTranslator/) - ricerca DLL ricorsiva; chore(log): riassunto compatto dei risultati Tauri (no dump oggetti enormi)
+- 🐛 news: RSS/og-image via fetch_url_content in Tauri + salta i proxy CORS pubblici nel webview (no errori allorigins); fix(ui): bottone 'Tutorial guidato' interamente cliccabile (TutorialMenu fullWidth)
+- 🐛 i18n-ru: Completa traduzione russa (481 stringhe EN→RU, copertura 97.5%, 0 residui IT) — issue #47
+- 🐛 i18n: Aggiunge changelog.v1_10_2 tradotto nei 10 locale non-IT (CI locale-integrity)
+- ⚡ prompt: Dedupe glossary hint and cluster per-string context hints
+- ♻️ api: Pilota migrazione fetch('/api')->invoke - cover-picker via fetch_url_content (fallback web); aggiunge docs/API_MIGRATION_MAP.md (mappa per-endpoint)
+- • Fix residual Italian/garbage strings in en.json authoring
+- • Translate last 4 Italian stragglers in en.json
+- • Clean up it.json long-tail namespaces (stage 8, 245 keys)
+- • Clean up it.json minor component namespaces (stage 7, 102 keys)
+- • Clean up it.json across profiles, logging, audio, and minor namespaces (stages 4-6)
+- • Clean up it.json profiles/security + logging/audio/info namespaces (stages 4-5, 172 keys)
+- • Bonifica it.json tappa 3 (overlay/injekt), 63 chiavi it/en
+- • Bonifica it.json tappa 2 (pagine visibili), 123 chiavi it/en
+- • Bonifica it.json tappa 1 (common), 172 chiavi it/en
+- • Fase A+B prediction-tool (namespace predictionToolPage, 73 chiavi 12 lingue); baseline 3104->3022; tetti es 36/pt 47
+- • en: Traduce 175 stringhe italiane rimaste in en.json + fix typo notifications; ripristina baseline fr 2
+- • Fase B bulk - traduzione completa 10 lingue (~9418 chiavi, copertura 90-97%); fix el changelog.v1_10_2 + ru Dry Run; baseline fr 2->3
+- • Bonifica hardcoded library/guide/projects/stores + onboarding + selettore greco UI; guard i18n-no-hardcoded in CI
 
 ## 🚀 v1.10.0 - 2026-06-23
 
