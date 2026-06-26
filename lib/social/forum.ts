@@ -307,6 +307,21 @@ function generateSlug(title: string): string {
     .substring(0, 80) + '-' + Date.now().toString(36);
 }
 
+/**
+ * author_id da usare per le scritture nel forum. La RLS "authenticated insert" pretende
+ * author_id = auth.uid(), quindi serve l'uid dell'utente Supabase ottenuto dal bridge
+ * profilo-locale → Supabase (autoSyncGSToSupabase). Se il bridge è giù, ricade sull'id
+ * locale, coperto dal fallback RLS "Community insert ...". import dinamico per evitare cicli.
+ */
+async function resolveAuthorId(localId: string): Promise<string> {
+  try {
+    const { autoSyncGSToSupabase } = await import('./community-chat');
+    const uid = await autoSyncGSToSupabase();
+    if (uid) return uid;
+  } catch { /* bridge non disponibile → fallback id locale */ }
+  return localId;
+}
+
 export async function createThread(input: CreateThreadInput, author: { id: string; name: string; avatar?: string }): Promise<ForumThread | null> {
   if (!isSupabaseConfigured()) return null;
   const supabase = await getSupabase();
@@ -315,12 +330,13 @@ export async function createThread(input: CreateThreadInput, author: { id: strin
     console.error('[Forum] Category not found:', input.category_slug);
     return null;
   }
-  
+
+  const authorId = await resolveAuthorId(author.id);
   const { data, error } = await supabase
     .from('forum_threads')
     .insert({
       category_id: cat.id,
-      author_id: author.id,
+      author_id: authorId,
       author_name: author.name,
       author_avatar: author.avatar || null,
       title: input.title,
@@ -399,11 +415,12 @@ export async function getPosts(threadId: string, userId?: string): Promise<Forum
 
 export async function createPost(input: CreatePostInput, author: { id: string; name: string; avatar?: string }): Promise<ForumPost | null> {
   const supabase = await getSupabase();
+  const authorId = await resolveAuthorId(author.id);
   const { data, error } = await supabase
     .from('forum_posts')
     .insert({
       thread_id: input.thread_id,
-      author_id: author.id,
+      author_id: authorId,
       author_name: author.name,
       author_avatar: author.avatar || null,
       content: input.content,

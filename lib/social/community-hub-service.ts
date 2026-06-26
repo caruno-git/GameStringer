@@ -713,6 +713,12 @@ class CommunityHubService {
       // Pubblicazione online: richiede una sessione Community Hub attiva.
       // Eventuali errori (auth / upload) vengono propagati al chiamante,
       // lasciando il pack come bozza locale così l'utente non perde il lavoro.
+      // Assicura la sessione (bridge profilo-locale → utente Supabase) così
+      // getCurrentUser() risolve e l'INSERT usa author_id = auth.uid().
+      try {
+        const { autoSyncGSToSupabase } = await import('./community-chat');
+        await autoSyncGSToSupabase();
+      } catch { /* bridge non disponibile → getCurrentUser resterà null sotto */ }
       const user = await backend.getCurrentUser();
       if (!user) {
         // Sentinella tradotta dalla UI (vedi patchHubPage.publishOnlineLoginRequired).

@@ -198,4 +198,24 @@ RETURNS TRIGGER AS $$
 BEGIN
   IF TG_OP = 'INSERT' THEN
     IF NEW.thread_id IS NOT NULL THEN
-      UPDATE forum_threads SET like_count = like_count + 1 WHERE 
+      UPDATE forum_threads SET like_count = like_count + 1 WHERE id = NEW.thread_id;
+    END IF;
+    IF NEW.post_id IS NOT NULL THEN
+      UPDATE forum_posts SET like_count = like_count + 1 WHERE id = NEW.post_id;
+    END IF;
+  ELSIF TG_OP = 'DELETE' THEN
+    IF OLD.thread_id IS NOT NULL THEN
+      UPDATE forum_threads SET like_count = GREATEST(0, like_count - 1) WHERE id = OLD.thread_id;
+    END IF;
+    IF OLD.post_id IS NOT NULL THEN
+      UPDATE forum_posts SET like_count = GREATEST(0, like_count - 1) WHERE id = OLD.post_id;
+    END IF;
+  END IF;
+  RETURN COALESCE(NEW, OLD);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER on_reaction_change
+  AFTER INSERT OR DELETE ON forum_reactions
+  FOR EACH ROW
+  EXECUTE FUNCTION update_like_counts();

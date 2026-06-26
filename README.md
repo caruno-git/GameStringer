@@ -21,6 +21,7 @@
 
 <p align="center">
   <a href="https://www.gamestringer.ai">Website</a> ·
+  <a href="#help-wanted"><strong>🙏 Help wanted</strong></a> ·
   <a href="#-what-is-gamestringer">What is it</a> ·
   <a href="#-download">Download</a> ·
   <a href="#-how-it-works">How it works</a> ·
@@ -35,6 +36,50 @@
 <p align="center">
   <strong>🌍 Available in 11 languages</strong> — switch language directly on the <a href="https://www.gamestringer.ai">website</a> or inside the app (IT, EN, ES, FR, DE, PT, PL, RU, JA, ZH, KO).
 </p>
+
+---
+
+<a name="help-wanted"></a>
+
+## 🙏 Help Wanted — Test it on real games & send feedback
+
+> **GameStringer is a solo, source-available project and it's still young.** It already handles 20+ engines, but real games are messy — every title stores its text a little differently. **The single most useful thing you can do right now is run GameStringer on a real game and tell me what happened.** Even *"it failed at step X"* is gold.
+
+**Why this matters:** I can't possibly test the thousands of games out there alone. Continuous, real-world **testing and feedback** is what turns *"works on my fixtures"* into *"works on your game."* Your reports directly shape the roadmap — this is the part where the community makes or breaks the project.
+
+### 🧪 Three ways to help (pick any)
+
+- **🎮 Test a game & report.** Run it on something in your library and file a quick [compatibility report](https://github.com/rouges78/GameStringer/discussions) — was the engine detected correctly? was the text extracted? did the patch apply and the game still boot?
+- **📦 Share a pack.** If a translation works, publish it to the in-app **Patch Hub** so others can use it — your name goes on it (reputation + "verified translator").
+- **🛠️ Contribute.** New engine parsers, locale fixes, QA scripts — look for `good first issue` in the repo.
+
+### 📋 What we especially need tested & feedback on
+
+- [ ] **Engine coverage on real titles** — Unity (Mono **and** IL2CPP), Unreal (`.locres`, `_P.pak`, IoStore), Godot, RPG Maker **MV/MZ**, Ren'Py, Bethesda (BSA/BA2/ESP), CRI (CPK), Wolf RPG, TyranoScript, Visionaire, Danganronpa
+- [ ] **Classic RPG Maker (2000/2003)** via the on-screen **OCR overlay** — how readable is the result?
+- [ ] **Encoding & control codes** — correct accents/CJK in-game, and in-game tags/variables left intact?
+- [ ] **Fonts** — do non-Latin scripts (CJK, Cyrillic, Greek) render in-game, or is a font swap needed?
+- [ ] **Translation quality per language** — which AI provider gives the best results for your language/genre?
+- [ ] **Patch Hub** — publishing and downloading `.gspack` packs end-to-end
+- [ ] **First-run onboarding & UX** — was it clear how to translate your first game? what confused you?
+- [ ] **Update tracker** — after a store update, did it correctly flag that the patch needs re-applying?
+
+### 📝 Compatibility report template (copy-paste)
+
+```
+- Game / store / version:
+- Engine detected (by GameStringer):
+- Step reached: Scan / Detect / Extract / Translate / Patch / Played
+- Result: ✅ works / ⚠️ partial / ❌ fails
+- AI provider used:
+- Language:
+- Notes (what broke, encoding, screenshots):
+- OS + GameStringer version:
+```
+
+**Where to post:** [GitHub Discussions](https://github.com/rouges78/GameStringer/discussions) · the in-app **Community Hub** (Supporto / Showcase / Richieste) · bugs → [Issues](https://github.com/rouges78/GameStringer/issues).
+
+GameStringer is free and source-available; the website and AI costs come out of my own pocket, so if it saves you time a coffee is appreciated but **never** expected: [Buy Me a Coffee](https://buymeacoffee.com/gamestringer) · [Ko-fi](https://ko-fi.com/gamestringer) · [GitHub Sponsors](https://github.com/sponsors/rouges78).
 
 ---
 
