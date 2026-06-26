@@ -2071,17 +2071,32 @@ export async function translateChatMessage(
 
   const truncated = text.slice(0, 500);
 
-  // 1. MyMemory — CORS-friendly, gratuito, nessuna API key (5000 char/giorno)
+  // GET CORS-aware: nel webview Tauri la fetch del browser verso le API di traduzione
+  // esterne è bloccata da CORS → instradiamo la GET via comando Rust `fetch_url_content`
+  // (reqwest lato backend, nessun vincolo CORS). Fuori da Tauri si usa la fetch del browser.
+  const getJson = async (url: string, timeoutMs: number): Promise<unknown | null> => {
+    try {
+      if (isTauri()) {
+        const { invoke } = await import('@tauri-apps/api/core');
+        const body = await invoke<string>('fetch_url_content', { url });
+        return JSON.parse(body);
+      }
+      const res = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) });
+      if (!res.ok) return null;
+      return await res.json();
+    } catch {
+      return null;
+    }
+  };
+
+  // 1. MyMemory — gratuito, nessuna API key (5000 char/giorno)
   try {
     const langPair = `${srcCode === 'auto' ? 'autodetect' : srcCode}|${tgtCode}`;
     const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(truncated)}&langpair=${langPair}`;
-    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
-    if (res.ok) {
-      const data = await res.json();
-      const translated = data?.responseData?.translatedText;
-      if (translated && translated !== truncated && data?.responseStatus === 200) {
-        return { translated, provider: 'mymemory' };
-      }
+    const data = await getJson(url, 8000) as { responseData?: { translatedText?: string }; responseStatus?: number } | null;
+    const translated = data?.responseData?.translatedText;
+    if (translated && translated !== truncated && data?.responseStatus === 200) {
+      return { translated, provider: 'mymemory' };
     }
   } catch {
     // MyMemory non disponibile
@@ -2090,19 +2105,10 @@ export async function translateChatMessage(
   // 2. Lingva — prova mirror multipli
   const lingvaHosts = ['lingva.ml', 'lingva.thedaviddelta.com', 'translate.plausibility.cloud'];
   for (const host of lingvaHosts) {
-    try {
-      const encoded = encodeURIComponent(truncated);
-      const res = await fetch(`https://${host}/api/v1/${srcCode}/${tgtCode}/${encoded}`, {
-        signal: AbortSignal.timeout(6000),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data?.translation && data.translation !== truncated) {
-          return { translated: data.translation, provider: 'lingva' };
-        }
-      }
-    } catch {
-      continue;
+    const encoded = encodeURIComponent(truncated);
+    const data = await getJson(`https://${host}/api/v1/${srcCode}/${tgtCode}/${encoded}`, 6000) as { translation?: string } | null;
+    if (data?.translation && data.translation !== truncated) {
+      return { translated: data.translation, provider: 'lingva' };
     }
   }
 
