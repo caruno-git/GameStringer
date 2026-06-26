@@ -67,25 +67,45 @@ export function startHeroTracking(progress: ProgressState, meta: HeroTrackMeta):
   void import('@/lib/notifications/tray-notifications').then(m => m.incrementActiveTranslations()).catch(() => {});
 
   let projectId: string | null = null;
-  let created = false;
+  let creating: Promise<void> | null = null;
+  // Fallback id: se manca il gameId (es. gioco aggiunto a mano) usa il path, che è
+  // comunque stabile per gioco → il progetto si crea sempre.
+  const gid = meta.gameId || meta.gamePath;
 
   const ensureProject = async (total: number) => {
-    if (created || !meta.gameId || total <= 0) return;
-    created = true; // set sincrono: evita doppia creazione su progressi ravvicinati
-    try {
-      const proj = await projectService.createOrGetProject({
-        gameId: meta.gameId,
-        gameName: meta.gameName || meta.gameId,
-        gameImage: meta.gameImage,
-        engine: meta.engineLabel,
-        sourceLanguage: meta.sourceLang || 'en',
-        targetLanguage: meta.targetLang,
-        files: [{ path: meta.gamePath, name: meta.engineLabel, type: meta.engineId, strings: total }],
-      });
-      projectId = proj.id;
-      if (proj.totalStrings !== total) { proj.totalStrings = total; await projectService.saveProject(proj); }
-    } catch { /* progetto non disponibile: si prosegue */ }
+    if (!gid) return;
+    // Crea una sola volta (riusa la promise in volo contro progressi ravvicinati).
+    if (!projectId && !creating) {
+      creating = (async () => {
+        try {
+          const proj = await projectService.createOrGetProject({
+            gameId: gid,
+            gameName: meta.gameName || gid,
+            gameImage: meta.gameImage,
+            engine: meta.engineLabel,
+            sourceLanguage: meta.sourceLang || 'en',
+            targetLanguage: meta.targetLang,
+            files: [{ path: meta.gamePath, name: meta.engineLabel, type: meta.engineId, strings: Math.max(total, 0) }],
+          });
+          projectId = proj.id;
+        } catch { /* progetto non disponibile: si prosegue */ }
+      })();
+    }
+    if (creating) await creating;
+    // Aggiorna il totale quando diventa noto (la creazione eager parte da 0).
+    if (projectId && total > 0) {
+      try {
+        const all = await projectService.getAllProjects();
+        const p = all.find(x => x.id === projectId);
+        if (p && p.totalStrings !== total) { p.totalStrings = total; await projectService.saveProject(p); }
+      } catch { /* ignore */ }
+    }
   };
+
+  // Crea il progetto SUBITO al lancio (anche prima del primo progress, e anche se il
+  // job fallisce all'avvio — es. Ollama non raggiungibile): così compare nei Progetti
+  // appena avvii la traduzione, e da lì è ripristinabile.
+  void ensureProject(0);
 
   const releaseGuardAndBadge = async () => {
     RUNNING.delete(key);
