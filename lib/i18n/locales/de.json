@@ -2390,6 +2390,16 @@
       "startTranslating": "Mit Übersetzen beginnen",
       "startTranslatingDesc": "Übersetze mit KI",
       "guideNote": "Du kannst jederzeit über das Seitenmenü auf die vollständige Anleitung zugreifen"
+    },
+    "howto": {
+      "title": "Wie man ein Spiel übersetzt",
+      "subtitle": "Vier Schritte, vom Öffnen bis zum Patch",
+      "s1": "Öffne die Bibliothek und scanne deine Stores (Steam, Epic, GOG…) oder füge ein Spiel hinzu, indem du seinen Ordner auf der Festplatte auswählst.",
+      "s2": "Klicke auf ein Spiel, um seine Seite zu öffnen: GameStringer erkennt die Engine von selbst.",
+      "s3": "Drücke auf \"Auto-Übersetzen\": Wähle die Sprache und den AI-Anbieter (das lokale Ollama ist kostenlos).",
+      "s4": "Starte den Vorgang. Der Text wird extrahiert, übersetzt und der Patch angewendet — mit einem automatischen Backup, bevor eine Datei verändert wird.",
+      "note": "Für klassische RPG Maker-Spiele (2000/2003) gibt es keinen extrahierbaren Text: Ein Bildschirm-OCR-Overlay übersetzt, während du spielst.",
+      "cta": "Loslegen: Zur Bibliothek gehen"
     }
   },
   "dashboard": {

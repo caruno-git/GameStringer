@@ -10,7 +10,8 @@ import {
   ChevronLeft,
   Check,
   Rocket,
-  Library
+  Library,
+  Wand2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -37,7 +38,7 @@ interface OnboardingStep {
 }
 
 const ONBOARDING_KEY = 'gamestringer_onboarding_completed';
-const ONBOARDING_VERSION = 4; // Increment ONLY when onboarding content actually changes
+const ONBOARDING_VERSION = 5; // Increment ONLY when onboarding content actually changes (v5: added "How to translate" step)
 const TUTORIAL_KEY = 'gamestringer-tutorial-completed'; // Chiave condivisa con InteractiveTutorial
 
 export function OnboardingWizard() {
@@ -260,6 +261,44 @@ export function OnboardingWizard() {
 
           <Button variant="outline" className="w-full" onClick={() => goTo('/library')}>
             {t('onboarding.ready.exploreLibrary')}
+            <ChevronRight className="h-4 w-4 ml-1" />
+          </Button>
+        </div>
+      )
+    },
+    {
+      id: 'howTranslate',
+      title: t('onboarding.howto.title'),
+      description: t('onboarding.howto.subtitle'),
+      icon: Wand2,
+      color: 'text-emerald-500',
+      content: (
+        <div className="space-y-6">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 bg-emerald-500/10 rounded-xl flex items-center justify-center">
+              <Wand2 className="h-8 w-8 text-emerald-500" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold">{t('onboarding.howto.title')}</h3>
+              <p className="text-muted-foreground">{t('onboarding.howto.subtitle')}</p>
+            </div>
+          </div>
+
+          <ol className="space-y-3">
+            {[t('onboarding.howto.s1'), t('onboarding.howto.s2'), t('onboarding.howto.s3'), t('onboarding.howto.s4')].map((s, i) => (
+              <li key={i} className="flex items-start gap-3">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-500/15 text-emerald-400 text-sm font-bold flex items-center justify-center">{i + 1}</span>
+                <span className="text-sm text-muted-foreground pt-0.5">{s}</span>
+              </li>
+            ))}
+          </ol>
+
+          <div className="p-3 bg-muted/30 rounded-lg text-xs text-muted-foreground">
+            {t('onboarding.howto.note')}
+          </div>
+
+          <Button className="w-full" onClick={() => goTo('/library')}>
+            {t('onboarding.howto.cta')}
             <ChevronRight className="h-4 w-4 ml-1" />
           </Button>
         </div>

@@ -2471,6 +2471,16 @@
       "startTranslating": "Inizia a Tradurre",
       "startTranslatingDesc": "Traduci con l'AI",
       "guideNote": "Puoi sempre accedere alla guida completa dal menu laterale"
+    },
+    "howto": {
+      "title": "Come tradurre un gioco",
+      "subtitle": "Quattro passi, dall'apertura alla patch",
+      "s1": "Apri la Libreria e scansiona i tuoi store (Steam, Epic, GOG…), oppure aggiungi un gioco scegliendo la cartella dal disco.",
+      "s2": "Clicca sul gioco per aprirne la pagina: GameStringer riconosce l'engine da solo.",
+      "s3": "Premi \"Traduci automaticamente\": scegli la lingua e il provider AI (Ollama in locale è gratis).",
+      "s4": "Avvia. Estrae il testo, traduce e applica la patch — con backup automatico prima di toccare i file.",
+      "note": "Per i giochi RPG Maker classici (2000/2003) non c'è testo estraibile: un overlay OCR traduce a schermo mentre giochi.",
+      "cta": "Inizia: vai alla Libreria"
     }
   },
   "dashboard": {

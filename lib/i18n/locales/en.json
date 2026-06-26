@@ -2471,6 +2471,16 @@
       "startTranslating": "Start Translating",
       "startTranslatingDesc": "Translate with AI",
       "guideNote": "You can always access the full guide from the side menu"
+    },
+    "howto": {
+      "title": "How to translate a game",
+      "subtitle": "Four steps, from opening it to the patch",
+      "s1": "Open the Library and scan your stores (Steam, Epic, GOG…), or add a game by picking its folder from disk.",
+      "s2": "Click a game to open its page: GameStringer detects the engine on its own.",
+      "s3": "Press \"Auto-Translate\": pick the language and the AI provider (local Ollama is free).",
+      "s4": "Start it. It extracts the text, translates, and applies the patch — with an automatic backup before touching any file.",
+      "note": "For classic RPG Maker games (2000/2003) there is no extractable text: an on-screen OCR overlay translates while you play.",
+      "cta": "Get started: go to the Library"
     }
   },
   "dashboard": {

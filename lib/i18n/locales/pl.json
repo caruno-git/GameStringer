@@ -2390,6 +2390,16 @@
       "startTranslating": "Zacznij tłumaczyć",
       "startTranslatingDesc": "Tłumacz z AI",
       "guideNote": "Zawsze możesz uzyskać dostęp do pełnego przewodnika z menu bocznego"
+    },
+    "howto": {
+      "title": "Jak przetłumaczyć grę",
+      "subtitle": "Cztery kroki, od otwarcia po łatkę",
+      "s1": "Otwórz Bibliotekę i przeskanuj swoje sklepy (Steam, Epic, GOG…) lub dodaj grę, wybierając jej folder z dysku.",
+      "s2": "Kliknij grę, aby otworzyć jej stronę: GameStringer sam wykrywa silnik.",
+      "s3": "Naciśnij \"Auto-tłumaczenie\": wybierz język i dostawcę AI (lokalny Ollama jest darmowy).",
+      "s4": "Uruchom je. Wyodrębnia tekst, tłumaczy i stosuje łatkę — z automatyczną kopią zapasową przed dotknięciem jakiegokolwiek pliku.",
+      "note": "W przypadku klasycznych gier RPG Maker (2000/2003) nie ma tekstu do wyodrębnienia: nakładka OCR na ekranie tłumaczy podczas gry.",
+      "cta": "Zacznij: przejdź do Biblioteki"
     }
   },
   "dashboard": {
