@@ -138,19 +138,29 @@ ALTER TABLE forum_posts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE forum_reactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE forum_downloads ENABLE ROW LEVEL SECURITY;
 
--- Tutti possono leggere
+-- Tutti possono leggere (DROP IF EXISTS per rendere la migration ri-eseguibile,
+-- es. sui branch di preview Supabase che ripartono da un DB clonato)
+DROP POLICY IF EXISTS "Public read categories" ON forum_categories;
 CREATE POLICY "Public read categories" ON forum_categories FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public read threads" ON forum_threads;
 CREATE POLICY "Public read threads" ON forum_threads FOR SELECT USING (NOT is_hidden);
+DROP POLICY IF EXISTS "Public read posts" ON forum_posts;
 CREATE POLICY "Public read posts" ON forum_posts FOR SELECT USING (NOT is_hidden);
 
 -- Solo autenticati possono scrivere
+DROP POLICY IF EXISTS "Auth insert threads" ON forum_threads;
 CREATE POLICY "Auth insert threads" ON forum_threads FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+DROP POLICY IF EXISTS "Auth insert posts" ON forum_posts;
 CREATE POLICY "Auth insert posts" ON forum_posts FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+DROP POLICY IF EXISTS "Auth insert reactions" ON forum_reactions;
 CREATE POLICY "Auth insert reactions" ON forum_reactions FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
 -- Solo autore può modificare
+DROP POLICY IF EXISTS "Author update threads" ON forum_threads;
 CREATE POLICY "Author update threads" ON forum_threads FOR UPDATE USING (author_id = auth.uid());
+DROP POLICY IF EXISTS "Author update posts" ON forum_posts;
 CREATE POLICY "Author update posts" ON forum_posts FOR UPDATE USING (author_id = auth.uid());
+DROP POLICY IF EXISTS "Author delete reactions" ON forum_reactions;
 CREATE POLICY "Author delete reactions" ON forum_reactions FOR DELETE USING (user_id = auth.uid());
 
 -- ─── FUNZIONI ────────────────────────────────────────────────────────────────
