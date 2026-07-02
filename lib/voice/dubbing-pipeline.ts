@@ -13,6 +13,7 @@
 import { voiceCloneService, type VoiceProfile, type SynthesisResult } from './voice-clone';
 import { translateWithFallback } from '@/lib/ai/ai-translate-direct';
 import { clientLogger } from '@/lib/client-logger';
+import { isTauri } from '@/lib/tauri-api';
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -321,6 +322,13 @@ export class DubbingPipeline {
       this.emitProgress('transcribe');
 
       try {
+        // /api/voice/transcribe non esiste nel desktop impacchettato (feature Labs, solo
+        // build web): degrada in modo pulito invece di generare un 501.
+        if (isTauri()) {
+          segment.status = 'error';
+          continue;
+        }
+
         // Read audio file as base64 via Tauri
         const { invoke } = await import('@tauri-apps/api/core');
         const audioBase64 = await invoke<string>('read_file_base64', { path: segment.filePath });

@@ -18,6 +18,7 @@ import {
 import { AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useTranslation } from '@/lib/i18n';
 import { clientLogger } from '@/lib/client-logger';
+import { isTauri } from '@/lib/tauri-api';
 
 interface RealtimeStats {
   processId: number;
@@ -78,7 +79,10 @@ export function InjektRealtimeStats({ processId, isActive }: InjektRealtimeStats
 
   const fetchStats = async () => {
     if (!processId) return;
-    
+    // /api non esiste nel desktop impacchettato: le stat live via HTTP valgono solo nel
+    // build web. In Tauri si degrada (nessuna stat) invece di generare un 501.
+    if (isTauri()) return;
+
     try {
       const response = await fetch(`/api/injekt/stats/${processId}`);
       if (response.ok) {
