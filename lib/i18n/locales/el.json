@@ -1,4 +1,27 @@
 {
+  "dubbingPage": {
+    "labsExperimental": "Labs · Experimental",
+    "startDubbing": "Start Dubbing",
+    "cancel": "Cancel",
+    "labsWarning1": "Labs · experimental feature.",
+    "labsWarning2": "AI dubbing (Whisper → translation → TTS) may have imperfections in",
+    "timingVoices": "timing and voices",
+    "labsWarning3": ". It's not part of the \"one button\" flow and does not replace professional dubbing. Keep a backup of the audio files before applying.",
+    "game": "Game",
+    "languages": "Languages",
+    "voiceProvider": "Voice & Provider",
+    "defaultVoice": "Default voice",
+    "sttEngine": "STT Engine",
+    "groqWhisper": "Groq Whisper (fast)",
+    "durationMatching": "Duration matching",
+    "lipSync": "Lip Sync (Rhubarb)",
+    "generateSubtitles": "Generate subtitles",
+    "pipelineSteps": "Pipeline Steps",
+    "errors": "Errors",
+    "confidence": "Confidence",
+    "audioSegments": "Audio segments",
+    "selectFolderPrompt": "Select a game folder to start automatic dubbing. The pipeline will run: audio scan → Whisper transcription → AI translation → voice synthesis → audio file patching."
+  },
   "fileSelector": {
     "fromWizard": "Coming from the Translation Wizard",
     "recommendedMethod": "Recommended method:",
