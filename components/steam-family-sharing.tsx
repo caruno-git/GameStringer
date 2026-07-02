@@ -133,7 +133,7 @@ export function SteamFamilySharing() {
       if (config.total_shared_games > 0) {
         toast.success(`🎮 Trovati ${config.total_shared_games} giochi condivisi da ${config.authorized_users.length} utenti!`);
       } else {
-        toast.info('Nessun gioco condiviso trovato. Verifica che il Family Sharing sia abilitato.');
+        toast.info(t('steamFamilySharing.noSharedGamesToast'));
       }
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : String(err);
@@ -200,7 +200,7 @@ export function SteamFamilySharing() {
     }
     // Valida formato Steam ID (17 cifre)
     if (!/^\d{17}$/.test(manualSteamId.trim())) {
-      toast.error('Steam ID non valido. Deve essere un numero di 17 cifre.');
+      toast.error(t('steamFamilySharing.invalidSteamId'));
       return;
     }
     if (manualAccounts.includes(manualSteamId.trim())) {
@@ -217,7 +217,7 @@ export function SteamFamilySharing() {
       await invoke('save_family_sharing_ids', { ids: newAccounts });
       toast.success(t('common.steamIdAggiuntoESalvato'));
     } catch {
-      toast.success('Steam ID aggiunto!');
+      toast.success(t('steamFamilySharing.steamIdAdded'));
     }
   };
 
@@ -232,7 +232,7 @@ export function SteamFamilySharing() {
     } catch {
       // Ignora errori di salvataggio
     }
-    toast.info('Steam ID rimosso');
+    toast.info(t('steamFamilySharing.steamIdRemoved'));
   };
 
   return (
@@ -243,24 +243,20 @@ export function SteamFamilySharing() {
           <CardTitle className="text-white text-base">{t('steamFamilySharingComp.gestioneFamilySharing')}</CardTitle>
         </div>
         <CardDescription className="text-slate-400 text-xs">
-          Rileva account Steam che condividono la libreria con te
-        </CardDescription>
+          {t('steamFamilySharing.subtitle')}</CardDescription>
       </CardHeader>
       <CardContent className="px-0 py-2">
         <Tabs defaultValue="add" className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-slate-900/50 border border-slate-700/50">
             <TabsTrigger value="add" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-slate-400">
               <Users className="h-4 w-4 mr-2" />
-              Aggiungi Amici
-            </TabsTrigger>
+              {t('steamFamilySharing.addFriends')}</TabsTrigger>
             <TabsTrigger value="auto" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-slate-400">
               <Search className="h-4 w-4 mr-2" />
-              Auto-Rileva
-            </TabsTrigger>
+              {t('steamFamilySharing.autoDetect')}</TabsTrigger>
             <TabsTrigger value="manual" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-slate-400">
               <Upload className="h-4 w-4 mr-2" />
-              File VDF
-            </TabsTrigger>
+              {t('steamFamilySharing.vdfFile')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="add" className="space-y-2 mt-2">
@@ -268,20 +264,18 @@ export function SteamFamilySharing() {
               <div className="flex items-center gap-2">
                 <Info className="h-4 w-4 text-purple-400 flex-shrink-0" />
                 <p className="text-xs text-slate-400">
-                  Inserisci lo Steam ID (17 cifre) degli amici. Trovalo nel profilo Steam.
-                </p>
+                  {t('steamFamilySharing.enterSteamIdDesc')}</p>
               </div>
             </div>
             <div className="flex gap-2">
               <Input
-                placeholder="Steam ID (es. 76561198012345678)"
+                placeholder={t('steamFamilySharing.steamIdPh')}
                 value={manualSteamId}
                 onChange={(e) => setManualSteamId(e.target.value)}
                 className="flex-1 bg-slate-900/50 border-slate-700/50 text-white placeholder:text-slate-500"
               />
               <Button onClick={handleAddManualAccount}>
-                Aggiungi
-              </Button>
+                {t('steamFamilySharing.add')}</Button>
             </div>
 
             {manualAccounts.length > 0 && (
@@ -309,8 +303,7 @@ export function SteamFamilySharing() {
               <div className="flex items-center gap-2">
                 <Info className="h-4 w-4 text-purple-400 flex-shrink-0" />
                 <p className="text-xs text-slate-400">
-                  Cerca automaticamente la configurazione Steam sul PC.
-                </p>
+                  {t('steamFamilySharing.autoDetectDesc')}</p>
               </div>
             </div>
             <div className="flex flex-col gap-2">
@@ -323,13 +316,11 @@ export function SteamFamilySharing() {
                 {isDetecting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Rilevamento in corso...
-                  </>
+                    {t('steamFamilySharing.detecting')}</>
                 ) : (
                   <>
                     <Search className="mr-2 h-4 w-4" />
-                    Avvia Rilevamento Automatico
-                  </>
+                    {t('steamFamilySharing.startAutoDetect')}</>
                 )}
               </Button>
 
@@ -337,7 +328,7 @@ export function SteamFamilySharing() {
                 <div className="space-y-2">
                   <Progress value={detectionProgress} />
                   <p className="text-sm text-muted-foreground text-center">
-                    Analisi configurazione Steam... {detectionProgress}%
+                    {t('steamFamilySharing.analyzingConfig')}{detectionProgress}%
                   </p>
                 </div>
               )}
@@ -349,11 +340,10 @@ export function SteamFamilySharing() {
               <div className="flex items-center gap-2">
                 <FileText className="h-4 w-4 text-purple-400 flex-shrink-0" />
                 <p className="text-xs text-slate-400">
-                  Carica <code className="font-mono bg-slate-900 px-1 rounded text-purple-400">sharedconfig.vdf</code>
+                  {t('steamFamilySharing.load')} <code className="font-mono bg-slate-900 px-1 rounded text-purple-400">sharedconfig.vdf</code>
                 </p>
                 <Button variant="ghost" size="sm" onClick={copyPath} className="text-slate-400 hover:text-white h-6 ml-auto">
-                  <Copy className="h-3 w-3 mr-1" /> Copia path
-                </Button>
+                  <Copy className="h-3 w-3 mr-1" /> {t('steamFamilySharing.copyPath')}</Button>
               </div>
             </div>
 
@@ -375,13 +365,11 @@ export function SteamFamilySharing() {
                 {isUploading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Analisi...
-                  </>
+                    {t('steamFamilySharing.analyzing')}</>
                 ) : (
                   <>
                     <Upload className="mr-2 h-4 w-4" />
-                    Analizza File
-                  </>
+                    {t('steamFamilySharing.analyzeFile')}</>
                 )}
               </Button>
             </div>
@@ -431,7 +419,7 @@ export function SteamFamilySharing() {
               <h3 className="text-sm font-semibold">{t('steamFamilySharingComp.giochiCondivisi')}</h3>
               <div className="flex gap-1">
                 <Badge variant="secondary" className="text-xs">{familySharingConfig.total_shared_games}</Badge>
-                <Badge variant="outline" className="text-xs">{familySharingConfig.authorized_users.length} utenti</Badge>
+                <Badge variant="outline" className="text-xs">{familySharingConfig.authorized_users.length}  {t('steamFamilySharing.usersUnit')}</Badge>
               </div>
             </div>
 
@@ -445,7 +433,7 @@ export function SteamFamilySharing() {
                     </div>
                   ))}
                   {familySharingConfig.shared_games.length > 5 && (
-                    <div className="text-center text-xs text-muted-foreground">+{familySharingConfig.shared_games.length - 5} altri...</div>
+                    <div className="text-center text-xs text-muted-foreground">+{familySharingConfig.shared_games.length - 5}  {t('steamFamilySharing.othersUnit')}</div>
                   )}
                 </div>
 
@@ -462,8 +450,7 @@ export function SteamFamilySharing() {
                     ) : (
                       <FolderOpen className="mr-2 h-4 w-4" />
                     )}
-                    Aggiorna Lista
-                  </Button>
+                    {t('steamFamilySharing.refreshList')}</Button>
                   
                   <Button 
                     onClick={() => {
@@ -472,19 +459,16 @@ export function SteamFamilySharing() {
                     size="sm"
                   >
                     <ExternalLink className="mr-2 h-4 w-4" />
-                    Vai alla Libreria
-                  </Button>
+                    {t('steamFamilySharing.goToLibrary')}</Button>
                 </div>
               </div>
             ) : (
               <div className="text-sm text-slate-400">
-                Nessun gioco condiviso trovato.
-              </div>
+                {t('steamFamilySharing.noSharedGames')}</div>
             )}
 
             <div className="p-2 rounded bg-green-500/10 border border-green-500/30 text-green-400 text-xs">
-              ✅ Family Sharing configurato!
-            </div>
+              ✅ {t('steamFamilySharing.familySharingConfigured')}</div>
           </div>
         )}
       </CardContent>
