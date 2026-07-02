@@ -267,7 +267,7 @@ export function LiveOcrOverlay() {
     a.download = `ocr-translations-${Date.now()}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success('Esportazione completata!');
+    toast.success(t('liveOcrOverlay.exportComplete'));
   };
 
   return (
@@ -283,11 +283,9 @@ export function LiveOcrOverlay() {
             </div>
             <div>
               <h1 className="text-lg font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
-                Live OCR Overlay
-              </h1>
+                {t('liveOcrOverlay.title')}</h1>
               <p className="text-white/70 text-2xs drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
-                Traduzione real-time dello schermo di gioco
-              </p>
+                {t('liveOcrOverlay.subtitle')}</p>
             </div>
           </div>
           
@@ -295,15 +293,14 @@ export function LiveOcrOverlay() {
             {isRunning && (
               <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black/30 shadow-lg shadow-black/40 border border-white/10">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                <span className="text-sm font-bold text-white">LIVE • {fps} FPS</span>
+                <span className="text-sm font-bold text-white">{t('liveOcrOverlay.liveLabel')} {fps} FPS</span>
               </div>
             )}
             
             {!isRunning ? (
               <Button onClick={handleStart} size="sm" className="bg-white/20 hover:bg-white/30 text-white border-0 shadow-lg">
                 <Play className="h-4 w-4 mr-2" />
-                Avvia
-              </Button>
+                {t('liveOcrOverlay.start')}</Button>
             ) : (
               <>
                 <Button onClick={handlePause} size="sm" className="bg-white/10 hover:bg-white/20 text-white border-white/20">
@@ -311,8 +308,7 @@ export function LiveOcrOverlay() {
                 </Button>
                 <Button onClick={handleStop} size="sm" className="bg-red-500/80 hover:bg-red-500 text-white border-0">
                   <Square className="h-4 w-4 mr-2" />
-                  Stop
-                </Button>
+                  {t('liveOcrOverlay.stop')}</Button>
               </>
             )}
           </div>
@@ -325,8 +321,7 @@ export function LiveOcrOverlay() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2">
               <Settings className="h-4 w-4" />
-              Impostazioni
-            </CardTitle>
+              {t('liveOcrOverlay.settings')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Modalità cattura */}
@@ -337,9 +332,9 @@ export function LiveOcrOverlay() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="fullscreen">🖥️ Schermo intero</SelectItem>
-                  <SelectItem value="region">📐 Regione</SelectItem>
-                  <SelectItem value="window">🪟 Finestra</SelectItem>
+                  <SelectItem value="fullscreen">🖥️ {t('liveOcrOverlay.fullScreen')}</SelectItem>
+                  <SelectItem value="region">📐 {t('liveOcrOverlay.region')}</SelectItem>
+                  <SelectItem value="window">🪟 {t('liveOcrOverlay.window')}</SelectItem>
                 </SelectContent>
               </Select>
               
@@ -359,14 +354,14 @@ export function LiveOcrOverlay() {
 
             {/* Lingue */}
             <div className="space-y-2">
-              <Label className="text-xs">Lingua origine</Label>
+              <Label className="text-xs">{t('liveOcrOverlay.sourceLanguage')}</Label>
               <Select value={sourceLanguage} onValueChange={setSourceLanguage}>
                 <SelectTrigger className="h-8 text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="auto">🔍 Auto-detect</SelectItem>
-                  <SelectItem value="en">🇬🇧 English</SelectItem>
+                  <SelectItem value="auto">🔍 {t('liveOcrOverlay.autoDetect')}</SelectItem>
+                  <SelectItem value="en">🇬🇧 {t('languages.en')}</SelectItem>
                   <SelectItem value="ja">🇯🇵 日本語</SelectItem>
                   <SelectItem value="zh">🇨🇳 中文</SelectItem>
                   <SelectItem value="ko">🇰🇷 한국어</SelectItem>
@@ -375,17 +370,17 @@ export function LiveOcrOverlay() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs">Lingua destinazione</Label>
+              <Label className="text-xs">{t('liveOcrOverlay.targetLanguage')}</Label>
               <Select value={targetLanguage} onValueChange={setTargetLanguage}>
                 <SelectTrigger className="h-8 text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="it">🇮🇹 Italiano</SelectItem>
-                  <SelectItem value="en">🇬🇧 English</SelectItem>
-                  <SelectItem value="es">🇪🇸 Español</SelectItem>
-                  <SelectItem value="fr">🇫🇷 Français</SelectItem>
-                  <SelectItem value="de">🇩🇪 Deutsch</SelectItem>
+                  <SelectItem value="it">🇮🇹 {t('languages.it')}</SelectItem>
+                  <SelectItem value="en">🇬🇧 {t('languages.en')}</SelectItem>
+                  <SelectItem value="es">🇪🇸 {t('languages.es')}</SelectItem>
+                  <SelectItem value="fr">🇫🇷 {t('languages.fr')}</SelectItem>
+                  <SelectItem value="de">🇩🇪 {t('languages.de')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -393,8 +388,8 @@ export function LiveOcrOverlay() {
             {/* Intervallo cattura */}
             <div className="space-y-2">
               <div className="flex justify-between">
-                <Label className="text-xs">Intervallo cattura</Label>
-                <span className="text-xs text-gray-400">{captureInterval}ms</span>
+                <Label className="text-xs">{t('liveOcrOverlay.captureInterval')}</Label>
+                <span className="text-xs text-gray-400">{captureInterval}{t('liveOcrOverlay.msUnit')}</span>
               </div>
               <Slider
                 value={[captureInterval]}
@@ -445,7 +440,7 @@ export function LiveOcrOverlay() {
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm flex items-center gap-2">
                 <Languages className="h-4 w-4" />
-                Testi rilevati ({detectedTexts.length})
+                {t('liveOcrOverlay.detectedTexts')} ({detectedTexts.length})
               </CardTitle>
               <div className="flex gap-1">
                 <Button onClick={copyAllTranslations} variant="ghost" size="sm" disabled={detectedTexts.length === 0}>
@@ -508,19 +503,19 @@ export function LiveOcrOverlay() {
         <Card className="bg-card/50 border-border/50 p-3">
           <div className="text-center">
             <div className="text-2xl font-bold text-green-400">{detectedTexts.length}</div>
-            <div className="text-2xs text-gray-400">Testi attuali</div>
+            <div className="text-2xs text-gray-400">{t('liveOcrOverlay.currentTexts')}</div>
           </div>
         </Card>
         <Card className="bg-card/50 border-border/50 p-3">
           <div className="text-center">
             <div className="text-2xl font-bold text-purple-400">{totalDetected}</div>
-            <div className="text-2xs text-gray-400">Totali sessione</div>
+            <div className="text-2xs text-gray-400">{t('liveOcrOverlay.sessionTotal')}</div>
           </div>
         </Card>
         <Card className="bg-card/50 border-border/50 p-3">
           <div className="text-center">
-            <div className="text-2xl font-bold text-amber-400">{captureInterval}ms</div>
-            <div className="text-2xs text-gray-400">Intervallo</div>
+            <div className="text-2xl font-bold text-amber-400">{captureInterval}{t('liveOcrOverlay.msUnit')}</div>
+            <div className="text-2xs text-gray-400">{t('liveOcrOverlay.interval')}</div>
           </div>
         </Card>
       </div>

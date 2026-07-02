@@ -1,4 +1,25 @@
 {
+  "liveOcrOverlay": {
+    "exportComplete": "Export complete!",
+    "title": "Live OCR Overlay",
+    "subtitle": "Real-time translation of the game screen",
+    "liveLabel": "LIVE •",
+    "start": "Start",
+    "stop": "Stop",
+    "settings": "Settings",
+    "fullScreen": "Full screen",
+    "region": "Region",
+    "window": "Window",
+    "sourceLanguage": "Source language",
+    "autoDetect": "Auto-detect",
+    "targetLanguage": "Target language",
+    "captureInterval": "Capture interval",
+    "msUnit": "ms",
+    "detectedTexts": "Detected texts",
+    "currentTexts": "Current texts",
+    "sessionTotal": "Session total",
+    "interval": "Interval"
+  },
   "gameMakerTranslator": {
     "title": "GameMaker Translator",
     "exeStrings": "EXE Strings",
