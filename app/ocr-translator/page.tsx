@@ -182,7 +182,7 @@ export default function OcrTranslatorPage() {
       try {
         await invoke('start_ocr_translator', { config: nextCfg });
         setIsRunning(true);
-        toast.success('Traduzione live OCR avviata');
+        toast.success(t('ocrTranslator.liveOcrStarted'));
         try {
           await invoke('toggle_ocr_overlay', { show: true });
           setOverlayOpen(true);
@@ -493,8 +493,7 @@ export default function OcrTranslatorPage() {
             </div>
             <div>
               <h1 className="text-lg font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
-                OCR Translator
-              </h1>
+                {t('ocrTranslator.titleLabel')}</h1>
               <p className="text-white/70 text-2xs drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
                 {t('ocrTranslator.subtitle')}
               </p>
@@ -514,11 +513,9 @@ export default function OcrTranslatorPage() {
       {/* Mode Tabs */}
       <div className="flex gap-1 p-1 rounded-lg bg-slate-800/50 border border-slate-700/50">
         <button onClick={() => setMode('live')} className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-all ${mode === 'live' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white hover:bg-slate-700/50'}`}>
-          <Monitor className="h-4 w-4" />Cattura Live
-        </button>
+          <Monitor className="h-4 w-4" />{t('ocrTranslator.liveCapture')}</button>
         <button onClick={() => setMode('screenshot')} className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-all ${mode === 'screenshot' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white hover:bg-slate-700/50'}`}>
-          <ImageIcon className="h-4 w-4" />Screenshot
-        </button>
+          <ImageIcon className="h-4 w-4" />{t('ocrTranslator.screenshot')}</button>
       </div>
 
       {/* Screenshot Static Mode */}
@@ -529,8 +526,7 @@ export default function OcrTranslatorPage() {
             <CardContent className="p-4 space-y-3">
               <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                 <span className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-white text-xs font-bold shadow-md">1</span>
-                Lingue
-              </div>
+                {t('ocrTranslator.languages')}</div>
               <div className="flex items-center gap-2 pl-8">
                 <select className="flex-1 h-9 px-3 rounded-lg border bg-background text-sm" value={config.language} onChange={(e) => setConfig({...config, language: e.target.value})}>
                   {SOURCE_LANGUAGES.map(l => <option key={l.code} value={l.code}>{l.flag} {l.name}</option>)}
@@ -552,31 +548,29 @@ export default function OcrTranslatorPage() {
             {screenshotProcessing ? (
               <div className="flex flex-col items-center gap-3">
                 <Loader2 className="h-10 w-10 animate-spin text-blue-400" />
-                <p className="text-sm text-blue-300">Analisi OCR e traduzione in corso...</p>
+                <p className="text-sm text-blue-300">{t('ocrTranslator.analyzing')}</p>
               </div>
             ) : screenshotSrc ? (
               <div className="space-y-3">
                 <div className="relative inline-block">
-                  <img src={screenshotSrc} alt="Screenshot" className="max-h-[300px] rounded-lg border border-slate-700 mx-auto" />
+                  <img src={screenshotSrc} alt={t('ocrTranslator.screenshot')} className="max-h-[300px] rounded-lg border border-slate-700 mx-auto" />
                   <button onClick={() => { setScreenshotSrc(null); setScreenshotTexts([]); }} className="absolute -top-2 -right-2 p-1 rounded-full bg-red-500 text-white hover:bg-red-400">
                     <X className="h-3 w-3" />
                   </button>
                 </div>
-                <p className="text-2xs text-slate-500">Trascina un altro screenshot per sostituire</p>
+                <p className="text-2xs text-slate-500">{t('ocrTranslator.dragToReplace')}</p>
               </div>
             ) : (
               <div className="space-y-3">
                 <ImageIcon className="h-12 w-12 text-slate-500 mx-auto" />
-                <p className="text-sm text-slate-300">Trascina uno screenshot qui</p>
-                <p className="text-2xs text-slate-500">oppure</p>
+                <p className="text-sm text-slate-300">{t('ocrTranslator.dragScreenshot')}</p>
+                <p className="text-2xs text-slate-500">{t('ocrTranslator.or')}</p>
                 <div className="flex items-center justify-center gap-2">
                   <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileSelect} />
                   <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => fileInputRef.current?.click()}>
-                    <Upload className="h-3.5 w-3.5" />Upload
-                  </Button>
+                    <Upload className="h-3.5 w-3.5" />{t('ocrTranslator.upload')}</Button>
                   <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={handlePaste}>
-                    <Clipboard className="h-3.5 w-3.5" />Incolla (Ctrl+V)
-                  </Button>
+                    <Clipboard className="h-3.5 w-3.5" />{t('ocrTranslator.paste')}</Button>
                 </div>
               </div>
             )}
@@ -589,18 +583,17 @@ export default function OcrTranslatorPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Scan className="h-4 w-4 text-blue-400" />
-                    <span className="text-sm font-medium text-white">{screenshotTexts.length} righe estratte</span>
+                    <span className="text-sm font-medium text-white">{screenshotTexts.length}  {t('ocrTranslator.linesExtracted')}</span>
                   </div>
                   <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={copyAllTranslations}>
-                    <Copy className="h-3 w-3" />Copia tutto
-                  </Button>
+                    <Copy className="h-3 w-3" />{t('ocrTranslator.copyAll')}</Button>
                 </div>
                 <ScrollArea className="max-h-[400px]">
                   <div className="space-y-1.5">
                     {screenshotTexts.map((text, i) => (
                       <div key={i} className="flex gap-3 p-2.5 rounded-lg bg-slate-800/40 border border-slate-700/30 hover:bg-slate-800/60 transition-colors">
                         <div className="flex-1 min-w-0">
-                          <p className="text-2xs text-slate-500 mb-0.5">Originale</p>
+                          <p className="text-2xs text-slate-500 mb-0.5">{t('ocrTranslator.original')}</p>
                           <p className="text-xs text-slate-300">{text.original}</p>
                         </div>
                         <ArrowRight className="h-3 w-3 text-blue-400 mt-4 shrink-0" />
@@ -713,15 +706,14 @@ export default function OcrTranslatorPage() {
                     }}
                     disabled={isRunning}
                   >
-                    <option value="libre">🌐 Lingva (Gratis/Veloce)</option>
-                    <option value="ollama">🦙 Ollama ({ollamaModel} locale)</option>
-                    <option value="vlm">👁️ Ollama VLM (LLaVA/Qwen-VL)</option>
-                    <option value="gemini">✨ Gemini (API Key richiesta)</option>
+                    <option value="libre">🌐 {t('ocrTranslator.lingvaOption')}</option>
+                    <option value="ollama">🦙 {t('ocrTranslator.ollamaOption')} ({ollamaModel}  {t('ocrTranslator.localeSuffix')}</option>
+                    <option value="vlm">👁️ {t('ocrTranslator.ollamaVlm')}</option>
+                    <option value="gemini">✨ {t('ocrTranslator.geminiOption')}</option>
                   </select>
                   {ocrProvider === 'vlm' && (
                     <div className="mt-2 text-2xs text-amber-400 bg-amber-500/10 p-2 rounded">
-                      <strong>{t('ocrTranslatorPage.notaVlm')}</strong> L&apos;immagine verrà inviata direttamente a Ollama. Assicurati di aver scaricato `llava`, `qwen2-vl` o `pixtral`. Questa modalità è lenta ma precisissima per il giapponese e lingue complesse.
-                    </div>
+                      <strong>{t('ocrTranslatorPage.notaVlm')}</strong> {t('ocrTranslator.vlmDesc')}</div>
                   )}
                 </div>
                 
@@ -733,7 +725,7 @@ export default function OcrTranslatorPage() {
                   </label>
                   <input 
                     type="password"
-                    placeholder="AIza..."
+                    placeholder={t('ocrTranslator.geminiKeyPh')}
                     value={geminiApiKey}
                     onChange={(e) => setGeminiApiKey(e.target.value)}
                     className="w-full h-9 px-3 rounded-lg border bg-background text-sm"
@@ -744,7 +736,7 @@ export default function OcrTranslatorPage() {
                 <div>
                   <div className="flex justify-between text-xs mb-2">
                     <span>{t('ocrTranslator.scanInterval')}</span>
-                    <span className="font-mono">{config.capture_interval_ms}ms</span>
+                    <span className="font-mono">{config.capture_interval_ms}{t('ocrTranslator.msUnit')}</span>
                   </div>
                   <input 
                     type="range" min="200" max="2000" step="100"
