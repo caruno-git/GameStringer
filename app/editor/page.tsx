@@ -514,16 +514,15 @@ export default function EditorPage() {
   // --- Actions ---
   const fetchGames = async () => {
     try {
-      const response = await fetch('/api/games');
-      if (response.ok) {
-        const data = await response.json();
-        setGames((ensureArray(data) as GameApiItem[]).map((g) => ({
-          id: g.id,
-          title: g.title,
-          platform: 'Unknown',
-          coverUrl: g.header_image || g.coverUrl
-        })));
-      }
+      // Lista giochi dal backend Tauri (get_games), non da /api (stub 501 nel desktop).
+      const { invoke } = await import('@tauri-apps/api/core');
+      const data = await invoke<GameApiItem[]>('get_games');
+      setGames((ensureArray(data) as GameApiItem[]).map((g) => ({
+        id: g.id,
+        title: g.title,
+        platform: 'Unknown',
+        coverUrl: g.header_image || g.coverUrl
+      })));
     } catch (error: unknown) {
       clientLogger.error(`Error loading games: ${String(error)}`);
     }
