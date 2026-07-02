@@ -14,6 +14,7 @@
 
 import { clientLogger } from '@/lib/client-logger';
 import { getCorrections, type HumanCorrection } from './adaptive-mt';
+import { ollamaFetch } from './ollama-http';
 
 // ============================================================================
 // TYPES
@@ -385,9 +386,7 @@ export async function checkOllamaAvailability(): Promise<{
   version: string | null;
 }> {
   try {
-    const resp = await fetch('http://localhost:11434/api/tags', {
-      signal: AbortSignal.timeout(3000),
-    });
+    const resp = await ollamaFetch('/api/tags', { timeoutMs: 3000 });
     if (!resp.ok) return { available: false, models: [], version: null };
     
     const data = await resp.json();
@@ -396,9 +395,7 @@ export async function checkOllamaAvailability(): Promise<{
     // Check version
     let version: string | null = null;
     try {
-      const verResp = await fetch('http://localhost:11434/api/version', {
-        signal: AbortSignal.timeout(2000),
-      });
+      const verResp = await ollamaFetch('/api/version', { timeoutMs: 2000 });
       if (verResp.ok) {
         const verData = await verResp.json();
         version = verData.version || null;

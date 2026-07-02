@@ -3,6 +3,8 @@
  * Download consigliati, speed test, confronto A/B tra modelli
  */
 
+import { ollamaFetch } from './ai/ollama-http';
+
 const OLLAMA_URL = 'http://127.0.0.1:11434';
 
 // ============================================================================
@@ -335,9 +337,9 @@ export const RECOMMENDED_MODELS: RecommendedModel[] = [
 
 /** Verifica se Ollama è in esecuzione */
 export async function isOllamaRunning(): Promise<boolean> {
-  // Usa solo HTTP diretto (funziona sia in browser che in Tauri)
+  // In Tauri instrada via Rust (ollamaFetch) per aggirare il CORS del webview.
   try {
-    const res = await fetch(`${OLLAMA_URL}/api/tags`, { signal: AbortSignal.timeout(2000) });
+    const res = await ollamaFetch('/api/tags', { timeoutMs: 2000 });
     return res.ok;
   } catch {
     return false;
@@ -346,8 +348,8 @@ export async function isOllamaRunning(): Promise<boolean> {
 
 /** Lista modelli installati */
 export async function listInstalledModels(): Promise<OllamaModel[]> {
-  // Usa solo HTTP diretto (restituisce dati completi, funziona sia in browser che in Tauri)
-  const res = await fetch(`${OLLAMA_URL}/api/tags`, { signal: AbortSignal.timeout(5000) });
+  // In Tauri instrada via Rust (ollamaFetch) per aggirare il CORS del webview.
+  const res = await ollamaFetch('/api/tags', { timeoutMs: 5000 });
   if (!res.ok) throw new Error('Ollama non raggiungibile');
   const data = await res.json();
   return (data.models || []).map((m: { name: string; size?: number; digest?: string; modified_at?: string; details?: unknown }) => ({
@@ -391,12 +393,12 @@ export async function pullModel(modelName: string, onProgress?: (status: string,
 
 /** Elimina un modello */
 export async function deleteModel(modelName: string): Promise<void> {
-  const res = await fetch(`${OLLAMA_URL}/api/delete`, {
+  const res = await ollamaFetch('/api/delete', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name: modelName }),
   });
-  if (!res.ok) throw new Error(`Errore delete: ${res.statusText}`);
+  if (!res.ok) throw new Error(`Errore delete: ${res.status}`);
 }
 
 /** Speed test — misura tok/s con un prompt di traduzione reale */
@@ -472,7 +474,7 @@ export async function compareModels(
 
   const translateWith = async (model: string) => {
     const start = Date.now();
-    const res = await fetch(`${OLLAMA_URL}/api/chat`, {
+    const res = await ollamaFetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -482,7 +484,7 @@ export async function compareModels(
         options: { temperature: 0.1, num_predict: 500 },
       }),
     });
-    if (!res.ok) throw new Error(`${model}: ${res.statusText}`);
+    if (!res.ok) throw new Error(`${model}: ${res.status}`);
     const data = await res.json();
     const timeMs = Date.now() - start;
     const tokPerSec = data.eval_count ? data.eval_count / (data.eval_duration / 1e9) : 0;

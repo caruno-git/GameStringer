@@ -5,6 +5,8 @@
  * Risolve il problema storico: "Chest" = forziere o petto? L'IA VEDE lo schermo.
  */
 
+import { ollamaFetch } from '@/lib/ai/ollama-http';
+
 export interface VisionTranslateOptions {
   text: string;
   targetLanguage: string;
@@ -78,14 +80,14 @@ async function translateWithOllamaVision(
     body.images = [cleanBase64];
   }
 
-  const response = await fetch('http://localhost:11434/api/generate', {
+  const response = await ollamaFetch('/api/generate', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
 
   if (!response.ok) {
-    throw new Error(`Ollama Vision error: ${response.status} ${response.statusText}`);
+    throw new Error(`Ollama Vision error: ${response.status}`);
   }
 
   const data = await response.json();
@@ -218,7 +220,7 @@ export async function captureGameScreenshot(): Promise<string | null> {
  */
 export async function getAvailableVisionModels(): Promise<string[]> {
   try {
-    const response = await fetch('http://localhost:11434/api/tags');
+    const response = await ollamaFetch('/api/tags');
     if (!response.ok) return [];
     const data = await response.json();
     const models = data.models || [];

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { clientLogger } from '@/lib/client-logger';
+import { ollamaFetch } from '@/lib/ai/ollama-http';
 
 // Web Speech API type declarations (non incluse in tutti i tsconfig)
 interface SpeechRecognitionEvent extends Event { results: SpeechRecognitionResultList; resultIndex: number; }
@@ -477,7 +478,7 @@ export class SpeechToTextEngine {
     const arrayBuffer = await audioBlob.arrayBuffer();
     const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
 
-    const res = await fetch('http://localhost:11434/api/generate', {
+    const res = await ollamaFetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -486,7 +487,7 @@ export class SpeechToTextEngine {
         images: [base64], // Ollama usa "images" per dati binari
         stream: false,
       }),
-      signal: AbortSignal.timeout(30000),
+      timeoutMs: 30000,
     });
 
     if (!res.ok) {
@@ -633,7 +634,7 @@ export async function checkSTTProviders(): Promise<STTProviderInfo[]> {
   // Check Ollama
   let hasOllama = false;
   try {
-    const res = await fetch('http://localhost:11434/api/tags', { signal: AbortSignal.timeout(2000) });
+    const res = await ollamaFetch('/api/tags', { timeoutMs: 2000 });
     hasOllama = res.ok;
   } catch {}
 

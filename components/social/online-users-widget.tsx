@@ -94,7 +94,7 @@ export function OnlineUsersWidget({
       <div className={cn("p-4 rounded-xl bg-slate-800/50 border border-slate-700/50", className)}>
         <div className="flex items-center gap-2 mb-3">
           <Users className="h-4 w-4 text-emerald-400" />
-          <span className="text-sm font-semibold text-white">{t('social.onlineFriends')}</span>
+          <span className="text-sm font-semibold text-white">{t('social.online')}</span>
         </div>
         <div className="flex items-center justify-center py-4">
           <RefreshCw className="h-5 w-5 text-slate-500 animate-spin" />
@@ -115,7 +115,7 @@ export function OnlineUsersWidget({
             <Users className="h-4 w-4 text-emerald-400" />
             <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
           </div>
-          <span className="text-sm font-semibold text-white">{t('social.onlineFriends')}</span>
+          <span className="text-sm font-semibold text-white">{t('social.online')}</span>
           <Badge variant="secondary" className="text-xs bg-emerald-500/20 text-emerald-400">
             {onlineUsers.length}
           </Badge>

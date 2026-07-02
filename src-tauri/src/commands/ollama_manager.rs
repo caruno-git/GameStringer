@@ -461,3 +461,51 @@ pub async fn get_recommended_ollama_models() -> Result<Vec<OllamaModelInfo>, Str
         },
     ])
 }
+
+#[derive(Debug, Serialize)]
+pub struct OllamaHttpResponse {
+    pub status: u16,
+    pub ok: bool,
+    pub body: String,
+}
+
+/// Proxy HTTP generico verso Ollama locale (127.0.0.1:11434), eseguito lato Rust
+/// con reqwest per aggirare il CORS del webview Tauri (origine `tauri://localhost` /
+/// `http://tauri.localhost` non ammessa dagli `OLLAMA_ORIGINS` di default).
+/// Supporta chiamate NON-streaming: GET/DELETE e POST con body JSON (`stream:false`).
+#[tauri::command]
+pub async fn ollama_http(
+    method: String,
+    path: String,
+    body: Option<String>,
+    timeout_ms: Option<u64>,
+) -> Result<OllamaHttpResponse, String> {
+    let client = reqwest::Client::new();
+    let url = format!("http://127.0.0.1:11434{}", path);
+    let timeout = std::time::Duration::from_millis(timeout_ms.unwrap_or(180_000));
+
+    let builder = match method.to_uppercase().as_str() {
+        "GET" => client.get(&url),
+        "DELETE" => client.delete(&url),
+        "POST" => {
+            let b = client.post(&url).header("Content-Type", "application/json");
+            match body {
+                Some(payload) => b.body(payload),
+                None => b,
+            }
+        }
+        other => return Err(format!("Metodo HTTP non supportato: {}", other)),
+    };
+
+    let resp = builder
+        .timeout(timeout)
+        .send()
+        .await
+        .map_err(|e| format!("Ollama non raggiungibile: {}", e))?;
+
+    let status = resp.status().as_u16();
+    let ok = resp.status().is_success();
+    let body = resp.text().await.map_err(|e| e.to_string())?;
+
+    Ok(OllamaHttpResponse { status, ok, body })
+}

@@ -13,6 +13,7 @@ import { VlmTranslator } from '@/lib/ocr/vlm-translator';
 import { translateSingleSmart, translateWithFallback } from '@/lib/ai/ai-translate-direct';
 import { rawPixelsToBase64 } from '@/lib/image-utils';
 import { clientLogger } from '@/lib/client-logger';
+import { ollamaFetch } from '@/lib/ai/ollama-http';
 
 interface DetectedText {
   text: string;
@@ -212,7 +213,7 @@ export default function OcrTranslatorPage() {
     try {
       // Per Ollama con deepseek-ocr, usa l'endpoint locale
       if (ocrProvider === 'ollama') {
-        const ollamaResponse = await fetch('http://localhost:11434/api/chat', {
+        const ollamaResponse = await ollamaFetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

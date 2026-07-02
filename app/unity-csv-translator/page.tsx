@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { get, set, del } from 'idb-keyval';
+import { ollamaFetch } from '@/lib/ai/ollama-http';
 import { invoke } from '@tauri-apps/api/core';
 import { open as dialogOpen, save as dialogSave } from '@tauri-apps/plugin-dialog';
 import {
@@ -186,7 +187,7 @@ export default function UnityCsvTranslatorPage() {
   }, []); // eslint-disable-line
 
   useEffect(() => {
-    fetch('http://localhost:11434/api/tags').then(r => r.json()).then((d: { models?: { name: string }[] }) => {
+    ollamaFetch('/api/tags').then(r => r.json()).then((d: { models?: { name: string }[] }) => {
       const m = (d.models || []).map((x: { name: string }) => x.name);
       setModels(m);
       if (m.length && !m.includes(model)) setModel(m[0]);
@@ -346,7 +347,7 @@ export default function UnityCsvTranslatorPage() {
         if (!e.english || e.done || e.english === '...') continue;
         setProg({ cur: done, tot, tbl: t.name });
         try {
-          const resp = await fetch('http://localhost:11434/api/generate', {
+          const resp = await ollamaFetch('/api/generate', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ model, prompt: buildSingleTranslationPrompt(e.english, 'en', targetLang, genre), stream: false, options: { temperature: 0.4, num_predict: 1024 } }),
           });
@@ -376,7 +377,7 @@ export default function UnityCsvTranslatorPage() {
         if (abort.current) break;
         setProg({ cur: inkDone, tot: inkTodo.length, tbl: 'Ink' });
         try {
-          const resp = await fetch('http://localhost:11434/api/generate', {
+          const resp = await ollamaFetch('/api/generate', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ model, prompt: buildSingleTranslationPrompt(s.text, 'en', targetLang, genre), stream: false, options: { temperature: 0.4, num_predict: 1024 } }),
           });

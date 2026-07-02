@@ -48,6 +48,7 @@ import {
 } from "@/lib/ai/ai-pipeline"
 import { useTranslation } from '@/lib/i18n';
 import { clientLogger } from '@/lib/client-logger';
+import { ollamaFetch } from '@/lib/ai/ollama-http';
 
 const STEP_ICONS: Record<PipelineStepId, any> = {
   harvest: Sparkles,
@@ -122,7 +123,7 @@ export default function AIPipelinePage() {
     setAgentConfig(loadMultiAgentConfig());
     setBenchmarkHistory(loadBenchmarkHistory());
     // Fetch available Ollama models
-    fetch('http://localhost:11434/api/tags', { signal: AbortSignal.timeout(3000) })
+    ollamaFetch('/api/tags', { timeoutMs: 3000 })
       .then(r => r.ok ? r.json() : null)
       .then(data => {
         if (data?.models) {

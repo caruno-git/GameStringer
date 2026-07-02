@@ -435,7 +435,19 @@ export function MainLayout({ children }: MainLayoutProps) {
   // Ollama status polling per indicatore sidebar
   useEffect(() => {
     const checkOllama = async () => {
-      // Usa solo HTTP diretto (funziona sia in browser che in Tauri)
+      // In Tauri il fetch diretto dal webview è bloccato da CORS (origine tauri.localhost non
+      // ammessa da OLLAMA_ORIGINS): instradiamo via comando Rust, che usa reqwest/TCP senza CORS.
+      const isTauriEnv = typeof window !== 'undefined' && ((window as unknown as Record<string, unknown>).__TAURI_INTERNALS__ || (window as unknown as Record<string, unknown>).__TAURI_IPC__);
+      if (isTauriEnv) {
+        try {
+          const { invoke } = await import('@tauri-apps/api/core');
+          const s = await invoke<{ running: boolean }>('check_ollama_status');
+          setOllamaOnline(!!s.running);
+          return;
+        } catch {
+          // fallback al fetch diretto qui sotto
+        }
+      }
       try {
         const res = await fetch('http://127.0.0.1:11434/api/tags', { signal: AbortSignal.timeout(3000) });
         setOllamaOnline(res.ok);

@@ -6,6 +6,7 @@
  */
 
 import { clientLogger } from '@/lib/client-logger';
+import { ollamaFetch } from './ollama-http';
 
 export interface AIProvider {
   id: string;
@@ -199,9 +200,9 @@ class AITranslationService {
    */
   async checkOllamaAvailability(): Promise<boolean> {
     try {
-      const response = await fetch('http://localhost:11434/api/tags', {
+      const response = await ollamaFetch('/api/tags', {
         method: 'GET',
-        signal: AbortSignal.timeout(3000)
+        timeoutMs: 3000,
       });
       
       if (response.ok) {
@@ -407,7 +408,7 @@ REGOLE IMPORTANTI:
     const userPrompt = this.buildUserPrompt(request);
 
     try {
-      const response = await fetch('http://localhost:11434/api/chat', {
+      const response = await ollamaFetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -587,7 +588,7 @@ Rispondi in formato JSON con coppie "termine_inglese": "traduzione_italiana_sugg
 Includi solo termini gaming-specific o importanti per la consistenza.`;
 
     try {
-      const response = await fetch('http://localhost:11434/api/generate', {
+      const response = await ollamaFetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

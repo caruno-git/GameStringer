@@ -11,6 +11,7 @@
 
 import { getApiKeys } from './ai-translate-direct';
 import { clientLogger } from '@/lib/client-logger';
+import { ollamaFetch } from './ollama-http';
 
 export interface AgenticOptions {
   text: string;
@@ -29,18 +30,13 @@ export interface AgenticResult {
 }
 
 export class AgenticTranslator {
-  private static readonly OLLAMA_URL = 'http://localhost:11434';
-
   private static async getModel(): Promise<string> {
     const keys = getApiKeys();
     const preferredModel = keys.ollamaModel;
     
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000);
-      const res = await fetch(`${this.OLLAMA_URL}/api/tags`, { signal: controller.signal });
-      clearTimeout(timeoutId);
-      
+      const res = await ollamaFetch('/api/tags', { timeoutMs: 3000 });
+
       if (!res.ok) return 'llama3';
       const data = await res.json();
       const available = (data.models || []).map((m: { name: string }) => m.name) as string[];
@@ -60,10 +56,7 @@ export class AgenticTranslator {
   }
 
   private static async callOllama(system: string, user: string, model: string): Promise<string> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 60000);
-
-    const res = await fetch(`${this.OLLAMA_URL}/api/chat`, {
+    const res = await ollamaFetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -75,10 +68,8 @@ export class AgenticTranslator {
         stream: false,
         options: { temperature: 0.1, num_predict: 2048 }
       }),
-      signal: controller.signal
+      timeoutMs: 60000,
     });
-
-    clearTimeout(timeoutId);
 
     if (!res.ok) throw new Error(`Ollama Error: ${res.status}`);
     const data = await res.json();

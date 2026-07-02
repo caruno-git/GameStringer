@@ -21,6 +21,7 @@ import { translateSmart, type TranslateOptions, type TranslateResult } from './a
 import { runQualityGates, type QualityReport } from '@/lib/quality/quality-gates';
 import { harvestBatch, type HarvestInput, type BatchHarvestResult } from '@/lib/context-harvester';
 import { buildRelevantGlossaryHint } from '@/lib/auto-glossary';
+import { ollamaFetch } from './ollama-http';
 import { clientLogger } from '@/lib/client-logger';
 
 // ============================================================================
@@ -143,7 +144,6 @@ async function translateWithAgent(
     return translateSmart(opts);
   }
 
-  const ollamaUrl = 'http://localhost:11434';
   const model = agent.model;
   const srcLang = opts.sourceLanguage || 'en';
   const tgtLang = opts.targetLanguage || 'it';
@@ -152,7 +152,7 @@ async function translateWithAgent(
 
   try {
     // Verifica che il modello sia disponibile
-    const tagsRes = await fetch(`${ollamaUrl}/api/tags`, { signal: AbortSignal.timeout(3000) });
+    const tagsRes = await ollamaFetch('/api/tags', { timeoutMs: 3000 });
     if (!tagsRes.ok) throw new Error('Ollama non raggiungibile');
     const tagsData = await tagsRes.json();
     const available = (tagsData.models || []).map((m: { name: string }) => m.name) as string[];
@@ -179,7 +179,7 @@ ${opts.context ? `\nContext: ${opts.context}` : ''}`;
       const batchPromises = batch.map(async (text) => {
         if (!text.trim() || text.length <= 1) return text;
         try {
-          const res = await fetch(`${ollamaUrl}/api/chat`, {
+          const res = await ollamaFetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -191,7 +191,7 @@ ${opts.context ? `\nContext: ${opts.context}` : ''}`;
               stream: false,
               options: { temperature: 0.1, num_predict: Math.max(256, text.length * 3) },
             }),
-            signal: AbortSignal.timeout(60000),
+            timeoutMs: 60000,
           });
           if (!res.ok) throw new Error(`Ollama ${res.status}`);
           const data = await res.json();

@@ -420,6 +420,9 @@ fn main() {
             commands::ollama_manager::stop_ollama,
             commands::ollama_manager::pull_ollama_model,
             commands::ollama_manager::get_recommended_ollama_models,
+            commands::ollama_manager::ollama_http,
+            commands::xunity_bridge::start_xunity_bridge,
+            commands::xunity_bridge::set_xunity_custom_endpoint,
             // System Monitor
             commands::system_monitor::get_system_stats,
             // GsPack Export/Import

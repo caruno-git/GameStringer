@@ -433,15 +433,38 @@ interface CategoryCardProps {
   onNewThread: () => void;
 }
 
+// Ultima visita per categoria (localStorage) → pallino "nuova attività".
+function getForumSeen(): Record<string, string> {
+  try { return JSON.parse(localStorage.getItem('gs_forum_seen') || '{}'); } catch { return {}; }
+}
+function markForumSeen(categoryId: string) {
+  try {
+    const m = getForumSeen();
+    m[categoryId] = new Date().toISOString();
+    localStorage.setItem('gs_forum_seen', JSON.stringify(m));
+  } catch { /* ignore */ }
+}
+
 function CategoryCard({ category, onClick, onNewThread }: CategoryCardProps) {
   const { t } = useTranslation();
   const Icon = CATEGORY_ICONS[category.slug] || MessageSquare;
   const theme = CATEGORY_THEMES[category.slug] || DEFAULT_THEME;
   const threadCount = category.thread_count || 0;
+  const [hasNew, setHasNew] = useState(() => {
+    if (typeof window === 'undefined' || !category.last_activity_at) return false;
+    const seen = getForumSeen()[category.id];
+    return !seen || category.last_activity_at > seen;
+  });
+
+  const handleOpen = () => {
+    markForumSeen(category.id);
+    setHasNew(false);
+    onClick();
+  };
 
   return (
     <button
-      onClick={onClick}
+      onClick={handleOpen}
       className="group relative rounded-xl overflow-hidden text-left transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-violet-500/10"
     >
       {/* Background gradient */}
@@ -479,6 +502,7 @@ function CategoryCard({ category, onClick, onNewThread }: CategoryCardProps) {
               <h3 className="font-bold text-white text-base leading-tight truncate group-hover:text-violet-100 transition-colors">
                 {t(`forum.categoryNames.${category.slug}`) || category.name}
               </h3>
+              {hasNew && <span className="flex-shrink-0 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-emerald-400/30 animate-pulse" aria-label="new" />}
               {category.is_locked && <Lock className="h-3.5 w-3.5 text-slate-500 flex-shrink-0" />}
             </div>
             <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
@@ -497,6 +521,9 @@ function CategoryCard({ category, onClick, onNewThread }: CategoryCardProps) {
               <span className={theme.accent}>{threadCount}</span>
             </div>
             <span className="text-slate-500">{threadCount === 1 ? t('forum.discussion') : (t('forum.discussions') || 'discussioni')}</span>
+            {category.last_activity_at && (
+              <span className="text-slate-600">· {new Date(category.last_activity_at).toLocaleDateString()}</span>
+            )}
           </div>
           {!category.is_locked && (
             <span

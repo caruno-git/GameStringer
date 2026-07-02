@@ -7,6 +7,7 @@
 
 import { getGenreConfig, type GameGenre } from './genre-prompts';
 import { clientLogger } from '@/lib/client-logger';
+import { ollamaFetch } from './ollama-http';
 
 export interface PostEditSuggestion {
   improved: string;
@@ -103,7 +104,7 @@ export async function suggestImprovement(req: PostEditRequest): Promise<PostEdit
   try {
     const ollamaModel = getOllamaModel();
     if (ollamaModel) {
-      const resp = await fetch('http://localhost:11434/api/generate', {
+      const resp = await ollamaFetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

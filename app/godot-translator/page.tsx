@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/core';
+import { ollamaFetch } from '@/lib/ai/ollama-http';
 import { open as dialogOpen, save as dialogSave } from '@tauri-apps/plugin-dialog';
 import {
   FileText, FolderOpen, Search, Loader2, CheckCircle2,
@@ -120,7 +121,7 @@ export default function GodotTranslatorPage() {
   useEffect(() => { logRef.current?.scrollTo(0, logRef.current.scrollHeight); }, [logs]);
 
   useEffect(() => {
-    fetch('http://localhost:11434/api/tags').then(r => r.json()).then((d: { models?: { name: string }[] }) => {
+    ollamaFetch('/api/tags').then(r => r.json()).then((d: { models?: { name: string }[] }) => {
       const m = (d.models || []).map((x: { name: string }) => x.name);
       setModels(m);
       if (m.length && !model) setModel(m[0]);
@@ -204,7 +205,7 @@ export default function GodotTranslatorPage() {
         if (entry.done || !entry.english) continue;
         setProg({ cur: done, tot, file: file.name });
         try {
-          const resp = await fetch('http://localhost:11434/api/generate', {
+          const resp = await ollamaFetch('/api/generate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

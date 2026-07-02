@@ -588,7 +588,7 @@ export default function GameDetailPage() {
     }
   };
 
-  const handleInstallUnityPatch = async () => {
+  const handleInstallUnityPatch = async (useLocalOllama = false) => {
     if (!game) return;
     
     setIsInstallingPatch(true);
@@ -631,14 +631,30 @@ export default function GameDetailPage() {
       }
       
       clientLogger.debug('[Patch] Installazione con:', `gamePath=${installPath}, gameExeName=${exeName}`);
+
+      // Opzione: motore di traduzione locale via Ollama (bridge HTTP ↔ XUnity CustomTranslate)
+      let bridgeUrl: string | null = null;
+      if (useLocalOllama) {
+        try {
+          const bridge = await invoke<{ url: string; port: number }>('start_xunity_bridge', {
+            port: null,
+            model: 'huihui_ai/hy-mt1.5-abliterated:1.8b',
+          });
+          bridgeUrl = bridge.url;
+          clientLogger.debug('[Patch] bridge Ollama avviato:', bridge.url);
+        } catch (e: unknown) {
+          clientLogger.warn('[Patch] bridge Ollama non avviato, uso Google:', String(e));
+        }
+      }
+
       clientLogger.debug('[Patch] Chiamata install_unity_autotranslator...');
-      
+
       const result = await invoke<{success: boolean; message: string}>('install_unity_autotranslator', {
         gamePath: installPath,
         gameExeName: exeName,
         // Fix issue #47: usa la lingua scelta dall'utente, non 'it' hardcoded
         targetLang: targetLang || language || 'it',
-        translationMode: 'google' // Usa Google Translate per traduzione automatica
+        translationMode: 'google' // seed valido; se Ollama locale ripuntiamo l'endpoint dopo
       });
 
       clientLogger.debug('[Patch] Risultato:', String(result));
@@ -650,6 +666,15 @@ export default function GameDetailPage() {
 
       if (result.success) {
         clientLogger.debug('[Patch] Installazione completata con successo!');
+        // Se richiesto, ripunta XUnity sul bridge Ollama locale (Endpoint=CustomTranslate)
+        if (useLocalOllama && bridgeUrl) {
+          try {
+            await invoke('set_xunity_custom_endpoint', { gamePath: installPath, url: bridgeUrl });
+            clientLogger.debug('[Patch] XUnity puntato sul bridge Ollama locale');
+          } catch (e: unknown) {
+            clientLogger.warn('[Patch] set_xunity_custom_endpoint fallito:', String(e));
+          }
+        }
         // Traccia attività
         await activityHistory.trackPatch(
           game.name || game.title,

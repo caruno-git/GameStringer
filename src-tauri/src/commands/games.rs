@@ -1726,35 +1726,69 @@ async fn parse_steam_manifest(manifest_path: &Path) -> Result<Option<GameScanRes
 pub async fn find_executables_in_folder(folder_path: String) -> Result<Vec<String>, String> {
     log::info!("🔍 Cercando eseguibili in: {}", folder_path);
     
-    let mut executables = Vec::new();
-    
+    // L'eseguibile del gioco ha spesso lo stesso nome della cartella di installazione.
+    let folder_name = std::path::Path::new(&folder_path)
+        .file_name()
+        .map(|n| n.to_string_lossy().to_lowercase())
+        .unwrap_or_default();
+
+    // (punteggio, dimensione, nome): ordiniamo per mettere per primo il gioco vero,
+    // non il primo .exe in ordine alfabetico.
+    let mut candidates: Vec<(u8, u64, String)> = Vec::new();
+
     match tokio::fs::read_dir(&folder_path).await {
         Ok(mut entries) => {
             while let Ok(Some(entry)) = entries.next_entry().await {
                 let path = entry.path();
-                
+
                 if let Some(extension) = path.extension() {
                     if extension.to_string_lossy().to_lowercase() == "exe" {
                         if let Some(file_name) = path.file_name() {
                             let name = file_name.to_string_lossy().to_string();
-                            // Escludi eseguibili di sistema/launcher comuni
-                            if !name.to_lowercase().contains("unins") 
-                                && !name.to_lowercase().contains("redist")
-                                && !name.to_lowercase().contains("vcredist")
-                                && !name.to_lowercase().contains("dxsetup")
-                                && !name.to_lowercase().contains("crashhandler")
-                                && !name.to_lowercase().contains("ue4prereq")
-                            {
-                                executables.push(name);
+                            let lower = name.to_lowercase();
+                            // Escludi installer/redistributable/crash-handler E GameStringer
+                            // stesso: se la portable è copiata nella cartella del gioco era
+                            // proprio lei a farsi lanciare al posto del gioco.
+                            let is_junk = lower.contains("unins")
+                                || lower.contains("redist")
+                                || lower.contains("vcredist")
+                                || lower.contains("dxsetup")
+                                || lower.contains("crashhandler")
+                                || lower.contains("crashpad")
+                                || lower.contains("ue4prereq")
+                                || lower.contains("dotnet")
+                                || lower.contains("gamestringer");
+                            if is_junk {
+                                continue;
                             }
+
+                            let size = entry.metadata().await.map(|m| m.len()).unwrap_or(0);
+                            let stem = lower.trim_end_matches(".exe");
+                            let score = if !folder_name.is_empty() && stem == folder_name {
+                                2
+                            } else if !folder_name.is_empty()
+                                && (folder_name.contains(stem) || stem.contains(folder_name.as_str()))
+                            {
+                                1
+                            } else {
+                                0
+                            };
+                            candidates.push((score, size, name));
                         }
                     }
                 }
             }
-            
-            // Ordina per nome
-            executables.sort();
-            log::info!("✅ Trovati {} eseguibili", executables.len());
+
+            // Ordina: prima match col nome cartella, poi dimensione (il binario del gioco
+            // è di norma il più grande), infine alfabetico.
+            candidates.sort_by(|a, b| {
+                b.0.cmp(&a.0)
+                    .then(b.1.cmp(&a.1))
+                    .then(a.2.to_lowercase().cmp(&b.2.to_lowercase()))
+            });
+
+            let executables: Vec<String> = candidates.into_iter().map(|(_, _, n)| n).collect();
+            log::info!("✅ Trovati {} eseguibili (migliore: {:?})", executables.len(), executables.first());
             Ok(executables)
         }
         Err(e) => {

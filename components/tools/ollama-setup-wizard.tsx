@@ -20,6 +20,7 @@ import {
 import { safeInvoke as invoke } from '@/lib/tauri-wrapper';
 import { listen } from '@tauri-apps/api/event';
 import { useTranslation } from '@/lib/i18n';
+import { ollamaFetch } from '@/lib/ai/ollama-http';
 
 interface OllamaStatus {
   installed: boolean;
@@ -53,7 +54,7 @@ export function OllamaSetupWizard({ onComplete }: { onComplete?: () => void }) {
     setLoading(true);
     setError(null);
     try {
-      const resp = await fetch('http://127.0.0.1:11434/api/tags', { signal: AbortSignal.timeout(3000) });
+      const resp = await ollamaFetch('/api/tags', { timeoutMs: 3000 });
       if (resp.ok) {
         const data = await resp.json();
         const modelNames: string[] = (data.models || []).map((m: { name: string }) => m.name);

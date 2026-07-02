@@ -64,6 +64,7 @@ pub mod translation_stats;
 pub mod audio_patcher;
 pub mod offline_translation;
 pub mod ollama_manager;
+pub mod xunity_bridge;
 pub mod system_monitor;
 pub mod gspack;
 #[allow(dead_code, unused_imports)]

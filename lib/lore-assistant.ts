@@ -6,6 +6,8 @@
  * Trasforma GameStringer da "traduttore" a "compagno di co-op".
  */
 
+import { ollamaFetch } from './ai/ollama-http';
+
 export interface DialogueEntry {
   id: string;
   text: string;
@@ -127,7 +129,7 @@ Answer based ONLY on the dialogues above. If you can identify character names, r
   private async callLLM(systemPrompt: string, userPrompt: string): Promise<string> {
     // 1. Ollama
     try {
-      const resp = await fetch('http://localhost:11434/api/generate', {
+      const resp = await ollamaFetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { ollamaFetch } from '@/lib/ai/ollama-http';
 import { 
   Gamepad2, 
   Clock,
@@ -152,7 +153,7 @@ export default function Dashboard() {
       for (const delay of checkIntervals) {
         await new Promise(r => setTimeout(r, delay));
         try {
-          const r = await fetch('http://localhost:11434/api/tags', { signal: AbortSignal.timeout(3000) });
+          const r = await ollamaFetch('/api/tags', { timeoutMs: 3000 });
           if (r.ok) {
             const data = await r.json();
             const models = data.models as unknown[];
@@ -187,7 +188,7 @@ export default function Dashboard() {
     // Ollama status — HTTP diretto (funziona sia in browser che in Tauri)
     (async () => {
       try {
-        const r = await fetch('http://localhost:11434/api/tags', { signal: AbortSignal.timeout(3000) });
+        const r = await ollamaFetch('/api/tags', { timeoutMs: 3000 });
         if (r.ok) {
           const data = await r.json();
           const models = data.models as unknown[];

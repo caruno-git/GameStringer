@@ -2,6 +2,7 @@ import { AgenticTranslator } from './agentic-translator';
 import { type BatchHarvestResult, type HarvestInput } from '@/lib/context-harvester';
 import { type GameGenre } from './genre-prompts';
 import { clientLogger } from '@/lib/client-logger';
+import { ollamaFetch } from './ollama-http';
 import { isTauri } from '@/lib/tauri-api';
 
 // Extracted modules
@@ -810,12 +811,11 @@ async function translateWithTranslateGemma(
   _apiKey: string,
   opts: TranslateOptions
 ): Promise<string[]> {
-  const ollamaUrl = 'http://localhost:11434';
   const srcLang = opts.sourceLanguage || 'en';
 
   // Verifica se il modello è installato
   try {
-    const tagsRes = await fetch(`${ollamaUrl}/api/tags`, { method: 'GET', signal: AbortSignal.timeout(3000) });
+    const tagsRes = await ollamaFetch('/api/tags', { method: 'GET', timeoutMs: 3000 });
     if (!tagsRes.ok) throw new Error('Ollama non raggiungibile');
     const tagsData = await tagsRes.json();
     const available = (tagsData.models || []).map((m: { name: string }) => m.name);
@@ -835,7 +835,7 @@ async function translateWithTranslateGemma(
   const prompt = `Translate from ${srcLang} to ${opts.targetLanguage}. Return ONLY the translations, one per line, separated by |||. Do NOT add explanations.\n\n${batchText}`;
 
   try {
-    const res = await fetch(`${ollamaUrl}/api/chat`, {
+    const res = await ollamaFetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -844,7 +844,7 @@ async function translateWithTranslateGemma(
         stream: false,
         options: { temperature: 0.2, num_predict: 4096 },
       }),
-      signal: AbortSignal.timeout(120000),
+      timeoutMs: 120000,
     });
 
     if (!res.ok) {
@@ -866,7 +866,7 @@ async function translateWithTranslateGemma(
     if (results.length !== opts.texts.length && opts.texts.length > 1) {
       results.length = 0;
       for (const text of opts.texts) {
-        const singleRes = await fetch(`${ollamaUrl}/api/chat`, {
+        const singleRes = await ollamaFetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -875,7 +875,7 @@ async function translateWithTranslateGemma(
             stream: false,
             options: { temperature: 0.2, num_predict: 500 },
           }),
-          signal: AbortSignal.timeout(60000),
+          timeoutMs: 60000,
         });
         if (!singleRes.ok) throw new Error(`TranslateGemma ${singleRes.status}`);
         const singleData = await singleRes.json();
@@ -896,7 +896,6 @@ async function translateWithHYMT(
   _apiKey: string,
   opts: TranslateOptions
 ): Promise<string[]> {
-  const ollamaUrl = 'http://localhost:11434';
   const srcCode = opts.sourceLanguage || 'en';
   const tgtCode = opts.targetLanguage || 'it';
   const srcLang = LANG_NAMES[srcCode] || srcCode;
@@ -905,7 +904,7 @@ async function translateWithHYMT(
   // Auto-detect miglior modello HY-MT disponibile (7B > 1.8B)
   let modelName = '';
   try {
-    const tagsRes = await fetch(`${ollamaUrl}/api/tags`, { method: 'GET', signal: AbortSignal.timeout(3000) });
+    const tagsRes = await ollamaFetch('/api/tags', { method: 'GET', timeoutMs: 3000 });
     if (!tagsRes.ok) throw new Error('Ollama non raggiungibile');
     const tagsData = await tagsRes.json();
     const available = (tagsData.models || []).map((m: { name: string }) => m.name);
@@ -1001,7 +1000,7 @@ Rules:
       // Scala num_predict in base alla lunghezza del testo
       const numPredict = Math.max(500, Math.min(2000, text.length * 3));
 
-      const res = await fetch(`${ollamaUrl}/api/chat`, {
+      const res = await ollamaFetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -1013,7 +1012,7 @@ Rules:
           stream: false,
           options: { temperature: 0.1, num_predict: numPredict },
         }),
-        signal: AbortSignal.timeout(90000),
+        timeoutMs: 90000,
       });
       if (!res.ok) throw new Error(`HY-MT ${res.status}`);
       const data = await res.json();
@@ -1256,7 +1255,6 @@ async function translateWithOllamaGeneric(
   _apiKey: string,
   opts: TranslateOptions
 ): Promise<string[]> {
-  const ollamaUrl = 'http://localhost:11434';
   const srcLang = opts.sourceLanguage || 'en';
   const tgtLang = opts.targetLanguage || 'it';
   const keys = getApiKeys();
@@ -1265,7 +1263,7 @@ async function translateWithOllamaGeneric(
   // Trova modello disponibile
   let selectedModel = '';
   try {
-    const tagsRes = await fetch(`${ollamaUrl}/api/tags`, { method: 'GET', signal: AbortSignal.timeout(3000) });
+    const tagsRes = await ollamaFetch('/api/tags', { method: 'GET', timeoutMs: 3000 });
     if (!tagsRes.ok) throw new Error('Ollama non raggiungibile');
     const tagsData = await tagsRes.json();
     const available = (tagsData.models || []).map((m: { name: string }) => m.name) as string[];
@@ -1371,7 +1369,7 @@ ${opts.context ? `\nContext: ${opts.context}` : ''}`;
           ];
 
       try {
-        const res = await fetch(`${ollamaUrl}/api/chat`, {
+        const res = await ollamaFetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1380,7 +1378,7 @@ ${opts.context ? `\nContext: ${opts.context}` : ''}`;
             stream: false,
             options: { temperature: 0.1, num_predict: Math.max(256, inputText.length * 3) },
           }),
-          signal: AbortSignal.timeout(60000),
+          timeoutMs: 60000,
         });
 
         if (!res.ok) throw new Error(`Ollama ${res.status}`);
@@ -1710,7 +1708,7 @@ export async function checkChainRequirements(presetId: ChainPreset): Promise<Pro
 
   if (ollamaProviders.length > 0) {
     try {
-      const res = await fetch('http://localhost:11434/api/tags', { signal: AbortSignal.timeout(2000) });
+      const res = await ollamaFetch('/api/tags', { timeoutMs: 2000 });
       if (res.ok) {
         ollamaOnline = true;
         const data = await res.json();

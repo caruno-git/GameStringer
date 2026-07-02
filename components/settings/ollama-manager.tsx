@@ -60,12 +60,35 @@ export function OllamaManager() {
 
   const checkStatus = useCallback(async () => {
     try {
-      // Usa HTTP diretto (funziona sia in browser che in Tauri)
       const isTauriEnv = typeof window !== 'undefined' && ((window as unknown as Record<string, unknown>).__TAURI_INTERNALS__ || (window as unknown as Record<string, unknown>).__TAURI_IPC__);
       setIsTauri(!!isTauriEnv);
+
+      // In Tauri il fetch diretto dal webview verso 127.0.0.1:11434 è bloccato da CORS:
+      // l'origine del webview (tauri.localhost) non rientra fra le OLLAMA_ORIGINS di default,
+      // quindi la fetch fallisce e Ollama appare "Non installato / Spento" pur essendo attivo.
+      // Instradiamo la detection via comando Rust (reqwest/TCP + `where ollama`), che non ha CORS.
+      if (isTauriEnv) {
+        try {
+          const { invoke } = await import('@tauri-apps/api/core');
+          const s = await invoke<OllamaStatus>('check_ollama_status');
+          setStatus({
+            installed: s.installed,
+            running: s.running,
+            version: s.version || '',
+            models: s.models || [],
+            install_path: s.install_path || '',
+          });
+          return;
+        } catch (e: unknown) {
+          clientLogger.error('[OllamaManager] check_ollama_status invoke failed, fallback HTTP:', e);
+          // prosegue col fallback HTTP diretto qui sotto
+        }
+      }
+
+      // Browser / dev (o fallback): fetch HTTP diretto
       try {
-        const resp = await fetch('http://127.0.0.1:11434/api/tags', { 
-          signal: AbortSignal.timeout(3000) 
+        const resp = await fetch('http://127.0.0.1:11434/api/tags', {
+          signal: AbortSignal.timeout(3000)
         });
         if (resp.ok) {
           const data = await resp.json();

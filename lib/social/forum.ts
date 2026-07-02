@@ -18,6 +18,7 @@ export interface ForumCategory {
   is_locked: boolean;
   thread_count?: number;
   post_count?: number;
+  last_activity_at?: string | null; // max(last_reply_at, created_at) dei thread della categoria
   last_thread?: {
     id: string;
     title: string;
@@ -147,8 +148,20 @@ export async function getCategories(): Promise<ForumCategory[]> {
         .select('*', { count: 'exact', head: true })
         .eq('category_id', cat.id)
         .eq('is_hidden', false);
-      
-      return { ...cat, thread_count: count || 0 };
+
+      // Ultima attività (nuovo thread o nuova risposta) della categoria
+      const { data: latest } = await supabase
+        .from('forum_threads')
+        .select('last_reply_at, created_at')
+        .eq('category_id', cat.id)
+        .eq('is_hidden', false)
+        .order('last_reply_at', { ascending: false, nullsFirst: false })
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      const last_activity_at = (latest?.last_reply_at as string | null) || (latest?.created_at as string | null) || null;
+
+      return { ...cat, thread_count: count || 0, last_activity_at };
     })
   );
   
