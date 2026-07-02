@@ -251,9 +251,9 @@ export function InjektUIEnhanced() {
       loadProfiles();
       updateStats();
       loadCustomTranslations();
-      alert('Profile imported successfully!');
+      alert(t('injektUi.importSuccess'));
     } else {
-      alert('Error importing profile');
+      alert(t('injektUi.importError'));
     }
   };
 
@@ -275,16 +275,14 @@ export function InjektUIEnhanced() {
               <div className="p-1.5 rounded-full bg-purple-500/20 border border-purple-400/30">
                 <Globe className="h-4 w-4 text-purple-400" />
               </div>
-              Total Translations
-            </CardTitle>
+              {t('injektUi.totalTranslations')}</CardTitle>
           </CardHeader>
           <CardContent className="relative z-10">
             <div className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
               {injectionStats?.totalTranslations || 0}
             </div>
             <p className="text-xs text-gray-400 mt-1">
-              {injectionStats?.customTranslations || 0} custom
-            </p>
+              {injectionStats?.customTranslations || 0}  {t('injektUi.customUnit')}</p>
           </CardContent>
         </Card>
 
@@ -295,8 +293,7 @@ export function InjektUIEnhanced() {
               <div className="p-1.5 rounded-full bg-blue-500/20 border border-blue-400/30">
                 <Zap className="h-4 w-4 text-blue-400" />
               </div>
-              Total Injections
-            </CardTitle>
+              {t('injektUi.totalInjections')}</CardTitle>
           </CardHeader>
           <CardContent className="relative z-10">
             <div className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
@@ -315,8 +312,7 @@ export function InjektUIEnhanced() {
               <div className="p-1.5 rounded-full bg-cyan-500/20 border border-cyan-400/30">
                 <Database className="h-4 w-4 text-cyan-400" />
               </div>
-              Memory Addresses
-            </CardTitle>
+              {t('injektUi.memoryAddresses')}</CardTitle>
           </CardHeader>
           <CardContent className="relative z-10">
             <div className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
@@ -333,8 +329,7 @@ export function InjektUIEnhanced() {
               <div className="p-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/30">
                 <Clock className="h-4 w-4 text-emerald-400" />
               </div>
-              Last Update
-            </CardTitle>
+              {t('injektUi.lastUpdate')}</CardTitle>
           </CardHeader>
           <CardContent className="relative z-10">
             <div className="text-lg font-medium text-white">
@@ -354,24 +349,19 @@ export function InjektUIEnhanced() {
         <TabsList className="grid w-full grid-cols-5 bg-black/20 backdrop-blur-xl border-white/10 h-14">
           <TabsTrigger value="injection" className="data-[state=active]:bg-purple-500/20 data-[state=active]:text-white data-[state=active]:border-purple-400/30 transition-all duration-300">
             <Zap className="h-4 w-4 mr-2" />
-            Injection
-          </TabsTrigger>
+            {t('injektUi.injectionTab')}</TabsTrigger>
           <TabsTrigger value="translations" className="data-[state=active]:bg-blue-500/20 data-[state=active]:text-white data-[state=active]:border-blue-400/30 transition-all duration-300">
             <Globe className="h-4 w-4 mr-2" />
-            Translations
-          </TabsTrigger>
+            {t('injektUi.translationsTab')}</TabsTrigger>
           <TabsTrigger value="profiles" className="data-[state=active]:bg-cyan-500/20 data-[state=active]:text-white data-[state=active]:border-cyan-400/30 transition-all duration-300">
             <Database className="h-4 w-4 mr-2" />
-            Profiles
-          </TabsTrigger>
+            {t('injektUi.profilesTab')}</TabsTrigger>
           <TabsTrigger value="stats" className="data-[state=active]:bg-emerald-500/20 data-[state=active]:text-white data-[state=active]:border-emerald-400/30 transition-all duration-300">
             <TrendingUp className="h-4 w-4 mr-2" />
-            Statistics
-          </TabsTrigger>
+            {t('injektUi.statisticsTab')}</TabsTrigger>
           <TabsTrigger value="overlay" className="data-[state=active]:bg-orange-500/20 data-[state=active]:text-white data-[state=active]:border-orange-400/30 transition-all duration-300">
             <Settings className="h-4 w-4 mr-2" />
-            Overlay
-          </TabsTrigger>
+            {t('injektUi.overlayTab')}</TabsTrigger>
         </TabsList>
 
         {/* Tab Injection */}
@@ -381,8 +371,7 @@ export function InjektUIEnhanced() {
             <CardHeader className="relative z-10">
               <CardTitle className="text-white flex items-center gap-2">
                 <Zap className="h-5 w-5 text-purple-400" />
-                Detected Processes
-              </CardTitle>
+                {t('injektUi.detectedProcesses')}</CardTitle>
             </CardHeader>
             <CardContent className="relative z-10">
               <ScrollArea className="h-[300px]">
@@ -403,7 +392,7 @@ export function InjektUIEnhanced() {
                           <div>
                             <div className="font-medium text-white">{process.name}</div>
                             <div className="text-sm text-gray-400">
-                              PID: {process.pid} {process.windowTitle && `• ${process.windowTitle}`}
+                              {t('injektUi.pidLabel')} {process.pid} {process.windowTitle && `• ${process.windowTitle}`}
                             </div>
                           </div>
                         </div>
@@ -433,13 +422,11 @@ export function InjektUIEnhanced() {
                     {isInjecting ? (
                       <>
                         <Square className="mr-2 h-4 w-4" />
-                        Stop Injection
-                      </>
+                        {t('injektUi.stopInjection')}</>
                     ) : (
                       <>
                         <Play className="mr-2 h-4 w-4" />
-                        Start Injection
-                      </>
+                        {t('injektUi.startInjection')}</>
                     )}
                   </Button>
                   <Button
@@ -462,8 +449,7 @@ export function InjektUIEnhanced() {
               <CardHeader className="relative z-10">
                 <CardTitle className="flex items-center gap-2 text-white">
                   <TrendingUp className="h-5 w-5 text-emerald-400" />
-                  Injection in Progress
-                </CardTitle>
+                  {t('injektUi.injectionInProgress')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 relative z-10">
                 <div>
@@ -474,7 +460,7 @@ export function InjektUIEnhanced() {
                   <Progress value={Math.min((injectionCount / 100) * 100, 100)} className="bg-white/10" />
                 </div>
                 <div className="text-sm text-gray-400">
-                  Active monitoring for {selectedProcess.name}...
+                  {t('injektUi.activeMonitoring')} {selectedProcess.name}...
                 </div>
               </CardContent>
             </Card>
@@ -488,8 +474,7 @@ export function InjektUIEnhanced() {
             <CardHeader className="relative z-10">
               <CardTitle className="text-white flex items-center gap-2">
                 <Globe className="h-5 w-5 text-blue-400" />
-                Custom Translations
-              </CardTitle>
+                {t('injektUi.customTranslations')}</CardTitle>
             </CardHeader>
             <CardContent className="relative z-10">
               {selectedProcess ? (
@@ -497,14 +482,14 @@ export function InjektUIEnhanced() {
                   {/* Add translation form */}
                   <div className="grid grid-cols-2 gap-2">
                     <Input
-                      placeholder="Original text (EN)"
+                      placeholder={t('injektUi.originalPh')}
                       value={newTranslation.original}
                       onChange={(e) => setNewTranslation({ ...newTranslation, original: e.target.value })}
                       className="bg-white/10 border-white/20 text-white placeholder-gray-400 focus:border-blue-400/50"
                     />
                     <div className="flex gap-2">
                       <Input
-                        placeholder="Translation (IT)"
+                        placeholder={t('injektUi.translationPh')}
                         value={newTranslation.translated}
                         onChange={(e) => setNewTranslation({ ...newTranslation, translated: e.target.value })}
                         className="bg-white/10 border-white/20 text-white placeholder-gray-400 focus:border-blue-400/50"
@@ -539,8 +524,7 @@ export function InjektUIEnhanced() {
                 </div>
               ) : (
                 <div className="text-center text-gray-400 py-8">
-                  Select a process to manage translations
-                </div>
+                  {t('injektUi.selectProcess')}</div>
               )}
             </CardContent>
           </Card>
@@ -553,20 +537,17 @@ export function InjektUIEnhanced() {
             <CardHeader className="relative z-10">
               <CardTitle className="text-white flex items-center gap-2">
                 <Database className="h-5 w-5 text-cyan-400" />
-                Profile Management
-              </CardTitle>
+                {t('injektUi.profileManagement')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 relative z-10">
               <div className="flex gap-2">
                 <Button onClick={exportProfile} disabled={!selectedProcess} className="bg-cyan-500/20 hover:bg-cyan-500/30 border-cyan-400/50 text-cyan-200">
                   <Download className="mr-2 h-4 w-4" />
-                  Export Profile
-                </Button>
+                  {t('injektUi.exportProfile')}</Button>
                 <Label htmlFor="import-profile" className="cursor-pointer">
                   <Button variant="outline" className="bg-purple-500/20 hover:bg-purple-500/30 border-purple-400/50 text-purple-200">
                     <Upload className="mr-2 h-4 w-4" />
-                    Import Profile
-                  </Button>
+                    {t('injektUi.importProfile')}</Button>
                   <Input
                     id="import-profile"
                     type="file"
@@ -585,8 +566,7 @@ export function InjektUIEnhanced() {
                         <div>
                           <div className="font-medium text-white">{profile.gameName}</div>
                           <div className="text-sm text-gray-400">
-                            {profile.processName} • {Object.keys(profile.customTranslations).length} custom translations
-                          </div>
+                            {profile.processName} • {Object.keys(profile.customTranslations).length}  {t('injektUi.customTranslationsUnit')}</div>
                         </div>
                         <Switch
                           checked={profile.enabled}
