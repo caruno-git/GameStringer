@@ -368,7 +368,7 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Database className="h-5 w-5 text-amber-400" />
-          <h3 className="text-base font-bold text-white">GameMaker Translator</h3>
+          <h3 className="text-base font-bold text-white">{t('gameMakerTranslator.title')}</h3>
           {dataInfo && (
             <>
               <Badge variant="outline" className="text-2xs border-amber-500/30 text-amber-400">
@@ -376,12 +376,11 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
               </Badge>
               {dataInfo.is_yyc && (
                 <Badge variant="outline" className="text-2xs border-purple-500/30 text-purple-400">
-                  EXE Strings
-                </Badge>
+                  {t('gameMakerTranslator.exeStrings')}</Badge>
               )}
               {dataInfo.has_language_files && (
                 <Badge variant="outline" className="text-2xs border-emerald-500/30 text-emerald-400">
-                  .jn Files ({dataInfo.language_file_count})
+                  {t('gameMakerTranslator.jnFiles')} ({dataInfo.language_file_count})
                 </Badge>
               )}
             </>
@@ -389,16 +388,13 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
         </div>
         <div className="flex items-center gap-1.5">
           <Button size="sm" variant="outline" className="h-7 text-[11px]" onClick={importTranslations}>
-            <Upload className="h-3 w-3 mr-1" /> Importa
-          </Button>
+            <Upload className="h-3 w-3 mr-1" /> {t('gameMakerTranslator.importBtn')}</Button>
           <Button size="sm" variant="outline" className="h-7 text-[11px]" onClick={exportTranslations}
             disabled={translatedCount === 0}>
-            <Download className="h-3 w-3 mr-1" /> Esporta
-          </Button>
+            <Download className="h-3 w-3 mr-1" /> {t('gameMakerTranslator.export')}</Button>
           <Button size="sm" variant="outline" className="h-7 text-[11px] text-orange-400 border-orange-500/30 hover:bg-orange-500/10"
             onClick={restoreBackup}>
-            <RotateCcw className="h-3 w-3 mr-1" /> Ripristina
-          </Button>
+            <RotateCcw className="h-3 w-3 mr-1" /> {t('gameMakerTranslator.restore')}</Button>
         </div>
       </div>
 
@@ -406,7 +402,7 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
       {isScanning ? (
         <div className="flex items-center gap-2 py-8 justify-center text-slate-400">
           <Loader2 className="h-5 w-5 animate-spin" />
-          <span className="text-sm">Analisi in corso...</span>
+          <span className="text-sm">{t('gameMakerTranslator.analyzing')}</span>
         </div>
       ) : dataInfo ? (
         <>
@@ -415,7 +411,7 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
             <Card className="bg-slate-800/50 border-slate-700/50">
               <CardContent className="p-2.5 text-center">
                 <div className="text-lg font-bold text-white">{dataInfo.total_strings.toLocaleString()}</div>
-                <div className="text-micro text-slate-400 uppercase">Totali</div>
+                <div className="text-micro text-slate-400 uppercase">{t('gameMakerTranslator.total')}</div>
               </CardContent>
             </Card>
             <Card className="bg-slate-800/50 border-slate-700/50">
@@ -427,7 +423,7 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
             <Card className="bg-slate-800/50 border-slate-700/50">
               <CardContent className="p-2.5 text-center">
                 <div className="text-lg font-bold text-emerald-400">{translatedCount}</div>
-                <div className="text-micro text-slate-400 uppercase">Tradotte</div>
+                <div className="text-micro text-slate-400 uppercase">{t('gameMakerTranslator.translated')}</div>
               </CardContent>
             </Card>
             <Card className="bg-slate-800/50 border-slate-700/50">
@@ -450,13 +446,12 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
                 <div className="flex items-center gap-2">
                   <Loader2 className="h-4 w-4 animate-spin text-sky-400" />
                   <span className="text-sm text-sky-300">
-                    Traduzione AI: {translateProgress}/{translateTotal}
+                    {t('gameMakerTranslator.aiTranslationLabel')} {translateProgress}/{translateTotal}
                   </span>
                 </div>
                 <Button size="sm" variant="destructive" className="h-6 text-2xs"
                   onClick={() => { abortRef.current = true; }}>
-                  <X className="h-3 w-3 mr-1" /> Stop
-                </Button>
+                  <X className="h-3 w-3 mr-1" /> {t('gameMakerTranslator.stop')}</Button>
               </div>
               <Progress value={(translateProgress / Math.max(translateTotal, 1)) * 100} className="h-1.5" />
             </div>
@@ -468,21 +463,19 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
               onClick={() => extractStrings(0)}
               disabled={isExtracting}>
               {isExtracting ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : <FileText className="h-3.5 w-3.5 mr-1.5" />}
-              Estrai Stringhe
-            </Button>
+              {t('gameMakerTranslator.extractStrings')}</Button>
             
             <Button size="xs" className="bg-sky-600 hover:bg-sky-700 text-white"
               onClick={translateBatch}
               disabled={isTranslating || strings.length === 0}>
               <Languages className="h-3.5 w-3.5 mr-1.5" />
-              Traduci Pagina
-            </Button>
+              {t('gameMakerTranslator.translatePage')}</Button>
 
             <Button size="xs" className="bg-violet-600 hover:bg-violet-700 text-white"
               onClick={translateAll}
               disabled={isTranslating || !dataInfo}>
               <Zap className="h-3.5 w-3.5 mr-1.5" />
-              Traduci Tutto ({dataInfo.translatable_strings})
+              {t('gameMakerTranslator.translateAll')} ({dataInfo.translatable_strings})
             </Button>
 
             <Button size="xs" className="bg-emerald-600 hover:bg-emerald-700 text-white"
@@ -503,7 +496,7 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
               <div className="relative flex-1">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
                 <Input
-                  aria-label={t('common.cerca')} placeholder="Cerca stringhe..."
+                  aria-label={t('common.cerca')} placeholder={t('gameMakerTranslator.searchPh')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter') searchStrings(); }}
@@ -516,8 +509,7 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
               <Button size="sm" variant={showOnlyUntranslated ? "default" : "outline"} className="h-8 text-[11px]"
                 onClick={() => setShowOnlyUntranslated(!showOnlyUntranslated)}>
                 <Filter className="h-3 w-3 mr-1" />
-                Solo non tradotte
-              </Button>
+                {t('gameMakerTranslator.onlyUntranslated')}</Button>
             </div>
           )}
 
@@ -527,9 +519,9 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
               {/* Table header */}
               <div className="grid grid-cols-[50px_1fr_1fr_60px] gap-2 px-3 py-2 bg-slate-800/80 text-2xs uppercase text-slate-400 font-bold tracking-wider">
                 <span>#</span>
-                <span>Originale</span>
+                <span>{t('gameMakerTranslator.original')}</span>
                 <span>{t('common.traduzione')}</span>
-                <span className="text-center">Azioni</span>
+                <span className="text-center">{t('gameMakerTranslator.actions')}</span>
               </div>
 
               {/* Rows */}
@@ -598,15 +590,14 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
                   <Button size="sm" variant="ghost" className="h-7 text-[11px]"
                     disabled={page === 0}
                     onClick={() => extractStrings(page - 1)}>
-                    <ChevronLeft className="h-3.5 w-3.5 mr-1" /> Precedente
-                  </Button>
+                    <ChevronLeft className="h-3.5 w-3.5 mr-1" /> {t('gameMakerTranslator.previous')}</Button>
                   <span className="text-[11px] text-slate-400">
-                    Pagina {page + 1} di {totalPages}
+                    {t('gameMakerTranslator.page')} {page + 1}  {t('gameMakerTranslator.of')} {totalPages}
                   </span>
                   <Button size="sm" variant="ghost" className="h-7 text-[11px]"
                     disabled={page >= totalPages - 1}
                     onClick={() => extractStrings(page + 1)}>
-                    Successiva <ChevronRight className="h-3.5 w-3.5 ml-1" />
+                    {t('gameMakerTranslator.next')}<ChevronRight className="h-3.5 w-3.5 ml-1" />
                   </Button>
                 </div>
               )}
@@ -617,8 +608,8 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
           {strings.length === 0 && !isExtracting && (
             <div className="text-center py-8 text-slate-500">
               <FileText className="h-8 w-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">Clicca &quot;Estrai Stringhe&quot; per iniziare</p>
-              <p className="text-[11px] mt-1">Verranno estratte le stringhe traducibili dal data.win</p>
+              <p className="text-sm">{t('gameMakerTranslator.clickExtractPrompt')}</p>
+              <p className="text-[11px] mt-1">{t('gameMakerTranslator.willExtractDesc')}</p>
             </div>
           )}
 
@@ -626,16 +617,13 @@ export function GameMakerTranslator({ gamePath, gameName }: GameMakerTranslatorP
           <div className="flex items-start gap-2 bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
             <AlertTriangle className="h-4 w-4 text-amber-400 mt-0.5 shrink-0" />
             <div className="text-[11px] text-amber-300/80 leading-relaxed">
-              <strong>Nota:</strong> Viene creato un backup automatico (data.win.bak) prima di ogni modifica. 
-              Usa &quot;Ripristina&quot; per tornare all&apos;originale. Le traduzioni più lunghe dell&apos;originale verranno
-              troncate per compatibilità con il formato GameMaker.
-            </div>
+              <strong>{t('gameMakerTranslator.noteLabel')}</strong>  {t('gameMakerTranslator.noteText')}</div>
           </div>
         </>
       ) : (
         <div className="text-center py-8 text-slate-500">
           <AlertTriangle className="h-8 w-8 mx-auto mb-2 opacity-50" />
-          <p className="text-sm">data.win non trovato in questa cartella</p>
+          <p className="text-sm">{t('gameMakerTranslator.dataWinNotFound')}</p>
           <p className="text-[11px] mt-1">{gamePath}</p>
         </div>
       )}
