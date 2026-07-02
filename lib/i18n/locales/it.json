@@ -1,4 +1,28 @@
 {
+  "retroOcrPanel": {
+    "reset": "Reset",
+    "upscaleLabel": "Upscale:",
+    "contrastLabel": "Contrasto:",
+    "thresholdLabel": "Threshold:",
+    "sharpenLabel": "Sharpen:",
+    "preprocessingParams": "Parametri Pre-Processing",
+    "upscaleFactor": "Upscale Factor",
+    "upscaleDesc": "Ingrandisce l'immagine preservando i pixel (nearest neighbor)",
+    "contrast": "Contrasto",
+    "binaryThreshold": "Threshold Binario",
+    "thresholdDesc": "Converte l'immagine in bianco/nero per miglior riconoscimento",
+    "processing": "Elaborazione...",
+    "startRetroOcr": "Avvia Retro OCR",
+    "tips": "Suggerimenti",
+    "tipForGames": "• Per games",
+    "eightBit": "8-bit",
+    "tip8bit": ": usa upscale 4x e threshold alto",
+    "tipDos": ": attiva \"Remove Dithering\" per palette limitate",
+    "tipForText": "• Per testo",
+    "japanese": "giapponese",
+    "tipJapanese": "(PC-98): usa upscale 4x con sharpen",
+    "tipInvert": "• Se il testo è scuro su sfondo chiaro, prova \"Inverti Colori\""
+  },
   "aiTranslationAssistant": {
     "enterText": "Inserisci il testo da tradurre",
     "copiedToClipboard": "Copiato negli appunti",

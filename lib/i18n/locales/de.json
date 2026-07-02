@@ -1,4 +1,28 @@
 {
+  "retroOcrPanel": {
+    "reset": "Reset",
+    "upscaleLabel": "Upscale:",
+    "contrastLabel": "Contrast:",
+    "thresholdLabel": "Threshold:",
+    "sharpenLabel": "Sharpen:",
+    "preprocessingParams": "Pre-Processing Parameters",
+    "upscaleFactor": "Upscale Factor",
+    "upscaleDesc": "Enlarges the image preserving the pixels (nearest neighbor)",
+    "contrast": "Contrast",
+    "binaryThreshold": "Binary Threshold",
+    "thresholdDesc": "Converts the image to black/white for better recognition",
+    "processing": "Processing...",
+    "startRetroOcr": "Start Retro OCR",
+    "tips": "Tips",
+    "tipForGames": "• For games",
+    "eightBit": "8-bit",
+    "tip8bit": ": use 4x upscale and high threshold",
+    "tipDos": ": enable \"Remove Dithering\" for limited palettes",
+    "tipForText": "• For text",
+    "japanese": "Japanese",
+    "tipJapanese": "(PC-98): use 4x upscale with sharpen",
+    "tipInvert": "• If the text is dark on a light background, try \"Invert Colors\""
+  },
   "aiTranslationAssistant": {
     "enterText": "Enter text to translate",
     "copiedToClipboard": "Copied to clipboard",

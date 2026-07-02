@@ -240,25 +240,24 @@ export function RetroOcrPanel({ onConfigChange, onStartOcr }: RetroOcrPanelProps
                 <h4 className="font-medium text-sm">{t('retroOcrPanelComp.configurazioneCorrente')}</h4>
                 <Button size="sm" variant="ghost" onClick={resetToDefault}>
                   <RotateCcw className="h-4 w-4 mr-1" />
-                  Reset
-                </Button>
+                  {t('retroOcrPanel.reset')}</Button>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
                 <div className="flex items-center gap-2">
                   <ZoomIn className="h-4 w-4 text-blue-500" />
-                  <span>Upscale: {config.upscaleFactor}x</span>
+                  <span>{t('retroOcrPanel.upscaleLabel')} {config.upscaleFactor}x</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Contrast className="h-4 w-4 text-orange-500" />
-                  <span>Contrasto: {config.contrastBoost.toFixed(1)}</span>
+                  <span>{t('retroOcrPanel.contrastLabel')} {config.contrastBoost.toFixed(1)}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <ScanLine className="h-4 w-4 text-purple-500" />
-                  <span>Threshold: {config.threshold ?? 'Off'}</span>
+                  <span>{t('retroOcrPanel.thresholdLabel')} {config.threshold ?? 'Off'}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Sparkles className="h-4 w-4 text-yellow-500" />
-                  <span>Sharpen: {config.sharpen ? 'On' : 'Off'}</span>
+                  <span>{t('retroOcrPanel.sharpenLabel')} {config.sharpen ? 'On' : 'Off'}</span>
                 </div>
               </div>
             </CardContent>
@@ -271,8 +270,7 @@ export function RetroOcrPanel({ onConfigChange, onStartOcr }: RetroOcrPanelProps
             <CardHeader className="pb-2">
               <CardTitle className="text-sm flex items-center gap-2">
                 <Settings2 className="h-4 w-4" />
-                Parametri Pre-Processing
-              </CardTitle>
+                {t('retroOcrPanel.preprocessingParams')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Upscale Factor */}
@@ -280,8 +278,7 @@ export function RetroOcrPanel({ onConfigChange, onStartOcr }: RetroOcrPanelProps
                 <div className="flex items-center justify-between">
                   <label className="text-sm font-medium flex items-center gap-2">
                     <ZoomIn className="h-4 w-4 text-blue-500" />
-                    Upscale Factor
-                  </label>
+                    {t('retroOcrPanel.upscaleFactor')}</label>
                   <Badge variant="outline">{config.upscaleFactor}x</Badge>
                 </div>
                 <Slider
@@ -293,8 +290,7 @@ export function RetroOcrPanel({ onConfigChange, onStartOcr }: RetroOcrPanelProps
                   className="w-full"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Ingrandisce l&apos;immagine preservando i pixel (nearest neighbor)
-                </p>
+                  {t('retroOcrPanel.upscaleDesc')}</p>
               </div>
 
               {/* Contrast Boost */}
@@ -302,8 +298,7 @@ export function RetroOcrPanel({ onConfigChange, onStartOcr }: RetroOcrPanelProps
                 <div className="flex items-center justify-between">
                   <label className="text-sm font-medium flex items-center gap-2">
                     <Contrast className="h-4 w-4 text-orange-500" />
-                    Contrasto
-                  </label>
+                    {t('retroOcrPanel.contrast')}</label>
                   <Badge variant="outline">{config.contrastBoost.toFixed(1)}x</Badge>
                 </div>
                 <Slider
@@ -321,8 +316,7 @@ export function RetroOcrPanel({ onConfigChange, onStartOcr }: RetroOcrPanelProps
                 <div className="flex items-center justify-between">
                   <label className="text-sm font-medium flex items-center gap-2">
                     <ScanLine className="h-4 w-4 text-purple-500" />
-                    Threshold Binario
-                  </label>
+                    {t('retroOcrPanel.binaryThreshold')}</label>
                   <div className="flex items-center gap-2">
                     <Switch
                       checked={config.threshold !== null}
@@ -346,8 +340,7 @@ export function RetroOcrPanel({ onConfigChange, onStartOcr }: RetroOcrPanelProps
                   />
                 )}
                 <p className="text-xs text-muted-foreground">
-                  Converte l&apos;immagine in bianco/nero per miglior riconoscimento
-                </p>
+                  {t('retroOcrPanel.thresholdDesc')}</p>
               </div>
 
               {/* Denoise Level */}
@@ -405,13 +398,11 @@ export function RetroOcrPanel({ onConfigChange, onStartOcr }: RetroOcrPanelProps
           {isProcessing ? (
             <>
               <ScanLine className="h-4 w-4 mr-2 animate-pulse" />
-              Elaborazione...
-            </>
+              {t('retroOcrPanel.processing')}</>
           ) : (
             <>
               <Play className="h-4 w-4 mr-2" />
-              Avvia Retro OCR
-            </>
+              {t('retroOcrPanel.startRetroOcr')}</>
           )}
         </Button>
         <Button variant="outline" size="icon">
@@ -425,12 +416,12 @@ export function RetroOcrPanel({ onConfigChange, onStartOcr }: RetroOcrPanelProps
       {/* Tips */}
       <Card className="bg-green-500/10 border-green-500/30">
         <CardContent className="py-3">
-          <h4 className="font-medium text-sm text-green-600 mb-2">💡 Suggerimenti</h4>
+          <h4 className="font-medium text-sm text-green-600 mb-2">💡 {t('retroOcrPanel.tips')}</h4>
           <ul className="text-xs text-muted-foreground space-y-1">
-            <li>• Per games <strong>8-bit</strong>: usa upscale 4x e threshold alto</li>
-            <li>• Per games <strong>DOS</strong>: attiva &quot;Remove Dithering&quot; per palette limitate</li>
-            <li>• Per testo <strong>giapponese</strong> (PC-98): usa upscale 4x con sharpen</li>
-            <li>• Se il testo è scuro su sfondo chiaro, prova &quot;Inverti Colori&quot;</li>
+            <li>{t('retroOcrPanel.tipForGames')} <strong>{t('retroOcrPanel.eightBit')}</strong>{t('retroOcrPanel.tip8bit')}</li>
+            <li>{t('retroOcrPanel.tipForGames')} <strong>DOS</strong>{t('retroOcrPanel.tipDos')}</li>
+            <li>{t('retroOcrPanel.tipForText')} <strong>{t('retroOcrPanel.japanese')}</strong>  {t('retroOcrPanel.tipJapanese')}</li>
+            <li>{t('retroOcrPanel.tipInvert')}</li>
           </ul>
         </CardContent>
       </Card>
