@@ -172,7 +172,7 @@ export function TranslationProfileManager({
   };
 
   const handleDeleteProfile = (id: string) => {
-    if (confirm('Sei sicuro di voler eliminare questo profilo?')) {
+    if (confirm(t('translationProfileManager.confirmDelete'))) {
       translationProfileManager.deleteProfile(id);
       loadProfiles();
       if (selectedProfile?.id === id) {
@@ -202,9 +202,9 @@ export function TranslationProfileManager({
         const id = translationProfileManager.importProfile(e.target?.result as string);
         if (id) {
           loadProfiles();
-          alert('Profile imported successfully!');
+          alert(t('translationProfileManager.importSuccess'));
         } else {
-          alert('Error importing profile');
+          alert(t('translationProfileManager.importError'));
         }
       };
       reader.readAsText(file);
@@ -279,14 +279,12 @@ export function TranslationProfileManager({
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <FileText className="w-4 h-4" />
-                Total Profiles
-              </CardTitle>
+                {t('translationProfileManager.totalProfiles')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{statistics.totalProfiles}</div>
               <p className="text-xs text-muted-foreground">
-                {statistics.officialProfiles} official
-              </p>
+                {statistics.officialProfiles}  {t('translationProfileManager.officialUnit')}</p>
             </CardContent>
           </Card>
 
@@ -294,14 +292,12 @@ export function TranslationProfileManager({
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <Hash className="w-4 h-4" />
-                Translations
-              </CardTitle>
+                {t('translationProfileManager.translationsStat')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{statistics.totalTranslations}</div>
               <p className="text-xs text-muted-foreground">
-                ~{Math.round(statistics.averageTranslationsPerProfile)} per profile
-              </p>
+                ~{Math.round(statistics.averageTranslationsPerProfile)}  {t('translationProfileManager.perProfile')}</p>
             </CardContent>
           </Card>
 
@@ -309,14 +305,12 @@ export function TranslationProfileManager({
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <GamepadIcon className="w-4 h-4" />
-                Games
-              </CardTitle>
+                {t('translationProfileManager.gamesStat')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{statistics.totalGames}</div>
               <p className="text-xs text-muted-foreground">
-                Supported
-              </p>
+                {t('translationProfileManager.supported')}</p>
             </CardContent>
           </Card>
 
@@ -324,14 +318,12 @@ export function TranslationProfileManager({
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <Globe className="w-4 h-4" />
-                Languages
-              </CardTitle>
+                {t('translationProfileManager.languagesStat')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{statistics.totalLanguages}</div>
               <p className="text-xs text-muted-foreground">
-                Available
-              </p>
+                {t('translationProfileManager.available')}</p>
             </CardContent>
           </Card>
         </div>
@@ -344,7 +336,7 @@ export function TranslationProfileManager({
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               type="text"
-              aria-label="Search" placeholder="Search profiles by name, game or tag..."
+              aria-label={t('translationProfileManager.searchAria')} placeholder={t('translationProfileManager.searchPh')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -356,15 +348,13 @@ export function TranslationProfileManager({
             <DialogTrigger asChild>
               <Button>
                 <Plus className="w-4 h-4 mr-2" />
-                Nuovo Profilo
-              </Button>
+                {t('translationProfileManager.newProfile')}</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
               <DialogHeader>
                 <DialogTitle>{t('translationProfileManagerComp.createNewProfile')}</DialogTitle>
                 <DialogDescription>
-                  Create a new translation profile for a game
-                </DialogDescription>
+                  {t('translationProfileManager.newProfileDesc')}</DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div className="space-y-2">
@@ -372,7 +362,7 @@ export function TranslationProfileManager({
                   <Input
                     value={newProfile.gameName}
                     onChange={(e) => setNewProfile({ ...newProfile, gameName: e.target.value })}
-                    placeholder="e.g. Hollow Knight"
+                    placeholder={t('translationProfileManager.gameNamePh')}
                   />
                 </div>
                 <div className="space-y-2">
@@ -380,7 +370,7 @@ export function TranslationProfileManager({
                   <Input
                     value={newProfile.processName}
                     onChange={(e) => setNewProfile({ ...newProfile, processName: e.target.value })}
-                    placeholder="e.g. hollow_knight.exe"
+                    placeholder={t('translationProfileManager.exePh')}
                   />
                 </div>
                 <div className="space-y-2">
@@ -410,7 +400,7 @@ export function TranslationProfileManager({
                   <Textarea
                     value={newProfile.description}
                     onChange={(e) => setNewProfile({ ...newProfile, description: e.target.value })}
-                    placeholder="Profile description..."
+                    placeholder={t('translationProfileManager.descPh')}
                     rows={3}
                   />
                 </div>
@@ -419,17 +409,15 @@ export function TranslationProfileManager({
                   <Input
                     value={newProfile.tags}
                     onChange={(e) => setNewProfile({ ...newProfile, tags: e.target.value })}
-                    placeholder="e.g. rpg, fantasy, indie"
+                    placeholder={t('translationProfileManager.tagsPh')}
                   />
                 </div>
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-                  Cancel
-                </Button>
+                  {t('translationProfileManager.cancel')}</Button>
                 <Button onClick={handleCreateProfile}>
-                  Create Profile
-                </Button>
+                  {t('translationProfileManager.createProfile')}</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -438,8 +426,7 @@ export function TranslationProfileManager({
             <Button variant="outline" asChild>
               <span>
                 <Upload className="w-4 h-4 mr-2" />
-                Import
-              </span>
+                {t('translationProfileManager.importBtn')}</span>
             </Button>
             <Input
               id="import-profile"
@@ -475,8 +462,7 @@ export function TranslationProfileManager({
                           {profile.gameName}
                           {profile.metadata.isOfficial && (
                             <Badge variant="secondary" className="text-xs">
-                              Ufficiale
-                            </Badge>
+                              {t('translationProfileManager.official')}</Badge>
                           )}
                         </CardTitle>
                         <CardDescription className="text-xs">
@@ -499,8 +485,8 @@ export function TranslationProfileManager({
                         {profile.metadata.description || 'No description'}
                       </p>
                       <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <span>{profile.translations.length} translations</span>
-                        <span>Updated: {formatDate(profile.metadata.updatedAt)}</span>
+                        <span>{profile.translations.length}  {t('translationProfileManager.translationsUnit')}</span>
+                        <span>{t('translationProfileManager.updatedLabel')} {formatDate(profile.metadata.updatedAt)}</span>
                       </div>
                       {profile.metadata.tags && profile.metadata.tags.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-2">
@@ -590,8 +576,7 @@ export function TranslationProfileManager({
                   <TabsContent value="translations" className="space-y-4">
                     <div className="flex justify-between items-center">
                       <p className="text-sm text-muted-foreground">
-                        {selectedProfile.translations.length} translations
-                      </p>
+                        {selectedProfile.translations.length}  {t('translationProfileManager.translationsUnit')}</p>
                       <Button
                         size="sm"
                         onClick={() => {
@@ -600,8 +585,7 @@ export function TranslationProfileManager({
                           }
                         }}
                       >
-                        Use This Profile
-                      </Button>
+                        {t('translationProfileManager.useThisProfile')}</Button>
                     </div>
                     <ScrollArea className="h-[400px]">
                       <div className="space-y-2 pr-4">
@@ -679,8 +663,7 @@ export function TranslationProfileManager({
             <Card>
               <CardContent className="flex items-center justify-center h-[500px]">
                 <p className="text-muted-foreground">
-                  Select a profile to view details
-                </p>
+                  {t('translationProfileManager.selectProfilePrompt')}</p>
               </CardContent>
             </Card>
           )}
@@ -693,8 +676,7 @@ export function TranslationProfileManager({
           <DialogHeader>
             <DialogTitle>{t('translationProfileManagerComp.editProfile')}</DialogTitle>
             <DialogDescription>
-              Edit translations and profile settings
-            </DialogDescription>
+              {t('translationProfileManager.editDesc')}</DialogDescription>
           </DialogHeader>
           {editingProfile && (
             <div className="space-y-6">
@@ -738,10 +720,10 @@ export function TranslationProfileManager({
 
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <Label>Translations ({editingProfile.translations.length})</Label>
+                  <Label>{t('translationProfileManager.translationsHeader')} ({editingProfile.translations.length})</Label>
                   <div className="flex gap-2">
                     <Input
-                      placeholder="Original text"
+                      placeholder={t('translationProfileManager.originalTextPh')}
                       value={newTranslation.original}
                       onChange={(e) => setNewTranslation({
                         ...newTranslation,
@@ -791,11 +773,9 @@ export function TranslationProfileManager({
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-              Cancel
-            </Button>
+              {t('translationProfileManager.cancel')}</Button>
             <Button onClick={handleUpdateProfile}>
-              Save Changes
-            </Button>
+              {t('translationProfileManager.saveChanges')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
