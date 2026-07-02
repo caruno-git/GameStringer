@@ -476,7 +476,7 @@ export function UnityInkTranslator() {
               ollamaStatus === 'offline' && "border-red-400/40 text-red-300"
             )}>
               <Cpu className="h-3 w-3 mr-1" />
-              Ollama: {ollamaStatus === 'checking' ? '...' : ollamaStatus === 'online' ? 'Online' : 'Offline'}
+              {t('unityInkTranslator.ollamaLabel')} {ollamaStatus === 'checking' ? '...' : ollamaStatus === 'online' ? 'Online' : 'Offline'}
             </Badge>
             {gameName && (
               <Badge variant="outline" className="border-white/20 text-white/80 text-2xs">
@@ -576,8 +576,7 @@ export function UnityInkTranslator() {
                               </div>
                               <div className="flex items-center gap-2 flex-shrink-0 ml-2">
                                 <Badge variant="outline" className="text-micro border-slate-600/50 text-slate-400">
-                                  {game.assetsFiles} file
-                                </Badge>
+                                  {game.assetsFiles}  {t('unityInkTranslator.filesUnit')}</Badge>
                                 <Badge variant="outline" className="text-micro border-slate-600/50 text-slate-400">
                                   {game.size}
                                 </Badge>
@@ -611,7 +610,7 @@ export function UnityInkTranslator() {
                     type="text"
                     value={gameDir}
                     onChange={(e) => setGameDir(e.target.value)}
-                    placeholder="D:\SteamLibrary\steamapps\common\Esoteric Ebb\Esoteric Ebb_Data"
+                    placeholder={t('unityInkTranslator.examplePath')}
                     className="flex-1 bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50"
                   />
                   <Button 
@@ -620,8 +619,7 @@ export function UnityInkTranslator() {
                     className="bg-violet-600 hover:bg-violet-500"
                   >
                     <Search className="h-4 w-4 mr-1" />
-                    Rileva
-                  </Button>
+                    {t('unityInkTranslator.detect')}</Button>
                 </div>
 
                 <div className="flex gap-2">
@@ -669,14 +667,11 @@ export function UnityInkTranslator() {
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
                   <Search className="h-4 w-4 text-blue-400" />
-                  Estrai stringhe Ink
-                </CardTitle>
+                  {t('unityInkTranslator.extractInkTitle')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-sm text-slate-400">
-                  Scansione di <span className="text-blue-300 font-medium">{gameName}</span> per estrarre 
-                  tutte le stringhe di dialogo dai blob Ink JSON.
-                </p>
+                  {t('unityInkTranslator.scanningOf')} <span className="text-blue-300 font-medium">{gameName}</span>  {t('unityInkTranslator.toExtractDesc')}</p>
                 
                 {extractResult ? (
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -705,7 +700,7 @@ export function UnityInkTranslator() {
                     onClick={() => setStep('translate')} 
                     className="bg-violet-600 hover:bg-violet-500 w-full"
                   >
-                    Procedi alla Traduzione <ArrowRight className="h-4 w-4 ml-2" />
+                    {t('unityInkTranslator.proceedToTranslation')} <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
                 )}
               </CardContent>
@@ -718,15 +713,13 @@ export function UnityInkTranslator() {
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
                   <Languages className="h-4 w-4 text-green-400" />
-                  Traduzione in corso
-                </CardTitle>
+                  {t('unityInkTranslator.translationInProgress')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {translateProgress.status === 'idle' && (
                   <>
                     <p className="text-sm text-slate-400">
-                      Traduzione di <span className="text-green-300 font-medium">{extractResult?.uniqueStrings || '?'}</span> stringhe 
-                      con <span className="text-green-300 font-medium">{ollamaModel}</span>
+                      {t('unityInkTranslator.translationOf')} <span className="text-green-300 font-medium">{extractResult?.uniqueStrings || '?'}</span>  {t('unityInkTranslator.stringsWith')} <span className="text-green-300 font-medium">{ollamaModel}</span>
                     </p>
 
                     {/* Character Voice Profiles Toggle */}
@@ -753,9 +746,7 @@ export function UnityInkTranslator() {
                       {useCharacterVoices && (
                         <div className="space-y-2">
                           <p className="text-xs text-slate-500">
-                            Traduce usando profili psicologici dei personaggi — dialoghi, narrazione e azioni vengono rilevati automaticamente.
-                            Usa la Chat API di Ollama per prompt più ricchi.
-                          </p>
+                            {t('unityInkTranslator.characterVoiceDesc')}</p>
                           
                           {/* Quick-add preset profiles */}
                           <div className="flex flex-wrap gap-1.5">
@@ -830,11 +821,9 @@ export function UnityInkTranslator() {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-slate-400">
-                        {translateProgress.done} / {translateProgress.total} stringhe
-                      </span>
+                        {translateProgress.done} / {translateProgress.total}  {t('unityInkTranslator.stringsUnit')}</span>
                       <span className="text-slate-500">
-                        {translateProgress.rate.toFixed(1)}/s — ETA: {Math.ceil(translateProgress.eta)}min
-                      </span>
+                        {translateProgress.rate.toFixed(1)}{t('unityInkTranslator.rateEta')} {Math.ceil(translateProgress.eta)}{t('unityInkTranslator.minUnit')}</span>
                     </div>
                     
                     <Progress 
@@ -857,8 +846,8 @@ export function UnityInkTranslator() {
                     )}
 
                     <div className="grid grid-cols-3 gap-2">
-                      <StatCard label="Tradotte" value={translateProgress.done} icon={CheckCircle2} color="green" small />
-                      <StatCard label="Errori" value={translateProgress.errors} icon={AlertCircle} color="red" small />
+                      <StatCard label={t('unityInkTranslator.translatedStat')} value={translateProgress.done} icon={CheckCircle2} color="green" small />
+                      <StatCard label={t('unityInkTranslator.errorsStat')} value={translateProgress.errors} icon={AlertCircle} color="red" small />
                       <StatCard label={t('common.velocità')} value={`${translateProgress.rate.toFixed(1)}/s`} icon={Zap} color="amber" small />
                     </div>
                   </div>
@@ -892,14 +881,12 @@ export function UnityInkTranslator() {
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
                   <Rocket className="h-4 w-4 text-orange-400" />
-                  Inietta traduzioni nel gioco
-                </CardTitle>
+                  {t('unityInkTranslator.injectTitle')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 text-sm text-amber-200">
                   <Shield className="h-4 w-4 inline mr-1" />
-                  I file originali verranno salvati automaticamente come backup (.backup)
-                </div>
+                  {t('unityInkTranslator.backupInfo')}</div>
 
                 {injectResult.status === 'idle' && (
                   <Button 
@@ -908,23 +895,21 @@ export function UnityInkTranslator() {
                     size="lg"
                   >
                     <Rocket className="h-4 w-4 mr-2" />
-                    Avvia Iniezione
-                  </Button>
+                    {t('unityInkTranslator.startInjection')}</Button>
                 )}
 
                 {injectResult.status === 'running' && (
                   <div className="flex items-center gap-2 text-sm text-slate-300">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Iniezione in corso... questo potrebbe richiedere qualche minuto.
-                  </div>
+                    {t('unityInkTranslator.injectionInProgress')}</div>
                 )}
 
                 {injectResult.status === 'done' && (
                   <div className="space-y-3">
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                       <StatCard label={t('common.file')} value={`${injectResult.filesProcessed}/${injectResult.totalFiles}`} icon={FileText} color="green" />
-                      <StatCard label="Storie" value={injectResult.storiesModified} icon={Search} color="purple" />
-                      <StatCard label="Sostituzioni" value={injectResult.totalReplacements} icon={Languages} color="blue" />
+                      <StatCard label={t('unityInkTranslator.storiesStat')} value={injectResult.storiesModified} icon={Search} color="purple" />
+                      <StatCard label={t('unityInkTranslator.replacementsStat')} value={injectResult.totalReplacements} icon={Languages} color="blue" />
                       <StatCard label={t('common.stato')} value="OK" icon={CheckCircle2} color="green" />
                     </div>
                     
@@ -933,8 +918,7 @@ export function UnityInkTranslator() {
                       className="bg-green-600 hover:bg-green-500 w-full"
                     >
                       <CheckCircle2 className="h-4 w-4 mr-2" />
-                      Completato!
-                    </Button>
+                      {t('unityInkTranslator.completed')}</Button>
                   </div>
                 )}
 
@@ -1068,9 +1052,9 @@ export function UnityInkTranslator() {
                         />
                       </div>
                       <div className="flex gap-3 text-micro text-slate-500">
-                        <span>Corte (&lt;20): <span className="text-slate-400">{previewStats.shortCount}</span></span>
-                        <span>Medie (20-80): <span className="text-slate-400">{previewStats.mediumCount}</span></span>
-                        <span>Lunghe (80+): <span className="text-slate-400">{previewStats.longCount}</span></span>
+                        <span>{t('unityInkTranslator.shortLabel')} <span className="text-slate-400">{previewStats.shortCount}</span></span>
+                        <span>{t('unityInkTranslator.mediumLabel')} <span className="text-slate-400">{previewStats.mediumCount}</span></span>
+                        <span>{t('unityInkTranslator.longLabel')} <span className="text-slate-400">{previewStats.longCount}</span></span>
                       </div>
                     </div>
                   )}
@@ -1084,7 +1068,7 @@ export function UnityInkTranslator() {
                         value={previewSearch}
                         onChange={(e) => setPreviewSearch(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && loadPreview(0, previewSearch)}
-                        aria-label={t('common.cerca')} placeholder="Cerca nelle traduzioni..."
+                        aria-label={t('common.cerca')} placeholder={t('unityInkTranslator.searchPh')}
                         className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-violet-500/50"
                       />
                     </div>
@@ -1102,19 +1086,17 @@ export function UnityInkTranslator() {
                   {/* Table */}
                   <div className="bg-slate-950/50 rounded-lg border border-slate-800/50 overflow-hidden">
                     <div className="grid grid-cols-[1fr_1fr] text-2xs font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-800/50">
-                      <div className="px-3 py-2">English</div>
-                      <div className="px-3 py-2">Italiano</div>
+                      <div className="px-3 py-2">{t('languages.en')}</div>
+                      <div className="px-3 py-2">{t('languages.it')}</div>
                     </div>
                     
                     {loadingPreview ? (
                       <div className="p-4 text-center text-slate-500 text-xs">
                         <Loader2 className="h-4 w-4 animate-spin mx-auto mb-1" />
-                        Caricamento...
-                      </div>
+                        {t('unityInkTranslator.loading')}</div>
                     ) : previewPairs.length === 0 ? (
                       <div className="p-4 text-center text-slate-500 text-xs">
-                        Nessun risultato
-                      </div>
+                        {t('unityInkTranslator.noResults')}</div>
                     ) : (
                       previewPairs.map((pair, i) => (
                         <div 
@@ -1143,16 +1125,14 @@ export function UnityInkTranslator() {
                         disabled={previewPage === 0}
                         variant="ghost" size="xs" className="text-2xs"
                       >
-                        Precedente
-                      </Button>
-                      <span>Pagina {previewPage + 1} di {previewTotalPages}</span>
+                        {t('unityInkTranslator.previous')}</Button>
+                      <span>{t('unityInkTranslator.page')} {previewPage + 1}  {t('unityInkTranslator.of')} {previewTotalPages}</span>
                       <Button 
                         onClick={() => loadPreview(Math.min(previewTotalPages - 1, previewPage + 1), previewSearch)} 
                         disabled={previewPage >= previewTotalPages - 1}
                         variant="ghost" size="xs" className="text-2xs"
                       >
-                        Successiva
-                      </Button>
+                        {t('unityInkTranslator.next')}</Button>
                     </div>
                   )}
                 </CardContent>
@@ -1168,19 +1148,19 @@ export function UnityInkTranslator() {
             <Card className="bg-slate-900/50 border-slate-700/50">
               <CardContent className="pt-4 space-y-2">
                 <div className="flex items-center gap-2 text-sm">
-                  <span className="text-slate-500">Gioco:</span>
+                  <span className="text-slate-500">{t('unityInkTranslator.gameLabel')}</span>
                   <span className="text-slate-200 font-medium">{gameName}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <span className="text-slate-500">Lingua:</span>
+                  <span className="text-slate-500">{t('unityInkTranslator.languageLabel')}</span>
                   <span className="text-slate-200">{targetLang.toUpperCase()}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <span className="text-slate-500">Modello:</span>
+                  <span className="text-slate-500">{t('unityInkTranslator.modelLabel')}</span>
                   <span className="text-slate-200 text-xs truncate">{ollamaModel}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <span className="text-slate-500">Ollama:</span>
+                  <span className="text-slate-500">{t('unityInkTranslator.ollamaLabel')} </span>
                   <Badge variant="outline" className={cn(
                     "text-2xs",
                     ollamaStatus === 'online' ? "border-green-500/30 text-green-400" : "border-red-500/30 text-red-400"
@@ -1201,8 +1181,7 @@ export function UnityInkTranslator() {
               >
                 <CardTitle className="text-xs flex items-center gap-1 text-slate-400">
                   <Eye className="h-3 w-3" />
-                  Console Log
-                </CardTitle>
+                  {t('unityInkTranslator.consoleLog')}</CardTitle>
                 {showLogs ? <ChevronUp className="h-3 w-3 text-slate-500" /> : <ChevronDown className="h-3 w-3 text-slate-500" />}
               </div>
             </CardHeader>
@@ -1210,7 +1189,7 @@ export function UnityInkTranslator() {
               <CardContent className="pt-0 px-3 pb-3">
                 <div className="bg-black/50 rounded-lg p-2 max-h-64 overflow-y-auto font-mono text-2xs text-slate-400 space-y-0.5">
                   {logs.length === 0 ? (
-                    <div className="text-slate-600">In attesa...</div>
+                    <div className="text-slate-600">{t('unityInkTranslator.waiting')}</div>
                   ) : (
                     logs.map((log, i) => (
                       <div key={i} className={cn(
