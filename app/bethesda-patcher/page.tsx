@@ -477,8 +477,7 @@ export default function BethesdaPatcherPage() {
             </div>
             <div>
               <h1 className="text-lg font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
-                Bethesda Engine Patcher
-              </h1>
+                {t('bethPatcher.title')}</h1>
               <p className="text-white/70 text-xs drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
                 Skyrim, Fallout 4, Starfield, Oblivion, Fallout 3/NV
               </p>
@@ -576,18 +575,15 @@ export default function BethesdaPatcherPage() {
             <CardHeader className="py-3 px-4">
               <CardTitle className="text-sm flex items-center gap-2">
                 <FolderOpen className="h-4 w-4 text-cyan-400" />
-                Seleziona Cartella Gioco
-              </CardTitle>
+                {t('bethPatcher.selectGameFolder')}</CardTitle>
               <CardDescription className="text-xs">
-                Scegli la cartella principale del gioco Bethesda (contenente la cartella Data)
-              </CardDescription>
+                {t('bethPatcher.selectFolderDesc')}</CardDescription>
             </CardHeader>
             <CardContent className="px-4 pb-4 space-y-3">
               <div className="flex gap-2">
                 <Button onClick={handleSelectFolder} variant="outline" size="sm" className="h-9 text-xs">
                   <FolderOpen className="mr-1.5 h-3.5 w-3.5" />
-                  Sfoglia...
-                </Button>
+                  {t('bethPatcher.browse')}</Button>
                 <Button
                   onClick={handleAnalyze}
                   disabled={!folderPath || analyzing}
@@ -599,8 +595,7 @@ export default function BethesdaPatcherPage() {
                   ) : (
                     <Search className="mr-1.5 h-3.5 w-3.5" />
                   )}
-                  Analizza
-                </Button>
+                  {t('bethPatcher.analyze')}</Button>
               </div>
 
               {folderPath && (
@@ -618,8 +613,7 @@ export default function BethesdaPatcherPage() {
                   <div>
                     <p className="text-xs font-medium text-emerald-400">{gameInfo.game_name}</p>
                     <p className="text-2xs text-slate-400">
-                      {gameInfo.plugins.length} plugin, {gameInfo.string_tables.length} string table, {gameInfo.bsa_files.length} archivi
-                    </p>
+                      {gameInfo.plugins.length}  {t('bethPatcher.pluginsUnit')}, {gameInfo.string_tables.length}  {t('bethPatcher.stringTablesUnit')}, {gameInfo.bsa_files.length}  {t('bethPatcher.archivesUnit')}</p>
                   </div>
                 </div>
               )}
@@ -661,8 +655,7 @@ export default function BethesdaPatcherPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="text-xs text-slate-400 font-medium uppercase tracking-wider">
-                    Lingua sorgente
-                  </label>
+                    {t('bethPatcher.sourceLanguage')}</label>
                   <Select value={sourceLanguage} onValueChange={setSourceLanguage}>
                     <SelectTrigger className="h-9 text-xs bg-slate-950/50 border-slate-700/50">
                       <SelectValue />
@@ -678,8 +671,7 @@ export default function BethesdaPatcherPage() {
                 </div>
                 <div className="space-y-1">
                   <label className="text-xs text-slate-400 font-medium uppercase tracking-wider">
-                    Lingua target
-                  </label>
+                    {t('bethPatcher.targetLanguage')}</label>
                   <Select value={targetLanguage} onValueChange={setTargetLanguage}>
                     <SelectTrigger className="h-9 text-xs bg-slate-950/50 border-slate-700/50">
                       <SelectValue />
@@ -704,7 +696,7 @@ export default function BethesdaPatcherPage() {
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-sm flex items-center gap-2">
                     <ScrollText className="h-4 w-4 text-cyan-400" />
-                    String Table ({gameInfo.string_tables.length})
+                    {t('bethPatcher.stringTable')} ({gameInfo.string_tables.length})
                   </CardTitle>
                 </div>
               </CardHeader>
@@ -754,7 +746,7 @@ export default function BethesdaPatcherPage() {
               <div className="flex items-center justify-between">
                 <CardTitle className="text-sm flex items-center gap-2">
                   <Package className="h-4 w-4 text-cyan-400" />
-                  Plugin ({gameInfo.plugins.length})
+                  {t('bethPatcher.plugin')} ({gameInfo.plugins.length})
                 </CardTitle>
                 <Button
                   variant="outline"
@@ -796,8 +788,7 @@ export default function BethesdaPatcherPage() {
                       {plugin.is_localized && (
                         <Badge className="text-2xs px-1.5 py-0 bg-cyan-500/20 text-cyan-400 border-cyan-500/30">
                           <Globe className="h-2.5 w-2.5 mr-0.5" />
-                          Localizzato
-                        </Badge>
+                          {t('bethPatcher.localized')}</Badge>
                       )}
                       <span className="text-2xs text-slate-500 ml-auto">
                         {formatFileSize(plugin.size)}
@@ -849,7 +840,7 @@ export default function BethesdaPatcherPage() {
                       <SelectValue placeholder={t('common.tipoRecord')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all" className="text-xs">Tutti i tipi</SelectItem>
+                      <SelectItem value="all" className="text-xs">{t('bethPatcher.allTypes')}</SelectItem>
                       {recordTypes.map((rt) => (
                         <SelectItem key={rt} value={rt} className="text-xs">
                           {getRecordTypeLabel(rt)} ({rt})
@@ -865,7 +856,7 @@ export default function BethesdaPatcherPage() {
                     value={searchFilter}
                     onChange={(e) => setSearchFilter(e.target.value)}
                     aria-label={t('common.cercaStringhe')}
-                    placeholder="Cerca..."
+                    placeholder={t('bethPatcher.searchPh')}
                     className="h-8 text-xs pl-8 bg-slate-950/50 border-slate-700/50"
                   />
                 </div>
@@ -881,8 +872,7 @@ export default function BethesdaPatcherPage() {
                   ) : (
                     <Sparkles className="mr-1.5 h-3.5 w-3.5" />
                   )}
-                  Traduci Tutto
-                </Button>
+                  {t('bethPatcher.translateAll')}</Button>
               </div>
 
               {translating && (
@@ -911,8 +901,7 @@ export default function BethesdaPatcherPage() {
                 />
               ) : (
                 <div className="flex items-center justify-center h-full text-sm text-slate-500">
-                  Nessun risultato trovato
-                </div>
+                  {t('bethPatcher.noResults')}</div>
               )
             ) : filteredPluginEntries.length > 0 ? (
               <Virtuoso
@@ -928,8 +917,7 @@ export default function BethesdaPatcherPage() {
               />
             ) : (
               <div className="flex items-center justify-center h-full text-sm text-slate-500">
-                Nessun risultato trovato
-              </div>
+                {t('bethPatcher.noResults')}</div>
             )}
           </div>
 
@@ -940,13 +928,11 @@ export default function BethesdaPatcherPage() {
                 <div className="flex items-center gap-4 text-xs text-slate-400">
                   <span>
                     <span className="text-emerald-400 font-semibold">{stats.translated}</span>
-                    /{stats.total} tradotte
-                  </span>
+                    /{stats.total} {t('bethPatcher.translatedLower')}</span>
                   {stats.errors > 0 && (
                     <span className="flex items-center gap-1">
                       <AlertCircle className="h-3.5 w-3.5 text-yellow-400" />
-                      {stats.errors} errori
-                    </span>
+                      {stats.errors} {t('bethPatcher.errorsLower')}</span>
                   )}
                 </div>
 
@@ -958,16 +944,14 @@ export default function BethesdaPatcherPage() {
                     onClick={handleImportCSV}
                   >
                     <Download className="mr-1.5 h-3.5 w-3.5 rotate-180" />
-                    Importa CSV
-                  </Button>
+                    {t('bethPatcher.importCsv')}</Button>
                   <Button
                     size="sm"
                     className="h-8 text-xs bg-cyan-600 hover:bg-cyan-500"
                     onClick={() => setStep(4)}
                     disabled={stats.translated === 0}
                   >
-                    Esporta
-                    <ChevronRight className="ml-1.5 h-3.5 w-3.5" />
+                    {t('bethPatcher.export')}<ChevronRight className="ml-1.5 h-3.5 w-3.5" />
                   </Button>
                 </div>
               </div>
@@ -986,22 +970,21 @@ export default function BethesdaPatcherPage() {
             <CardHeader className="py-3 px-4">
               <CardTitle className="text-sm flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                Riepilogo Traduzione
-              </CardTitle>
+                {t('bethPatcher.translationSummary')}</CardTitle>
             </CardHeader>
             <CardContent className="px-4 pb-4">
               <div className="grid grid-cols-3 gap-3">
                 <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-center">
                   <p className="text-2xl font-bold text-emerald-400">{stats.translated}</p>
-                  <p className="text-xs text-slate-400 mt-0.5">Tradotte</p>
+                  <p className="text-xs text-slate-400 mt-0.5">{t('bethPatcher.translatedCap')}</p>
                 </div>
                 <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-center">
                   <p className="text-2xl font-bold text-cyan-400">{stats.total}</p>
-                  <p className="text-xs text-slate-400 mt-0.5">Totali</p>
+                  <p className="text-xs text-slate-400 mt-0.5">{t('bethPatcher.totals')}</p>
                 </div>
                 <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-center">
                   <p className="text-2xl font-bold text-yellow-400">{stats.errors}</p>
-                  <p className="text-xs text-slate-400 mt-0.5">Errori</p>
+                  <p className="text-xs text-slate-400 mt-0.5">{t('bethPatcher.errorsCap')}</p>
                 </div>
               </div>
             </CardContent>
@@ -1012,10 +995,9 @@ export default function BethesdaPatcherPage() {
             <CardHeader className="py-3 px-4">
               <CardTitle className="text-sm flex items-center gap-2">
                 <Download className="h-4 w-4 text-cyan-400" />
-                Opzioni di Esportazione
-              </CardTitle>
+                {t('bethPatcher.exportOptions')}</CardTitle>
               <CardDescription className="text-xs">
-                {gameInfo?.game_name ?? 'Bethesda'} &mdash; {sourceLanguage} &rarr; {targetLanguage}
+                {gameInfo?.game_name ?? 'Bethesda'} {'\u2014'}{sourceLanguage} {'\u2192'}{targetLanguage}
               </CardDescription>
             </CardHeader>
             <CardContent className="px-4 pb-4">
@@ -1040,7 +1022,7 @@ export default function BethesdaPatcherPage() {
                 >
                   <FileText className="h-5 w-5" />
                   <span className="font-medium">{t('common.esportaCsv')}</span>
-                  <span className="text-2xs text-slate-400">Foglio di calcolo</span>
+                  <span className="text-2xs text-slate-400">{t('bethPatcher.spreadsheet')}</span>
                 </Button>
 
                 <Button
@@ -1061,7 +1043,7 @@ export default function BethesdaPatcherPage() {
                 >
                   {copiedFeedback ? <CheckCircle2 className="h-5 w-5 text-emerald-400" /> : <Copy className="h-5 w-5" />}
                   <span className="font-medium">{copiedFeedback ? 'Copiato!' : 'Copia Tutto'}</span>
-                  <span className="text-2xs text-slate-400">Negli appunti</span>
+                  <span className="text-2xs text-slate-400">{t('bethPatcher.toClipboard')}</span>
                 </Button>
               </div>
             </CardContent>
@@ -1088,8 +1070,7 @@ export default function BethesdaPatcherPage() {
           <div className="flex justify-center">
             <Button variant="outline" size="sm" className="h-9 text-xs" onClick={() => setStep(3)}>
               <ArrowRight className="h-3.5 w-3.5 mr-1.5 rotate-180" />
-              Torna all&apos;Editor
-            </Button>
+              {t('bethPatcher.backToEditor')}</Button>
           </div>
         </div>
       )}
@@ -1108,6 +1089,7 @@ const StringEntryRow = React.memo(function StringEntryRow({
   entry: StringEntry
   onChange: (id: number, value: string) => void
 }) {
+  const { t } = useTranslation()
   const isLong = entry.value.length > 80
 
   return (
@@ -1115,7 +1097,7 @@ const StringEntryRow = React.memo(function StringEntryRow({
       {/* ID + status */}
       <div className="flex items-center gap-2">
         <span className="text-2xs text-slate-500 font-mono">
-          ID: {entry.id}
+          {t('bethPatcher.idLabel')}{entry.id}
         </span>
         {entry.translationStatus === 'translated' && (
           <CheckCircle2 className="h-3 w-3 text-emerald-400" />
@@ -1134,7 +1116,7 @@ const StringEntryRow = React.memo(function StringEntryRow({
           <Input
             value={entry.translated ?? ''}
             onChange={(e) => onChange(entry.id, e.target.value)}
-            placeholder="Traduzione..."
+            placeholder={t('bethPatcher.translationPh')}
             className="h-8 text-xs bg-slate-950/50 border-slate-700/50 w-full"
             aria-label={`Traduzione per ID ${entry.id}`}
           />
@@ -1155,6 +1137,7 @@ const PluginEntryRow = React.memo(function PluginEntryRow({
   entry: PluginStringEntry
   onChange: (formId: number, fieldName: string, value: string) => void
 }) {
+  const { t } = useTranslation()
   const isLong = entry.value.length > 80
   const RecordIcon = RECORD_TYPE_ICONS[entry.record_type] ?? FileText
 
@@ -1194,7 +1177,7 @@ const PluginEntryRow = React.memo(function PluginEntryRow({
           <Input
             value={entry.translated ?? ''}
             onChange={(e) => onChange(entry.form_id, entry.field_name, e.target.value)}
-            placeholder="Traduzione..."
+            placeholder={t('bethPatcher.translationPh')}
             className="h-8 text-xs bg-slate-950/50 border-slate-700/50 w-full"
             aria-label={`Traduzione per ${entry.record_type} ${formatFormId(entry.form_id)}`}
           />
