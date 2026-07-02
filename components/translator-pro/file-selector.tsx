@@ -134,10 +134,9 @@ export function FileSelector({
           <Sparkles className="h-5 w-5 text-blue-400" />
           <div className="flex-1">
             <p className="text-sm font-medium text-blue-300">
-              Arrivi dal Translation Wizard
-            </p>
+              {t('fileSelector.fromWizard')}</p>
             <p className="text-xs text-blue-400/70">
-              Metodo consigliato: {wizardMethod === 'file' ? '📁 Modifica File' : wizardMethod === 'bridge' ? '🔌 Translation Bridge' : '🔧 Manuale'}
+              {t('fileSelector.recommendedMethod')} {wizardMethod === 'file' ? '📁 Modifica File' : wizardMethod === 'bridge' ? '🔌 Translation Bridge' : '🔧 Manuale'}
               {wizardTargetLang && ` • Lingua: ${wizardTargetLang.toUpperCase()}`}
             </p>
           </div>
@@ -146,8 +145,7 @@ export function FileSelector({
 
       <Button variant="ghost" size="sm" onClick={onGoBack} className="gap-2">
         <ArrowLeft className="h-4 w-4" />
-        Cambia game
-      </Button>
+        {t('fileSelector.changeGame')}</Button>
 
       {/* Selected Game - Compact */}
       {selectedGame && (
@@ -185,8 +183,7 @@ export function FileSelector({
           {isCheckingEngine ? (
             <div className="flex items-center gap-2 text-muted-foreground">
               <Loader2 className="h-3 w-3 animate-spin" />
-              Analisi game...
-            </div>
+              {t('fileSelector.analyzingGame')}</div>
           ) : (
             <>
               {/* Engine row */}
@@ -210,7 +207,7 @@ export function FileSelector({
                   <div className="flex items-center justify-between border-t border-border/50 pt-1.5">
                     <div className="flex items-center gap-1.5">
                       <FileText className="h-3 w-3 text-muted-foreground" />
-                      <span>{localizationInfo.available_languages.length} lingue</span>
+                      <span>{localizationInfo.available_languages.length}  {t('fileSelector.languagesUnit')}</span>
                       <Badge variant="outline" className="text-2xs h-3.5 px-1">{localizationInfo.format.toUpperCase()}</Badge>
                     </div>
                     <span className={cn("text-2xs", localizationInfo.missing_italian ? "text-amber-500" : "text-green-500")}>
@@ -227,8 +224,7 @@ export function FileSelector({
                       disabled={isLoadingFiles}
                     >
                       <Rocket className="h-3 w-3" />
-                      Carica EN → Traduci IT
-                    </Button>
+                      {t('fileSelector.loadEnTranslateIt')}</Button>
                   )}
                 </>
               )}
@@ -248,13 +244,11 @@ export function FileSelector({
         {isLoadingFiles ? (
           <>
             <Loader2 className="h-4 w-4 animate-spin" />
-            Ricerca...
-          </>
+            {t('fileSelector.searching')}</>
         ) : (
           <>
             <Search className="h-4 w-4" />
-            Cerca file di traduzione
-          </>
+            {t('fileSelector.searchTranslationFiles')}</>
         )}
       </Button>
 
@@ -263,7 +257,7 @@ export function FileSelector({
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">oppure carica manualmente</span>
+          <span className="bg-background px-2 text-muted-foreground">{t('fileSelector.orLoadManually')}</span>
         </div>
       </div>
 
@@ -279,7 +273,7 @@ export function FileSelector({
         />
         <label htmlFor="file-upload" className="cursor-pointer flex items-center justify-center gap-2">
           <Upload className="h-4 w-4 text-muted-foreground/50" />
-          <span className="text-xs text-muted-foreground">Trascina o clicca • {SUPPORTED_FORMATS.join(', ')}</span>
+          <span className="text-xs text-muted-foreground">{t('fileSelector.dragOrClick')} {SUPPORTED_FORMATS.join(', ')}</span>
         </label>
       </div>
 
@@ -297,26 +291,24 @@ export function FileSelector({
           {filesWarning.type === 'xunity_suggested' && engineInfo?.is_unity && (
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground">
-                XUnity AutoTranslator intercetta il testo del game in tempo reale e permette di tradurlo.
-              </p>
+                {t('fileSelector.xunityDesc')}</p>
               <Button
                 size="sm"
                 className="bg-purple-600 hover:bg-purple-700"
                 onClick={onGoToUnityPatcher}
               >
                 <Zap className="h-3 w-3 mr-1" />
-                Vai a Unity Patcher
-              </Button>
+                {t('fileSelector.goToUnityPatcher')}</Button>
             </div>
           )}
           {filesWarning.configFiles.length > 0 && (
             <details className="mt-2">
               <summary className="text-xs text-muted-foreground cursor-pointer">
-                File esclusi ({filesWarning.configFiles.length})
+                {t('fileSelector.excludedFiles')} ({filesWarning.configFiles.length})
               </summary>
               <ul className="text-xs text-muted-foreground mt-1 ml-4 list-disc">
                 {filesWarning.configFiles.slice(0, 5).map(f => <li key={f}>{f}</li>)}
-                {filesWarning.configFiles.length > 5 && <li>...e altri {filesWarning.configFiles.length - 5}</li>}
+                {filesWarning.configFiles.length > 5 && <li>{t('fileSelector.andOthers1')} {filesWarning.configFiles.length - 5}</li>}
               </ul>
             </details>
           )}
@@ -328,7 +320,7 @@ export function FileSelector({
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="font-medium">
-              File da tradurre ({selectedFiles.filter(f => f.checked !== false).length}/{selectedFiles.length})
+              {t('fileSelector.filesToTranslate')} ({selectedFiles.filter(f => f.checked !== false).length}/{selectedFiles.length})
             </h3>
             <div className="flex gap-2">
               <Button
@@ -338,8 +330,7 @@ export function FileSelector({
                 className="h-7 text-xs"
               >
                 <CheckCircle className="h-3 w-3 mr-1" />
-                Tutti
-              </Button>
+                {t('fileSelector.all')}</Button>
               <Button
                 variant="outline"
                 size="sm"
@@ -347,8 +338,7 @@ export function FileSelector({
                 className="h-7 text-xs"
               >
                 <Square className="h-3 w-3 mr-1" />
-                Nessuno
-              </Button>
+                {t('fileSelector.none')}</Button>
               <Button
                 variant="outline"
                 size="sm"
@@ -356,8 +346,7 @@ export function FileSelector({
                 className="h-7 text-xs text-destructive hover:text-destructive"
               >
                 <AlertTriangle className="h-3 w-3 mr-1" />
-                Remove unselected
-              </Button>
+                {t('fileSelector.removeUnselected')}</Button>
             </div>
           </div>
           <div className="grid md:grid-cols-2 gap-4">
@@ -386,8 +375,7 @@ export function FileSelector({
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-sm truncate">{file.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {FORMAT_DESCRIPTIONS[file.format]} • {file.parseResult.strings.length} stringhe
-                    </p>
+                      {FORMAT_DESCRIPTIONS[file.format]} • {file.parseResult.strings.length}  {t('fileSelector.stringsUnit')}</p>
                   </div>
                   <Button
                     variant="ghost"
@@ -419,8 +407,7 @@ export function FileSelector({
                       ))}
                       {previewFile.parseResult.strings.length > 50 && (
                         <p className="text-xs text-muted-foreground text-center py-2">
-                          ... e altre {previewFile.parseResult.strings.length - 50} stringhe
-                        </p>
+                          {t('fileSelector.andOthersMore')} {previewFile.parseResult.strings.length - 50}  {t('fileSelector.stringsUnit')}</p>
                       )}
                     </div>
                   </ScrollArea>
@@ -436,11 +423,9 @@ export function FileSelector({
 
           <div className="flex justify-between items-center pt-4">
             <p className="text-sm text-muted-foreground">
-              Totale: <strong>{totalStrings}</strong> stringhe da tradurre
-            </p>
+              {t('fileSelector.totalLabel')} <strong>{totalStrings}</strong>  {t('fileSelector.stringsToTranslate')}</p>
             <Button onClick={onContinue} disabled={checkedFilesCount === 0}>
-              Continua
-              <ChevronRight className="ml-2 h-4 w-4" />
+              {t('fileSelector.continueBtn')}<ChevronRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
         </div>
