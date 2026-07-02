@@ -478,6 +478,13 @@
     "loading": "Cargando..."
   },
   "settingsPage": {
+    "tutorialLabel": "Tutorial",
+    "endpointUrl": "Endpoint URL",
+    "communityHubSupabase": "Community Hub — Supabase Backend",
+    "communityHubShort": "Community Hub",
+    "temperatureLabel": "Temperature:",
+    "maxTokensLabel": "Max Tokens:",
+    "batchSizeLabel": "Batch Size:",
     "copyToSeeAll": "\\n\\n... (copiar para ver todo)",
     "gbTotal": "GB en total",
     "diskUsed": "usados",
@@ -2249,6 +2256,13 @@
     "cannotLoadPage": "No se puede cargar esta página."
   },
   "languages": {
+    "tr": "Türkçe",
+    "nl": "Nederlands",
+    "sv": "Svenska",
+    "vi": "Tiếng Việt",
+    "id": "Bahasa Indonesia",
+    "ptBr": "Português (Brasil)",
+    "esLatam": "Español (Latinoamérica)",
     "it": "Italiano",
     "en": "English",
     "es": "Español",

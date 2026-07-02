@@ -123,7 +123,7 @@ function SupabaseSettingsCard() {
       <CardHeader className="p-0 pb-4">
         <CardTitle as="h2" className="flex items-center gap-2 text-base">
           <Database className="h-4 w-4 text-emerald-400" />
-          Community Hub — Supabase Backend
+          {t('settingsPage.communityHubSupabase')}
         </CardTitle>
         <p className="text-xs text-muted-foreground mt-1">
           {t('common.connectTheCommunityHubToASupabaseDatabaseToShareTranslationPacksOnline')}
@@ -592,7 +592,7 @@ export default function SettingsPage() {
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={() => setTutorialDialogOpen(true)} className="border-white/30 text-white hover:bg-white/10 h-8 text-xs">
               <BookOpen className="h-3.5 w-3.5 mr-1.5" />
-              Tutorial
+              {t('settingsPage.tutorialLabel')}
             </Button>
             <Dialog open={tutorialDialogOpen} onOpenChange={setTutorialDialogOpen}>
               <DialogContent className="sm:max-w-md">
@@ -676,7 +676,7 @@ export default function SettingsPage() {
           </TabsTrigger>
           <TabsTrigger value="community" className="flex items-center gap-1.5 text-xs px-3 py-1.5">
             <Globe className="h-3.5 w-3.5" />
-            <span>Community Hub</span>
+            <span>{t('settingsPage.communityHubShort')}</span>
           </TabsTrigger>
           <TabsTrigger value="display" className="flex items-center gap-1.5 text-xs px-3 py-1.5">
             <Maximize2 className="h-3.5 w-3.5" />
@@ -748,7 +748,7 @@ export default function SettingsPage() {
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Endpoint URL</Label>
+                  <Label>{t('settingsPage.endpointUrl')}</Label>
                   <Input
                     value={settings.translation?.modelwizUrl || 'http://localhost:8080'}
                     onChange={(e) => updateSetting('translation', 'modelwizUrl', e.target.value)}
@@ -794,28 +794,28 @@ export default function SettingsPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="it">🇮🇹 Italiano</SelectItem>
-                      <SelectItem value="en">🇬🇧 English</SelectItem>
-                      <SelectItem value="es">🇪🇸 Español</SelectItem>
-                      <SelectItem value="fr">🇫🇷 Français</SelectItem>
-                      <SelectItem value="de">🇩🇪 Deutsch</SelectItem>
-                      <SelectItem value="pt">🇵🇹 Português</SelectItem>
-                      <SelectItem value="pl">🇵🇱 Polski</SelectItem>
+                      <SelectItem value="it">🇮🇹 {t('languages.it')}</SelectItem>
+                      <SelectItem value="en">🇬🇧 {t('languages.en')}</SelectItem>
+                      <SelectItem value="es">🇪🇸 {t('languages.es')}</SelectItem>
+                      <SelectItem value="fr">🇫🇷 {t('languages.fr')}</SelectItem>
+                      <SelectItem value="de">🇩🇪 {t('languages.de')}</SelectItem>
+                      <SelectItem value="pt">🇵🇹 {t('languages.pt')}</SelectItem>
+                      <SelectItem value="pl">🇵🇱 {t('languages.pl')}</SelectItem>
                       <SelectItem value="ru">🇷🇺 Русский</SelectItem>
                       <SelectItem value="zh">🇨🇳 中文</SelectItem>
                       <SelectItem value="ja">🇯🇵 日本語</SelectItem>
                       <SelectItem value="ko">🇰🇷 한국어</SelectItem>
                       <SelectItem value="ar">🇸🇦 العربية</SelectItem>
                       <SelectItem value="hi">🇮🇳 हिन्दी</SelectItem>
-                      <SelectItem value="tr">🇹🇷 Türkçe</SelectItem>
-                      <SelectItem value="nl">🇳🇱 Nederlands</SelectItem>
-                      <SelectItem value="sv">🇸🇪 Svenska</SelectItem>
+                      <SelectItem value="tr">🇹🇷 {t('languages.tr')}</SelectItem>
+                      <SelectItem value="nl">🇳🇱 {t('languages.nl')}</SelectItem>
+                      <SelectItem value="sv">🇸🇪 {t('languages.sv')}</SelectItem>
                       <SelectItem value="uk">🇺🇦 Українська</SelectItem>
                       <SelectItem value="th">🇹🇭 ไทย</SelectItem>
-                      <SelectItem value="vi">🇻🇳 Tiếng Việt</SelectItem>
-                      <SelectItem value="id">🇮🇩 Bahasa Indonesia</SelectItem>
-                      <SelectItem value="pt-BR">🇧🇷 Português (Brasil)</SelectItem>
-                      <SelectItem value="es-419">🇲🇽 Español (Latinoamérica)</SelectItem>
+                      <SelectItem value="vi">🇻🇳 {t('languages.vi')}</SelectItem>
+                      <SelectItem value="id">🇮🇩 {t('languages.id')}</SelectItem>
+                      <SelectItem value="pt-BR">🇧🇷 {t('languages.ptBr')}</SelectItem>
+                      <SelectItem value="es-419">🇲🇽 {t('languages.esLatam')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -1020,7 +1020,7 @@ export default function SettingsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-3">
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <Label>Temperature: {settings.translation.temperature}</Label>
+                    <Label>{t('settingsPage.temperatureLabel')} {settings.translation.temperature}</Label>
                     <InfoTooltip 
                       variant="info"
                       content={
@@ -1046,7 +1046,7 @@ export default function SettingsPage() {
 
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <Label>Max Tokens: {settings.translation.maxTokens}</Label>
+                    <Label>{t('settingsPage.maxTokensLabel')} {settings.translation.maxTokens}</Label>
                     <InfoTooltip 
                       variant="info"
                       content={
@@ -1073,7 +1073,7 @@ export default function SettingsPage() {
 
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <Label>Batch Size: {settings.translation.batchSize}</Label>
+                    <Label>{t('settingsPage.batchSizeLabel')} {settings.translation.batchSize}</Label>
                     <InfoTooltip 
                       variant="info"
                       content={

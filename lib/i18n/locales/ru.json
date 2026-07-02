@@ -478,6 +478,13 @@
     "loading": "Загрузка..."
   },
   "settingsPage": {
+    "tutorialLabel": "Tutorial",
+    "endpointUrl": "Endpoint URL",
+    "communityHubSupabase": "Community Hub — Supabase Backend",
+    "communityHubShort": "Community Hub",
+    "temperatureLabel": "Temperature:",
+    "maxTokensLabel": "Max Tokens:",
+    "batchSizeLabel": "Batch Size:",
     "copyToSeeAll": "\\n\\n... (скопируйте, чтобы увидеть всё)",
     "gbTotal": "ГБ всего",
     "diskUsed": "использовано",
@@ -2249,6 +2256,13 @@
     "cannotLoadPage": "Невозможно загрузить эту страницу."
   },
   "languages": {
+    "tr": "Türkçe",
+    "nl": "Nederlands",
+    "sv": "Svenska",
+    "vi": "Tiếng Việt",
+    "id": "Bahasa Indonesia",
+    "ptBr": "Português (Brasil)",
+    "esLatam": "Español (Latinoamérica)",
     "it": "Italiano",
     "en": "English",
     "es": "Español",

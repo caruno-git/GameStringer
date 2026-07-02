@@ -478,6 +478,13 @@
     "loading": "로딩 중..."
   },
   "settingsPage": {
+    "tutorialLabel": "Tutorial",
+    "endpointUrl": "Endpoint URL",
+    "communityHubSupabase": "Community Hub — Supabase Backend",
+    "communityHubShort": "Community Hub",
+    "temperatureLabel": "Temperature:",
+    "maxTokensLabel": "Max Tokens:",
+    "batchSizeLabel": "Batch Size:",
     "copyToSeeAll": "\\n\\n... (모두 보려면 복사)",
     "gbTotal": "GB 전체",
     "diskUsed": "사용 중",
@@ -2249,6 +2256,13 @@
     "cannotLoadPage": "이 페이지를 로드할 수 없습니다."
   },
   "languages": {
+    "tr": "Türkçe",
+    "nl": "Nederlands",
+    "sv": "Svenska",
+    "vi": "Tiếng Việt",
+    "id": "Bahasa Indonesia",
+    "ptBr": "Português (Brasil)",
+    "esLatam": "Español (Latinoamérica)",
     "it": "이탈리아어",
     "en": "영어",
     "es": "스페인어",

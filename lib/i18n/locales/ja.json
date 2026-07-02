@@ -478,6 +478,13 @@
     "loading": "読み込み中..."
   },
   "settingsPage": {
+    "tutorialLabel": "Tutorial",
+    "endpointUrl": "Endpoint URL",
+    "communityHubSupabase": "Community Hub — Supabase Backend",
+    "communityHubShort": "Community Hub",
+    "temperatureLabel": "Temperature:",
+    "maxTokensLabel": "Max Tokens:",
+    "batchSizeLabel": "Batch Size:",
     "copyToSeeAll": "\\n\\n...（コピーしてすべて表示）",
     "gbTotal": "GB 合計",
     "diskUsed": "使用中",
@@ -2249,6 +2256,13 @@
     "cannotLoadPage": "このページを読み込むことができません。"
   },
   "languages": {
+    "tr": "Türkçe",
+    "nl": "Nederlands",
+    "sv": "Svenska",
+    "vi": "Tiếng Việt",
+    "id": "Bahasa Indonesia",
+    "ptBr": "Português (Brasil)",
+    "esLatam": "Español (Latinoamérica)",
     "it": "イタリア語",
     "en": "英語",
     "es": "スペイン語",
