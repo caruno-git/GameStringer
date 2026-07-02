@@ -1,4 +1,28 @@
 {
+  "customPromptSettings": {
+    "settingsSaved": "Custom Prompt settings saved",
+    "settingsReset": "Settings reset",
+    "title": "Custom Prompt & Voice",
+    "newBadge": "New 2026",
+    "subtitle": "Customize LLM provider behavior with persona, tone and custom prompt",
+    "enableCustomPrompt": "Enable Custom Prompt",
+    "enableDesc": "Adds custom instructions to all translations",
+    "personaRole": "Persona / Role",
+    "personaDesc": "Translate as if you were this character",
+    "toneStyle": "Tone / Style",
+    "customPrompt": "Custom Prompt",
+    "customPromptDesc": "Additional instructions that will be added to the system prompt",
+    "deeplVoiceApi": "DeepL Voice API",
+    "voiceDesc": "Real-time voice translation (40+ languages)",
+    "ttsVoice": "TTS Voice",
+    "preserveVoice": "Preserve original voice characteristics",
+    "preserveVoiceDesc": "Keeps tone, emphasis and style of the original voice (beta)",
+    "preview": "Preview:",
+    "reset": "Reset",
+    "personaPh": "Select a persona...",
+    "tonePh": "Select a tone...",
+    "customPromptPh": "E.g.: Use archaic vocabulary, speak formally, use fantasy-specific terms..."
+  },
   "lipSyncPanel": {
     "title": "Lip Sync (Rhubarb)",
     "subtitle": "Generate lip-sync data from audio for dubbing",

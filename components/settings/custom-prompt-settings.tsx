@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { useTranslation } from '@/lib/i18n';
 
 interface CustomPromptSettings {
   enabled: boolean;
@@ -77,6 +78,7 @@ const VOICE_PRESETS = [
 ];
 
 export function CustomPromptSettings() {
+  const { t } = useTranslation();
   const [settings, setSettings] = useState<CustomPromptSettings>(DEFAULT_SETTINGS);
   const [saved, setSaved] = useState(false);
 
@@ -94,14 +96,14 @@ export function CustomPromptSettings() {
   const handleSave = () => {
     localStorage.setItem('gs_custom_prompt_settings', JSON.stringify(settings));
     setSaved(true);
-    toast.success('Impostazioni Custom Prompt salvate');
+    toast.success(t('customPromptSettings.settingsSaved'));
     setTimeout(() => setSaved(false), 2000);
   };
 
   const handleReset = () => {
     setSettings(DEFAULT_SETTINGS);
     localStorage.removeItem('gs_custom_prompt_settings');
-    toast.success('Impostazioni ripristinate');
+    toast.success(t('customPromptSettings.settingsReset'));
   };
 
   const updateSetting = <K extends keyof CustomPromptSettings>(
@@ -116,12 +118,10 @@ export function CustomPromptSettings() {
       <CardHeader className="p-0 pb-4">
         <CardTitle className="flex items-center gap-2 text-base">
           <MessageSquareText className="h-4 w-4 text-purple-400" />
-          Custom Prompt & Voice
-          <Badge variant="outline" className="text-xs ml-2">New 2026</Badge>
+          {t('customPromptSettings.title')}<Badge variant="outline" className="text-xs ml-2">{t('customPromptSettings.newBadge')}</Badge>
         </CardTitle>
         <p className="text-xs text-muted-foreground mt-1">
-          Personalizza il comportamento dei provider LLM con persona, tono e prompt custom
-        </p>
+          {t('customPromptSettings.subtitle')}</p>
       </CardHeader>
       
       <CardContent className="p-0 space-y-4">
@@ -130,10 +130,9 @@ export function CustomPromptSettings() {
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-amber-400" />
             <div>
-              <span className="text-sm font-medium">Abilita Custom Prompt</span>
+              <span className="text-sm font-medium">{t('customPromptSettings.enableCustomPrompt')}</span>
               <p className="text-xs text-muted-foreground">
-                Aggiunge istruzioni personalizzate a tutte le traduzioni
-              </p>
+                {t('customPromptSettings.enableDesc')}</p>
             </div>
           </div>
           <Switch
@@ -150,14 +149,13 @@ export function CustomPromptSettings() {
             <div className="space-y-2">
               <Label className="text-xs flex items-center gap-1.5">
                 <UserCircle className="h-3.5 w-3.5 text-cyan-400" />
-                Persona / Ruolo
-              </Label>
+                {t('customPromptSettings.personaRole')}</Label>
               <Select
                 value={settings.persona}
                 onValueChange={(value) => updateSetting('persona', value)}
               >
                 <SelectTrigger className="text-sm">
-                  <SelectValue placeholder="Seleziona una persona..." />
+                  <SelectValue placeholder={t('customPromptSettings.personaPh')} />
                 </SelectTrigger>
                 <SelectContent>
                   {PERSONA_PRESETS.map((preset) => (
@@ -168,22 +166,20 @@ export function CustomPromptSettings() {
                 </SelectContent>
               </Select>
               <p className="text-xs text-muted-foreground">
-                Traduci come se fossi questo personaggio
-              </p>
+                {t('customPromptSettings.personaDesc')}</p>
             </div>
 
             {/* Tono */}
             <div className="space-y-2">
               <Label className="text-xs flex items-center gap-1.5">
                 <Sparkles className="h-3.5 w-3.5 text-pink-400" />
-                Tono / Stile
-              </Label>
+                {t('customPromptSettings.toneStyle')}</Label>
               <Select
                 value={settings.tone}
                 onValueChange={(value) => updateSetting('tone', value)}
               >
                 <SelectTrigger className="text-sm">
-                  <SelectValue placeholder="Seleziona un tono..." />
+                  <SelectValue placeholder={t('customPromptSettings.tonePh')} />
                 </SelectTrigger>
                 <SelectContent>
                   {TONE_PRESETS.map((preset) => (
@@ -197,16 +193,15 @@ export function CustomPromptSettings() {
 
             {/* Custom Prompt libero */}
             <div className="space-y-2">
-              <Label className="text-xs">Prompt Personalizzato</Label>
+              <Label className="text-xs">{t('customPromptSettings.customPrompt')}</Label>
               <Textarea
-                placeholder="Es: Usa lessico arcaico, parla in modo formale, usa termini specifici del fantasy..."
+                placeholder={t('customPromptSettings.customPromptPh')}
                 value={settings.customPrompt}
                 onChange={(e) => updateSetting('customPrompt', e.target.value)}
                 className="text-sm min-h-[80px] resize-none"
               />
               <p className="text-xs text-muted-foreground">
-                Istruzioni aggiuntive che verranno aggiunte al prompt di sistema
-              </p>
+                {t('customPromptSettings.customPromptDesc')}</p>
             </div>
           </>
         )}
@@ -218,10 +213,9 @@ export function CustomPromptSettings() {
           <div className="flex items-center gap-2">
             <Volume2 className="h-4 w-4 text-emerald-400" />
             <div>
-              <span className="text-sm font-medium">DeepL Voice API</span>
+              <span className="text-sm font-medium">{t('customPromptSettings.deeplVoiceApi')}</span>
               <p className="text-xs text-muted-foreground">
-                Traduzione vocale real-time (40+ lingue)
-              </p>
+                {t('customPromptSettings.voiceDesc')}</p>
             </div>
           </div>
           <Switch
@@ -233,7 +227,7 @@ export function CustomPromptSettings() {
         {settings.enableVoice && (
           <div className="space-y-3 pl-4 border-l-2 border-emerald-500/30">
             <div className="space-y-2">
-              <Label className="text-xs">Voce TTS</Label>
+              <Label className="text-xs">{t('customPromptSettings.ttsVoice')}</Label>
               <Select
                 value={settings.speakerVoice}
                 onValueChange={(value) => updateSetting('speakerVoice', value)}
@@ -252,22 +246,21 @@ export function CustomPromptSettings() {
             </div>
 
             <div className="flex items-center justify-between">
-              <Label className="text-xs">Preserva caratteristiche voce originale</Label>
+              <Label className="text-xs">{t('customPromptSettings.preserveVoice')}</Label>
               <Switch
                 checked={settings.preserveVoice}
                 onCheckedChange={(checked) => updateSetting('preserveVoice', checked)}
               />
             </div>
             <p className="text-xs text-muted-foreground">
-              Mantiene tono, enfasi e stile della voce originale (beta)
-            </p>
+              {t('customPromptSettings.preserveVoiceDesc')}</p>
           </div>
         )}
 
         {/* Preview */}
         {(settings.persona || settings.tone || settings.customPrompt) && (
           <div className="p-3 rounded-lg bg-slate-800/30 border border-slate-700/30">
-            <p className="text-xs font-medium text-slate-300 mb-2">Anteprima:</p>
+            <p className="text-xs font-medium text-slate-300 mb-2">{t('customPromptSettings.preview')}</p>
             <p className="text-xs text-slate-400 italic">
               {settings.persona && `Persona: "${settings.persona}"`}
               {settings.persona && settings.tone && ' · '}
@@ -295,8 +288,7 @@ export function CustomPromptSettings() {
             className="gap-1.5"
           >
             <RotateCcw className="h-3.5 w-3.5" />
-            Reset
-          </Button>
+            {t('customPromptSettings.reset')}</Button>
         </div>
       </CardContent>
     </Card>
