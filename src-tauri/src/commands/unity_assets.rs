@@ -98,12 +98,21 @@ pub async fn download_uabea() -> Result<String, String> {
     let client = Client::builder()
         .timeout(std::time::Duration::from_secs(120))
         .redirect(reqwest::redirect::Policy::limited(10))
+        .user_agent("GameStringer-UABEA-Downloader") // l'API GitHub richiede un User-Agent
         .build().map_err(|e| e.to_string())?;
 
-    // Prova URL principale, poi fallback
-    let urls = [UABEA_DOWNLOAD_URL, UABEA_FALLBACK_URL];
-    let mut last_err = String::new();
+    // Prima risolvi l'asset REALE dell'ultima release via API GitHub: il nome dello zip
+    // cambia tra release, e l'URL /latest/download/<nome-fisso> hardcoded è ciò che dava
+    // il 404. Gli URL statici restano solo come ultima rete di sicurezza.
+    let mut urls: Vec<String> = Vec::new();
+    match resolve_latest_uabea_asset(&client).await {
+        Ok(url) => urls.push(url),
+        Err(e) => log::warn!("UABEA: risoluzione asset via API GitHub fallita: {}", e),
+    }
+    urls.push(UABEA_DOWNLOAD_URL.to_string());
+    urls.push(UABEA_FALLBACK_URL.to_string());
 
+    let mut last_err = String::new();
     for url in &urls {
         match try_download_uabea(&client, url, &dir).await {
             Ok(exe_path) => return Ok(exe_path),
@@ -118,6 +127,68 @@ pub async fn download_uabea() -> Result<String, String> {
         "Download UABEA fallito da tutti gli URL. Scaricalo manualmente da https://github.com/nesrak1/UABEA/releases e copialo in: {}. Errore: {}",
         dir.display(), last_err
     ))
+}
+
+/// Risolve dinamicamente l'URL dell'asset .zip (preferendo Windows) dell'ultima release
+/// UABEA interrogando l'API GitHub. Prova prima /releases/latest, poi la lista /releases
+/// (se l'ultima è una pre-release, /latest non la restituisce).
+async fn resolve_latest_uabea_asset(client: &Client) -> Result<String, String> {
+    const APIS: [&str; 2] = [
+        "https://api.github.com/repos/nesrak1/UABEA/releases/latest",
+        "https://api.github.com/repos/nesrak1/UABEA/releases",
+    ];
+    let mut last = String::from("nessuna release trovata");
+    for api in APIS {
+        let resp = match client
+            .get(api)
+            .header("Accept", "application/vnd.github+json")
+            .send()
+            .await
+        {
+            Ok(r) => r,
+            Err(e) => { last = e.to_string(); continue; }
+        };
+        if !resp.status().is_success() {
+            last = format!("HTTP {} da {}", resp.status().as_u16(), api);
+            continue;
+        }
+        let json: serde_json::Value = match resp.json().await {
+            Ok(j) => j,
+            Err(e) => { last = e.to_string(); continue; }
+        };
+        // /latest ritorna un oggetto; /releases un array (prendo la prima release).
+        let release = if json.is_array() {
+            json.get(0).cloned().unwrap_or(serde_json::Value::Null)
+        } else {
+            json
+        };
+        if let Some(url) = pick_uabea_zip_asset(&release) {
+            return Ok(url);
+        }
+        last = "nessun asset .zip nella release".to_string();
+    }
+    Err(last)
+}
+
+/// Dall'oggetto release sceglie l'asset .zip: prima uno che contiene "win", altrimenti il
+/// primo .zip disponibile.
+fn pick_uabea_zip_asset(release: &serde_json::Value) -> Option<String> {
+    let assets = release.get("assets")?.as_array()?;
+    let mut any_zip: Option<String> = None;
+    for a in assets {
+        let name = a.get("name").and_then(|v| v.as_str()).unwrap_or("").to_lowercase();
+        let dl = a.get("browser_download_url").and_then(|v| v.as_str()).unwrap_or("");
+        if !name.ends_with(".zip") || dl.is_empty() {
+            continue;
+        }
+        if name.contains("win") {
+            return Some(dl.to_string());
+        }
+        if any_zip.is_none() {
+            any_zip = Some(dl.to_string());
+        }
+    }
+    any_zip
 }
 
 async fn try_download_uabea(client: &Client, url: &str, dir: &std::path::Path) -> Result<String, String> {
