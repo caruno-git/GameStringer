@@ -183,13 +183,13 @@ export default function GuidePage() {
                   <Step number={3} title={g.qsStep3Title}>
                     <p>{g.qsStep3Line1} <NavLink href="/library">{t('nav.library')}</NavLink>{g.qsStep3Line1b}</p>
                     <p>{g.qsStep3Line2}</p>
-                    <p>{g.qsStep3Line3a} <strong>&quot;{g.btnTranslate}&quot;</strong> {g.qsStep3Line3b}</p>
+                    <p>{g.qsStep3Line3a} <strong>"{g.btnTranslate}"</strong> {g.qsStep3Line3b}</p>
                   </Step>
 
                   <Step number={4} title={g.qsStep4Title}>
                     <p>{g.qsStep4Line1} <NavLink href="/auto-translate">{t('guidePage.autotranslate')}</NavLink> {g.qsStep4Line1b}</p>
                     <p>{g.qsStep4Line2}</p>
-                    <p>{g.qsStep4Line3a} <strong>&quot;{g.btnStartTranslation}&quot;</strong>.</p>
+                    <p>{g.qsStep4Line3a} <strong>"{g.btnStartTranslation}"</strong>.</p>
                     <p>{g.qsStep4Line4}</p>
                   </Step>
 
@@ -254,14 +254,14 @@ export default function GuidePage() {
                   </Step>
                   <Step number={2} title={g.wfUnityStep2Title}>
                     <p>{g.wfUnityStep2Line1}</p>
-                    <p>{g.wfUnityStep2Line2a} <strong>&quot;{g.btnInstall}&quot;</strong> {g.wfUnityStep2Line2b}</p>
+                    <p>{g.wfUnityStep2Line2a} <strong>"{g.btnInstall}"</strong> {g.wfUnityStep2Line2b}</p>
                   </Step>
                   <Step number={3} title={g.wfUnityStep3Title}>
                     <p>{g.wfUnityStep3Line1}</p>
                     <p>{g.wfUnityStep3Line2}</p>
                   </Step>
                   <Step number={4} title={g.wfUnityStep4Title}>
-                    <p>{g.wfUnityStep4Line1a} <strong>&quot;{g.btnRescan}&quot;</strong>{g.wfUnityStep4Line1b}</p>
+                    <p>{g.wfUnityStep4Line1a} <strong>"{g.btnRescan}"</strong>{g.wfUnityStep4Line1b}</p>
                     <p>{g.wfUnityStep4Line2}</p>
                   </Step>
                   <Tip variant="info">{g.wfUnityTip}</Tip>
@@ -279,7 +279,7 @@ export default function GuidePage() {
                 </CardHeader>
                 <CardContent className="space-y-0">
                   <Step number={1} title={g.wfFilesStep1Title}>
-                    <p>{g.wfFilesStep1Line1} <NavLink href="/library">{t('nav.library')}</NavLink> {g.wfFilesStep1Line1b} <strong>&quot;{g.btnTranslate}&quot;</strong>.</p>
+                    <p>{g.wfFilesStep1Line1} <NavLink href="/library">{t('nav.library')}</NavLink> {g.wfFilesStep1Line1b} <strong>"{g.btnTranslate}"</strong>.</p>
                     <p>{g.wfFilesStep1Line2}</p>
                   </Step>
                   <Step number={2} title={g.wfFilesStep2Title}>
@@ -287,7 +287,7 @@ export default function GuidePage() {
                     <p>{g.wfFilesStep2Line2}</p>
                   </Step>
                   <Step number={3} title={g.wfFilesStep3Title}>
-                    <p>{g.wfFilesStep3Line1a} <strong>&quot;{g.btnStartTranslation}&quot;</strong>.</p>
+                    <p>{g.wfFilesStep3Line1a} <strong>"{g.btnStartTranslation}"</strong>.</p>
                     <p>{g.wfFilesStep3Line2}</p>
                     <p>{g.wfFilesStep3Line3}</p>
                   </Step>
@@ -567,7 +567,7 @@ export default function GuidePage() {
                   </div>
 
                   <Tip variant="info">
-                    Come si apre: <strong>icona Brain (viola)</strong> sulla game card in libreria (hover) oppure dal bottone <strong>P.T.</strong> nella pagina dettaglio gioco. Output: report esportabile + bottone &quot;Esegui workflow&quot;.
+                    Come si apre: <strong>icona Brain (viola)</strong> sulla game card in libreria (hover) oppure dal bottone <strong>P.T.</strong> nella pagina dettaglio gioco. Output: report esportabile + bottone "Esegui workflow".
                   </Tip>
                 </CardContent>
               </Card>
@@ -694,7 +694,7 @@ export default function GuidePage() {
                 <CardHeader className="py-2 px-3">
                   <CardTitle className="text-sm flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-indigo-400" />
-                    &quot;String it!&quot; — Traduzione in un click
+                    "String it!" — Traduzione in un click
                     <Badge variant="outline" className="ml-auto text-2xs border-indigo-500/40 text-indigo-300">v1.9.0</Badge>
                   </CardTitle>
                   <CardDescription className="text-xs">
