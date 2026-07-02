@@ -1,4 +1,28 @@
 {
+  "lipSyncPanel": {
+    "title": "Lip Sync (Rhubarb)",
+    "subtitle": "Generate lip-sync data from audio for dubbing",
+    "notFound": "Rhubarb Lip Sync not found",
+    "downloadFrom": "Download from",
+    "addToPath": "and add it to the system PATH.",
+    "audioFile": "Audio File (WAV, OGG, MP3)",
+    "dialogText": "Dialog text (optional, improves accuracy)",
+    "recognizer": "Recognizer",
+    "phonetic": "Phonetic (fast)",
+    "dataBased": "Data-based (accurate)",
+    "cueLabel": "Cue",
+    "avgCueLabel": "Avg cue",
+    "msUnit": "ms",
+    "speech": "Speech",
+    "silence": "Silence",
+    "engineTarget": "Engine Target",
+    "rawEngine": "Raw (Rhubarb)",
+    "unityEngine": "Unity (Blend Shapes)",
+    "unrealEngine": "Unreal (FaceFX)",
+    "export": "Export",
+    "audioPathPh": "Audio file path...",
+    "dialogPh": "Enter the text spoken in the audio file..."
+  },
   "retroOcrPanel": {
     "reset": "Reset",
     "upscaleLabel": "Upscale:",

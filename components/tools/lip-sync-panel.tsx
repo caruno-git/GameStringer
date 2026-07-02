@@ -164,8 +164,8 @@ export function LipSyncPanel({ audioPath: initialPath, dialogText: initialDialog
               <Smile className="w-5 h-5 text-pink-400" />
             </div>
             <div>
-              <h2 className="font-semibold text-white">Lip Sync (Rhubarb)</h2>
-              <p className="text-xs text-zinc-500">Genera dati di lip-sync da audio per doppiaggio</p>
+              <h2 className="font-semibold text-white">{t('lipSyncPanel.title')}</h2>
+              <p className="text-xs text-zinc-500">{t('lipSyncPanel.subtitle')}</p>
             </div>
           </div>
           <Badge className={rhubarbAvailable === true ? 'bg-emerald-500/20 text-emerald-400' : rhubarbAvailable === false ? 'bg-amber-500/20 text-amber-400' : 'bg-zinc-500/20 text-zinc-400'}>
@@ -179,10 +179,9 @@ export function LipSyncPanel({ audioPath: initialPath, dialogText: initialDialog
         <div className="flex items-start gap-3 p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 text-sm">
           <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
           <div>
-            <p className="font-medium">Rhubarb Lip Sync non trovato</p>
+            <p className="font-medium">{t('lipSyncPanel.notFound')}</p>
             <p className="text-amber-300/70 text-xs mt-1">
-              Scarica da <a href="https://github.com/DanielSWolf/rhubarb-lip-sync/releases" target="_blank" rel="noopener" className="underline">GitHub</a> e aggiungilo al PATH di sistema.
-            </p>
+              {t('lipSyncPanel.downloadFrom')} <a href="https://github.com/DanielSWolf/rhubarb-lip-sync/releases" target="_blank" rel="noopener" className="underline">GitHub</a>  {t('lipSyncPanel.addToPath')}</p>
           </div>
         </div>
       )}
@@ -190,21 +189,21 @@ export function LipSyncPanel({ audioPath: initialPath, dialogText: initialDialog
       {/* Input Section */}
       <div className="space-y-3">
         <div>
-          <Label className="text-xs text-zinc-500 mb-1 block">File Audio (WAV, OGG, MP3)</Label>
+          <Label className="text-xs text-zinc-500 mb-1 block">{t('lipSyncPanel.audioFile')}</Label>
           <Input
             value={audioPath}
             onChange={(e) => setAudioPath(e.target.value)}
-            placeholder="Percorso del file audio..."
+            placeholder={t('lipSyncPanel.audioPathPh')}
             className="bg-zinc-800/50 border-zinc-700"
           />
         </div>
 
         <div>
-          <Label className="text-xs text-zinc-500 mb-1 block">Testo del dialogo (opzionale, migliora la precisione)</Label>
+          <Label className="text-xs text-zinc-500 mb-1 block">{t('lipSyncPanel.dialogText')}</Label>
           <Textarea
             value={dialogText}
             onChange={(e) => setDialogText(e.target.value)}
-            placeholder="Inserisci il testo parlato nel file audio..."
+            placeholder={t('lipSyncPanel.dialogPh')}
             className="bg-zinc-800/50 border-zinc-700 min-h-[60px]"
             rows={2}
           />
@@ -212,14 +211,14 @@ export function LipSyncPanel({ audioPath: initialPath, dialogText: initialDialog
 
         <div className="flex items-center gap-4">
           <div className="flex-1">
-            <Label className="text-xs text-zinc-500 mb-1 block">Recognizer</Label>
+            <Label className="text-xs text-zinc-500 mb-1 block">{t('lipSyncPanel.recognizer')}</Label>
             <Select value={recognizer} onValueChange={(v) => setRecognizer(v as 'phonetic' | 'dataBased')}>
               <SelectTrigger className="bg-zinc-800/50 border-zinc-700">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="phonetic">Fonetico (veloce)</SelectItem>
-                <SelectItem value="dataBased">Data-based (preciso)</SelectItem>
+                <SelectItem value="phonetic">{t('lipSyncPanel.phonetic')}</SelectItem>
+                <SelectItem value="dataBased">{t('lipSyncPanel.dataBased')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -252,19 +251,19 @@ export function LipSyncPanel({ audioPath: initialPath, dialogText: initialDialog
               <div className="text-sm font-bold text-white">{stats.duration.toFixed(2)}s</div>
             </div>
             <div className="p-2.5 rounded-lg bg-zinc-800/50 border border-zinc-700">
-              <div className="text-[10px] text-zinc-500">Cue</div>
+              <div className="text-[10px] text-zinc-500">{t('lipSyncPanel.cueLabel')}</div>
               <div className="text-sm font-bold text-white">{stats.totalCues}</div>
             </div>
             <div className="p-2.5 rounded-lg bg-zinc-800/50 border border-zinc-700">
-              <div className="text-[10px] text-zinc-500">Media cue</div>
-              <div className="text-sm font-bold text-white">{(stats.avgCueDuration * 1000).toFixed(0)}ms</div>
+              <div className="text-[10px] text-zinc-500">{t('lipSyncPanel.avgCueLabel')}</div>
+              <div className="text-sm font-bold text-white">{(stats.avgCueDuration * 1000).toFixed(0)}{t('lipSyncPanel.msUnit')}</div>
             </div>
             <div className="p-2.5 rounded-lg bg-zinc-800/50 border border-zinc-700">
-              <div className="text-[10px] text-zinc-500">Parlato</div>
+              <div className="text-[10px] text-zinc-500">{t('lipSyncPanel.speech')}</div>
               <div className="text-sm font-bold text-emerald-400">{(stats.speechRatio * 100).toFixed(0)}%</div>
             </div>
             <div className="p-2.5 rounded-lg bg-zinc-800/50 border border-zinc-700">
-              <div className="text-[10px] text-zinc-500">Silenzio</div>
+              <div className="text-[10px] text-zinc-500">{t('lipSyncPanel.silence')}</div>
               <div className="text-sm font-bold text-zinc-400">{(stats.silenceRatio * 100).toFixed(0)}%</div>
             </div>
           </div>
@@ -364,15 +363,15 @@ export function LipSyncPanel({ audioPath: initialPath, dialogText: initialDialog
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label className="text-[10px] text-zinc-500 mb-1 block">Engine Target</Label>
+                <Label className="text-[10px] text-zinc-500 mb-1 block">{t('lipSyncPanel.engineTarget')}</Label>
                 <Select value={exportEngine} onValueChange={(v) => setExportEngine(v as 'raw' | 'unity' | 'unreal')}>
                   <SelectTrigger className="bg-zinc-800/50 border-zinc-700 h-8 text-xs">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="raw">Raw (Rhubarb)</SelectItem>
-                    <SelectItem value="unity">Unity (Blend Shapes)</SelectItem>
-                    <SelectItem value="unreal">Unreal (FaceFX)</SelectItem>
+                    <SelectItem value="raw">{t('lipSyncPanel.rawEngine')}</SelectItem>
+                    <SelectItem value="unity">{t('lipSyncPanel.unityEngine')}</SelectItem>
+                    <SelectItem value="unreal">{t('lipSyncPanel.unrealEngine')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -396,7 +395,7 @@ export function LipSyncPanel({ audioPath: initialPath, dialogText: initialDialog
 
             <Button onClick={handleExport} size="sm" className="w-full bg-pink-600 hover:bg-pink-500">
               <Download className="w-3.5 h-3.5 mr-2" />
-              Esporta {exportEngine === 'unity' ? 'per Unity' : exportEngine === 'unreal' ? 'per Unreal' : exportFormat.toUpperCase()}
+              {t('lipSyncPanel.export')}{exportEngine === 'unity' ? 'per Unity' : exportEngine === 'unreal' ? 'per Unreal' : exportFormat.toUpperCase()}
             </Button>
           </div>
         </div>
