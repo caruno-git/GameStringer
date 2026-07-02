@@ -157,7 +157,7 @@ export function RomPatcherUI() {
       }
     }
     setVerifyStatus('ok');
-    toast.success('Verifica OK: la patch riproduce perfettamente la ROM tradotta!');
+    toast.success(t('romPatcher.verifyOk'));
   };
 
   const handlePublishToHub = () => {
@@ -215,11 +215,9 @@ export function RomPatcherUI() {
       <Tabs defaultValue="apply">
         <TabsList className="h-8">
           <TabsTrigger value="apply" className="text-xs h-7">
-            <Zap className="h-3 w-3 mr-1" />Applica Patch
-          </TabsTrigger>
+            <Zap className="h-3 w-3 mr-1" />{t('romPatcher.applyPatch')}</TabsTrigger>
           <TabsTrigger value="create" className="text-xs h-7">
-            <FileUp className="h-3 w-3 mr-1" />Crea Patch (Export)
-          </TabsTrigger>
+            <FileUp className="h-3 w-3 mr-1" />{t('romPatcher.createPatchExport')}</TabsTrigger>
         </TabsList>
 
         {/* ============================================================ */}
@@ -230,16 +228,14 @@ export function RomPatcherUI() {
             <CardHeader className="pb-2">
               <CardTitle className="text-sm flex items-center gap-2">
                 <Zap className="h-4 w-4 text-purple-400" />
-                Applica Patch IPS/BPS a una ROM
-              </CardTitle>
+                {t('romPatcher.applyPatchTitle')}</CardTitle>
               <CardDescription className="text-xs">
-                Seleziona la ROM originale e il file patch. Il formato viene rilevato automaticamente.
-              </CardDescription>
+                {t('romPatcher.applyPatchDesc')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               {/* ROM input */}
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium">ROM Originale</Label>
+                <Label className="text-xs font-medium">{t('romPatcher.originalRom')}</Label>
                 <div
                   className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:border-purple-400/50 transition-colors"
                   onClick={() => applyRomRef.current?.click()}
@@ -254,7 +250,7 @@ export function RomPatcherUI() {
                   ) : (
                     <>
                       <Upload className="h-6 w-6 mx-auto mb-1 text-muted-foreground" />
-                      <p className="text-xs text-muted-foreground">Clicca per selezionare la ROM (.smc, .sfc, .nes, .gba, .nds, .bin, ...)</p>
+                      <p className="text-xs text-muted-foreground">{t('romPatcher.selectRomPrompt')}</p>
                     </>
                   )}
                 </div>
@@ -280,7 +276,7 @@ export function RomPatcherUI() {
                   ) : (
                     <>
                       <Upload className="h-6 w-6 mx-auto mb-1 text-muted-foreground" />
-                      <p className="text-xs text-muted-foreground">Clicca per selezionare la patch (.ips, .bps)</p>
+                      <p className="text-xs text-muted-foreground">{t('romPatcher.selectPatchPrompt')}</p>
                     </>
                   )}
                 </div>
@@ -290,12 +286,12 @@ export function RomPatcherUI() {
               {applyPatchFile && applyPatchFile.info.valid && (
                 <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/50 text-xs">
                   <Info className="h-3 w-3 text-blue-400" />
-                  <span>Formato: <strong>{applyPatchFile.info.format.toUpperCase()}</strong></span>
+                  <span>{t('romPatcher.formatLabel')} <strong>{applyPatchFile.info.format.toUpperCase()}</strong></span>
                   {applyPatchFile.info.targetSize && (
-                    <span>Target: <strong>{formatBytes(applyPatchFile.info.targetSize)}</strong></span>
+                    <span>{t('romPatcher.targetLabel')} <strong>{formatBytes(applyPatchFile.info.targetSize)}</strong></span>
                   )}
                   {applyPatchFile.info.sourceCrc && (
-                    <span>CRC32 src: <code className="text-2xs">{applyPatchFile.info.sourceCrc}</code></span>
+                    <span>{t('romPatcher.crc32SrcLabel')} <code className="text-2xs">{applyPatchFile.info.sourceCrc}</code></span>
                   )}
                 </div>
               )}
@@ -307,7 +303,7 @@ export function RomPatcherUI() {
                 onClick={handleApply}
               >
                 {isApplying ? (
-                  <><RefreshCw className="h-4 w-4 mr-2 animate-spin" />Applicazione in corso...</>
+                  <><RefreshCw className="h-4 w-4 mr-2 animate-spin" />{t('romPatcher.applying')}</>
                 ) : (
                   <><Zap className="h-4 w-4 mr-2" />{t('common.applicaPatch')}</>
                 )}
@@ -329,13 +325,12 @@ export function RomPatcherUI() {
                   {applyResult.success ? (
                     <div className="space-y-2">
                       <div className="flex gap-4 text-xs text-muted-foreground">
-                        <span>Formato: <strong>{applyResult.format.toUpperCase()}</strong></span>
-                        <span>Record: <strong>{applyResult.recordsApplied}</strong></span>
-                        <span>Output: <strong>{formatBytes(applyResult.outputSize)}</strong></span>
+                        <span>{t('romPatcher.formatLabel')} <strong>{applyResult.format.toUpperCase()}</strong></span>
+                        <span>{t('romPatcher.recordLabel')} <strong>{applyResult.recordsApplied}</strong></span>
+                        <span>{t('romPatcher.outputLabel')} <strong>{formatBytes(applyResult.outputSize)}</strong></span>
                       </div>
                       <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={handleDownloadPatched}>
-                        <Download className="h-3 w-3 mr-1" />Scarica ROM Patchata
-                      </Button>
+                        <Download className="h-3 w-3 mr-1" />{t('romPatcher.downloadPatchedRom')}</Button>
                     </div>
                   ) : (
                     <p className="text-xs text-red-400">{applyResult.error}</p>
@@ -354,16 +349,14 @@ export function RomPatcherUI() {
             <CardHeader className="pb-2">
               <CardTitle className="text-sm flex items-center gap-2">
                 <FileUp className="h-4 w-4 text-orange-400" />
-                Crea Patch IPS/BPS da ROM
-              </CardTitle>
+                {t('romPatcher.createPatchTitle')}</CardTitle>
               <CardDescription className="text-xs">
-                Confronta la ROM originale con quella tradotta per generare un file patch distribuibile.
-              </CardDescription>
+                {t('romPatcher.createPatchDesc')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               {/* Original ROM */}
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium">ROM Originale (non modificata)</Label>
+                <Label className="text-xs font-medium">{t('romPatcher.originalRomUnmodified')}</Label>
                 <div
                   className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:border-orange-400/50 transition-colors"
                   onClick={() => createOrigRef.current?.click()}
@@ -378,7 +371,7 @@ export function RomPatcherUI() {
                   ) : (
                     <>
                       <Upload className="h-6 w-6 mx-auto mb-1 text-muted-foreground" />
-                      <p className="text-xs text-muted-foreground">ROM originale giapponese/inglese</p>
+                      <p className="text-xs text-muted-foreground">{t('romPatcher.originalRomLang')}</p>
                     </>
                   )}
                 </div>
@@ -386,7 +379,7 @@ export function RomPatcherUI() {
 
               {/* Modified ROM */}
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium">ROM Tradotta (modificata)</Label>
+                <Label className="text-xs font-medium">{t('romPatcher.translatedRomModified')}</Label>
                 <div
                   className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:border-orange-400/50 transition-colors"
                   onClick={() => createModRef.current?.click()}
@@ -411,8 +404,8 @@ export function RomPatcherUI() {
               {createOriginal && createModified && (
                 <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/50 text-xs">
                   <Info className="h-3 w-3 text-blue-400" />
-                  <span>Originale: <strong>{formatBytes(createOriginal.data.length)}</strong></span>
-                  <span>Tradotta: <strong>{formatBytes(createModified.data.length)}</strong></span>
+                  <span>{t('romPatcher.originalLabel')} <strong>{formatBytes(createOriginal.data.length)}</strong></span>
+                  <span>{t('romPatcher.translatedLabel')} <strong>{formatBytes(createModified.data.length)}</strong></span>
                   {createOriginal.data.length !== createModified.data.length && (
                     <Badge variant="outline" className="text-2xs">
                       {createModified.data.length > createOriginal.data.length ? '+' : ''}
@@ -424,15 +417,15 @@ export function RomPatcherUI() {
 
               {/* Format select */}
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium">Formato Patch</Label>
+                <Label className="text-xs font-medium">{t('romPatcher.patchFormat')}</Label>
                 <Select value={createFormat} onValueChange={(v) => setCreateFormat(v as "auto" | "ips" | "bps")}>
                   <SelectTrigger className="h-9">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="auto">Auto (IPS se &le;16MB, altrimenti BPS)</SelectItem>
-                    <SelectItem value="ips">IPS (classico, compatibile con tutti i patcher)</SelectItem>
-                    <SelectItem value="bps">BPS (moderno, con verifica CRC32)</SelectItem>
+                    <SelectItem value="auto">{t('romPatcher.autoFormat')}</SelectItem>
+                    <SelectItem value="ips">{t('romPatcher.ipsOption')}</SelectItem>
+                    <SelectItem value="bps">{t('romPatcher.bpsOption')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -444,7 +437,7 @@ export function RomPatcherUI() {
                 onClick={handleCreate}
               >
                 {isCreating ? (
-                  <><RefreshCw className="h-4 w-4 mr-2 animate-spin" />Creazione in corso...</>
+                  <><RefreshCw className="h-4 w-4 mr-2 animate-spin" />{t('romPatcher.creating')}</>
                 ) : (
                   <><FileUp className="h-4 w-4 mr-2" />{t('common.creaPatch')}</>
                 )}
@@ -466,26 +459,24 @@ export function RomPatcherUI() {
                   {createResult.success ? (
                     <div className="space-y-2">
                       <div className="flex gap-4 text-xs text-muted-foreground">
-                        <span>Formato: <strong>{createResult.format.toUpperCase()}</strong></span>
-                        <span>Record: <strong>{createResult.records}</strong></span>
-                        <span>Dimensione: <strong>{formatBytes(createResult.patchSize)}</strong></span>
+                        <span>{t('romPatcher.formatLabel')} <strong>{createResult.format.toUpperCase()}</strong></span>
+                        <span>{t('romPatcher.recordLabel')} <strong>{createResult.records}</strong></span>
+                        <span>{t('romPatcher.sizeLabel')} <strong>{formatBytes(createResult.patchSize)}</strong></span>
                       </div>
                       <div className="flex flex-wrap gap-2">
                         <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={handleDownloadPatch}>
-                          <Download className="h-3 w-3 mr-1" />Scarica .{createResult.format}
+                          <Download className="h-3 w-3 mr-1" />{t('romPatcher.download')} .{createResult.format}
                         </Button>
                         <Button size="sm" variant="outline" onClick={handleVerifyRoundtrip} disabled={verifyStatus === 'ok'}>
                           <ShieldCheck className={`h-3 w-3 mr-1 ${verifyStatus === 'ok' ? 'text-green-500' : verifyStatus === 'fail' ? 'text-red-500' : ''}`} />
                           {verifyStatus === 'ok' ? 'Verificata' : verifyStatus === 'fail' ? 'Fallita' : 'Verifica'}
                         </Button>
                         <Button size="sm" className="bg-purple-500 hover:bg-purple-600" onClick={handlePublishToHub}>
-                          <Share2 className="h-3 w-3 mr-1" />Pubblica nel Hub
-                        </Button>
+                          <Share2 className="h-3 w-3 mr-1" />{t('romPatcher.publishToHub')}</Button>
                       </div>
                       <div className="mt-2 p-2 rounded bg-muted/50">
                         <p className="text-2xs text-muted-foreground">
-                          La patch contiene solo le differenze tra le due ROM — sicura da distribuire, nessun dato protetto da copyright.
-                        </p>
+                          {t('romPatcher.safeToDistribute')}</p>
                       </div>
                     </div>
                   ) : (
@@ -502,9 +493,9 @@ export function RomPatcherUI() {
               <div className="flex items-start gap-2">
                 <Info className="h-4 w-4 text-amber-400 mt-0.5 shrink-0" />
                 <div className="text-xs text-muted-foreground space-y-1">
-                  <p><strong>IPS</strong> — formato classico, supportato da tutti gli emulatori e patcher. Max 16MB. Non verifica integrita.</p>
-                  <p><strong>BPS</strong> — formato moderno di byuu. Nessun limite dimensione. Include checksum CRC32 per ROM sorgente, target e patch.</p>
-                  <p>{t('common.lePatchContengono')}<strong>solo le differenze</strong> tra le due ROM — non includono contenuto protetto da copyright.</p>
+                  <p><strong>IPS</strong>  {t('romPatcher.ipsInfo')}</p>
+                  <p><strong>BPS</strong>  {t('romPatcher.bpsInfo')}</p>
+                  <p>{t('common.lePatchContengono')}<strong>{t('romPatcher.onlyDifferences')}</strong>  {t('romPatcher.betweenRoms')}</p>
                 </div>
               </div>
             </CardContent>
