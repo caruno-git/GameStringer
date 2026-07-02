@@ -84,7 +84,7 @@ export function SecretsDashboard() {
       setData(secretsData);
     } catch (error: unknown) {
       clientLogger.error('Error fetching secrets status:', error);
-      toast.error('Failed to load secrets status');
+      toast.error(t('secretsDashboardComp.loadFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -116,20 +116,20 @@ export function SecretsDashboard() {
       const generated = Array.from(array, b => chars[b % chars.length]).join('');
       setGeneratedKey(generated);
       logUserAction('generate_secret_key', { length });
-      toast.success('Secret key generated successfully');
+      toast.success(t('secretsDashboardComp.keyGenerated'));
     } catch (error: unknown) {
       clientLogger.error('Error generating secret key:', error);
-      toast.error('Failed to generate secret key');
+      toast.error(t('secretsDashboardComp.generateFailed'));
     }
   };
 
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast.success('Copied to clipboard');
+      toast.success(t('secretsDashboardComp.copiedToClipboard'));
     } catch (error: unknown) {
       clientLogger.error('Failed to copy to clipboard:', error);
-      toast.error('Failed to copy to clipboard');
+      toast.error(t('secretsDashboardComp.copyFailed'));
     }
   };
 
@@ -186,8 +186,7 @@ export function SecretsDashboard() {
         </div>
         <Button onClick={fetchSecretsStatus} disabled={isLoading} variant="outline">
           <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-          Refresh
-        </Button>
+          {t('secretsDashboardComp.refresh')}</Button>
       </div>
 
       {data && (
@@ -202,8 +201,7 @@ export function SecretsDashboard() {
               <CardContent>
                 <div className="text-2xl font-bold">{data.summary.total}</div>
                 <p className="text-xs text-muted-foreground">
-                  {data.summary.configured} configured
-                </p>
+                  {data.summary.configured}  {t('secretsDashboardComp.configuredUnit')}</p>
               </CardContent>
             </Card>
 
@@ -215,8 +213,7 @@ export function SecretsDashboard() {
               <CardContent>
                 <div className="text-2xl font-bold">{data.summary.required}</div>
                 <p className="text-xs text-muted-foreground">
-                  {data.summary.requiredConfigured} configured
-                </p>
+                  {data.summary.requiredConfigured}  {t('secretsDashboardComp.configuredUnit')}</p>
               </CardContent>
             </Card>
 
@@ -228,8 +225,7 @@ export function SecretsDashboard() {
               <CardContent>
                 <div className="text-2xl font-bold text-red-600">{data.summary.missing.length}</div>
                 <p className="text-xs text-muted-foreground">
-                  Required secrets missing
-                </p>
+                  {t('secretsDashboardComp.requiredMissing')}</p>
               </CardContent>
             </Card>
 
@@ -256,8 +252,7 @@ export function SecretsDashboard() {
               <AlertDescription className="text-red-800">
                 <strong>{t('secretsDashboardComp.missingRequiredSecrets')}</strong> {data.summary.missing.join(', ')}
                 <br />
-                The application may not function properly without these secrets.
-              </AlertDescription>
+                {t('secretsDashboardComp.missingWarning')}</AlertDescription>
             </Alert>
           )}
 
@@ -268,8 +263,7 @@ export function SecretsDashboard() {
               <AlertDescription className="text-yellow-800">
                 <strong>{t('secretsDashboardComp.invalidSecrets')}</strong> {data.summary.invalid.join(', ')}
                 <br />
-                These secrets have invalid formats and should be updated.
-              </AlertDescription>
+                {t('secretsDashboardComp.invalidFormats')}</AlertDescription>
             </Alert>
           )}
 
@@ -286,8 +280,7 @@ export function SecretsDashboard() {
                 <CardHeader>
                   <CardTitle>{t('secretsDashboardComp.secretsConfiguration')}</CardTitle>
                   <CardDescription>
-                    Current status of all configured secrets
-                  </CardDescription>
+                    {t('secretsDashboardComp.statusDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ScrollArea className="h-[400px]">
@@ -336,8 +329,7 @@ export function SecretsDashboard() {
                 <CardHeader>
                   <CardTitle>{t('secretsDashboardComp.secretValidator')}</CardTitle>
                   <CardDescription>
-                    Validate secret formats before adding them to your environment
-                  </CardDescription>
+                    {t('secretsDashboardComp.validateDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -365,7 +357,7 @@ export function SecretsDashboard() {
                           type={showTestValue ? 'text' : 'password'}
                           value={testValue}
                           onChange={(e) => setTestValue(e.target.value)}
-                          placeholder="Enter secret value to validate..."
+                          placeholder={t('secretsDashboardComp.validatePh')}
                         />
                         <Button
                           variant="ghost"
@@ -387,8 +379,7 @@ export function SecretsDashboard() {
                     {isValidating ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Validating...
-                      </>
+                        {t('secretsDashboardComp.validating')}</>
                     ) : (
                       'Validate Secret'
                     )}
@@ -415,17 +406,14 @@ export function SecretsDashboard() {
                 <CardHeader>
                   <CardTitle>{t('secretsDashboardComp.secretGenerator')}</CardTitle>
                   <CardDescription>
-                    Generate secure random keys for your application
-                  </CardDescription>
+                    {t('secretsDashboardComp.generateDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center space-x-2">
                     <Button onClick={() => generateSecretKey(32)}>
-                      Generate 32-char Key
-                    </Button>
+                      {t('secretsDashboardComp.gen32')}</Button>
                     <Button onClick={() => generateSecretKey(64)} variant="outline">
-                      Generate 64-char Key
-                    </Button>
+                      {t('secretsDashboardComp.gen64')}</Button>
                   </div>
                   
                   {generatedKey && (
@@ -448,8 +436,7 @@ export function SecretsDashboard() {
                       <Alert className="border-blue-200 bg-blue-50">
                         <AlertTriangle className="h-4 w-4 text-blue-600" />
                         <AlertDescription className="text-blue-800">
-                          Copy this key to your .env.local file. It will not be shown again.
-                        </AlertDescription>
+                          {t('secretsDashboardComp.copyKeyWarning')}</AlertDescription>
                       </Alert>
                     </div>
                   )}
