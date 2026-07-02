@@ -287,18 +287,18 @@ export function OllamaManager() {
             {status?.installed ? (
               <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/30 text-xs">
                 <CheckCircle2 className="h-3 w-3 mr-1" />
-                Installato
+                {t('gameDetails.installed')}
               </Badge>
             ) : (
               <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-500/30 text-xs">
                 <XCircle className="h-3 w-3 mr-1" />
-                Non installato
+                {t('gameDetails.notInstalled')}
               </Badge>
             )}
             {status?.running ? (
               <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/30 text-xs">
                 <div className="h-2 w-2 rounded-full bg-green-500 mr-1 animate-pulse" />
-                Attivo
+                {t('ocrTranslator.active')}
               </Badge>
             ) : (
               <Badge variant="outline" className="bg-zinc-500/10 text-zinc-400 border-zinc-500/30 text-xs">
