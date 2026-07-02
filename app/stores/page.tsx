@@ -695,8 +695,8 @@ export default function StoresPage() {
       if (!command) {
         // Nessun comando Tauri per questo provider: niente fetch('/api/...'), che nel
         // webview impacchettato non esiste. Segnaliamo che il test non è disponibile.
-        setTestResults(prev => ({ ...prev, [providerId]: { error: 'Test non disponibile per questo provider' } }));
-        toast.error(`Test non disponibile per ${providerId}`);
+        setTestResults(prev => ({ ...prev, [providerId]: { error: t('stores.notAvailable') } }));
+        toast.error(t('stores.notAvailable'));
       } else {
         // Usa il comando Tauri per un test reale
         const result = await invoke<{ connected?: boolean; success?: boolean; error?: string; message?: string; games_count?: number }>(command);

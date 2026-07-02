@@ -198,7 +198,7 @@ export function UnityInkTranslator() {
     if (!gameDir.trim()) return;
     if (isTauri()) {
       addLog('Unity Ink Translator: backend non ancora disponibile nel desktop. Per i giochi Unity usa Unity CSV Translator o la patch XUnity.');
-      toast({ title: 'Non disponibile nel desktop', description: 'Il traduttore Ink lato desktop è in arrivo. Per ora usa Unity CSV Translator o XUnity AutoTranslator.', variant: 'destructive' });
+      toast({ title: t('stores.notAvailable'), description: t('stores.comingSoon'), variant: 'destructive' });
       return;
     }
     addLog(`Cartella gioco: ${gameDir}`);

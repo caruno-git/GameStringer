@@ -690,7 +690,7 @@ export default function EditorPage() {
         }
       }
       
-      toast({ title: 'Salvato', description: 'Traduzione updated e salvata nel dizionario' });
+      toast({ title: t('common.salvato'), description: 'Traduzione updated e salvata nel dizionario' });
     } catch (error: unknown) {
       clientLogger.error(`Error saving translation: ${String(error)}`);
       toast({ title: 'error', description: 'Impossibile salvare le modifiche', variant: 'destructive' });
@@ -881,7 +881,7 @@ export default function EditorPage() {
       await removeEditorTranslation(id);
       setTranslations(prev => prev.filter(t => t.id !== id));
       if (selectedTranslation?.id === id) setSelectedTranslation(null);
-      toast({ title: 'Eliminata', description: 'Traduzione rimossa' });
+      toast({ title: t('common.eliminata'), description: t('common.traduzioneRimossa') });
     } catch {
       toast({ title: 'error', description: 'Impossibile eliminare', variant: 'destructive' });
     }
@@ -911,7 +911,7 @@ export default function EditorPage() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
 
-      toast({ title: 'Esportazione completata', description: `Traduzioni esportate in ${format.toUpperCase()}` });
+      toast({ title: t('common.esportazioneCompletata'), description: `Traduzioni esportate in ${format.toUpperCase()}` });
     } catch {
       toast({ title: 'error', description: 'Impossibile esportare', variant: 'destructive' });
     }

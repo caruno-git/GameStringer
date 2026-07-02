@@ -1036,8 +1036,8 @@ export default function TranslatorProPage() {
     if (isTauri()) {
       // /api/export/patch (generazione ZIP server-side) è stub 501 nel desktop.
       toast({
-        title: 'Export patch non disponibile qui',
-        description: 'Nel desktop genera la patch dalla pagina del gioco (Esporta .gspack) o usa la patch XUnity.',
+        title: t('stores.notAvailable'),
+        description: t('stores.comingSoon'),
         variant: 'destructive',
       });
       return;
