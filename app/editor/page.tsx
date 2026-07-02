@@ -570,11 +570,10 @@ export default function EditorPage() {
         clientLogger.warn(`[Editor] Dizionari non disponibili: ${String(dictError)}`);
       }
       
-      // Carica anche dai games con traduzioni saved (API Next.js come fallback)
+      // Carica anche dai record di traduzione salvati nella TM locale (IndexedDB).
       try {
-        const transResponse = await fetch('/api/translations');
-        const transData = transResponse.ok ? await transResponse.json() : [];
-        
+        const transData = await listEditorTranslations();
+
         for (const trans of ensureArray(transData) as TransApiItem[]) {
           const gameId = trans.gameId || 'unknown';
           const gameName = trans.game?.title || 'game sconosciuto';
