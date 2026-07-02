@@ -294,7 +294,7 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
   // Copy text
   const copyText = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast.success('Text copied to clipboard');
+    toast.success(t('ocrImageProcessor.copiedToClipboard'));
   };
 
   // Download result
@@ -311,7 +311,7 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
   // Elimina result
   const deleteResult = (id: string) => {
     setResults(prev => prev.filter(r => r.id !== id));
-    toast.success('Result deleted');
+    toast.success(t('ocrImageProcessor.resultDeleted'));
   };
 
   // Request translation
@@ -330,29 +330,26 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
         <div>
           <h2 className="text-2xl font-bold">{t('common.ocrImageProcessor')}</h2>
           <p className="text-muted-foreground">
-            Extract text from screenshots and game images
-          </p>
+            {t('ocrImageProcessor.subtitle')}</p>
         </div>
         
         <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
           <DialogTrigger asChild>
             <Button variant="outline">
               <Settings className="h-4 w-4 mr-2" />
-              Settings
-            </Button>
+              {t('ocrImageProcessor.settings')}</Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>OCR Settings</DialogTitle>
+              <DialogTitle>{t('ocrImageProcessor.ocrSettings')}</DialogTitle>
               <DialogDescription>
-                Configure text recognition options
-              </DialogDescription>
+                {t('ocrImageProcessor.ocrSettingsDesc')}</DialogDescription>
             </DialogHeader>
             
             <div className="space-y-6">
               {/* Lingua */}
               <div className="space-y-2">
-                <Label>Recognition Language</Label>
+                <Label>{t('ocrImageProcessor.recognitionLanguage')}</Label>
                 <Select 
                   value={settings.language} 
                   onValueChange={(value) => setSettings(prev => ({ ...prev, language: value }))}
@@ -372,7 +369,7 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
 
               {/* Modalità rilevamento */}
               <div className="space-y-2">
-                <Label>Detection Mode</Label>
+                <Label>{t('ocrImageProcessor.detectionMode')}</Label>
                 <Select 
                   value={settings.textDetectionMode} 
                   onValueChange={(value: string) => setSettings(prev => ({ ...prev, textDetectionMode: value as typeof prev.textDetectionMode }))}
@@ -381,16 +378,16 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="fast">Fast</SelectItem>
-                    <SelectItem value="accurate">Accurate</SelectItem>
-                    <SelectItem value="hybrid">Hybrid</SelectItem>
+                    <SelectItem value="fast">{t('ocrImageProcessor.fast')}</SelectItem>
+                    <SelectItem value="accurate">{t('ocrImageProcessor.accurate')}</SelectItem>
+                    <SelectItem value="hybrid">{t('ocrImageProcessor.hybrid')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {/* Confidenza minima */}
               <div className="space-y-2">
-                <Label>Minimum Confidence: {settings.minConfidence}%</Label>
+                <Label>{t('ocrImageProcessor.minConfidence')} {settings.minConfidence}%</Label>
                 <Slider
                   value={[settings.minConfidence]}
                   onValueChange={([value]) => setSettings(prev => ({ ...prev, minConfidence: value }))}
@@ -418,7 +415,7 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
                 {settings.enhanceImage && (
                   <>
                     <div className="space-y-2">
-                      <Label>Contrasto: {settings.contrastBoost}%</Label>
+                      <Label>{t('ocrImageProcessor.contrast')} {settings.contrastBoost}%</Label>
                       <Slider
                         value={[settings.contrastBoost]}
                         onValueChange={([value]) => setSettings(prev => ({ ...prev, contrastBoost: value }))}
@@ -429,7 +426,7 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Luminosità: {settings.brightnessAdjust}%</Label>
+                      <Label>{t('ocrImageProcessor.brightness')} {settings.brightnessAdjust}%</Label>
                       <Slider
                         value={[settings.brightnessAdjust]}
                         onValueChange={([value]) => setSettings(prev => ({ ...prev, brightnessAdjust: value }))}
@@ -442,7 +439,7 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
                 )}
 
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="noise">Riduzione Rumore</Label>
+                  <Label htmlFor="noise">{t('ocrImageProcessor.noiseReduction')}</Label>
                   <Switch
                     id="noise"
                     checked={settings.noiseReduction}
@@ -463,8 +460,7 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
 
             <DialogFooter>
               <Button onClick={() => setIsSettingsOpen(false)}>
-                Salva Impostazioni
-              </Button>
+                {t('ocrImageProcessor.saveSettings')}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -486,11 +482,9 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
               
               <div>
                 <p className="text-lg font-medium">
-                  Drag an image here or click to select
-                </p>
+                  {t('ocrImageProcessor.dragImage')}</p>
                 <p className="text-sm text-muted-foreground">
-                  Supports PNG, JPG, JPEG, WebP
-                </p>
+                  {t('ocrImageProcessor.supportedFormats')}</p>
               </div>
 
               <div className="flex gap-2">
@@ -499,13 +493,11 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
                   disabled={isProcessing}
                 >
                   <Upload className="h-4 w-4 mr-2" />
-                  Select File
-                </Button>
+                  {t('ocrImageProcessor.selectFile')}</Button>
                 
                 <Button variant="outline" disabled={isProcessing}>
                   <Camera className="h-4 w-4 mr-2" />
-                  Screenshot
-                </Button>
+                  {t('ocrImageProcessor.screenshot')}</Button>
               </div>
             </div>
 
@@ -522,7 +514,7 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
           {isProcessing && (
             <div className="mt-4 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Processing...</span>
+                <span className="text-sm font-medium">{t('ocrImageProcessor.processing')}</span>
                 <span className="text-sm text-muted-foreground">{progress}%</span>
               </div>
               <Progress value={progress} className="h-2" />
@@ -535,7 +527,7 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
       {results.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">OCR Results</h3>
+            <h3 className="text-lg font-semibold">{t('ocrImageProcessor.ocrResults')}</h3>
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
@@ -543,8 +535,7 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
                 onClick={() => setShowBoundingBoxes(!showBoundingBoxes)}
               >
                 {showBoundingBoxes ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                {showBoundingBoxes ? 'Hide' : 'Show'} Boxes
-              </Button>
+                {showBoundingBoxes ? 'Hide' : 'Show'} {t('ocrImageProcessor.boxes')}</Button>
             </div>
           </div>
 
@@ -554,11 +545,9 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <CardTitle className="text-base">
-                      result OCR
-                    </CardTitle>
+                      {t('ocrImageProcessor.resultTitle')}</CardTitle>
                     <Badge variant="secondary">
-                      {result.confidence.toFixed(1)}% confidenza
-                    </Badge>
+                      {result.confidence.toFixed(1)}% {t('ocrImageProcessor.confidence')}</Badge>
                     <Badge variant="outline">
                       {supportedLanguages.find(l => l.code === result.language)?.name || result.language}
                     </Badge>
@@ -602,8 +591,7 @@ const OCRImageProcessor: React.FC<OCRImageProcessorProps> = ({
                 </div>
                 
                 <CardDescription>
-                  Estratto il {result.timestamp.toLocaleString()} • {result.boundingBoxes.length} elementi rilevati
-                </CardDescription>
+                  {t('ocrImageProcessor.extractedOn')} {result.timestamp.toLocaleString()} • {result.boundingBoxes.length}  {t('ocrImageProcessor.detectedElements')}</CardDescription>
               </CardHeader>
               
               <CardContent className="space-y-4">
