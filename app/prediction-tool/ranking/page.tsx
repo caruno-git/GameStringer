@@ -136,8 +136,7 @@ export default function PredictionRankingPage() {
             onClick={() => window.location.href = '/library'}
             className="text-slate-400 hover:text-white transition-colors text-sm flex items-center gap-1"
           >
-            <ChevronLeft className="h-4 w-4" /> Torna alla Libreria
-          </button>
+            <ChevronLeft className="h-4 w-4" /> {t('predictionRankingPage.backToLibrary')}</button>
         </div>
 
         <div className="flex items-center justify-between mb-8">
@@ -147,9 +146,8 @@ export default function PredictionRankingPage() {
             </div>
             <div>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-300 to-fuchsia-300 bg-clip-text text-transparent">
-                P.T. Classifica Rapida
-              </h1>
-              <p className="text-slate-400 text-sm">Scansiona tutti i giochi installati e classifica per difficoltà di traduzione</p>
+                {t('predictionRankingPage.title')}</h1>
+              <p className="text-slate-400 text-sm">{t('predictionRankingPage.subtitle')}</p>
             </div>
           </div>
 
@@ -159,7 +157,7 @@ export default function PredictionRankingPage() {
             className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-500 hover:to-fuchsia-500 disabled:opacity-50 rounded-xl font-semibold transition-all shadow-lg shadow-purple-500/25"
           >
             {loading ? (
-              <><Loader2 className="h-5 w-5 animate-spin" /> Scansione in corso...</>
+              <><Loader2 className="h-5 w-5 animate-spin" /> {t('predictionRankingPage.scanning')}</>
             ) : (
               <><Zap className="h-5 w-5" /> {scanned ? 'Riscansiona Tutti' : 'Scansiona Tutti'}</>
             )}
@@ -171,7 +169,7 @@ export default function PredictionRankingPage() {
           <div className="bg-slate-800/60 rounded-2xl border border-purple-500/20 p-8 mb-8">
             <div className="flex items-center gap-4 mb-4">
               <Brain className="h-6 w-6 text-purple-400 animate-pulse" />
-              <span className="text-lg font-semibold">Analizzando i giochi installati...</span>
+              <span className="text-lg font-semibold">{t('predictionRankingPage.analyzing')}</span>
             </div>
             <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden">
               <div
@@ -180,8 +178,7 @@ export default function PredictionRankingPage() {
               />
             </div>
             <p className="text-slate-400 text-sm mt-2">
-              Scansione file, rilevamento lingue, analisi formati... Potrebbe richiedere qualche minuto.
-            </p>
+              {t('predictionRankingPage.scanningDetail')}</p>
           </div>
         )}
 
@@ -203,31 +200,31 @@ export default function PredictionRankingPage() {
               </div>
               <div className="bg-green-500/10 rounded-xl p-3 border border-green-500/20 text-center">
                 <div className="text-2xl font-bold text-green-400">{stats.easy}</div>
-                <div className="text-2xs text-green-400/70 uppercase tracking-wider">Facili</div>
+                <div className="text-2xs text-green-400/70 uppercase tracking-wider">{t('predictionRankingPage.easy')}</div>
               </div>
               <div className="bg-yellow-500/10 rounded-xl p-3 border border-yellow-500/20 text-center">
                 <div className="text-2xl font-bold text-yellow-400">{stats.medium}</div>
-                <div className="text-2xs text-yellow-400/70 uppercase tracking-wider">Medi</div>
+                <div className="text-2xs text-yellow-400/70 uppercase tracking-wider">{t('predictionRankingPage.medium')}</div>
               </div>
               <div className="bg-red-500/10 rounded-xl p-3 border border-red-500/20 text-center">
                 <div className="text-2xl font-bold text-red-400">{stats.hard}</div>
-                <div className="text-2xs text-red-400/70 uppercase tracking-wider">Difficili</div>
+                <div className="text-2xs text-red-400/70 uppercase tracking-wider">{t('predictionRankingPage.hard')}</div>
               </div>
               <div className="bg-blue-500/10 rounded-xl p-3 border border-blue-500/20 text-center">
                 <div className="text-2xl font-bold text-blue-400">{stats.withItalian}</div>
-                <div className="text-2xs text-blue-400/70 uppercase tracking-wider">Con IT</div>
+                <div className="text-2xs text-blue-400/70 uppercase tracking-wider">{t('predictionRankingPage.withIt')}</div>
               </div>
               <div className="bg-purple-500/10 rounded-xl p-3 border border-purple-500/20 text-center">
                 <div className="text-2xl font-bold text-purple-400">{stats.gsSupported}</div>
-                <div className="text-2xs text-purple-400/70 uppercase tracking-wider">GS OK</div>
+                <div className="text-2xs text-purple-400/70 uppercase tracking-wider">{t('predictionRankingPage.gsOk')}</div>
               </div>
               <div className="bg-slate-800/60 rounded-xl p-3 border border-slate-700/50 text-center">
                 <div className="text-2xl font-bold text-cyan-400">{formatStrings(stats.totalStrings)}</div>
-                <div className="text-2xs text-slate-400 uppercase tracking-wider">Stringhe Tot.</div>
+                <div className="text-2xs text-slate-400 uppercase tracking-wider">{t('predictionRankingPage.totalStrings')}</div>
               </div>
               <div className="bg-slate-800/60 rounded-xl p-3 border border-slate-700/50 text-center">
                 <div className="text-2xl font-bold text-emerald-400">${stats.totalCost.toFixed(0)}</div>
-                <div className="text-2xs text-slate-400 uppercase tracking-wider">Costo Cloud Tot.</div>
+                <div className="text-2xs text-slate-400 uppercase tracking-wider">{t('predictionRankingPage.totalCloudCost')}</div>
               </div>
             </div>
 
@@ -235,23 +232,23 @@ export default function PredictionRankingPage() {
             <div className="bg-slate-800/80 rounded-t-xl border border-slate-700/50 border-b-0">
               <div className="grid grid-cols-[minmax(200px,2fr)_100px_80px_100px_90px_90px_80px_70px_70px] gap-2 px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
                 <button onClick={() => toggleSort('name')} className="flex items-center gap-1 hover:text-white transition-colors text-left">
-                  Gioco {sortKey === 'name' && <ArrowUpDown className="h-3 w-3" />}
+                  {t('predictionRankingPage.game')}{sortKey === 'name' && <ArrowUpDown className="h-3 w-3" />}
                 </button>
-                <span>Engine</span>
+                <span>{t('predictionRankingPage.engine')}</span>
                 <button onClick={() => toggleSort('difficulty')} className="flex items-center gap-1 hover:text-white transition-colors">
-                  Difficoltà {sortKey === 'difficulty' && <ArrowUpDown className="h-3 w-3" />}
+                  {t('predictionRankingPage.difficulty')}{sortKey === 'difficulty' && <ArrowUpDown className="h-3 w-3" />}
                 </button>
                 <button onClick={() => toggleSort('strings')} className="flex items-center gap-1 hover:text-white transition-colors">
-                  Stringhe {sortKey === 'strings' && <ArrowUpDown className="h-3 w-3" />}
+                  {t('predictionRankingPage.strings')}{sortKey === 'strings' && <ArrowUpDown className="h-3 w-3" />}
                 </button>
                 <button onClick={() => toggleSort('timeLocal')} className="flex items-center gap-1 hover:text-white transition-colors">
-                  Tempo Loc. {sortKey === 'timeLocal' && <ArrowUpDown className="h-3 w-3" />}
+                  {t('predictionRankingPage.localTime')}{sortKey === 'timeLocal' && <ArrowUpDown className="h-3 w-3" />}
                 </button>
                 <button onClick={() => toggleSort('timeCloud')} className="flex items-center gap-1 hover:text-white transition-colors">
-                  Tempo Cloud {sortKey === 'timeCloud' && <ArrowUpDown className="h-3 w-3" />}
+                  {t('predictionRankingPage.cloudTime')}{sortKey === 'timeCloud' && <ArrowUpDown className="h-3 w-3" />}
                 </button>
                 <button onClick={() => toggleSort('cost')} className="flex items-center gap-1 hover:text-white transition-colors">
-                  Costo {sortKey === 'cost' && <ArrowUpDown className="h-3 w-3" />}
+                  {t('predictionRankingPage.cost')}{sortKey === 'cost' && <ArrowUpDown className="h-3 w-3" />}
                 </button>
                 <span className="text-center">{t('common.lingue')}</span>
                 <span className="text-center">GS</span>
@@ -299,8 +296,7 @@ export default function PredictionRankingPage() {
                       </span>
                       {game.isDemo && (
                         <span className="flex-shrink-0 px-1.5 py-0.5 text-micro font-bold uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded">
-                          Demo
-                        </span>
+                          {t('predictionRankingPage.demo')}</span>
                       )}
                     </div>
                     <span className="text-2xs text-slate-500">{game.sizeGb > 0 ? `${game.sizeGb.toFixed(1)} GB` : ''}</span>
@@ -361,7 +357,7 @@ export default function PredictionRankingPage() {
             {sorted.length === 0 && (
               <div className="text-center py-12 text-slate-500">
                 <Brain className="h-12 w-12 mx-auto mb-4 opacity-30" />
-                <p>Nessun gioco installato trovato.</p>
+                <p>{t('predictionRankingPage.noGamesFound')}</p>
               </div>
             )}
           </>
@@ -373,13 +369,11 @@ export default function PredictionRankingPage() {
             <Brain className="h-20 w-20 mx-auto mb-6 text-purple-500/30" />
             <h2 className="text-xl font-semibold text-slate-300 mb-2">{t('common.classificaDifficoltàTraduzione')}</h2>
             <p className="text-slate-500 max-w-md mx-auto mb-8">
-              Clicca &quot;Scansiona Tutti&quot; per analizzare tutti i giochi installati e ottenere
-              una classifica ordinata per difficoltà di traduzione, con stime di tempo e costo.
-            </p>
+              {t('predictionRankingPage.clickScanPrompt')}</p>
             <div className="flex items-center justify-center gap-6 text-sm text-slate-500">
-              <div className="flex items-center gap-2"><BarChart3 className="h-4 w-4" /> Difficoltà</div>
-              <div className="flex items-center gap-2"><Clock className="h-4 w-4" /> Tempi</div>
-              <div className="flex items-center gap-2"><DollarSign className="h-4 w-4" /> Costi</div>
+              <div className="flex items-center gap-2"><BarChart3 className="h-4 w-4" /> {t('predictionRankingPage.difficulty')}</div>
+              <div className="flex items-center gap-2"><Clock className="h-4 w-4" /> {t('predictionRankingPage.times')}</div>
+              <div className="flex items-center gap-2"><DollarSign className="h-4 w-4" /> {t('predictionRankingPage.costs')}</div>
               <div className="flex items-center gap-2"><Globe className="h-4 w-4" />{t('common.lingue')}</div>
               <div className="flex items-center gap-2"><Shield className="h-4 w-4" />{t('common.supportoGs')}</div>
             </div>
