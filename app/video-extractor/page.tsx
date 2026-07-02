@@ -441,9 +441,7 @@ export default function VideoExtractorPage() {
           <div className="text-sm">
             <p className="font-semibold">{t('common.ffmpegNonTrovatoNelPathDiSistema')}</p>
             <p className="text-amber-300/70 mt-1">
-              Per convertire i video dei giochi, installa FFmpeg e assicurati che sia nel PATH.
-              La scansione e l&apos;analisi dei file funzionano comunque senza FFmpeg.
-            </p>
+              {t('videoExtractor.ffmpegHint')}</p>
           </div>
         </div>
       )}
@@ -468,8 +466,7 @@ export default function VideoExtractorPage() {
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-400 hover:text-indigo-300 text-xs font-medium transition-all no-underline"
               >
                 <Gamepad2 className="w-3.5 h-3.5" />
-                Scheda Gioco
-              </Link>
+                {t('videoExtractor.gameSheet')}</Link>
             )}
             {/* Game picker from library */}
             <div className="relative">
@@ -480,8 +477,7 @@ export default function VideoExtractorPage() {
                 className="text-xs gap-1.5"
               >
                 <Library className="w-3.5 h-3.5" />
-                Scegli dalla Libreria
-                <ChevronDown className={`w-3 h-3 transition-transform ${showGamePicker ? 'rotate-180' : ''}`} />
+                {t('videoExtractor.chooseFromLibrary')}<ChevronDown className={`w-3 h-3 transition-transform ${showGamePicker ? 'rotate-180' : ''}`} />
               </Button>
               {showGamePicker && (
                 <div className="absolute right-0 top-full mt-1 w-80 max-h-72 bg-zinc-900 border border-zinc-700 rounded-lg shadow-xl z-50 overflow-hidden">
@@ -489,7 +485,7 @@ export default function VideoExtractorPage() {
                     <Input
                       value={gamePickerSearch}
                       onChange={(e) => setGamePickerSearch(e.target.value)}
-                      placeholder="Cerca gioco installato..."
+                      placeholder={t('videoExtractor.searchInstalledGame')}
                       className="h-7 text-xs bg-zinc-800/50 border-zinc-700"
                       autoFocus
                     />
@@ -554,7 +550,7 @@ export default function VideoExtractorPage() {
               <div className="text-xl font-bold text-white">{formatSize(scanResult.total_size_bytes)}</div>
             </div>
             <div className="bg-zinc-900/50 rounded-lg border border-zinc-800 p-3">
-              <div className="text-xs text-zinc-500 mb-1">Formati Trovati</div>
+              <div className="text-xs text-zinc-500 mb-1">{t('videoExtractor.formatsFound')}</div>
               <div className="text-xl font-bold text-white">{scanResult.format_summary.length}</div>
             </div>
             <div className="bg-zinc-900/50 rounded-lg border border-zinc-800 p-3">
@@ -583,8 +579,7 @@ export default function VideoExtractorPage() {
                 className="cursor-pointer bg-zinc-700/30 text-zinc-400 border-zinc-600 hover:bg-zinc-600/30"
                 onClick={() => setFilterFormat('all')}
               >
-                Mostra tutti
-              </Badge>
+                {t('videoExtractor.showAll')}</Badge>
             )}
           </div>
 
@@ -592,11 +587,9 @@ export default function VideoExtractorPage() {
           <div className="flex items-center gap-3 flex-wrap">
             <div className="flex items-center gap-1">
               <Button variant="outline" size="sm" onClick={selectAll} className="text-xs">
-                {selectedFiles.size === filteredFiles.length && filteredFiles.length > 0 ? 'Deseleziona' : 'Seleziona'} Tutti
-              </Button>
+                {selectedFiles.size === filteredFiles.length && filteredFiles.length > 0 ? 'Deseleziona' : 'Seleziona'} {t('videoExtractor.all')}</Button>
               <Button variant="outline" size="sm" onClick={selectAllConvertible} className="text-xs">
-                Solo Convertibili
-              </Button>
+                {t('videoExtractor.convertibleOnly')}</Button>
             </div>
 
             <div className="flex-1" />
@@ -606,7 +599,7 @@ export default function VideoExtractorPage() {
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Cerca file..."
+                placeholder={t('videoExtractor.searchFiles')}
                 className="pl-8 h-8 w-48 bg-zinc-800/50 border-zinc-700 text-xs"
               />
             </div>
@@ -618,7 +611,7 @@ export default function VideoExtractorPage() {
               {filteredFiles.length === 0 ? (
                 <div className="p-8 text-center text-zinc-500">
                   <FileVideo className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  <p>Nessun file video trovato{filterFormat !== 'all' ? ' per questo formato' : ''}</p>
+                  <p>{t('videoExtractor.noVideoFiles')}{filterFormat !== 'all' ? ' per questo formato' : ''}</p>
                 </div>
               ) : (
                 filteredFiles.map((file) => (
@@ -659,8 +652,7 @@ export default function VideoExtractorPage() {
                           </Badge>
                           {file.ffmpeg_convertible && (
                             <Badge variant="outline" className="text-[10px] bg-emerald-500/10 text-emerald-400 border-emerald-500/30">
-                              Convertibile
-                            </Badge>
+                              {t('videoExtractor.convertible')}</Badge>
                           )}
                         </div>
                         <div className="flex items-center gap-3 text-xs text-zinc-500 mt-0.5">
@@ -670,7 +662,7 @@ export default function VideoExtractorPage() {
                             <span className="text-zinc-400">{file.width}x{file.height}</span>
                           )}
                           {file.frame_count && (
-                            <span>{file.frame_count} frame</span>
+                            <span>{file.frame_count} {t('videoExtractor.frameLabel')}</span>
                           )}
                         </div>
                       </div>
@@ -689,23 +681,23 @@ export default function VideoExtractorPage() {
                       <div className="px-12 py-3 bg-zinc-800/30 border-b border-zinc-800/50">
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
                           <div>
-                            <span className="text-zinc-500">Formato:</span>
+                            <span className="text-zinc-500">{t('videoExtractor.formatLabel')}</span>
                             <span className="ml-2 text-white">{headerInfo[file.path].format_name}</span>
                           </div>
                           {headerInfo[file.path].width && (
                             <div>
-                              <span className="text-zinc-500">Risoluzione:</span>
+                              <span className="text-zinc-500">{t('videoExtractor.resolutionLabel')}</span>
                               <span className="ml-2 text-white">{headerInfo[file.path].width}x{headerInfo[file.path].height}</span>
                             </div>
                           )}
                           {headerInfo[file.path].frame_count && (
                             <div>
-                              <span className="text-zinc-500">Frame:</span>
+                              <span className="text-zinc-500">{t('videoExtractor.frameColon')}</span>
                               <span className="ml-2 text-white">{headerInfo[file.path].frame_count}</span>
                             </div>
                           )}
                           <div>
-                            <span className="text-zinc-500">Audio:</span>
+                            <span className="text-zinc-500">{t('videoExtractor.audioLabel')}</span>
                             <span className="ml-2 text-white">
                               {headerInfo[file.path].has_audio
                                 ? `${headerInfo[file.path].audio_sample_rate || '?'} Hz`
@@ -734,14 +726,13 @@ export default function VideoExtractorPage() {
                 <Settings2 className="w-5 h-5 text-purple-400" />
                 <h2 className="font-semibold text-white">{t('common.opzioniConversione')}</h2>
                 <Badge className="bg-purple-500/20 text-purple-400">
-                  {selectedFiles.size} file selezionati
-                </Badge>
+                  {selectedFiles.size} {t('videoExtractor.filesSelected')}</Badge>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Preset */}
                 <div>
-                  <label className="text-xs text-zinc-500 mb-1 block">Preset</label>
+                  <label className="text-xs text-zinc-500 mb-1 block">{t('videoExtractor.preset')}</label>
                   <Select value={selectedPreset} onValueChange={setSelectedPreset}>
                     <SelectTrigger className="bg-zinc-800/50 border-zinc-700">
                       <SelectValue />
@@ -756,7 +747,7 @@ export default function VideoExtractorPage() {
 
                 {/* Output Directory */}
                 <div className="md:col-span-2">
-                  <label className="text-xs text-zinc-500 mb-1 block">Directory Output (vuoto = stessa cartella)</label>
+                  <label className="text-xs text-zinc-500 mb-1 block">{t('videoExtractor.outputDirEmpty')}</label>
                   <Input
                     value={outputDir}
                     onChange={(e) => setOutputDir(e.target.value)}
@@ -790,7 +781,7 @@ export default function VideoExtractorPage() {
               {converting && (
                 <div className="space-y-2">
                   <Progress value={conversionProgress} className="h-2" />
-                  <p className="text-xs text-zinc-500">Conversione in corso...</p>
+                  <p className="text-xs text-zinc-500">{t('videoExtractor.converting')}</p>
                 </div>
               )}
 
@@ -799,8 +790,7 @@ export default function VideoExtractorPage() {
                 <div className="space-y-2">
                   <h3 className="text-sm font-medium text-white flex items-center gap-2">
                     <Download className="w-4 h-4" />
-                    Risultati Conversione
-                  </h3>
+                    {t('videoExtractor.conversionResults')}</h3>
                   <div className="space-y-1.5 max-h-[300px] overflow-y-auto">
                     {conversionResults.map((result, i) => (
                       <div
@@ -835,8 +825,7 @@ export default function VideoExtractorPage() {
 
                   <div className="flex items-center gap-2 pt-2 text-xs text-zinc-400">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                    {conversionResults.filter(r => r.success).length} / {conversionResults.length} convertiti con successo
-                  </div>
+                    {conversionResults.filter(r => r.success).length} / {conversionResults.length} {t('videoExtractor.convertedSuccess')}</div>
                 </div>
               )}
             </div>
@@ -847,18 +836,18 @@ export default function VideoExtractorPage() {
             <div className="bg-zinc-900/50 rounded-lg border border-fuchsia-500/30 p-4 space-y-4">
               <div className="flex items-center gap-3">
                 <Maximize2 className="w-5 h-5 text-fuchsia-400" />
-                <h2 className="font-semibold text-white">AI Upscaling (Real-ESRGAN)</h2>
+                <h2 className="font-semibold text-white">{t('videoExtractor.aiUpscaling')}</h2>
                 {realesrganAvailable === true ? (
                   <Badge className="bg-emerald-500/20 text-emerald-400">{t('common.disponibile')}</Badge>
                 ) : realesrganAvailable === false ? (
-                  <Badge className="bg-amber-500/20 text-amber-400">Non installato</Badge>
+                  <Badge className="bg-amber-500/20 text-amber-400">{t('gameDetails.notInstalled')}</Badge>
                 ) : null}
               </div>
 
               {realesrganAvailable === false && (
                 <div className="text-xs text-zinc-400 space-y-1">
                   <p>Per usare l&apos;AI upscaling, scarica <a href="https://github.com/xinntao/Real-ESRGAN/releases" target="_blank" rel="noopener" className="text-fuchsia-400 underline">Real-ESRGAN ncnn Vulkan</a> e aggiungilo al PATH.</p>
-                  <p className="text-zinc-500">Funziona su GPU (Vulkan) — ideale per upscalare video FMV retro come Gabriel Knight 2.</p>
+                  <p className="text-zinc-500">{t('videoExtractor.upscalingHint')}</p>
                 </div>
               )}
 
@@ -879,19 +868,19 @@ export default function VideoExtractorPage() {
                       </Select>
                     </div>
                     <div>
-                      <label className="text-xs text-zinc-500 mb-1 block">Scala</label>
+                      <label className="text-xs text-zinc-500 mb-1 block">{t('videoExtractor.scale')}</label>
                       <Select value={String(upscaleScale)} onValueChange={(v) => setUpscaleScale(Number(v))}>
                         <SelectTrigger className="bg-zinc-800/50 border-zinc-700">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="2">2x</SelectItem>
-                          <SelectItem value="4">4x (consigliato per FMV retro)</SelectItem>
+                          <SelectItem value="4">{t('videoExtractor.scale4x')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div>
-                      <label className="text-xs text-zinc-500 mb-1 block">Directory Output</label>
+                      <label className="text-xs text-zinc-500 mb-1 block">{t('videoExtractor.outputDir')}</label>
                       <Input
                         value={outputDir}
                         onChange={(e) => setOutputDir(e.target.value)}
@@ -915,8 +904,7 @@ export default function VideoExtractorPage() {
                   </Button>
 
                   <p className="text-[11px] text-zinc-500">
-                    Estrae i frame → upscale AI su GPU → riassembla in MP4 H.264. Può richiedere diversi minuti per video.
-                  </p>
+                    {t('videoExtractor.upscalingPipeline')}</p>
                 </>
               )}
             </div>
@@ -926,7 +914,7 @@ export default function VideoExtractorPage() {
           <div className="bg-zinc-900/50 rounded-lg border border-zinc-800 p-4">
             <div className="flex items-center gap-2 mb-3">
               <Info className="w-4 h-4 text-zinc-500" />
-              <h3 className="text-sm font-medium text-zinc-400">Formati Supportati</h3>
+              <h3 className="text-sm font-medium text-zinc-400">{t('videoExtractor.supportedFormats')}</h3>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
               {[
