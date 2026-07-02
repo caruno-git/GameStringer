@@ -308,25 +308,21 @@ export default function ContextHarvesterPage() {
           <CardHeader className="py-3 px-4">
             <CardTitle className="text-sm flex items-center gap-2">
               <FileText className="h-4 w-4" />
-              Input Stringhe
-            </CardTitle>
+              {t('contextHarvesterPage.inputStrings')}</CardTitle>
             <CardDescription className="text-xs">
-              Carica le stringhe del gioco per estrarre contesto automaticamente
-            </CardDescription>
+              {t('contextHarvesterPage.subtitle')}</CardDescription>
           </CardHeader>
           <CardContent className="px-4 pb-4 space-y-3">
             <Tabs value={inputMode} onValueChange={(v) => setInputMode(v as "file" | "paste" | "demo")}>
               <TabsList className="h-8">
                 <TabsTrigger value="demo" className="text-xs h-7">
                   <Sparkles className="h-3 w-3 mr-1" />
-                  Demo (30 stringhe)
-                </TabsTrigger>
+                  {t('contextHarvesterPage.demoBtn')}</TabsTrigger>
                 <TabsTrigger value="paste" className="text-xs h-7">
                   <MessageSquare className="h-3 w-3 mr-1" />{t('heatmap.paste')}</TabsTrigger>
                 <TabsTrigger value="file" className="text-xs h-7">
                   <Upload className="h-3 w-3 mr-1" />
-                  File
-                </TabsTrigger>
+                  {t('contextHarvesterPage.fileTab')}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="paste" className="mt-2 space-y-2">
@@ -341,8 +337,7 @@ export default function ContextHarvesterPage() {
 
               <TabsContent value="file" className="mt-2">
                 <Label htmlFor="file-upload" className="text-xs">
-                  Carica file JSON, CSV o TXT
-                </Label>
+                  {t('contextHarvesterPage.loadFileDesc')}</Label>
                 <Input
                   id="file-upload"
                   type="file"
@@ -354,8 +349,7 @@ export default function ContextHarvesterPage() {
 
               <TabsContent value="demo" className="mt-2">
                 <p className="text-xs text-muted-foreground">
-                  30 stringhe di esempio da un RPG generico — menu, dialoghi, combattimento, inventario, quest, sistema.
-                </p>
+                  {t('contextHarvesterPage.demoDesc')}</p>
               </TabsContent>
             </Tabs>
 
@@ -365,7 +359,7 @@ export default function ContextHarvesterPage() {
                 <Input
                   value={gameNameInput}
                   onChange={(e) => setGameNameInput(e.target.value)}
-                  placeholder="es. The Elder Scrolls"
+                  placeholder={t('contextHarvesterPage.gameNamePh')}
                   className="h-8 text-xs mt-1"
                 />
               </div>
@@ -374,7 +368,7 @@ export default function ContextHarvesterPage() {
                 <Input
                   value={gameGenreInput}
                   onChange={(e) => setGameGenreInput(e.target.value)}
-                  placeholder="es. RPG, Visual Novel, FPS"
+                  placeholder={t('contextHarvesterPage.genrePh')}
                   className="h-8 text-xs mt-1"
                 />
               </div>
@@ -384,8 +378,7 @@ export default function ContextHarvesterPage() {
                 className="h-8 text-xs"
               >
                 {isProcessing ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Play className="h-3 w-3 mr-1" />}
-                Analizza
-              </Button>
+                {t('contextHarvesterPage.analyze')}</Button>
             </div>
           </CardContent>
         </Card>
@@ -435,9 +428,9 @@ export default function ContextHarvesterPage() {
                   <span className="text-xs font-medium">{t('contextHarvesterPage.constraints')}</span>
                 </div>
                 <div className="text-xs text-muted-foreground space-y-0.5">
-                  <div>{result.stats.stringsWithPlaceholders} con placeholder</div>
-                  <div>{result.stats.stringsWithConstraints} con vincoli UI</div>
-                  {result.stats.avgMaxLength && <div>~{result.stats.avgMaxLength} chars max medio</div>}
+                  <div>{result.stats.stringsWithPlaceholders}  {t('contextHarvesterPage.withPlaceholder')}</div>
+                  <div>{result.stats.stringsWithConstraints}  {t('contextHarvesterPage.withUiConstraints')}</div>
+                  {result.stats.avgMaxLength && <div>~{result.stats.avgMaxLength}  {t('contextHarvesterPage.charsMaxAvg')}</div>}
                 </div>
               </Card>
 
@@ -465,8 +458,7 @@ export default function ContextHarvesterPage() {
                 <CardHeader className="py-2 px-4 flex flex-row items-center justify-between">
                   <CardTitle className="text-xs flex items-center gap-1.5">
                     <Sparkles className="h-3.5 w-3.5 text-amber-400" />
-                    Prompt Hint Generato (iniettato automaticamente)
-                  </CardTitle>
+                    {t('contextHarvesterPage.promptHintGenerated')}</CardTitle>
                   <Button variant="ghost" size="xs" className="text-xs" onClick={handleCopyPrompt}>
                     <Copy className="h-3 w-3 mr-1" />{t('translationFixer.copy')}</Button>
                 </CardHeader>
@@ -481,11 +473,9 @@ export default function ContextHarvesterPage() {
             {/* Actions */}
             <div className="flex gap-2">
               <Button variant="outline" size="xs" className="text-xs" onClick={handleExport}>
-                <Download className="h-3 w-3 mr-1" /> Esporta JSON
-              </Button>
+                <Download className="h-3 w-3 mr-1" /> {t('contextHarvesterPage.exportJson')}</Button>
               <Button variant="outline" size="xs" className="text-xs" onClick={handleSave}>
-                <FileText className="h-3 w-3 mr-1" /> Salva per Gioco
-              </Button>
+                <FileText className="h-3 w-3 mr-1" /> {t('contextHarvesterPage.saveForGame')}</Button>
               {/* Filters */}
               <div className="flex-1" />
               <select
@@ -516,7 +506,7 @@ export default function ContextHarvesterPage() {
               <Card className="lg:col-span-2">
                 <CardHeader className="py-2 px-4">
                   <CardTitle className="text-xs">
-                    Stringhe Analizzate ({filteredContexts.length}/{result.stats.totalStrings})
+                    {t('contextHarvesterPage.analyzedStrings')} ({filteredContexts.length}/{result.stats.totalStrings})
                   </CardTitle>
                 </CardHeader>
                 <ScrollArea className="h-[500px]">
@@ -553,8 +543,7 @@ export default function ContextHarvesterPage() {
                             </Badge>
                             {ctx.constraints.hasPlaceholders && (
                               <Badge variant="outline" className="text-micro px-1 py-0 h-4 bg-yellow-500/10 text-yellow-400 border-yellow-500/30">
-                                ⚠️ vars
-                              </Badge>
+                                ⚠️ {t('contextHarvesterPage.varsLabel')}</Badge>
                             )}
                           </div>
                         </div>
@@ -582,8 +571,7 @@ export default function ContextHarvesterPage() {
                           {SCREEN_ICONS[selectedCtx.screen]} {selectedCtx.screen}
                         </Badge>
                         <span className="text-2xs text-muted-foreground">
-                          ({Math.round(selectedCtx.screenConfidence * 100)}% conf.)
-                        </span>
+                          ({Math.round(selectedCtx.screenConfidence * 100)}% {t('contextHarvesterPage.confLabel')}</span>
                       </div>
                     </div>
 
@@ -598,8 +586,7 @@ export default function ContextHarvesterPage() {
                           <span className="text-2xs text-muted-foreground">({selectedCtx.speaker})</span>
                         )}
                         <span className="text-2xs text-muted-foreground">
-                          ({Math.round(selectedCtx.speakerConfidence * 100)}% conf.)
-                        </span>
+                          ({Math.round(selectedCtx.speakerConfidence * 100)}% {t('contextHarvesterPage.confLabel')}</span>
                       </div>
                     </div>
 
@@ -628,18 +615,18 @@ export default function ContextHarvesterPage() {
                       <Label className="text-2xs text-muted-foreground">{t('contextHarvesterPage.uiConstraints')}</Label>
                       <div className="space-y-1 mt-1">
                         {selectedCtx.constraints.maxLength !== null && (
-                          <div className="text-xs">📏 Max lunghezza: <span className="font-medium">{selectedCtx.constraints.maxLength}</span> chars</div>
+                          <div className="text-xs">📏 {t('contextHarvesterPage.maxLength')} <span className="font-medium">{selectedCtx.constraints.maxLength}</span>  {t('contextHarvesterPage.charsUnit')}</div>
                         )}
                         {selectedCtx.constraints.hasPlaceholders && (
                           <div className="text-xs">
-                            ⚠️ Placeholder: <code className="text-2xs bg-muted px-1 rounded">{selectedCtx.constraints.placeholders.join(", ")}</code>
+                            ⚠️ {t('contextHarvesterPage.placeholderLabel')} <code className="text-2xs bg-muted px-1 rounded">{selectedCtx.constraints.placeholders.join(", ")}</code>
                           </div>
                         )}
                         {selectedCtx.constraints.isAllCaps && (
-                          <div className="text-xs">🔠 Tutto maiuscolo</div>
+                          <div className="text-xs">🔠 {t('contextHarvesterPage.allUppercase')}</div>
                         )}
                         {selectedCtx.constraints.singleLine && (
-                          <div className="text-xs">↔️ Riga singola</div>
+                          <div className="text-xs">↔️ {t('contextHarvesterPage.singleLine')}</div>
                         )}
                         {!selectedCtx.constraints.maxLength && !selectedCtx.constraints.hasPlaceholders && !selectedCtx.constraints.isAllCaps && (
                           <div className="text-xs text-muted-foreground">{t('contextHarvesterPage.noConstraints')}</div>
@@ -672,8 +659,7 @@ export default function ContextHarvesterPage() {
                 ) : (
                   <CardContent className="px-4 pb-4">
                     <p className="text-xs text-muted-foreground text-center py-8">
-                      Clicca su una stringa per vedere il contesto estratto
-                    </p>
+                      {t('contextHarvesterPage.clickStringPrompt')}</p>
                   </CardContent>
                 )}
               </Card>
@@ -683,7 +669,7 @@ export default function ContextHarvesterPage() {
             {savedHarvests.length > 0 && (
               <Card>
                 <CardHeader className="py-2 px-4">
-                  <CardTitle className="text-xs">Harvest Salvati ({savedHarvests.length})</CardTitle>
+                  <CardTitle className="text-xs">{t('contextHarvesterPage.savedHarvests')} ({savedHarvests.length})</CardTitle>
                 </CardHeader>
                 <CardContent className="px-4 pb-3">
                   <div className="space-y-1">
@@ -691,7 +677,7 @@ export default function ContextHarvesterPage() {
                       <div key={h.gameId} className="flex items-center justify-between p-2 rounded bg-muted/30 text-xs">
                         <div>
                           <span className="font-medium">{h.gameName || h.gameId}</span>
-                          <span className="text-muted-foreground ml-2">{h.totalStrings} stringhe</span>
+                          <span className="text-muted-foreground ml-2">{h.totalStrings}  {t('contextHarvesterPage.stringsUnit')}</span>
                           <span className="text-muted-foreground ml-2">{new Date(h.harvestedAt).toLocaleDateString("it-IT")}</span>
                         </div>
                         <Button
