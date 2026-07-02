@@ -476,18 +476,16 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
             <h3 id="notification-center-title" className="font-semibold text-white">{t('common.notifications')}</h3>
             {filteredUnreadCount > 0 && (
               <Badge variant="secondary" className="text-xs">
-                {filteredUnreadCount} new
-              </Badge>
+                {filteredUnreadCount}  {t('notificationCenter.newLabel')}</Badge>
             )}
             {hasActiveFilters && (
               <Badge variant="outline" className="text-xs">
-                Filtered ({processedNotifications.length})
+                {t('notificationCenter.filtered')} ({processedNotifications.length})
               </Badge>
             )}
             {isSelectMode && selectedNotifications.size > 0 && (
               <Badge variant="default" className="text-xs">
-                {selectedNotifications.size} selected
-              </Badge>
+                {selectedNotifications.size}  {t('notificationCenter.selectedLabel')}</Badge>
             )}
           </div>
           
@@ -516,19 +514,19 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+                <DropdownMenuLabel>{t('notificationCenter.sortBy')}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => handleSort('createdAt')}>
-                  Date {sortConfig.field === 'createdAt' && (sortConfig.direction === 'desc' ? '↓' : '↑')}
+                  {t('notificationCenter.sortDate')}{sortConfig.field === 'createdAt' && (sortConfig.direction === 'desc' ? '↓' : '↑')}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleSort('title')}>
-                  Title {sortConfig.field === 'title' && (sortConfig.direction === 'desc' ? '↓' : '↑')}
+                  {t('notificationCenter.sortTitle')}{sortConfig.field === 'title' && (sortConfig.direction === 'desc' ? '↓' : '↑')}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleSort('priority')}>
-                  Priority {sortConfig.field === 'priority' && (sortConfig.direction === 'desc' ? '↓' : '↑')}
+                  {t('notificationCenter.priority')}{sortConfig.field === 'priority' && (sortConfig.direction === 'desc' ? '↓' : '↑')}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleSort('type')}>
-                  Type {sortConfig.field === 'type' && (sortConfig.direction === 'desc' ? '↓' : '↑')}
+                  {t('notificationCenter.type')}{sortConfig.field === 'type' && (sortConfig.direction === 'desc' ? '↓' : '↑')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -548,7 +546,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>Filters</DropdownMenuLabel>
+                <DropdownMenuLabel>{t('notificationCenter.filters')}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 
                 {/* Filtro solo non lette */}
@@ -557,11 +555,10 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   onCheckedChange={setShowUnreadOnly}
                 >
                   <Mail className="h-4 w-4 mr-2" />
-                  Unread only
-                </DropdownMenuCheckboxItem>
+                  {t('notificationCenter.unreadOnly')}</DropdownMenuCheckboxItem>
                 
                 <DropdownMenuSeparator />
-                <DropdownMenuLabel>Type</DropdownMenuLabel>
+                <DropdownMenuLabel>{t('notificationCenter.type')}</DropdownMenuLabel>
                 
                 {Object.values(NotificationType).map((type) => (
                   <DropdownMenuCheckboxItem
@@ -574,7 +571,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                 ))}
                 
                 <DropdownMenuSeparator />
-                <DropdownMenuLabel>Priority</DropdownMenuLabel>
+                <DropdownMenuLabel>{t('notificationCenter.priority')}</DropdownMenuLabel>
                 
                 {Object.values(NotificationPriority).map((priority) => (
                   <DropdownMenuCheckboxItem
@@ -591,8 +588,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={clearAllFilters}>
                       <X className="h-4 w-4 mr-2" />
-                      Clear filters
-                    </DropdownMenuItem>
+                      {t('notificationCenter.clearFilters')}</DropdownMenuItem>
                   </>
                 )}
               </DropdownMenuContent>
@@ -628,25 +624,21 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={handleBatchMarkAsRead}>
                         <CheckCheck className="h-4 w-4 mr-2" />
-                        Mark selected as read
-                      </DropdownMenuItem>
+                        {t('notificationCenter.markSelectedRead')}</DropdownMenuItem>
                       <DropdownMenuItem onClick={handleBatchDelete} className="text-destructive">
                         <Trash2 className="h-4 w-4 mr-2" />
-                        Delete selected
-                      </DropdownMenuItem>
+                        {t('notificationCenter.deleteSelected')}</DropdownMenuItem>
                     </>
                   ) : (
                     <>
                       {filteredUnreadCount > 0 && (
                         <DropdownMenuItem onClick={markAllAsRead}>
                           <CheckCheck className="h-4 w-4 mr-2" />
-                          Mark all as read
-                        </DropdownMenuItem>
+                          {t('notificationCenter.markAllRead')}</DropdownMenuItem>
                       )}
                       <DropdownMenuItem onClick={handleClearAll} className="text-destructive">
                         <Trash2 className="h-4 w-4 mr-2" />
-                        Delete all
-                      </DropdownMenuItem>
+                        {t('notificationCenter.deleteAll')}</DropdownMenuItem>
                     </>
                   )}
                 </DropdownMenuContent>
@@ -658,7 +650,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
               size="icon"
               onClick={onClose}
               className="h-8 w-8"
-              aria-label="Close notification center"
+              aria-label={t('notificationCenter.closeAria')}
             >
               <X className="h-4 w-4" />
             </Button>
@@ -667,11 +659,8 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
         {/* Descrizione nascosta per screen reader */}
         <div id="notification-center-description" className="sr-only">
-          Centro notifiche con {processedNotifications.length} notifiche. 
-          {filteredUnreadCount > 0 && `${filteredUnreadCount} non lette. `}
-          Usa i filtri per cercare notifiche specifiche. 
-          Premi Escape per chiudere, Ctrl+A per selezionare tutto, Ctrl+F per cercare.
-        </div>
+          {t('notificationCenter.srDescBefore')} {processedNotifications.length}  {t('notificationCenter.srDescAfter')}{filteredUnreadCount > 0 && `${filteredUnreadCount} non lette. `}
+          {t('notificationCenter.filtersHelp')}</div>
 
         {/* Barra di ricerca */}
         <div className="p-3 border-b border-slate-700/50">
@@ -679,27 +668,24 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-500" aria-hidden="true" />
             <Input
               id="notification-search"
-              placeholder="Search notifications..."
+              placeholder={t('notificationCenter.searchPh')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 bg-slate-800/50 border-slate-700 focus:border-purple-500/50 focus:ring-purple-500/20 placeholder:text-slate-500"
-              aria-label="Search notifications by title, message or category"
+              aria-label={t('notificationCenter.searchAria')}
               aria-describedby="search-help"
             />
             <div id="search-help" className="sr-only">
-              Type to search notifications. Search includes title, message and categories.
-            </div>
+              {t('notificationCenter.searchHelp')}</div>
           </div>
         </div>
 
         {/* Statistiche filtri */}
         {hasActiveFilters && (
           <div className="px-4 py-2 bg-muted/50 border-b text-sm text-muted-foreground">
-            Showing {processedNotifications.length} of {notifications.length} notifications
-            {searchQuery && (
+            {t('notificationCenter.showing')} {processedNotifications.length}  {t('notificationCenter.of')} {notifications.length}  {t('notificationCenter.notificationsUnit')}{searchQuery && (
               <span className="ml-2">
-                • Search: &quot;{searchQuery}&quot;
-              </span>
+                • {t('notificationCenter.searchColon')} "{searchQuery}"</span>
             )}
           </div>
         )}
@@ -715,7 +701,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
               <div
                 className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"
                 role="progressbar"
-                aria-label="Loading notifications"
+                aria-label={t('notificationCenter.loadingAria')}
               />
             </div>
           ) : processedNotifications.length === 0 ? (
@@ -739,8 +725,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   onClick={clearAllFilters}
                   className="mt-4 border-slate-700 hover:bg-slate-800"
                 >
-                  Clear filters
-                </Button>
+                  {t('notificationCenter.clearFilters')}</Button>
               )}
             </div>
           ) : (
@@ -947,7 +932,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
                 )}
               >
                 {notification.title}
-                {isUnread && <span className="sr-only"> (non letta)</span>}
+                {isUnread && <span className="sr-only"> {t('notificationCenter.unreadMark')}</span>}
               </h4>
               <p 
                 id={messageId}
@@ -983,7 +968,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
                       e.stopPropagation();
                       onMarkAsRead(notification.id);
                     }}
-                    title="Mark as read"
+                    title={t('notificationCenter.markReadTitle')}
                   >
                     <Check className="h-3 w-3" />
                   </Button>
