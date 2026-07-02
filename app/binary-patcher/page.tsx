@@ -758,8 +758,7 @@ export default function BinaryPatcherPage() {
                   <Binary className="h-12 w-12 mx-auto text-white/20 mb-3" />
                   <h2 className="text-lg font-bold text-white mb-1">{autoLoadLog.length > 0 ? 'Oppure carica manualmente' : 'Carica un file binario'}</h2>
                   <p className="text-white/50 text-sm mb-3">
-                    Seleziona un .exe o .dll di gioco per estrarre le stringhe traducibili
-                  </p>
+                    {t('binaryPatcherPage.selectExeDll')}</p>
                   <div className="flex items-center justify-center gap-2">
                     <Badge variant="outline" className="text-xs">.exe</Badge>
                     <Badge variant="outline" className="text-xs">.dll</Badge>
@@ -774,7 +773,7 @@ export default function BinaryPatcherPage() {
                     <AlertTriangle className="h-4 w-4 text-amber-400 mt-0.5 flex-none" />
                     <div className="text-xs text-amber-300/80">
                       <p className="font-medium mb-1">{t('binaryPatcherPage.antiCheatWarning')}</p>
-                      <p>I giochi con protezioni anti-cheat (EAC, BattlEye, VAC) potrebbero non funzionare dopo il patch.</p>
+                      <p>{t('binaryPatcherPage.antiCheatWarning')}</p>
                     </div>
                   </div>
                 </div>
@@ -802,7 +801,7 @@ export default function BinaryPatcherPage() {
                     {antiCheat.safe ? (
                       <><CheckCircle2 className="h-4 w-4 text-green-400" /><span className="text-sm text-green-400">{t('binaryPatcherPage.noAntiCheat')}</span></>
                     ) : (
-                      <><XCircle className="h-4 w-4 text-red-400" /><span className="text-sm text-red-400">Anti-cheat rilevato: {antiCheat.detected.join(', ')}</span></>
+                      <><XCircle className="h-4 w-4 text-red-400" /><span className="text-sm text-red-400">{t('binaryPatcherPage.antiCheatDetected')} {antiCheat.detected.join(', ')}</span></>
                     )}
                   </div>
                   {antiCheat.warnings.map((w, i) => (
@@ -818,19 +817,18 @@ export default function BinaryPatcherPage() {
                 <label className="text-sm text-white/60">{t('binaryPatcherPage.targetLang')}</label>
                 <select value={targetLang} onChange={(e) => setTargetLang(e.target.value)}
                   className="border border-white/10 rounded px-3 py-1.5 text-sm text-white" style={{backgroundColor: '#1a1a2e'}}>
-                  <option value="it">🇮🇹 Italiano</option>
-                  <option value="en">🇬🇧 English</option>
-                  <option value="es">🇪🇸 Español</option>
-                  <option value="de">🇩🇪 Deutsch</option>
-                  <option value="fr">🇫🇷 Français</option>
-                  <option value="pt">🇵🇹 Português</option>
+                  <option value="it">🇮🇹 {t('languages.it')}</option>
+                  <option value="en">🇬🇧 {t('languages.en')}</option>
+                  <option value="es">🇪🇸 {t('languages.es')}</option>
+                  <option value="de">🇩🇪 {t('languages.de')}</option>
+                  <option value="fr">🇫🇷 {t('languages.fr')}</option>
+                  <option value="pt">🇵🇹 {t('languages.pt')}</option>
                 </select>
               </div>
 
               <Button onClick={handleExtract} disabled={isProcessing} className="w-full bg-orange-600 hover:bg-orange-700">
                 {isProcessing ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Search className="h-4 w-4 mr-2" />}
-                Estrai stringhe dal binario
-              </Button>
+                {t('binaryPatcherPage.extractStrings')}</Button>
             </div>
           </div>
         )}
@@ -879,9 +877,7 @@ export default function BinaryPatcherPage() {
                   <div className="flex-1">
                     <h3 className="text-sm font-semibold text-amber-200">{t('binaryPatcherPage.progressFound')}</h3>
                     <p className="text-xs text-amber-300/70 mt-0.5">
-                      {savedCheckpoint.translatedCount}/{savedCheckpoint.totalCount} stringhe tradotte
-                      ({savedCheckpoint.targetLang.toUpperCase()})
-                      — salvato il {new Date(savedCheckpoint.savedAt).toLocaleString('it-IT', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                      {savedCheckpoint.translatedCount}/{savedCheckpoint.totalCount}  {t('binaryPatcherPage.translatedStrings')} ({savedCheckpoint.targetLang.toUpperCase()}) {t('binaryPatcherPage.savedOn')} {new Date(savedCheckpoint.savedAt).toLocaleString('it-IT', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
                   <div className="flex gap-2">
@@ -892,8 +888,7 @@ export default function BinaryPatcherPage() {
                       setSavedCheckpoint(null);
                       setStep('review');
                     }}>
-                      <Eye className="h-3 w-3 mr-1" /> Review
-                    </Button>
+                      <Eye className="h-3 w-3 mr-1" /> {t('binaryPatcherPage.review')}</Button>
                     <Button size="xs" className="text-xs bg-emerald-600 hover:bg-emerald-700" onClick={() => {
                       setProject(savedCheckpoint.project);
                       setTargetLang(savedCheckpoint.targetLang);
@@ -903,8 +898,7 @@ export default function BinaryPatcherPage() {
                     }}>
                       <Play className="h-3 w-3 mr-1" />{t('ueTranslator.resumeTranslator')}</Button>
                     <Button size="sm" variant="outline" className="h-8 text-xs border-amber-500/30 text-amber-300 hover:bg-amber-500/20" onClick={clearBinCheckpoint}>
-                      <XCircle className="h-3 w-3 mr-1" /> Ricomincia
-                    </Button>
+                      <XCircle className="h-3 w-3 mr-1" /> {t('binaryPatcherPage.restart')}</Button>
                   </div>
                 </div>
               </div>
@@ -920,12 +914,12 @@ export default function BinaryPatcherPage() {
               </div>
               <select value={targetLang} onChange={(e) => setTargetLang(e.target.value)}
                 className="border border-white/10 rounded px-2 py-1 text-xs text-white" style={{backgroundColor: '#1a1a2e'}}>
-                <option value="it" style={{backgroundColor: '#1a1a2e'}}>🇮🇹 Italiano</option>
-                <option value="en" style={{backgroundColor: '#1a1a2e'}}>🇬🇧 English</option>
-                <option value="es" style={{backgroundColor: '#1a1a2e'}}>🇪🇸 Español</option>
-                <option value="de" style={{backgroundColor: '#1a1a2e'}}>🇩🇪 Deutsch</option>
-                <option value="fr" style={{backgroundColor: '#1a1a2e'}}>🇫🇷 Français</option>
-                <option value="pt" style={{backgroundColor: '#1a1a2e'}}>🇵🇹 Português</option>
+                <option value="it" style={{backgroundColor: '#1a1a2e'}}>🇮🇹 {t('languages.it')}</option>
+                <option value="en" style={{backgroundColor: '#1a1a2e'}}>🇬🇧 {t('languages.en')}</option>
+                <option value="es" style={{backgroundColor: '#1a1a2e'}}>🇪🇸 {t('languages.es')}</option>
+                <option value="de" style={{backgroundColor: '#1a1a2e'}}>🇩🇪 {t('languages.de')}</option>
+                <option value="fr" style={{backgroundColor: '#1a1a2e'}}>🇫🇷 {t('languages.fr')}</option>
+                <option value="pt" style={{backgroundColor: '#1a1a2e'}}>🇵🇹 {t('languages.pt')}</option>
                 <option value="ja" style={{backgroundColor: '#1a1a2e'}}>🇯🇵 日本語</option>
                 <option value="ko" style={{backgroundColor: '#1a1a2e'}}>🇰🇷 한국어</option>
                 <option value="zh" style={{backgroundColor: '#1a1a2e'}}>🇨🇳 中文</option>
@@ -937,8 +931,7 @@ export default function BinaryPatcherPage() {
             <div className="p-4 rounded-lg bg-white/5 border border-white/10 mb-4">
               <h3 className="text-sm font-medium text-white mb-3 flex items-center gap-2">
                 <Cpu className="h-4 w-4 text-orange-400" />
-                Metodo di traduzione
-              </h3>
+                {t('binaryPatcherPage.translationMethod')}</h3>
               <div className="grid grid-cols-2 gap-3 mb-3">
                 {/* AI Mode */}
                 <div
@@ -1029,23 +1022,20 @@ export default function BinaryPatcherPage() {
               {isProcessing ? (
                 <Button onClick={handleStopTranslation} className="w-full bg-red-600 hover:bg-red-700 h-10">
                   <XCircle className="h-4 w-4 mr-2" />
-                  Ferma traduzione
-                </Button>
+                  {t('binaryPatcherPage.stopTranslation')}</Button>
               ) : translationStopped ? (
                 <>
                   <Button onClick={handleTranslate} className="flex-1 bg-orange-600 hover:bg-orange-700 h-10">
                     <Play className="h-4 w-4 mr-2" />
-                    Riprendi traduzione
-                  </Button>
+                    {t('binaryPatcherPage.resumeTranslation')}</Button>
                   <Button onClick={() => { setTranslationStopped(false); setStep('review'); }} variant="outline" className="h-10 border-white/10">
                     <ArrowRight className="h-4 w-4 mr-2" />
-                    Vai a Review
-                  </Button>
+                    {t('binaryPatcherPage.goToReview')}</Button>
                 </>
               ) : (
                 <Button onClick={handleTranslate} className="w-full bg-orange-600 hover:bg-orange-700 h-10">
                   {translationMode === 'ai' ? <Bot className="h-4 w-4 mr-2" /> : <Zap className="h-4 w-4 mr-2" />}
-                  Traduci {stats.total} stringhe ({project.sourceLang.toUpperCase()} → {targetLang.toUpperCase()})
+                  {t('binaryPatcherPage.translate')} {stats.total}  {t('binaryPatcherPage.stringsCount')} ({project.sourceLang.toUpperCase()} → {targetLang.toUpperCase()})
                 </Button>
               )}
             </div>
@@ -1068,8 +1058,7 @@ export default function BinaryPatcherPage() {
               <Progress value={stats.percentage} className="flex-1 h-2" />
               <Button onClick={handlePatch} disabled={isProcessing || stats.translated === 0} size="sm" className="bg-green-600 hover:bg-green-700">
                 {isProcessing ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Zap className="h-4 w-4 mr-1" />}
-                Applica Patch
-              </Button>
+                {t('binaryPatcherPage.applyPatch')}</Button>
             </div>
 
             {/* Filters */}
@@ -1078,7 +1067,7 @@ export default function BinaryPatcherPage() {
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/30" />
                 <Input
                   value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                  aria-label={t('common.cerca')} placeholder="Cerca stringhe..."
+                  aria-label={t('common.cerca')} placeholder={t('binaryPatcherPage.searchPh')}
                   className="pl-8 h-8 text-sm bg-white/5 border-white/10"
                 />
               </div>
@@ -1155,8 +1144,7 @@ export default function BinaryPatcherPage() {
                 })}
                 {filteredStrings.length > 200 && (
                   <div className="px-3 py-4 text-center text-xs text-white/30">
-                    Mostrate 200 di {filteredStrings.length} — usa la ricerca per filtrare
-                  </div>
+                    {t('binaryPatcherPage.showing200Of')} {filteredStrings.length}  {t('binaryPatcherPage.useSearchFilter')}</div>
                 )}
               </div>
             </div>
