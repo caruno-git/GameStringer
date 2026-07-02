@@ -179,8 +179,7 @@ export function SmartContextPanel({
                   <Brain className="h-4 w-4 text-purple-400" />
                   <span className="text-sm font-medium text-purple-300">{t('smartContextPanelComp.smartContext')}</span>
                   <Badge variant="outline" className="text-2xs">
-                    {context.stats.learnings} apprendimenti
-                  </Badge>
+                    {context.stats.learnings}  {t('smartContextPanelComp.learningsUnit')}</Badge>
                 </div>
                 {isOpen ? <ChevronDown className="h-4 w-4 text-gray-500" /> : <ChevronRight className="h-4 w-4 text-gray-500" />}
               </div>
@@ -192,17 +191,15 @@ export function SmartContextPanel({
               <div className="flex gap-1">
                 <Badge variant="outline" className="text-2xs">
                   <Users className="h-3 w-3 mr-1" />
-                  {context.characters.length} personaggi
-                </Badge>
+                  {context.characters.length}  {t('smartContextPanelComp.charactersUnit')}</Badge>
                 <Badge variant="outline" className="text-2xs">
                   <BookOpen className="h-3 w-3 mr-1" />
-                  {context.terms.length} termini
-                </Badge>
+                  {context.terms.length}  {t('smartContextPanelComp.termsUnit')}</Badge>
               </div>
               
               {context.characters.length > 0 && (
                 <div className="text-2xs text-gray-500">
-                  Personaggi: {context.characters.slice(0, 3).map(c => c.name).join(', ')}
+                  {t('smartContextPanelComp.charactersLabel')} {context.characters.slice(0, 3).map(c => c.name).join(', ')}
                   {context.characters.length > 3 && ` +${context.characters.length - 3}`}
                 </div>
               )}
@@ -240,11 +237,9 @@ export function SmartContextPanel({
         <div className="flex gap-2 mt-2">
           <Badge variant="outline" className="text-2xs">
             <Sparkles className="h-3 w-3 mr-1" />
-            {context.stats.learnings} apprendimenti
-          </Badge>
+            {context.stats.learnings}  {t('smartContextPanelComp.learningsUnit')}</Badge>
           <Badge variant="outline" className="text-2xs">
-            {context.stats.translatedStrings} traduzioni
-          </Badge>
+            {context.stats.translatedStrings}  {t('smartContextPanelComp.translationsUnit')}</Badge>
         </div>
       </CardHeader>
 
@@ -258,7 +253,7 @@ export function SmartContextPanel({
             className="flex-1 h-7 text-xs"
           >
             <Users className="h-3 w-3 mr-1" />
-            Personaggi ({context.characters.length})
+            {t('smartContextPanelComp.charactersTab')} ({context.characters.length})
           </Button>
           <Button
             variant={activeTab === 'terms' ? 'secondary' : 'ghost'}
@@ -267,7 +262,7 @@ export function SmartContextPanel({
             className="flex-1 h-7 text-xs"
           >
             <BookOpen className="h-3 w-3 mr-1" />
-            Glossario ({context.terms.length})
+            {t('smartContextPanelComp.glossaryTab')} ({context.terms.length})
           </Button>
         </div>
 
@@ -317,15 +312,13 @@ export function SmartContextPanel({
                 <DialogTrigger asChild>
                   <Button variant="outline" size="sm" className="w-full border-dashed">
                     <Plus className="h-3 w-3 mr-1" />
-                    Aggiungi Personaggio
-                  </Button>
+                    {t('smartContextPanelComp.addCharacter')}</Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                       <Users className="h-5 w-5 text-purple-400" />
-                      Nuovo Personaggio
-                    </DialogTitle>
+                      {t('smartContextPanelComp.newCharacter')}</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-3">
                     <div>
@@ -333,7 +326,7 @@ export function SmartContextPanel({
                       <Input
                         value={newCharacter.name}
                         onChange={(e) => setNewCharacter({ ...newCharacter, name: e.target.value })}
-                        placeholder="es. Commander Shepard"
+                        placeholder={t('smartContextPanelComp.charOrigPh')}
                         className="bg-muted/50 border-border"
                       />
                     </div>
@@ -342,7 +335,7 @@ export function SmartContextPanel({
                       <Input
                         value={newCharacter.translatedName || ''}
                         onChange={(e) => setNewCharacter({ ...newCharacter, translatedName: e.target.value })}
-                        placeholder="es. Comandante Shepard"
+                        placeholder={t('smartContextPanelComp.charTransPh')}
                         className="bg-muted/50 border-border"
                       />
                     </div>
@@ -370,7 +363,7 @@ export function SmartContextPanel({
                       <Input
                         value={newCharacter.personality || ''}
                         onChange={(e) => setNewCharacter({ ...newCharacter, personality: e.target.value })}
-                        placeholder="es. Serio, leader, militare"
+                        placeholder={t('smartContextPanelComp.charTraitsPh')}
                         className="bg-muted/50 border-border"
                       />
                     </div>
@@ -380,7 +373,7 @@ export function SmartContextPanel({
                         <Input
                           value={aliasInput}
                           onChange={(e) => setAliasInput(e.target.value)}
-                          placeholder="es. Shep"
+                          placeholder={t('smartContextPanelComp.charAliasPh')}
                           className="bg-muted/50 border-border"
                           onKeyPress={(e) => e.key === 'Enter' && addAlias()}
                         />
@@ -406,14 +399,13 @@ export function SmartContextPanel({
                       <Textarea
                         value={newCharacter.notes || ''}
                         onChange={(e) => setNewCharacter({ ...newCharacter, notes: e.target.value })}
-                        placeholder="Note aggiuntive sulla traduzione..."
+                        placeholder={t('smartContextPanelComp.notesPh')}
                         className="bg-slate-800 border-slate-600 h-20"
                       />
                     </div>
                     <Button onClick={handleAddCharacter} className="w-full bg-purple-600 hover:bg-purple-700">
                       <Check className="h-4 w-4 mr-2" />
-                      Aggiungi Personaggio
-                    </Button>
+                      {t('smartContextPanelComp.addCharacter')}</Button>
                   </div>
                 </DialogContent>
               </Dialog>
@@ -462,15 +454,13 @@ export function SmartContextPanel({
                 <DialogTrigger asChild>
                   <Button variant="outline" size="sm" className="w-full border-dashed">
                     <Plus className="h-3 w-3 mr-1" />
-                    Aggiungi Termine
-                  </Button>
+                    {t('smartContextPanelComp.addTerm')}</Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                       <BookOpen className="h-5 w-5 text-purple-400" />
-                      Nuovo Termine
-                    </DialogTitle>
+                      {t('smartContextPanelComp.newTerm')}</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-3">
                     <div>
@@ -478,7 +468,7 @@ export function SmartContextPanel({
                       <Input
                         value={newTerm.original}
                         onChange={(e) => setNewTerm({ ...newTerm, original: e.target.value })}
-                        placeholder="es. Health Potion"
+                        placeholder={t('smartContextPanelComp.termOrigPh')}
                         className="bg-muted/50 border-border"
                       />
                     </div>
@@ -487,7 +477,7 @@ export function SmartContextPanel({
                       <Input
                         value={newTerm.translation}
                         onChange={(e) => setNewTerm({ ...newTerm, translation: e.target.value })}
-                        placeholder="es. Pozione di salute"
+                        placeholder={t('smartContextPanelComp.termTransPh')}
                         className="bg-muted/50 border-border"
                       />
                     </div>
@@ -496,14 +486,13 @@ export function SmartContextPanel({
                       <Input
                         value={newTerm.context}
                         onChange={(e) => setNewTerm({ ...newTerm, context: e.target.value })}
-                        placeholder="es. Oggetto di inventario"
+                        placeholder={t('smartContextPanelComp.termContextPh')}
                         className="bg-muted/50 border-border"
                       />
                     </div>
                     <Button onClick={handleAddTerm} className="w-full bg-purple-600 hover:bg-purple-700">
                       <Check className="h-4 w-4 mr-2" />
-                      Aggiungi Termine
-                    </Button>
+                      {t('smartContextPanelComp.addTerm')}</Button>
                   </div>
                 </DialogContent>
               </Dialog>
@@ -516,8 +505,7 @@ export function SmartContextPanel({
           <div className="flex items-start gap-2">
             <Lightbulb className="h-4 w-4 text-purple-400 shrink-0 mt-0.5" />
             <p className="text-2xs text-purple-300/80">
-              Smart Context apprende automaticamente mentre traduci. I personaggi e termini vengono rilevati dai dialoghi.
-            </p>
+              {t('smartContextPanelComp.autoLearnDesc')}</p>
           </div>
         </div>
       </CardContent>
