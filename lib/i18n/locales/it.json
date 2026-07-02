@@ -1,4 +1,15 @@
 {
+  "aiTranslationAssistant": {
+    "enterText": "Inserisci il testo da tradurre",
+    "copiedToClipboard": "Copiato negli appunti",
+    "termAdded": "Termine aggiunto al glossario",
+    "ollamaNotDetected": "Ollama non rilevato.",
+    "translating": "Traduzione...",
+    "translate": "Traduci",
+    "msUnit": "ms",
+    "gameNamePh": "es. The Witcher 3",
+    "contextPh": "es. medieval fantasy"
+  },
   "dubbingPage": {
     "labsExperimental": "Labs · Sperimentale",
     "startDubbing": "Avvia Dubbing",

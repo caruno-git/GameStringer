@@ -134,7 +134,7 @@ export function AITranslationAssistant() {
 
   const handleTranslate = async () => {
     if (!inputText.trim()) {
-      toast.error('Enter text to translate');
+      toast.error(t('aiTranslationAssistant.enterText'));
       return;
     }
 
@@ -183,7 +183,7 @@ export function AITranslationAssistant() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast.success('Copied to clipboard');
+    toast.success(t('aiTranslationAssistant.copiedToClipboard'));
   };
 
   const addGlossaryTerm = () => {
@@ -197,7 +197,7 @@ export function AITranslationAssistant() {
       }));
       setGlossaryTerm('');
       setGlossaryTranslation('');
-      toast.success('Term added to glossary');
+      toast.success(t('aiTranslationAssistant.termAdded'));
     }
   };
 
@@ -258,7 +258,7 @@ export function AITranslationAssistant() {
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-yellow-500/10 border border-yellow-500/20 text-xs">
           <AlertCircle className="h-3 w-3 text-yellow-500" />
           <span className="text-yellow-300">
-            Ollama non rilevato. <a href="https://ollama.ai" target="_blank" className="underline">ollama.ai</a> → <code className="bg-slate-800 px-1 rounded text-2xs">ollama run translategemma</code>
+            {t('aiTranslationAssistant.ollamaNotDetected')} <a href="https://ollama.ai" target="_blank" className="underline">ollama.ai</a> → <code className="bg-slate-800 px-1 rounded text-2xs">ollama run translategemma</code>
           </span>
         </div>
       )}
@@ -274,13 +274,13 @@ export function AITranslationAssistant() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="en">🇺🇸 English</SelectItem>
-                  <SelectItem value="ja">🇯🇵 Japanese</SelectItem>
-                  <SelectItem value="zh">🇨🇳 Chinese</SelectItem>
-                  <SelectItem value="ko">🇰🇷 Korean</SelectItem>
-                  <SelectItem value="de">🇩🇪 German</SelectItem>
-                  <SelectItem value="fr">🇫🇷 French</SelectItem>
-                  <SelectItem value="es">🇪🇸 Spanish</SelectItem>
+                  <SelectItem value="en">🇺🇸 {t('languages.en')}</SelectItem>
+                  <SelectItem value="ja">🇯🇵 {t('languages.ja')}</SelectItem>
+                  <SelectItem value="zh">🇨🇳 {t('languages.zh')}</SelectItem>
+                  <SelectItem value="ko">🇰🇷 {t('languages.ko')}</SelectItem>
+                  <SelectItem value="de">🇩🇪 {t('languages.de')}</SelectItem>
+                  <SelectItem value="fr">🇫🇷 {t('languages.fr')}</SelectItem>
+                  <SelectItem value="es">🇪🇸 {t('languages.es')}</SelectItem>
                 </SelectContent>
               </Select>
               <ArrowRight className="h-4 w-4 text-slate-500 flex-shrink-0" />
@@ -289,11 +289,11 @@ export function AITranslationAssistant() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="it">🇮🇹 Italian</SelectItem>
-                  <SelectItem value="en">🇺🇸 English</SelectItem>
-                  <SelectItem value="es">🇪🇸 Spanish</SelectItem>
-                  <SelectItem value="fr">🇫🇷 French</SelectItem>
-                  <SelectItem value="de">🇩🇪 German</SelectItem>
+                  <SelectItem value="it">🇮🇹 {t('languages.it')}</SelectItem>
+                  <SelectItem value="en">🇺🇸 {t('languages.en')}</SelectItem>
+                  <SelectItem value="es">🇪🇸 {t('languages.es')}</SelectItem>
+                  <SelectItem value="fr">🇫🇷 {t('languages.fr')}</SelectItem>
+                  <SelectItem value="de">🇩🇪 {t('languages.de')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -347,13 +347,11 @@ export function AITranslationAssistant() {
               {isTranslating ? (
                 <>
                   <RefreshCw className="h-3.5 w-3.5 mr-1.5 animate-spin" />
-                  Traduzione...
-                </>
+                  {t('aiTranslationAssistant.translating')}</>
               ) : (
                 <>
                   <Sparkles className="h-3.5 w-3.5 mr-1.5" />
-                  Traduci
-                </>
+                  {t('aiTranslationAssistant.translate')}</>
               )}
             </Button>
           </div>
@@ -370,7 +368,7 @@ export function AITranslationAssistant() {
                   {lastResult && (
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Badge variant="outline">{lastResult.provider}/{lastResult.model}</Badge>
-                      <span>{lastResult.processingTime}ms</span>
+                      <span>{lastResult.processingTime}{t('aiTranslationAssistant.msUnit')}</span>
                     </div>
                   )}
                 </div>
@@ -437,7 +435,7 @@ export function AITranslationAssistant() {
                     <Input
                       value={gameContext.gameTitle}
                       onChange={(e) => setGameContext(prev => ({ ...prev, gameTitle: e.target.value }))}
-                      placeholder="e.g. The Witcher 3"
+                      placeholder={t('aiTranslationAssistant.gameNamePh')}
                     />
                   </div>
 
@@ -482,7 +480,7 @@ export function AITranslationAssistant() {
                     <Input
                       value={gameContext.setting}
                       onChange={(e) => setGameContext(prev => ({ ...prev, setting: e.target.value }))}
-                      placeholder="e.g. medieval fantasy"
+                      placeholder={t('aiTranslationAssistant.contextPh')}
                     />
                   </div>
                 </CardContent>
