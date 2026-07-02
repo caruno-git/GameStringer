@@ -2955,6 +2955,18 @@
     "enableFeed": "Attiva almeno un feed nelle impostazioni"
   },
   "guidePage": {
+    "ptTitle": "Prediction Tool (P.T.) — Lo strumento più potente",
+    "ptDifficultyScore": "Difficulty Score 0-100",
+    "ptDifficultyDesc": "Combinazione pesata di volume stringhe, engine, DRM, encoding e complessità linguistica. Più basso = più facile.",
+    "ptDrmDesc": "Rileva Denuvo, VMProtect, Steam DRM + encoding Shift-JIS/UTF-8/UTF-16 per-file prima di tradurre.",
+    "ptModelsTitle": "18 modelli LLM stimati",
+    "ptModelsDesc": "Ollama (Gemma 4, Qwen, Llama), OpenAI, DeepL, Gemini — con tempo e costo per ogni modello.",
+    "ptChainsTitle": "5 chain suggerite",
+    "ptChainsDesc": "Local (privacy), Cloud (qualità), Hybrid (bilanciata) — con fallback automatico e qualità/costo stimati.",
+    "ptRankTitle": "P.T.Rank — Classifica Rapida",
+    "rankExample": "Esempio ranking",
+    "dryReady": "Engine supportato + stringhe estraibili",
+    "dryErrors": "Manifest corrotto / DRM bloccante",
     "title": "Guida",
     "tools": "Strumenti",
     "shortcuts": "Scorciatoie",

@@ -3733,6 +3733,18 @@
     "translatedText": "Przetłumaczony tekst"
   },
   "guidePage": {
+    "ptTitle": "Prediction Tool (P.T.) — The most powerful tool",
+    "ptDifficultyScore": "Difficulty Score 0-100",
+    "ptDifficultyDesc": "Weighted combination of string volume, engine, DRM, encoding and linguistic complexity. Lower = easier.",
+    "ptDrmDesc": "Detects Denuvo, VMProtect, Steam DRM + Shift-JIS/UTF-8/UTF-16 encoding per file before translating.",
+    "ptModelsTitle": "18 estimated LLM models",
+    "ptModelsDesc": "Ollama (Gemma 4, Qwen, Llama), OpenAI, DeepL, Gemini — with time and cost for each model.",
+    "ptChainsTitle": "5 suggested chains",
+    "ptChainsDesc": "Local (privacy), Cloud (quality), Hybrid (balanced) — with automatic fallback and estimated quality/cost.",
+    "ptRankTitle": "P.T.Rank — Quick Ranking",
+    "rankExample": "Ranking example",
+    "dryReady": "Supported engine + extractable strings",
+    "dryErrors": "Corrupt manifest / blocking DRM",
     "title": "Przewodnik",
     "faq": "FAQ",
     "stores": "Sklepy",

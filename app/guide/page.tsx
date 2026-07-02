@@ -501,7 +501,7 @@ export default function GuidePage() {
                 <CardHeader className="py-2 px-3">
                   <CardTitle className="text-sm flex items-center gap-2">
                     <Brain className="w-4 h-4 text-purple-400" />
-                    Prediction Tool (P.T.) — Lo strumento più potente
+                    {t('guidePage.ptTitle')}
                     <Badge variant="outline" className="ml-auto text-2xs border-purple-500/40 text-purple-300">v1.9.0</Badge>
                   </CardTitle>
                   <CardDescription className="text-xs">
@@ -542,27 +542,27 @@ export default function GuidePage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     <div className="rounded border border-slate-700/40 bg-slate-900/40 p-2">
                       <div className="flex items-center gap-1.5 text-2xs font-semibold text-purple-300 mb-1">
-                        <Gauge className="h-3 w-3" /> Difficulty Score 0-100
+                        <Gauge className="h-3 w-3" /> {t('guidePage.ptDifficultyScore')}
                       </div>
-                      <p className="text-2xs text-muted-foreground">Combinazione pesata di volume stringhe, engine, DRM, encoding e complessità linguistica. Più basso = più facile.</p>
+                      <p className="text-2xs text-muted-foreground">{t('guidePage.ptDifficultyDesc')}</p>
                     </div>
                     <div className="rounded border border-slate-700/40 bg-slate-900/40 p-2">
                       <div className="flex items-center gap-1.5 text-2xs font-semibold text-purple-300 mb-1">
                         <ShieldCheck className="h-3 w-3" /> DRM & Encoding
                       </div>
-                      <p className="text-2xs text-muted-foreground">Rileva Denuvo, VMProtect, Steam DRM + encoding Shift-JIS/UTF-8/UTF-16 per-file prima di tradurre.</p>
+                      <p className="text-2xs text-muted-foreground">{t('guidePage.ptDrmDesc')}</p>
                     </div>
                     <div className="rounded border border-slate-700/40 bg-slate-900/40 p-2">
                       <div className="flex items-center gap-1.5 text-2xs font-semibold text-purple-300 mb-1">
-                        <Cpu className="h-3 w-3" /> 18 modelli LLM stimati
+                        <Cpu className="h-3 w-3" /> {t('guidePage.ptModelsTitle')}
                       </div>
-                      <p className="text-2xs text-muted-foreground">Ollama (Gemma 4, Qwen, Llama), OpenAI, DeepL, Gemini — con tempo e costo per ogni modello.</p>
+                      <p className="text-2xs text-muted-foreground">{t('guidePage.ptModelsDesc')}</p>
                     </div>
                     <div className="rounded border border-slate-700/40 bg-slate-900/40 p-2">
                       <div className="flex items-center gap-1.5 text-2xs font-semibold text-purple-300 mb-1">
-                        <GitBranch className="h-3 w-3" /> 5 chain suggerite
+                        <GitBranch className="h-3 w-3" /> {t('guidePage.ptChainsTitle')}
                       </div>
-                      <p className="text-2xs text-muted-foreground">Local (privacy), Cloud (qualità), Hybrid (bilanciata) — con fallback automatico e qualità/costo stimati.</p>
+                      <p className="text-2xs text-muted-foreground">{t('guidePage.ptChainsDesc')}</p>
                     </div>
                   </div>
 
@@ -626,11 +626,11 @@ export default function GuidePage() {
                   <div className="grid grid-cols-3 gap-2">
                     <div className="rounded border border-emerald-500/30 bg-emerald-950/20 p-2 text-center">
                       <div className="text-sm font-bold text-emerald-300">✓ Ready</div>
-                      <div className="text-[10px] text-muted-foreground">Engine supportato + stringhe estraibili</div>
+                      <div className="text-[10px] text-muted-foreground">{t('guidePage.dryReady')}</div>
                     </div>
                     <div className="rounded border border-amber-500/30 bg-amber-950/20 p-2 text-center">
                       <div className="text-sm font-bold text-amber-300">⚠ Errors</div>
-                      <div className="text-[10px] text-muted-foreground">Manifest corrotto / DRM bloccante</div>
+                      <div className="text-[10px] text-muted-foreground">{t('guidePage.dryErrors')}</div>
                     </div>
                     <div className="rounded border border-slate-500/30 bg-slate-950/40 p-2 text-center">
                       <div className="text-sm font-bold text-slate-300">— Unsupported</div>
@@ -649,7 +649,7 @@ export default function GuidePage() {
                 <CardHeader className="py-2 px-3">
                   <CardTitle className="text-sm flex items-center gap-2">
                     <Trophy className="w-4 h-4 text-amber-400" />
-                    P.T.Rank — Classifica Rapida
+                    {t('guidePage.ptRankTitle')}
                     <Badge variant="outline" className="ml-auto text-2xs border-amber-500/40 text-amber-300">v1.9.0</Badge>
                   </CardTitle>
                   <CardDescription className="text-xs">
@@ -660,7 +660,7 @@ export default function GuidePage() {
                   {/* Sample ranking visualization */}
                   <div className="rounded-lg border border-amber-500/20 bg-slate-950/40 p-3 space-y-1.5">
                     <div className="text-2xs text-amber-300 font-semibold mb-1 uppercase tracking-wider flex items-center gap-1">
-                      <ListOrdered className="h-3 w-3" /> Esempio ranking
+                      <ListOrdered className="h-3 w-3" /> {t('guidePage.rankExample')}
                     </div>
                     {[
                       { rank: 1, name: 'Mother Russia Bleeds', engine: 'GameMaker', score: 12, badge: 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300', bar: 'bg-emerald-500/70', txt: 'text-emerald-300' },
