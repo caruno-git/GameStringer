@@ -438,11 +438,10 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <ImageIcon className="h-5 w-5 text-blue-400" />
-            Scegli Cover per {gameName}
+            {t('coverPicker.chooseCoverFor')} {gameName}
           </DialogTitle>
           <DialogDescription>
-            Seleziona la cover che preferisci da SteamGridDB
-          </DialogDescription>
+            {t('coverPicker.subtitle')}</DialogDescription>
         </DialogHeader>
 
         {/* Source Selection */}
@@ -472,8 +471,7 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
             className="gap-1.5"
           >
             <ExternalLink className="h-3.5 w-3.5" />
-            Web
-          </Button>
+            {t('coverPicker.webTab')}</Button>
           <Button
             variant={source === 'custom' ? 'default' : 'outline'}
             size="sm"
@@ -481,8 +479,7 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
             className="gap-1.5"
           >
             <Link2 className="h-3.5 w-3.5" />
-            URL Manuale
-          </Button>
+            {t('coverPicker.manualUrl')}</Button>
         </div>
 
         {/* Custom URL Input */}
@@ -494,7 +491,7 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
                 <div className="flex gap-2">
                   <Input
                     type="url"
-                    placeholder="https://esempio.com/immagine.jpg"
+                    placeholder={t('coverPicker.urlPh')}
                     value={customUrl}
                     onChange={(e) => validateAndPreviewUrl(e.target.value)}
                     className="flex-1"
@@ -508,8 +505,7 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
                   </Button>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Supporta: JPG, PNG, GIF, WebP, Steam CDN, IGDB
-                </p>
+                  {t('coverPicker.supportedFormats')}</p>
               </div>
               
               {/* Preview */}
@@ -519,7 +515,7 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
                   <div className="aspect-[460/215] bg-slate-800 rounded overflow-hidden max-w-md">
                     <img 
                       src={customUrlPreview} 
-                      alt="Preview" 
+                      alt={t('coverPicker.previewAlt')} 
                       className="w-full h-full object-cover"
                       onError={() => {
                         setCustomUrlError(true);
@@ -534,8 +530,7 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
               {customUrlError && (
                 <div className="flex items-center gap-2 text-red-400 text-sm">
                   <AlertCircle className="h-4 w-4" />
-                  URL non valido o immagine non accessibile
-                </div>
+                  {t('coverPicker.invalidUrl')}</div>
               )}
             </div>
           </div>
@@ -551,11 +546,9 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
                 <AlertCircle className="h-12 w-12 text-yellow-400 mb-3" />
                 <p className="text-muted-foreground mb-2">{igdbError}</p>
                 <p className="text-xs text-muted-foreground mb-4">
-                  Prova con URL Manuale o cerca su Google Images
-                </p>
+                  {t('coverPicker.tryManualUrl')}</p>
                 <Button variant="outline" size="sm" onClick={fetchIgdbCovers}>
-                  Riprova
-                </Button>
+                  {t('coverPicker.retry')}</Button>
               </div>
             ) : igdbCovers.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
@@ -573,7 +566,7 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
                     <div className="aspect-[460/215] bg-slate-800 relative">
                       <img
                         src={cover.thumb || cover.url}
-                        alt="IGDB Cover"
+                        alt={t('coverPicker.igdbCoverAlt')}
                         className="w-full h-full object-cover"
                         loading="lazy"
                       />
@@ -593,7 +586,7 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
             {webLoading ? (
               <div className="flex items-center justify-center h-64">
                 <Loader2 className="h-8 w-8 animate-spin text-emerald-400" />
-                <span className="ml-2 text-muted-foreground">Cercando cover sul web...</span>
+                <span className="ml-2 text-muted-foreground">{t('coverPicker.searchingWeb')}</span>
               </div>
             ) : webError ? (
               <div className="flex flex-col items-center justify-center h-64 text-center">
@@ -601,23 +594,20 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
                 <p className="text-muted-foreground mb-2">{webError}</p>
                 <div className="flex gap-2 mt-4">
                   <Button variant="outline" size="sm" onClick={fetchWebCovers}>
-                    Riprova
-                  </Button>
+                    {t('coverPicker.retry')}</Button>
                   <Button 
                     variant="outline" 
                     size="sm" 
                     onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(gameName + ' box art cover')}&tbm=isch`, '_blank')}
                   >
                     <ExternalLink className="h-3.5 w-3.5 mr-1" />
-                    Cerca su Google
-                  </Button>
+                    {t('coverPicker.searchGoogle')}</Button>
                 </div>
               </div>
             ) : webCovers.length > 0 ? (
               <div className="space-y-4">
                 <p className="text-xs text-muted-foreground">
-                  Cover trovate da MobyGames, TheGamesDB e altre fonti. Clicca per selezionare.
-                </p>
+                  {t('coverPicker.webCoversInfo')}</p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                   {webCovers.map((cover) => (
                     <div
@@ -633,7 +623,7 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
                       <div className="aspect-[2/3] bg-slate-800 relative">
                         <img
                           src={cover.thumb || cover.url}
-                          alt="Web Cover"
+                          alt={t('coverPicker.webCoverAlt')}
                           className="w-full h-full object-cover"
                           loading="lazy"
                           onError={(e) => {
@@ -654,8 +644,7 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
                     onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(gameName + ' box art cover vertical')}&tbm=isch`, '_blank')}
                   >
                     <ExternalLink className="h-3.5 w-3.5 mr-1" />
-                    Cerca altre cover su Google Images
-                  </Button>
+                    {t('coverPicker.searchMoreGoogle')}</Button>
                 </div>
               </div>
             ) : (
@@ -668,8 +657,7 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
                   onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(gameName + ' box art cover')}&tbm=isch`, '_blank')}
                 >
                   <ExternalLink className="h-3.5 w-3.5 mr-1" />
-                  Cerca su Google Images
-                </Button>
+                  {t('coverPicker.searchGoogleImages')}</Button>
               </div>
             )}
           </div>
@@ -679,20 +667,16 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
             <TabsList className="grid grid-cols-4 w-fit">
               <TabsTrigger value="grid" className="gap-1">
                 <Grid3X3 className="h-3.5 w-3.5" />
-                Grid
-              </TabsTrigger>
+                {t('coverPicker.gridFilter')}</TabsTrigger>
               <TabsTrigger value="hero" className="gap-1">
                 <Sparkles className="h-3.5 w-3.5" />
-                Hero
-              </TabsTrigger>
+                {t('coverPicker.heroFilter')}</TabsTrigger>
               <TabsTrigger value="logo" className="gap-1">
                 <Type className="h-3.5 w-3.5" />
-                Logo
-              </TabsTrigger>
+                {t('coverPicker.logoFilter')}</TabsTrigger>
               <TabsTrigger value="all" className="gap-1">
                 <ImageIcon className="h-3.5 w-3.5" />
-                Tutti
-              </TabsTrigger>
+                {t('coverPicker.allFilter')}</TabsTrigger>
             </TabsList>
 
             <Button 
@@ -702,8 +686,7 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
               disabled={loading}
             >
               <RefreshCw className={cn("h-4 w-4 mr-1", loading && "animate-spin")} />
-              Ricarica
-            </Button>
+              {t('coverPicker.reload')}</Button>
           </div>
 
           <div className="flex-1 overflow-y-auto mt-4 pr-2">
@@ -717,8 +700,7 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
                 <Key className="h-12 w-12 text-blue-400 mb-3" />
                 <h3 className="text-lg font-semibold mb-2">{t('coverPickerComp.apiKeyRichiesta')}</h3>
                 <p className="text-sm text-muted-foreground mb-4 max-w-md">
-                  Per cercare cover su SteamGridDB è necessaria una API Key gratuita.
-                </p>
+                  {t('coverPicker.apiKeyNeeded')}</p>
                 <a 
                   href="https://www.steamgriddb.com/profile/preferences/api" 
                   target="_blank" 
@@ -726,12 +708,11 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
                   className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 text-sm mb-4 underline"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
-                  Ottieni la tua API Key gratuita
-                </a>
+                  {t('coverPicker.getApiKey')}</a>
                 <div className="flex gap-2 w-full max-w-sm">
                   <Input
                     type="text"
-                    placeholder="Incolla qui la tua API Key..."
+                    placeholder={t('coverPicker.apiKeyPh')}
                     value={tempApiKey}
                     onChange={(e) => setTempApiKey(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSaveApiKey()}
@@ -739,8 +720,7 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
                   />
                   <Button onClick={handleSaveApiKey} disabled={!tempApiKey.trim()}>
                     <Check className="h-4 w-4 mr-1" />
-                    Salva
-                  </Button>
+                    {t('coverPicker.save')}</Button>
                 </div>
               </div>
             ) : error ? (
@@ -748,8 +728,7 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
                 <AlertCircle className="h-12 w-12 text-red-400 mb-3" />
                 <p className="text-muted-foreground">{error}</p>
                 <Button variant="outline" size="sm" className="mt-4" onClick={() => fetchCovers(activeTab)}>
-                  Riprova
-                </Button>
+                  {t('coverPicker.retry')}</Button>
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
@@ -832,12 +811,10 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
         {/* Footer */}
         <div className="flex items-center justify-between pt-4 border-t mt-4">
           <div className="text-sm text-muted-foreground">
-            {filteredCovers.length} cover disponibili
-          </div>
+            {filteredCovers.length}  {t('coverPicker.coversAvailable')}</div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={onClose}>
-              Annulla
-            </Button>
+              {t('coverPicker.cancel')}</Button>
             <Button 
               onClick={handleSelectCover} 
               disabled={!selectedCover || saving}
@@ -846,13 +823,11 @@ export function CoverPicker({ isOpen, onClose, appId, gameName, onCoverSelected,
               {saving ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Salvando...
-                </>
+                  {t('coverPicker.saving')}</>
               ) : (
                 <>
                   <Check className="h-4 w-4 mr-2" />
-                  Usa questa cover
-                </>
+                  {t('coverPicker.useThisCover')}</>
               )}
             </Button>
           </div>
