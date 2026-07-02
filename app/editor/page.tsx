@@ -701,7 +701,7 @@ export default function EditorPage() {
 
   const generateSuggestions = async () => {
     if (!selectedTranslation || !selectedLine) {
-      notifications.warning('Seleziona prima una stringa da tradurre');
+      notifications.warning(t('editorPage.selectStringFirst'));
       return;
     }
     
@@ -713,13 +713,13 @@ export default function EditorPage() {
     );
     if (cached) {
       handleTranslationChange(cached);
-      notifications.success('Traduzione trovata in cache');
+      notifications.success(t('editorPage.cacheHit'));
       return;
     }
     
     // Online translation
     if (!offlineCache.isOnline()) {
-      notifications.error('Offline - traduzione non disponibile');
+      notifications.error(t('editorPage.offlineUnavailable'));
       return;
     }
     
@@ -745,7 +745,7 @@ export default function EditorPage() {
         notifications.success(`${suggestions.length} suggerimenti trovati`);
       }
     } catch {
-      notifications.error('Impossibile generare suggerimenti');
+      notifications.error(t('editorPage.cannotGenerateSuggestions'));
     } finally {
       setIsGeneratingSuggestions(false);
     }
@@ -876,7 +876,7 @@ export default function EditorPage() {
   };
 
   const _deleteTranslation = async (id: string) => {
-    if (!confirm('Eliminare questa traduzione?')) return;
+    if (!confirm(t('editorPage.confirmDelete'))) return;
     try {
       await removeEditorTranslation(id);
       setTranslations(prev => prev.filter(t => t.id !== id));
@@ -987,8 +987,7 @@ export default function EditorPage() {
               <div className="p-1 rounded bg-indigo-500/20 border border-indigo-500/30">
                 <FileText className="h-3.5 w-3.5 text-indigo-400" />
               </div>
-              Explorer
-            </h2>
+              {t('editorPage.explorer')}</h2>
             <div className="flex items-center gap-1.5">
               <TooltipProvider>
                 <Tooltip>
@@ -1023,7 +1022,7 @@ export default function EditorPage() {
           <div className="relative group">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
             <Input 
-              aria-label={t('common.cerca')} placeholder="Cerca stringa o gioco..." 
+              aria-label={t('common.cerca')} placeholder={t('editorPage.searchPh')} 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="h-8 pl-9 pr-8 text-xs bg-slate-950/60 border-slate-700/50 focus-visible:ring-indigo-500/30 rounded-lg shadow-inner text-slate-200 placeholder:text-slate-500"
@@ -1061,7 +1060,7 @@ export default function EditorPage() {
           </div>
           
           <div className="flex items-center justify-between text-micro font-semibold uppercase tracking-widest text-slate-500 px-1 pt-1">
-            <span>{filteredTranslations.length} elementi</span>
+            <span>{filteredTranslations.length}  {t('editorPage.itemsUnit')}</span>
             <div className="flex items-center gap-2">
               <span className="text-emerald-400 flex items-center gap-1"><CheckCircle className="w-3 h-3"/> {stats.completed}</span>
               <span className="text-amber-400 flex items-center gap-1"><AlertCircle className="w-3 h-3"/> {stats.pending}</span>
@@ -1107,8 +1106,7 @@ export default function EditorPage() {
                         {project.game.title}
                       </p>
                       <p className="text-2xs text-slate-500 font-medium">
-                        {project.files.length} file • {project.totalStrings} stringhe
-                      </p>
+                        {project.files.length}  {t('editorPage.fileBullet')} {project.totalStrings}  {t('editorPage.stringsUnit')}</p>
                     </div>
                     <div className="flex flex-col items-end gap-1.5 pr-1">
                       <Badge variant="outline" className="text-micro h-4 px-1.5 bg-emerald-500/10 text-emerald-400 border-emerald-500/30">
@@ -1168,7 +1166,7 @@ export default function EditorPage() {
                           {file.filename}
                         </p>
                         <p className="text-2xs text-slate-500 font-medium">
-                          {file.stringCount} stringhe • <span className="uppercase text-slate-400">{file.targetLanguage}</span>
+                          {file.stringCount}  {t('editorPage.stringsBullet')} <span className="uppercase text-slate-400">{file.targetLanguage}</span>
                         </p>
                       </div>
                       <Badge variant="outline" className="text-micro h-4 px-1.5 bg-emerald-500/5 text-emerald-400/80 border-emerald-500/20 font-mono">
@@ -1253,11 +1251,10 @@ export default function EditorPage() {
                     <div className="flex items-center gap-2 mt-0.5">
                       {isMultiLangFile && (
                         <Badge variant="outline" className="text-micro h-4 px-1.5 border-emerald-500/30 text-emerald-400 uppercase tracking-widest font-bold">
-                          Multi-Lang
-                        </Badge>
+                          {t('editorPage.multiLang')}</Badge>
                       )}
                       {selectedTranslation.confidence > 0 && (
-                        <span className="text-2xs font-mono text-emerald-500/80">CONF:{Math.round(selectedTranslation.confidence * 100)}%</span>
+                        <span className="text-2xs font-mono text-emerald-500/80">{t('editorPage.confLabel')}{Math.round(selectedTranslation.confidence * 100)}%</span>
                       )}
                     </div>
                   </div>
@@ -1266,8 +1263,7 @@ export default function EditorPage() {
                 <div className="flex items-center gap-2">
                   <Button variant="ghost" size="xs" className="text-xs font-semibold text-slate-300 hover:text-indigo-300 hover:bg-indigo-500/10 rounded-lg transition-colors" onClick={generateSuggestions} disabled={isGeneratingSuggestions}>
                     {isGeneratingSuggestions ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : <Sparkles className="h-3.5 w-3.5 mr-1.5 text-indigo-400" />}
-                    Traduci AI
-                  </Button>
+                    {t('editorPage.translateAi')}</Button>
                   <Button
                     variant="ghost" size="sm" className={cn("h-8 text-xs font-semibold rounded-lg transition-colors", glossaryTerms.length > 0 ? "bg-amber-500/10 text-amber-400 hover:bg-amber-500/20" : "text-slate-300 hover:text-amber-300 hover:bg-amber-500/10")}
                     onClick={() => setShowGlossaryPanel(!showGlossaryPanel)}
@@ -1293,13 +1289,11 @@ export default function EditorPage() {
                     disabled={!hasUnsavedChanges || isSaving}
                   >
                     {isSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : <Save className="h-3.5 w-3.5 mr-1.5" />}
-                    Salva
-                  </Button>
+                    {t('editorPage.save')}</Button>
                   <Link href={`/community-hub?action=publish&gameId=${selectedTranslation.gameId || ''}&gameName=${encodeURIComponent(selectedTranslation.game?.title || '')}`}>
                     <Button variant="ghost" size="xs" className="text-xs font-semibold text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 rounded-lg border border-blue-500/20 hidden lg:flex">
                       <Globe className="h-3.5 w-3.5 mr-1" />
-                      Condividi
-                    </Button>
+                      {t('editorPage.share')}</Button>
                   </Link>
                 </div>
               </div>
@@ -1337,8 +1331,7 @@ export default function EditorPage() {
                   <div className="px-4 py-3 bg-slate-900/60 border-b border-slate-800/50 backdrop-blur-md sticky top-0 z-20">
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-2xs font-bold text-slate-500 uppercase tracking-widest">
-                        Progresso File
-                      </span>
+                        {t('editorPage.fileProgress')}</span>
                       <Badge variant="outline" className="text-micro h-4 bg-emerald-500/10 text-emerald-400 border-emerald-500/30">
                         {Math.round((selectedTranslation.parsedLines.filter(l => l.translatedText).length / selectedTranslation.parsedLines.length) * 100)}%
                       </Badge>
@@ -1356,12 +1349,10 @@ export default function EditorPage() {
                     <div className="flex items-center justify-between mt-2">
                       <span className="text-emerald-400 text-2xs font-semibold flex items-center gap-1">
                         <CheckCircle className="h-3 w-3" />
-                        {selectedTranslation.parsedLines.filter(l => l.translatedText).length} fatte
-                      </span>
+                        {selectedTranslation.parsedLines.filter(l => l.translatedText).length}  {t('editorPage.doneUnit')}</span>
                       <span className="text-amber-400/80 text-2xs font-semibold flex items-center gap-1">
                         <AlertCircle className="h-3 w-3" />
-                        {selectedTranslation.parsedLines.length - selectedTranslation.parsedLines.filter(l => l.translatedText).length} da fare
-                      </span>
+                        {selectedTranslation.parsedLines.length - selectedTranslation.parsedLines.filter(l => l.translatedText).length}  {t('editorPage.todoUnit')}</span>
                     </div>
                   </div>
                   <ScrollArea className="flex-1 custom-scrollbar">
@@ -1457,7 +1448,7 @@ export default function EditorPage() {
                       <div className="flex items-center gap-3">
                         <span className="text-2xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
                           <FileText className="h-3.5 w-3.5" />{t('mangaTranslator.source')}</span>
-                        <Badge variant="outline" className="text-micro h-4 bg-slate-800/50 text-slate-400 border-slate-700/50">Riga {selectedLine.lineNumber}</Badge>
+                        <Badge variant="outline" className="text-micro h-4 bg-slate-800/50 text-slate-400 border-slate-700/50">{t('editorPage.row')} {selectedLine.lineNumber}</Badge>
                       </div>
                       <Button variant="ghost" size="icon" aria-label={t('common.copia')} className="h-7 w-7 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-indigo-300 transition-colors" onClick={() => {
                         navigator.clipboard.writeText(selectedLine.originalText);
@@ -1503,7 +1494,7 @@ export default function EditorPage() {
                           setHasUnsavedChanges(true);
                         }}
                         className="relative w-full h-full min-h-[150px] resize-none border-indigo-500/20 bg-slate-900/60 text-[14px] font-medium leading-relaxed focus-visible:ring-2 focus-visible:ring-indigo-500/40 focus-visible:border-indigo-500/50 placeholder:text-slate-600 rounded-xl shadow-inner p-4 transition-all hover:bg-slate-900/80 custom-scrollbar"
-                        placeholder="Inserisci la traduzione per questa stringa..."
+                        placeholder={t('editorPage.translationPh')}
                         spellCheck={false}
                       />
                     </div>
@@ -1515,7 +1506,7 @@ export default function EditorPage() {
                             <BookOpen className="h-3 w-3 text-amber-400" />
                           </div>
                           <span className="text-2xs font-bold text-amber-400 uppercase tracking-widest">{t('editorPage.translationMemory')}</span>
-                          <span className="text-micro text-amber-500/60 ml-auto">{glossaryTerms.length} termini trovati</span>
+                          <span className="text-micro text-amber-500/60 ml-auto">{glossaryTerms.length}  {t('editorPage.termsFound')}</span>
                         </div>
                         <div className="flex flex-wrap gap-2">
                           {glossaryTerms.map(term => (
@@ -1531,7 +1522,7 @@ export default function EditorPage() {
                               <span className="text-amber-200/60 font-medium group-hover:text-amber-200 transition-colors">{term.sourceTerm}</span>
                               <ChevronRight className="h-3 w-3 text-amber-500/40" />
                               <span className="text-amber-300 font-bold group-hover:text-amber-100 transition-colors">{term.targetTerm}</span>
-                              {term.tier === 'locked' && <span className="text-red-400 text-2xs ml-0.5" title="Termine bloccato (priorità alta)">🔒</span>}
+                              {term.tier === 'locked' && <span className="text-red-400 text-2xs ml-0.5" title={t('editorPage.lockedTermTitle')}>🔒</span>}
                             </button>
                           ))}
                         </div>
@@ -1546,7 +1537,7 @@ export default function EditorPage() {
                     <LayoutPanelLeft className="h-10 w-10 text-slate-600 opacity-50" />
                   </div>
                   <p className="text-sm font-semibold text-slate-400 tracking-wide">{t('editorPage.selectString')}</p>
-                  <p className="text-xs text-slate-600 mt-1">per iniziare a modificare la traduzione</p>
+                  <p className="text-xs text-slate-600 mt-1">{t('editorPage.startEditingHint')}</p>
                 </div>
               ) : (
                 /* Original full editor for non-parsed content */
@@ -1554,12 +1545,10 @@ export default function EditorPage() {
                   <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-500/5 via-transparent to-transparent pointer-events-none" />
                   <div className="px-4 py-3 bg-indigo-950/30 border-b border-indigo-500/20 flex justify-between items-center backdrop-blur-md">
                     <span className="text-2xs font-bold text-indigo-400 uppercase tracking-widest flex items-center gap-1.5">
-                      <Edit3 className="h-3.5 w-3.5" /> Area di Traduzione
-                    </span>
+                      <Edit3 className="h-3.5 w-3.5" /> {t('editorPage.translationArea')}</span>
                     {hasUnsavedChanges && (
                       <Badge variant="outline" className="text-micro h-4 bg-amber-500/10 border-amber-500/30 text-amber-400 font-bold uppercase tracking-wider animate-pulse">
-                        <AlertCircle className="h-2.5 w-2.5 mr-1" /> Modificato
-                      </Badge>
+                        <AlertCircle className="h-2.5 w-2.5 mr-1" /> {t('editorPage.modified')}</Badge>
                     )}
                   </div>
                   <div className="flex-1 p-5 relative">
@@ -1580,7 +1569,7 @@ export default function EditorPage() {
                           <BookOpen className="h-3 w-3 text-amber-400" />
                         </div>
                         <span className="text-2xs font-bold text-amber-400 uppercase tracking-widest">{t('editorPage.translationMemory')}</span>
-                        <span className="text-micro text-amber-500/60 ml-auto">{glossaryTerms.length} termini trovati</span>
+                        <span className="text-micro text-amber-500/60 ml-auto">{glossaryTerms.length}  {t('editorPage.termsFound')}</span>
                       </div>
                       <div className="flex flex-wrap gap-2">
                         {glossaryTerms.map(term => (
@@ -1613,8 +1602,7 @@ export default function EditorPage() {
             </div>
             <h3 className="text-lg font-semibold mb-2 text-slate-400">{t('editorPage.noSelection')}</h3>
             <p className="text-sm text-center max-w-xs opacity-70">
-              Seleziona una stringa dalla lista per iniziare a modificare la traduzione
-            </p>
+              {t('editorPage.selectStringPrompt')}</p>
           </div>
         )}
       </div>
