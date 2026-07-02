@@ -148,7 +148,7 @@ function SupabaseSettingsCard() {
             <Input
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://abcdefgh.supabase.co"
+              placeholder={t('settingsPage.supabaseUrlPh')}
               className="mt-1 text-xs font-mono"
             />
           </div>
@@ -159,7 +159,7 @@ function SupabaseSettingsCard() {
                 value={anonKey}
                 onChange={(e) => setAnonKey(e.target.value)}
                 type={showKey ? 'text' : 'password'}
-                placeholder="eyJhbGciOiJIUzI1NiIs..."
+                placeholder={t('settingsPage.supabaseKeyPh')}
                 className="text-xs font-mono pr-10"
               />
               <button
@@ -712,7 +712,7 @@ export default function SettingsPage() {
                   <Input
                     value={settings.translation?.lmStudioUrl || 'http://localhost:1234'}
                     onChange={(e) => updateSetting('translation', 'lmStudioUrl', e.target.value)}
-                    placeholder="http://localhost:1234"
+                    placeholder={t('settingsPage.lmstudioUrlPh')}
                     className="font-mono text-xs"
                   />
                   <p className="text-2xs text-muted-foreground">{t('settingsPage.portaDefault1234')}</p>
@@ -752,7 +752,7 @@ export default function SettingsPage() {
                   <Input
                     value={settings.translation?.modelwizUrl || 'http://localhost:8080'}
                     onChange={(e) => updateSetting('translation', 'modelwizUrl', e.target.value)}
-                    placeholder="http://localhost:8080"
+                    placeholder={t('settingsPage.modelwizUrlPh')}
                     className="font-mono text-xs"
                   />
                   <p className="text-2xs text-muted-foreground">{t('settingsPage.modelwizUrlHint')}</p>
@@ -825,14 +825,14 @@ export default function SettingsPage() {
                 <h3 className="text-sm font-medium text-muted-foreground">{t('settingsPage.apiKeysFallback')}</h3>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="translation-api-key">🔑 Google Gemini API Key</Label>
+                  <Label htmlFor="translation-api-key">{t('settingsPage.geminiHeader')}</Label>
                   <div className="flex space-x-2">
                     <Input
                       id="translation-api-key"
                       type={showApiKeys.translation ? "text" : "password"}
                       value={settings.translation.apiKey}
                       onChange={(e) => updateSetting('translation', 'apiKey', e.target.value)}
-                      placeholder="AIzaSy..."
+                      placeholder={t('settingsPage.geminiKeyPh')}
                       className="font-mono text-xs"
                     />
                     <Button
@@ -855,7 +855,7 @@ export default function SettingsPage() {
                       type={showApiKeys.groq ? "text" : "password"}
                       value={settings.translation.groqApiKey}
                       onChange={(e) => updateSetting('translation', 'groqApiKey', e.target.value)}
-                      placeholder="gsk_..."
+                      placeholder={t('settingsPage.groqKeyPh')}
                       className="font-mono text-xs"
                     />
                     <Button
@@ -871,14 +871,14 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="deepseek-api-key">🔑 DeepSeek API Key</Label>
+                  <Label htmlFor="deepseek-api-key">{t('settingsPage.deepseekHeader')}</Label>
                   <div className="flex space-x-2">
                     <Input
                       id="deepseek-api-key"
                       type={showApiKeys.deepseek ? "text" : "password"}
                       value={settings.translation.deepseekApiKey}
                       onChange={(e) => updateSetting('translation', 'deepseekApiKey', e.target.value)}
-                      placeholder="sk-..."
+                      placeholder={t('settingsPage.skPrefixPh')}
                       className="font-mono text-xs"
                     />
                     <Button
@@ -894,14 +894,14 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="openai-api-key">🔑 OpenAI API Key</Label>
+                  <Label htmlFor="openai-api-key">{t('settingsPage.openaiHeader')}</Label>
                   <div className="flex space-x-2">
                     <Input
                       id="openai-api-key"
                       type={showApiKeys.openai ? "text" : "password"}
                       value={settings.translation.openaiApiKey}
                       onChange={(e) => updateSetting('translation', 'openaiApiKey', e.target.value)}
-                      placeholder="sk-..."
+                      placeholder={t('settingsPage.skPrefixPh')}
                       className="font-mono text-xs"
                     />
                     <Button
@@ -917,14 +917,14 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="anthropic-api-key">🔑 Anthropic Claude API Key</Label>
+                  <Label htmlFor="anthropic-api-key">{t('settingsPage.anthropicHeader')}</Label>
                   <div className="flex space-x-2">
                     <Input
                       id="anthropic-api-key"
                       type={showApiKeys.anthropic ? "text" : "password"}
                       value={settings.translation.anthropicApiKey}
                       onChange={(e) => updateSetting('translation', 'anthropicApiKey', e.target.value)}
-                      placeholder="sk-ant-..."
+                      placeholder={t('settingsPage.anthropicKeyPh')}
                       className="font-mono text-xs"
                     />
                     <Button
@@ -980,7 +980,7 @@ export default function SettingsPage() {
                   <div className="space-y-1">
                     <Label htmlFor="openrouter-api-key" className="text-xs">OpenRouter</Label>
                     <div className="flex space-x-1">
-                      <Input id="openrouter-api-key" type={showApiKeys.openrouter ? "text" : "password"} value={settings.translation.openrouterApiKey} onChange={(e) => updateSetting('translation', 'openrouterApiKey', e.target.value)} placeholder="sk-or-..." className="font-mono text-xs h-8" />
+                      <Input id="openrouter-api-key" type={showApiKeys.openrouter ? "text" : "password"} value={settings.translation.openrouterApiKey} onChange={(e) => updateSetting('translation', 'openrouterApiKey', e.target.value)} placeholder={t('settingsPage.openrouterKeyPh')} className="font-mono text-xs h-8" />
                       <Button variant="outline" size="icon" aria-label={t('common.mostraNascondi')} className="h-8 w-8" onClick={() => setShowApiKeys(prev => ({ ...prev, openrouter: !prev.openrouter }))}>{showApiKeys.openrouter ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}</Button>
                     </div>
                     <p className="text-2xs text-muted-foreground">{t('settingsPage.modelliGratuitiInclusi')}<a href="https://openrouter.ai/keys" target="_blank" rel="noopener" className="underline">{t('settingsPage.key')}</a></p>
@@ -988,7 +988,7 @@ export default function SettingsPage() {
                   <div className="space-y-1">
                     <Label htmlFor="cerebras-api-key" className="text-xs">Cerebras</Label>
                     <div className="flex space-x-1">
-                      <Input id="cerebras-api-key" type={showApiKeys.cerebras ? "text" : "password"} value={settings.translation.cerebrasApiKey} onChange={(e) => updateSetting('translation', 'cerebrasApiKey', e.target.value)} placeholder="csk-..." className="font-mono text-xs h-8" />
+                      <Input id="cerebras-api-key" type={showApiKeys.cerebras ? "text" : "password"} value={settings.translation.cerebrasApiKey} onChange={(e) => updateSetting('translation', 'cerebrasApiKey', e.target.value)} placeholder={t('settingsPage.cerebrasKeyPh')} className="font-mono text-xs h-8" />
                       <Button variant="outline" size="icon" aria-label={t('common.mostraNascondi')} className="h-8 w-8" onClick={() => setShowApiKeys(prev => ({ ...prev, cerebras: !prev.cerebras }))}>{showApiKeys.cerebras ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}</Button>
                     </div>
                     <p className="text-2xs text-muted-foreground">{t('settingsPage.freeTierUltraveloce')}<a href="https://cloud.cerebras.ai/platform" target="_blank" rel="noopener" className="underline">{t('settingsPage.key')}</a></p>
@@ -1004,7 +1004,7 @@ export default function SettingsPage() {
                   <div className="space-y-1">
                     <Label htmlFor="qwen-api-key" className="text-xs">{t('settingsPage.qwen3AlibabaDashscope')}</Label>
                     <div className="flex space-x-1">
-                      <Input id="qwen-api-key" type={showApiKeys.qwen ? "text" : "password"} value={settings.translation.qwenApiKey} onChange={(e) => updateSetting('translation', 'qwenApiKey', e.target.value)} placeholder="sk-..." className="font-mono text-xs h-8" />
+                      <Input id="qwen-api-key" type={showApiKeys.qwen ? "text" : "password"} value={settings.translation.qwenApiKey} onChange={(e) => updateSetting('translation', 'qwenApiKey', e.target.value)} placeholder={t('settingsPage.skPrefixPh')} className="font-mono text-xs h-8" />
                       <Button variant="outline" size="icon" aria-label={t('common.mostraNascondi')} className="h-8 w-8" onClick={() => setShowApiKeys(prev => ({ ...prev, qwen: !prev.qwen }))}>{showApiKeys.qwen ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}</Button>
                     </div>
                     <p className="text-2xs text-muted-foreground">{t('settingsPage.qwen1m')}<a href="https://dashscope.console.aliyun.com/apiKey" target="_blank" rel="noopener" className="underline">{t('settingsPage.key')}</a></p>
