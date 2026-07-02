@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
 import { useTranslation } from '@/lib/i18n';
+import { isTauri } from '@/lib/tauri-api';
 
 // ── Types ──────────────────────────────────────────────────
 interface ExtractResult {
@@ -146,6 +147,9 @@ export function UnityInkTranslator() {
   }, []);
 
   async function scanSteamGames() {
+    // Il backend Unity Ink (parsing asset) è servito da /api, stub 501 nel desktop:
+    // il tool non è ancora portato lato Tauri. Degrada senza generare errori.
+    if (isTauri()) { addLog('Unity Ink Translator: non ancora disponibile nel desktop (backend da portare a Rust)'); return; }
     setScanningGames(true);
     try {
       const resp = await fetch('/api/unity-ink/steam-scan');
@@ -167,6 +171,7 @@ export function UnityInkTranslator() {
   }, [logs]);
 
   async function checkOllama() {
+    if (isTauri()) { setOllamaStatus('offline'); return; }
     setOllamaStatus('checking');
     try {
       const resp = await fetch('/api/unity-ink/ollama-status');
@@ -191,6 +196,11 @@ export function UnityInkTranslator() {
   // ── STEP 1: Select Game ──────────────────────────────────
   async function handleSelectGame() {
     if (!gameDir.trim()) return;
+    if (isTauri()) {
+      addLog('Unity Ink Translator: backend non ancora disponibile nel desktop. Per i giochi Unity usa Unity CSV Translator o la patch XUnity.');
+      toast({ title: 'Non disponibile nel desktop', description: 'Il traduttore Ink lato desktop è in arrivo. Per ora usa Unity CSV Translator o XUnity AutoTranslator.', variant: 'destructive' });
+      return;
+    }
     addLog(`Cartella gioco: ${gameDir}`);
     
     try {
