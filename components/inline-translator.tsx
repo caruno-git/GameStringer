@@ -199,7 +199,7 @@ MAIN_QUEST_01=Find the ancient artifact`;
                 </div>
                 <div>
                   <CardTitle className="text-lg font-bold bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
-                    Translation of {gameName}
+                    {t('inlineTranslatorComp.translationOf')} {gameName}
                   </CardTitle>
                   <p className="text-xs text-gray-400 mt-0.5">{t('inlineTranslatorComp.neuralTranslator')}</p>
                 </div>
@@ -258,8 +258,7 @@ MAIN_QUEST_01=Find the ancient artifact`;
                   <div className="text-center">
                     <h3 className="text-lg font-semibold mb-2">{t('inlineTranslatorComp.scanningInProgress')}</h3>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Searching for translatable files in the game
-                    </p>
+                      {t('inlineTranslatorComp.searchingFiles')}</p>
                     <Progress value={scanProgress} className="w-full max-w-xs mx-auto" />
                     <p className="text-xs text-muted-foreground mt-2">{scanProgress}%</p>
                   </div>
@@ -338,26 +337,22 @@ MAIN_QUEST_01=Find the ancient artifact`;
                           <SelectItem value="it">
                             <span className="flex items-center gap-2">
                               <span className="text-base">🇮🇹</span>
-                              Italian
-                            </span>
+                              {t('languages.it')}</span>
                           </SelectItem>
                           <SelectItem value="es">
                             <span className="flex items-center gap-2">
                               <span className="text-base">🇪🇸</span>
-                              Spanish
-                            </span>
+                              {t('languages.es')}</span>
                           </SelectItem>
                           <SelectItem value="fr">
                             <span className="flex items-center gap-2">
                               <span className="text-base">🇫🇷</span>
-                              French
-                            </span>
+                              {t('languages.fr')}</span>
                           </SelectItem>
                           <SelectItem value="de">
                             <span className="flex items-center gap-2">
                               <span className="text-base">🇩🇪</span>
-                              German
-                            </span>
+                              {t('languages.de')}</span>
                           </SelectItem>
                         </SelectContent>
                       </Select>
@@ -369,7 +364,7 @@ MAIN_QUEST_01=Find the ancient artifact`;
                       className="bg-gradient-to-r from-purple-500 to-fuchsia-500 hover:from-purple-600 hover:to-fuchsia-600 text-white shadow-lg shadow-purple-500/25 px-6"
                     >
                       {isLoadingFile ? (
-                        <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Loading...</>
+                        <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> {t('inlineTranslatorComp.loading')}</>
                       ) : (
                         <><Wand2 className="h-4 w-4 mr-2" />{t('common.proceedWithTranslation')}</>
                       )}
@@ -401,7 +396,7 @@ MAIN_QUEST_01=Find the ancient artifact`;
                         value={translatedContent}
                         onChange={(e) => setTranslatedContent(e.target.value)}
                         className="h-[300px] font-mono text-sm"
-                        placeholder="Translation will appear here"
+                        placeholder={t('inlineTranslatorComp.resultPh')}
                         readOnly={isTranslating}
                       />
                     </div>
@@ -438,7 +433,7 @@ MAIN_QUEST_01=Find the ancient artifact`;
                           type="password"
                           value={apiKey}
                           onChange={(e) => setApiKey(e.target.value)}
-                          placeholder="Enter your API key"
+                          placeholder={t('inlineTranslatorComp.apiKeyPh')}
                           autoComplete="off"
                         />
                       </form>
@@ -453,26 +448,22 @@ MAIN_QUEST_01=Find the ancient artifact`;
                             <SelectItem value="it">
                               <span className="flex items-center gap-2">
                                 <img src="https://flagcdn.com/16x12/it.png" alt="IT" className="w-4 h-3" />
-                                Italian
-                              </span>
+                                {t('languages.it')}</span>
                             </SelectItem>
                             <SelectItem value="es">
                               <span className="flex items-center gap-2">
                                 <img src="https://flagcdn.com/16x12/es.png" alt="ES" className="w-4 h-3" />
-                                Spanish
-                              </span>
+                                {t('languages.es')}</span>
                             </SelectItem>
                             <SelectItem value="fr">
                               <span className="flex items-center gap-2">
                                 <img src="https://flagcdn.com/16x12/fr.png" alt="FR" className="w-4 h-3" />
-                                French
-                              </span>
+                                {t('languages.fr')}</span>
                             </SelectItem>
                             <SelectItem value="de">
                               <span className="flex items-center gap-2">
                                 <img src="https://flagcdn.com/16x12/de.png" alt="DE" className="w-4 h-3" />
-                                German
-                              </span>
+                                {t('languages.de')}</span>
                             </SelectItem>
                           </SelectContent>
                         </Select>
@@ -481,7 +472,7 @@ MAIN_QUEST_01=Find the ancient artifact`;
                     
                     <div className="flex items-center justify-between pt-2">
                       <div className="text-sm text-muted-foreground">
-                        Estimated cost: <strong className="text-foreground">${getEstimatedCost()}</strong>
+                        {t('inlineTranslatorComp.estimatedCost')} <strong className="text-foreground">${getEstimatedCost()}</strong>
                       </div>
                       
                       <Button
@@ -490,9 +481,9 @@ MAIN_QUEST_01=Find the ancient artifact`;
                         size="lg"
                       >
                         {isTranslating ? (
-                          <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Translating...</>
+                          <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> {t('inlineTranslatorComp.translating')}</>
                         ) : (
-                          <><Wand2 className="h-4 w-4 mr-2" /> Start AI Translation</>
+                          <><Wand2 className="h-4 w-4 mr-2" /> {t('inlineTranslatorComp.startAiTranslation')}</>
                         )}
                       </Button>
                     </div>
@@ -510,8 +501,7 @@ MAIN_QUEST_01=Find the ancient artifact`;
                   <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
                   <h3 className="text-lg font-semibold mb-2">{t('inlineTranslatorComp.translationComplete')}</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    File {selectedFile?.name} has been successfully translated
-                  </p>
+                    {t('inlineTranslatorComp.fileLabel')} {selectedFile?.name}  {t('inlineTranslatorComp.successMsg')}</p>
                   
                   <div className="max-w-2xl mx-auto mb-6">
                     <Label className="text-sm mb-2 block">{t('inlineTranslatorComp.translationPreview')}</Label>
@@ -527,15 +517,12 @@ MAIN_QUEST_01=Find the ancient artifact`;
                       setTranslatedContent('');
                       setCurrentStep('select-file');
                     }}>
-                      Translate Other Files
-                    </Button>
+                      {t('inlineTranslatorComp.translateOther')}</Button>
                     <Button variant="outline">
                       <Save className="h-4 w-4 mr-2" />
-                      Save Translation
-                    </Button>
+                      {t('inlineTranslatorComp.saveTranslation')}</Button>
                     <Button onClick={onClose}>
-                      Close
-                    </Button>
+                      {t('inlineTranslatorComp.close')}</Button>
                   </div>
                 </motion.div>
               )}
