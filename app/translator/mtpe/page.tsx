@@ -126,11 +126,9 @@ export default function MTPEPage() {
           </div>
           <div>
             <h1 className="text-lg font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
-              MTPE Workflow
-            </h1>
+              {t('mtpePage.title')}</h1>
             <p className="text-white/70 text-2xs drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
-              Machine Translation Post-Editing
-            </p>
+              {t('mtpePage.subtitle')}</p>
           </div>
         </div>
       </div>
@@ -141,8 +139,7 @@ export default function MTPEPage() {
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
                 <FileText className="h-4 w-4" />
-                1. Inserisci testi da tradurre
-              </CardTitle>
+                {t('mtpePage.step1')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-3 gap-4">
@@ -153,13 +150,13 @@ export default function MTPEPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="en">🇬🇧 English</SelectItem>
+                      <SelectItem value="en">🇬🇧 {t('languages.en')}</SelectItem>
                       <SelectItem value="ja">🇯🇵 日本語</SelectItem>
                       <SelectItem value="zh">🇨🇳 中文</SelectItem>
                       <SelectItem value="ko">🇰🇷 한국어</SelectItem>
-                      <SelectItem value="de">🇩🇪 Deutsch</SelectItem>
-                      <SelectItem value="fr">🇫🇷 Français</SelectItem>
-                      <SelectItem value="es">🇪🇸 Español</SelectItem>
+                      <SelectItem value="de">🇩🇪 {t('languages.de')}</SelectItem>
+                      <SelectItem value="fr">🇫🇷 {t('languages.fr')}</SelectItem>
+                      <SelectItem value="es">🇪🇸 {t('languages.es')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -171,13 +168,13 @@ export default function MTPEPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="it">🇮🇹 Italiano</SelectItem>
-                      <SelectItem value="en">🇬🇧 English</SelectItem>
-                      <SelectItem value="de">🇩🇪 Deutsch</SelectItem>
-                      <SelectItem value="fr">🇫🇷 Français</SelectItem>
-                      <SelectItem value="es">🇪🇸 Español</SelectItem>
-                      <SelectItem value="pt">🇵🇹 Português</SelectItem>
-                      <SelectItem value="pl">🇵🇱 Polski</SelectItem>
+                      <SelectItem value="it">🇮🇹 {t('languages.it')}</SelectItem>
+                      <SelectItem value="en">🇬🇧 {t('languages.en')}</SelectItem>
+                      <SelectItem value="de">🇩🇪 {t('languages.de')}</SelectItem>
+                      <SelectItem value="fr">🇫🇷 {t('languages.fr')}</SelectItem>
+                      <SelectItem value="es">🇪🇸 {t('languages.es')}</SelectItem>
+                      <SelectItem value="pt">🇵🇹 {t('languages.pt')}</SelectItem>
+                      <SelectItem value="pl">🇵🇱 {t('languages.pl')}</SelectItem>
                       <SelectItem value="ru">🇷🇺 Русский</SelectItem>
                       <SelectItem value="zh">🇨🇳 中文</SelectItem>
                       <SelectItem value="ja">🇯🇵 日本語</SelectItem>
@@ -209,21 +206,19 @@ export default function MTPEPage() {
                 value={sourceTexts}
                 onChange={(e) => setSourceTexts(e.target.value)}
                 className="min-h-[300px] bg-slate-800/50 border-slate-600 font-mono text-sm"
-                placeholder="Inserisci un testo per riga...&#10;&#10;Hello, adventurer!&#10;Welcome to our world.&#10;Choose your destiny..."
+                placeholder={t('mtpePage.inputPh')}
               />
 
               <div className="flex justify-between items-center">
                 <span className="text-xs text-gray-500">
-                  {sourceTexts.split('\n').filter(l => l.trim()).length} righe
-                </span>
+                  {sourceTexts.split('\n').filter(l => l.trim()).length}  {t('mtpePage.linesUnit')}</span>
                 <Button 
                   onClick={handleStartTranslation}
                   disabled={!sourceTexts.trim()}
                   className="bg-sky-600 hover:bg-sky-700"
                 >
                   <Play className="h-4 w-4 mr-2" />
-                  Avvia traduzione AI
-                </Button>
+                  {t('mtpePage.startAiTranslation')}</Button>
               </div>
             </CardContent>
           </Card>
@@ -236,7 +231,7 @@ export default function MTPEPage() {
               <Sparkles className="h-12 w-12 text-sky-400 mx-auto mb-4 animate-pulse" />
               <h2 className="text-xl font-medium mb-2">{t('offlineTranslator.translating')}</h2>
               <p className="text-gray-400 mb-4">
-                Provider: {provider.toUpperCase()}
+                {t('mtpePage.providerLabel')} {provider.toUpperCase()}
               </p>
               <div className="w-64 mx-auto">
                 <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
@@ -255,10 +250,9 @@ export default function MTPEPage() {
         {phase === 'review' && (
           <div>
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-medium">2. Revisiona traduzioni</h2>
+              <h2 className="text-lg font-medium">{t('mtpePage.step2')}</h2>
               <Button variant="ghost" size="sm" onClick={handleReset}>
-                Ricomincia
-              </Button>
+                {t('mtpePage.restart')}</Button>
             </div>
             <MTPEWorkflow
               translations={translations}
@@ -276,24 +270,20 @@ export default function MTPEPage() {
               <div className="text-5xl mb-4">✅</div>
               <h2 className="text-xl font-medium mb-2">{t('mtpePage.workflowCompletato')}</h2>
               <p className="text-gray-400 mb-4">
-                {results.filter(r => r.status === 'approved').length} approvate,{' '}
-                {results.filter(r => r.status === 'edited').length} modificate,{' '}
-                {results.filter(r => r.status === 'rejected').length} rifiutate
-              </p>
+                {results.filter(r => r.status === 'approved').length}  {t('mtpePage.approvedCount')}{' '}
+                {results.filter(r => r.status === 'edited').length}  {t('mtpePage.editedCount')}{' '}
+                {results.filter(r => r.status === 'rejected').length}  {t('mtpePage.rejectedCount')}</p>
               
               <div className="flex gap-3 justify-center">
                 <Button onClick={handleExport} className="bg-green-600 hover:bg-green-700">
                   <Download className="h-4 w-4 mr-2" />
-                  Esporta TSV
-                </Button>
+                  {t('mtpePage.exportTsv')}</Button>
                 <Button variant="outline" onClick={handleReset}>
-                  Nuovo workflow
-                </Button>
+                  {t('mtpePage.newWorkflow')}</Button>
               </div>
               
               <p className="text-xs text-gray-500 mt-4">
-                Le traduzioni approvate/modificate sono state salvate nella Translation Memory
-              </p>
+                {t('mtpePage.savedToTm')}</p>
             </CardContent>
           </Card>
         )}
