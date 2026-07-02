@@ -2116,7 +2116,14 @@ pub async fn install_unity_autotranslator(game_path: String, game_exe_name: Stri
 
     // 1. Scarica e Installa BepInEx
     steps.push(format!("Download BepInEx {} {}...", bepinex_version, arch_str));
-    match download_and_extract(bepinex_url, game_dir).await {
+    // La legacy 5.4.11 resta pinnata (compat Unity 5.6); per il path 5.x risolvi l'ultima
+    // 5.4.x stabile dalla release più recente, con fallback al tag pinnato.
+    let bepinex_url = if use_legacy {
+        bepinex_url.to_string()
+    } else {
+        resolve_gh_asset("BepInEx/BepInEx", &["win", arch_str, ".zip"], &["il2cpp", "unity"], bepinex_url).await
+    };
+    match download_and_extract(&bepinex_url, game_dir).await {
         Ok(_) => steps.push("✓ BepInEx installato".to_string()),
         Err(e) => return Err(format!("Errore installazione BepInEx: {}", e)),
     }
@@ -2185,11 +2192,14 @@ async fn install_il2cpp_patch(game_dir: &Path, lang: &str, mode: &str, is_64bit:
     }
     
     // 1. Scarica BepInEx 6 IL2CPP
-    let bepinex_url = if is_64bit { BEPINEX6_IL2CPP_X64_URL } else { BEPINEX6_IL2CPP_X86_URL };
+    let bepinex_fallback = if is_64bit { BEPINEX6_IL2CPP_X64_URL } else { BEPINEX6_IL2CPP_X86_URL };
     let arch_str = if is_64bit { "x64" } else { "x86" };
-    
+    // Le build IL2CPP sono pre-release: risolvi l'ultima dalla lista GitHub (arch giusta),
+    // con fallback al tag pinnato.
+    let bepinex_url = resolve_gh_asset("BepInEx/BepInEx", &["il2cpp", "win", arch_str, ".zip"], &["mono"], bepinex_fallback).await;
+
     steps.push(format!("Download BepInEx 6 IL2CPP {}...", arch_str));
-    match download_and_extract(bepinex_url, game_dir).await {
+    match download_and_extract(&bepinex_url, game_dir).await {
         Ok(_) => steps.push("✓ BepInEx 6 IL2CPP installato".to_string()),
         Err(e) => return Err(format!("Errore installazione BepInEx 6 IL2CPP: {}", e)),
     }
