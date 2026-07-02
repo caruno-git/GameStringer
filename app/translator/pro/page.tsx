@@ -1434,8 +1434,7 @@ export default function TranslatorProPage() {
               {selectedGame ? `Neural Translator Pro • ${selectedGame.name}` : 'Neural Translator Pro'}
             </h1>
             <p className="text-xs text-white/70">
-              Sistema professionale di traduzione con AI
-            </p>
+              {t('translatorProPage.subtitle')}</p>
           </div>
           
           {/* Actions */}
@@ -1574,8 +1573,7 @@ export default function TranslatorProPage() {
           <div className="space-y-6">
             <Button variant="ghost" size="sm" onClick={() => setCurrentStep('select-files')} className="gap-2">
               <ArrowLeft className="h-4 w-4" />
-              Modifica file
-            </Button>
+              {t('translatorProPage.editFile')}</Button>
             
             {/* Summary */}
             <div className="grid grid-cols-3 gap-4">
@@ -1610,10 +1608,9 @@ export default function TranslatorProPage() {
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-semibold">🤖 Raccomandazione AI</h4>
+                      <h4 className="font-semibold">🤖 {t('translatorProPage.aiRecommendation')}</h4>
                       <Badge variant="secondary" className="text-xs">
-                        {Math.round(recommendedProvider.confidence * 100)}% confidenza
-                      </Badge>
+                        {Math.round(recommendedProvider.confidence * 100)}% {t('translatorProPage.confidence')}</Badge>
                     </div>
                     <p className="text-sm text-muted-foreground mb-2">
                       {recommendedProvider.reason}
@@ -1626,7 +1623,7 @@ export default function TranslatorProPage() {
                         className="gap-2"
                       >
                         <CheckCircle className="h-3 w-3" />
-                        Usa {recommendedProvider.provider === 'gpt5' ? 'GPT-4o' : 
+                        {t('translatorProPage.use')}{recommendedProvider.provider === 'gpt5' ? 'GPT-4o' : 
                              recommendedProvider.provider === 'claude' ? 'Claude' :
                              recommendedProvider.provider === 'gemini' ? 'Gemini' :
                              recommendedProvider.provider === 'deepseek' ? 'DeepSeek' :
@@ -1636,8 +1633,7 @@ export default function TranslatorProPage() {
                     {provider === recommendedProvider.provider && (
                       <p className="text-sm text-green-600 font-medium flex items-center gap-1">
                         <CheckCircle className="h-4 w-4" />
-                        Recommended provider selected
-                      </p>
+                        {t('translatorProPage.recommendedSelected')}</p>
                     )}
                   </div>
                 </div>
@@ -1731,7 +1727,7 @@ export default function TranslatorProPage() {
                     type="password"
                     value={apiKey}
                     onChange={(e) => handleApiKeyChange(e.target.value)}
-                    placeholder="Enter your API key (saved automatically)"
+                    placeholder={t('translatorProPage.apiKeyPh')}
                     autoComplete="off"
                   />
                 </form>
@@ -1744,16 +1740,16 @@ export default function TranslatorProPage() {
                         <SelectValue placeholder={t('common.selectLanguage')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="en"><span className="flex items-center gap-2">{getFlagEmoji('GB')} English</span></SelectItem>
-                        <SelectItem value="de"><span className="flex items-center gap-2">{getFlagEmoji('DE')} Deutsch</span></SelectItem>
-                        <SelectItem value="fr"><span className="flex items-center gap-2">{getFlagEmoji('FR')} Français</span></SelectItem>
-                        <SelectItem value="es"><span className="flex items-center gap-2">{getFlagEmoji('ES')} Español</span></SelectItem>
+                        <SelectItem value="en"><span className="flex items-center gap-2">{getFlagEmoji('GB')} {t('languages.en')}</span></SelectItem>
+                        <SelectItem value="de"><span className="flex items-center gap-2">{getFlagEmoji('DE')} {t('languages.de')}</span></SelectItem>
+                        <SelectItem value="fr"><span className="flex items-center gap-2">{getFlagEmoji('FR')} {t('languages.fr')}</span></SelectItem>
+                        <SelectItem value="es"><span className="flex items-center gap-2">{getFlagEmoji('ES')} {t('languages.es')}</span></SelectItem>
                         <SelectItem value="ja"><span className="flex items-center gap-2">{getFlagEmoji('JP')} 日本語</span></SelectItem>
                         <SelectItem value="zh"><span className="flex items-center gap-2">{getFlagEmoji('CN')} 中文</span></SelectItem>
                         <SelectItem value="ko"><span className="flex items-center gap-2">{getFlagEmoji('KR')} 한국어</span></SelectItem>
                         <SelectItem value="ru"><span className="flex items-center gap-2">{getFlagEmoji('RU')} Русский</span></SelectItem>
-                        <SelectItem value="pt"><span className="flex items-center gap-2">{getFlagEmoji('BR')} Português</span></SelectItem>
-                        <SelectItem value="pl"><span className="flex items-center gap-2">{getFlagEmoji('PL')} Polski</span></SelectItem>
+                        <SelectItem value="pt"><span className="flex items-center gap-2">{getFlagEmoji('BR')} {t('languages.pt')}</span></SelectItem>
+                        <SelectItem value="pl"><span className="flex items-center gap-2">{getFlagEmoji('PL')} {t('languages.pl')}</span></SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -1764,17 +1760,17 @@ export default function TranslatorProPage() {
                         <SelectValue placeholder={t('common.selectLanguage')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="it"><span className="flex items-center gap-2">{getFlagEmoji('IT')} Italiano</span></SelectItem>
-                        <SelectItem value="en"><span className="flex items-center gap-2">{getFlagEmoji('GB')} English</span></SelectItem>
-                        <SelectItem value="de"><span className="flex items-center gap-2">{getFlagEmoji('DE')} Deutsch</span></SelectItem>
-                        <SelectItem value="fr"><span className="flex items-center gap-2">{getFlagEmoji('FR')} Français</span></SelectItem>
-                        <SelectItem value="es"><span className="flex items-center gap-2">{getFlagEmoji('ES')} Español</span></SelectItem>
+                        <SelectItem value="it"><span className="flex items-center gap-2">{getFlagEmoji('IT')} {t('languages.it')}</span></SelectItem>
+                        <SelectItem value="en"><span className="flex items-center gap-2">{getFlagEmoji('GB')} {t('languages.en')}</span></SelectItem>
+                        <SelectItem value="de"><span className="flex items-center gap-2">{getFlagEmoji('DE')} {t('languages.de')}</span></SelectItem>
+                        <SelectItem value="fr"><span className="flex items-center gap-2">{getFlagEmoji('FR')} {t('languages.fr')}</span></SelectItem>
+                        <SelectItem value="es"><span className="flex items-center gap-2">{getFlagEmoji('ES')} {t('languages.es')}</span></SelectItem>
                         <SelectItem value="ja"><span className="flex items-center gap-2">{getFlagEmoji('JP')} 日本語</span></SelectItem>
                         <SelectItem value="zh"><span className="flex items-center gap-2">{getFlagEmoji('CN')} 中文</span></SelectItem>
                         <SelectItem value="ko"><span className="flex items-center gap-2">{getFlagEmoji('KR')} 한국어</span></SelectItem>
                         <SelectItem value="ru"><span className="flex items-center gap-2">{getFlagEmoji('RU')} Русский</span></SelectItem>
-                        <SelectItem value="pt"><span className="flex items-center gap-2">{getFlagEmoji('BR')} Português</span></SelectItem>
-                        <SelectItem value="pl"><span className="flex items-center gap-2">{getFlagEmoji('PL')} Polski</span></SelectItem>
+                        <SelectItem value="pt"><span className="flex items-center gap-2">{getFlagEmoji('BR')} {t('languages.pt')}</span></SelectItem>
+                        <SelectItem value="pl"><span className="flex items-center gap-2">{getFlagEmoji('PL')} {t('languages.pl')}</span></SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -1786,8 +1782,7 @@ export default function TranslatorProPage() {
                 <div className="p-4 rounded-xl border space-y-4">
                   <h3 className="font-medium flex items-center gap-2">
                     <Settings2 className="h-4 w-4" />
-                    Opzioni avanzate
-                  </h3>
+                    {t('translatorProPage.advancedOptions')}</h3>
                   
                   <label className="flex items-center justify-between cursor-pointer">
                     <div className="flex items-center gap-2">
@@ -1829,8 +1824,7 @@ export default function TranslatorProPage() {
                   </label>
                   {showAllFiles && (
                     <p className="text-xs text-yellow-400/70">
-                      ⚠️ Bypasses smart filter. Re-select the game after enabling.
-                    </p>
+                      ⚠️ {t('translatorProPage.bypassWarning')}</p>
                   )}
                 </div>
                 
@@ -1839,8 +1833,7 @@ export default function TranslatorProPage() {
                   <div className="p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-fuchsia-500/10 border border-purple-500/20">
                     <h3 className="font-medium mb-3 flex items-center gap-2">
                       <Info className="h-4 w-4" />
-                      Estimate
-                    </h3>
+                      {t('translatorProPage.estimate')}</h3>
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       <div className="flex items-center gap-2">
                         <Clock className="h-4 w-4 text-muted-foreground" />
@@ -1851,8 +1844,7 @@ export default function TranslatorProPage() {
                         <span>~${costEstimate.estimatedCost.toFixed(4)}</span>
                       </div>
                       <div className="col-span-2 text-xs text-muted-foreground">
-                        {costEstimate.breakdown.estimatedTmHits} from memory, {costEstimate.breakdown.estimatedApiCalls} from API
-                      </div>
+                        {costEstimate.breakdown.estimatedTmHits}  {t('translatorProPage.fromMemory')} {costEstimate.breakdown.estimatedApiCalls}  {t('translatorProPage.fromApi')}</div>
                     </div>
                   </div>
                 )}
@@ -1876,8 +1868,7 @@ export default function TranslatorProPage() {
                 className="bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600"
               >
                 <Sparkles className="mr-2 h-4 w-4" />
-                Avvia Traduzione
-              </Button>
+                {t('translatorProPage.startTranslation')}</Button>
             </div>
           </div>
         )}
@@ -2039,8 +2030,7 @@ export default function TranslatorProPage() {
           <AlertDialogHeader>
             <AlertDialogTitle className="text-green-400 flex items-center gap-2">
               <CheckCircle className="h-6 w-6" />
-              Patch Esportata con Successo!
-            </AlertDialogTitle>
+              {t('translatorProPage.patchExported')}</AlertDialogTitle>
             <AlertDialogDescription asChild>
               <div className="text-slate-300 space-y-3">
                 <p>{t('translatorProPage.ilPacchettoDiTraduzioneÈStatoS')}</p>
@@ -2061,8 +2051,7 @@ export default function TranslatorProPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogAction className="bg-green-600 hover:bg-green-700">
-              Chiudi
-            </AlertDialogAction>
+              {t('translatorProPage.close')}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
