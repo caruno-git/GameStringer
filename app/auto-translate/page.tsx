@@ -1682,8 +1682,7 @@ export default function AutoTranslatePage() {
                         <Eye className="h-3 w-3 mr-1" /> {t('autoTranslatePage.review')}
                       </Button>
                       <Button size="xs" className="text-xs bg-emerald-600 hover:bg-emerald-700" onClick={() => handleStartTranslation(true)}>
-                        <Play className="h-3 w-3 mr-1" /> Resume
-                      </Button>
+                        <Play className="h-3 w-3 mr-1" /> {t('autoTranslatePage.resume')}</Button>
                       <Button size="sm" variant="outline" className="h-8 text-xs border-amber-500/30 text-amber-300 hover:bg-amber-500/20" onClick={clearCheckpoint}>
                         <XCircle className="h-3 w-3 mr-1" /> {t('autoTranslatePage.restart')}
                       </Button>
@@ -1928,8 +1927,7 @@ export default function AutoTranslatePage() {
                       Powered by <a href="https://github.com/BepInEx/BepInEx" target="_blank" rel="noopener" className="text-blue-400/70 hover:text-blue-400 underline">BepInEx</a> (BepInEx Team) 
                       {' '}&amp;{' '}
                       <a href="https://github.com/bbepis/XUnity.AutoTranslator" target="_blank" rel="noopener" className="text-blue-400/70 hover:text-blue-400 underline">XUnity.AutoTranslator</a> (bbepis).
-                      {' '}Thanks to the original authors for their incredible open-source work.
-                    </p>
+                      {' '}{t('autoTranslatePage.thanksAuthors')}</p>
                   </div>
                   </div>
                   )}
@@ -2112,9 +2110,9 @@ export default function AutoTranslatePage() {
                     disabled={stoppedByUser}
                   >
                     {stoppedByUser ? (
-                      <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> Stopping...</>
+                      <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> {t('autoTranslatePage.stopping')}</>
                     ) : (
-                      <><XCircle className="h-3.5 w-3.5 mr-1.5" /> Stop & Save</>
+                      <><XCircle className="h-3.5 w-3.5 mr-1.5" /> {t('autoTranslatePage.stopAndSave')}</>
                     )}
                   </Button>
                 </div>
@@ -2136,14 +2134,12 @@ export default function AutoTranslatePage() {
                   <div className="bg-muted/40 rounded-lg p-3 text-center">
                     <div className="text-2xl font-bold tabular-nums">{progress.currentFile}/{progress.totalFiles}</div>
                     <div className="text-2xs text-muted-foreground mt-0.5 flex items-center justify-center gap-1">
-                      <FileText className="h-3 w-3" /> Files
-                    </div>
+                      <FileText className="h-3 w-3" /> {t('autoTranslatePage.filesLabel')}</div>
                   </div>
                   <div className="bg-muted/40 rounded-lg p-3 text-center">
                     <div className="text-2xl font-bold tabular-nums">{elapsedMin > 0 ? `${elapsedMin}m${String(elapsedSecRem).padStart(2, '0')}s` : `${elapsedSecRem}s`}</div>
                     <div className="text-2xs text-muted-foreground mt-0.5 flex items-center justify-center gap-1">
-                      <Timer className="h-3 w-3" /> Elapsed
-                    </div>
+                      <Timer className="h-3 w-3" /> {t('autoTranslatePage.elapsed')}</div>
                   </div>
                   <div className="bg-muted/40 rounded-lg p-3 text-center">
                     <div className="text-2xl font-bold tabular-nums text-violet-400">{remaining !== null ? `~${remaining}m` : '...'}</div>
@@ -2220,9 +2216,7 @@ export default function AutoTranslatePage() {
                           <div>
                             <p className="text-xs font-semibold text-amber-200">{t('autoTranslatePage.translationProvidersExhausted')}</p>
                             <p className="text-2xs text-amber-300/70 mt-1">
-                              Free services (Lingva, MyMemory) have reached their request limit.
-                              Translations completed so far have been saved.
-                            </p>
+                              {t('autoTranslatePage.freeLimitReached')}</p>
                           </div>
                         </div>
                         <div className="bg-black/20 rounded p-2 space-y-1">
@@ -2243,8 +2237,7 @@ export default function AutoTranslatePage() {
                 )}
 
                 <p className="text-2xs text-muted-foreground text-center">
-                  Progress is saved automatically. You can resume at any time.
-                </p>
+                  {t('autoTranslatePage.progressSaved')}</p>
               </CardContent>
             </Card>
           </div>
@@ -2266,16 +2259,14 @@ export default function AutoTranslatePage() {
                 <div className="text-lg font-bold text-red-400">{untranslatedCount}</div>
                 {untranslatedCount > 0 && !isRetranslating && (
                   <Button size="sm" className="w-full h-6 text-micro mt-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" onClick={handleTranslateUntranslated}>
-                    <Zap className="h-2.5 w-2.5 mr-0.5" /> Translate all
-                  </Button>
+                    <Zap className="h-2.5 w-2.5 mr-0.5" /> {t('autoTranslatePage.translateAll')}</Button>
                 )}
                 {isRetranslating && retranslateProgress && (
                   <div className="mt-1 space-y-0.5">
                     <Progress value={(retranslateProgress.done / retranslateProgress.total) * 100} className="h-1.5" />
                     <div className="text-2xs text-muted-foreground text-center">{retranslateProgress.done}/{retranslateProgress.total}</div>
                     <Button size="sm" variant="ghost" className="w-full h-5 text-2xs" onClick={() => { abortRef.current = true }}>
-                      <XCircle className="h-2 w-2 mr-0.5" /> Stop
-                    </Button>
+                      <XCircle className="h-2 w-2 mr-0.5" /> {t('autoTranslatePage.stop')}</Button>
                   </div>
                 )}
               </Card>
@@ -2283,16 +2274,14 @@ export default function AutoTranslatePage() {
 
             <div className="flex items-center gap-2">
               <Button onClick={handleGeneratePatch} className="h-9 text-xs bg-gradient-to-r from-violet-500 to-indigo-500">
-                <Package className="h-3.5 w-3.5 mr-1.5" /> Create Patch
-              </Button>
+                <Package className="h-3.5 w-3.5 mr-1.5" /> {t('autoTranslatePage.createPatch')}</Button>
               {gameInfo?.installPath && isUnrealEngine(gameInfo.installPath) && (
                 <Button
                   onClick={handleTestPatch}
                   className="h-9 text-xs bg-gradient-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600"
                   disabled={testPatchStatus !== 'idle' && testPatchStatus !== 'done' && testPatchStatus !== 'error'}
                 >
-                  <Play className="h-3.5 w-3.5 mr-1.5" /> Test Patch
-                </Button>
+                  <Play className="h-3.5 w-3.5 mr-1.5" /> {t('autoTranslatePage.testPatch')}</Button>
               )}
             </div>
 
@@ -2334,17 +2323,14 @@ export default function AutoTranslatePage() {
                     {testPatchApplied && (testPatchStatus === 'monitoring' || testPatchStatus === 'done') && (
                       <>
                         <Button size="sm" variant="destructive" className="h-7 text-2xs" onClick={handleRestorePatch}>
-                          <RotateCcw className="h-2.5 w-2.5 mr-1" /> Restore Originals
-                        </Button>
+                          <RotateCcw className="h-2.5 w-2.5 mr-1" /> {t('autoTranslatePage.restoreOriginals')}</Button>
                         <Button size="xs" className="text-2xs bg-emerald-600 hover:bg-emerald-700" onClick={handleKeepPatch}>
-                          <Check className="h-2.5 w-2.5 mr-1" /> Keep Patch
-                        </Button>
+                          <Check className="h-2.5 w-2.5 mr-1" /> {t('autoTranslatePage.keepPatch')}</Button>
                       </>
                     )}
                     {testPatchStatus === 'error' && (
                       <Button size="sm" variant="outline" className="h-7 text-2xs" onClick={handleTestPatch}>
-                        <RotateCcw className="h-2.5 w-2.5 mr-1" /> Retry
-                      </Button>
+                        <RotateCcw className="h-2.5 w-2.5 mr-1" /> {t('autoTranslatePage.retry')}</Button>
                     )}
                   </div>
                 </CardContent>
@@ -2400,7 +2386,7 @@ export default function AutoTranslatePage() {
                                 <div className="mt-1 space-y-1">
                                   <Textarea value={editValue} onChange={(e) => setEditValue(e.target.value)} className="text-xs min-h-[60px]" autoFocus />
                                   <div className="flex gap-1">
-                                    <Button size="xs" className="text-2xs" onClick={handleEditSave}><Save className="h-2.5 w-2.5 mr-0.5" /> Save</Button>
+                                    <Button size="xs" className="text-2xs" onClick={handleEditSave}><Save className="h-2.5 w-2.5 mr-0.5" /> {t('autoTranslatePage.save')}</Button>
                                     <Button size="sm" variant="ghost" className="h-6 text-2xs" onClick={handleEditCancel}>{t("common.cancel")}</Button>
                                   </div>
                                 </div>
@@ -2411,7 +2397,7 @@ export default function AutoTranslatePage() {
                                   ) : (
                                     <span className="text-red-400 italic">— untranslated —</span>
                                   )}
-                                  {s.isEdited && <Badge className="text-2xs h-3 px-1 bg-blue-500/20 text-blue-400">edited</Badge>}
+                                  {s.isEdited && <Badge className="text-2xs h-3 px-1 bg-blue-500/20 text-blue-400">{t('autoTranslatePage.edited')}</Badge>}
                                 </div>
                               )}
                             </div>
@@ -2461,19 +2447,16 @@ export default function AutoTranslatePage() {
                     </p>
                     <div className="flex flex-wrap justify-center gap-3 mt-4">
                       <Button onClick={handleDownloadZip} size="lg" className="bg-gradient-to-r from-emerald-500 to-teal-500">
-                        <Download className="h-4 w-4 mr-2" /> Download ZIP
-                      </Button>
+                        <Download className="h-4 w-4 mr-2" /> {t('autoTranslatePage.downloadZip')}</Button>
                       <Button
                         onClick={handleTestPatch}
                         size="lg"
                         className="bg-gradient-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600"
                         disabled={testPatchStatus !== 'idle' && testPatchStatus !== 'done' && testPatchStatus !== 'error'}
                       >
-                        <Play className="h-4 w-4 mr-2" /> Test Patch
-                      </Button>
+                        <Play className="h-4 w-4 mr-2" /> {t('autoTranslatePage.testPatch')}</Button>
                       <Button variant="outline" onClick={() => setStep('review')}>
-                        <ChevronLeft className="h-4 w-4 mr-1" /> Back to Review
-                      </Button>
+                        <ChevronLeft className="h-4 w-4 mr-1" /> {t('autoTranslatePage.backToReview')}</Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -2484,7 +2467,7 @@ export default function AutoTranslatePage() {
                   <Card className="p-3 text-center"><div className="text-2xl font-bold text-blue-400">{avgScore}%</div><div className="text-2xs text-muted-foreground">{t('autoTranslatePage.quality')}</div></Card>
                 </div>
                 <Card className="border-dashed">
-                  <CardHeader className="py-2 px-4"><CardTitle className="text-xs flex items-center gap-2"><Globe className="h-3.5 w-3.5" /> Export As (standard formats)</CardTitle></CardHeader>
+                  <CardHeader className="py-2 px-4"><CardTitle className="text-xs flex items-center gap-2"><Globe className="h-3.5 w-3.5" /> {t('autoTranslatePage.exportAs')}</CardTitle></CardHeader>
                   <CardContent className="px-4 pb-3 flex flex-wrap gap-2">
                     {(['TMX', 'XLIFF', 'PO'] as const).map(fmt => (
                       <Button key={fmt} variant="outline" size="xs" className="text-2xs" onClick={() => {
