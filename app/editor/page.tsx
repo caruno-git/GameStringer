@@ -29,6 +29,7 @@ import { invoke } from '@/lib/tauri-api';
 import { activityHistory } from '@/lib/activity-history';
 import { useTranslation } from '@/lib/i18n';
 import { storageManager } from '@/lib/storage-manager';
+import { listEditorTranslations, upsertEditorTranslation, removeEditorTranslation, buildTranslationExport } from '@/lib/editor-translations-store';
 import { get, set } from 'idb-keyval';
 import { loadGlossary, type AutoGlossaryEntry } from '@/lib/auto-glossary';
 import { BookOpen, FolderTree, Globe } from 'lucide-react';
@@ -601,8 +602,8 @@ export default function EditorPage() {
       // Se non ci sono progetti, mostra i games dalla library che hanno file di localizzazione
       if (projectsMap.size === 0) {
         try {
-          const gamesResponse = await fetch('/api/games');
-          const gamesData = gamesResponse.ok ? await gamesResponse.json() : [];
+          const { invoke } = await import('@tauri-apps/api/core');
+          const gamesData = await invoke<GameApiItem[]>('get_games').catch(() => [] as GameApiItem[]);
           
           // Filtra games con traduzioni (quelli che hanno translationStats)
           for (const game of ensureArray(gamesData) as GameApiItem[]) {
@@ -646,18 +647,12 @@ export default function EditorPage() {
   const fetchTranslations = async () => {
     setIsLoading(true);
     try {
-      const params = new URLSearchParams();
-      if (filterGame !== 'all') params.append('gameId', filterGame);
-      if (filterStatus !== 'all') params.append('status', filterStatus);
-      
-      const response = await fetch(`/api/translations?${params}`);
-      if (response.ok) {
-        const data = await response.json();
-        setTranslations(data);
-        if (selectedTranslation) {
-          const updated = data.find((t: Translation) => t.id === selectedTranslation.id);
-          if (updated) setSelectedTranslation(updated);
-        }
+      // Translation Memory locale (IndexedDB), non /api (stub 501 nel desktop).
+      const data = await listEditorTranslations({ gameId: filterGame, status: filterStatus }) as unknown as Translation[];
+      setTranslations(data);
+      if (selectedTranslation) {
+        const updated = data.find((t: Translation) => t.id === selectedTranslation.id);
+        if (updated) setSelectedTranslation(updated);
       }
     } catch (error: unknown) {
       clientLogger.error(`Error loading translations: ${String(error)}`);
@@ -677,28 +672,18 @@ export default function EditorPage() {
       setSelectedTranslation(updatedTranslation);
       setTranslations(prev => prev.map(t => t.id === updatedTranslation.id ? updatedTranslation : t));
 
-      const response = await fetch('/api/translations', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: selectedTranslation.id, ...updates, isManualEdit: true })
-      });
+      // Persisti su IndexedDB (TM locale), non /api (stub 501 nel desktop).
+      await upsertEditorTranslation({ ...updatedTranslation } as unknown as Record<string, unknown>);
 
-      if (!response.ok) throw new Error('Failed to save');
-      
-      // Integrazione con Dictionaries: salva automaticamente nel dizionario del game
+      // Integrazione con Dictionaries: salva nel dizionario del game via comando Rust.
       if (updates.translatedText && selectedTranslation.originalText) {
         try {
-          await fetch('/api/dictionaries/add', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              gameId: selectedTranslation.gameId,
-              gameName: selectedTranslation.game?.title || 'Unknown',
-              sourceLanguage: selectedTranslation.sourceLanguage,
-              targetLanguage: selectedTranslation.targetLanguage,
-              original: selectedTranslation.originalText,
-              translated: updates.translatedText
-            })
+          const { invoke } = await import('@tauri-apps/api/core');
+          await invoke('add_translation_to_dictionary', {
+            gameId: selectedTranslation.gameId,
+            targetLang: selectedTranslation.targetLanguage,
+            original: selectedTranslation.originalText,
+            translated: updates.translatedText,
           });
           clientLogger.debug('[Editor] Traduzione salvata nel dizionario');
         } catch (dictError) {
@@ -742,18 +727,9 @@ export default function EditorPage() {
     // TODO: Implementare integrazione con API di traduzione (DeepL, Google Translate, etc.)
     setIsGeneratingSuggestions(true);
     try {
-      const response = await fetch('/api/translations/suggestions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          translationId: selectedTranslation.id,
-          originalText: selectedTranslation.originalText,
-          targetLanguage: selectedTranslation.targetLanguage
-        })
-      });
-
-      if (response.ok) {
-        const suggestions = await response.json();
+      // Suggerimenti: nessun backend nel desktop (era /api, ora stub). Degrada a vuoto.
+      {
+        const suggestions: AISuggestion[] = [];
         const updated = { ...selectedTranslation, suggestions };
         setSelectedTranslation(updated);
         setTranslations(prev => prev.map(t => t.id === updated.id ? updated : t));
@@ -762,7 +738,7 @@ export default function EditorPage() {
         if (suggestions.length > 0 && selectedLine) {
           offlineCache.set(
             selectedLine.originalText,
-            suggestions[0],
+            String(suggestions[0]),
             'en',
             selectedTranslation.targetLanguage
           );
@@ -903,12 +879,10 @@ export default function EditorPage() {
   const _deleteTranslation = async (id: string) => {
     if (!confirm('Eliminare questa traduzione?')) return;
     try {
-      const response = await fetch(`/api/translations?id=${id}`, { method: 'DELETE', headers: { 'X-GS-Client': 'gamestringer' } });
-      if (response.ok) {
-        setTranslations(prev => prev.filter(t => t.id !== id));
-        if (selectedTranslation?.id === id) setSelectedTranslation(null);
-        toast({ title: 'Eliminata', description: 'Traduzione rimossa' });
-      }
+      await removeEditorTranslation(id);
+      setTranslations(prev => prev.filter(t => t.id !== id));
+      if (selectedTranslation?.id === id) setSelectedTranslation(null);
+      toast({ title: 'Eliminata', description: 'Traduzione rimossa' });
     } catch {
       toast({ title: 'error', description: 'Impossibile eliminare', variant: 'destructive' });
     }
@@ -925,25 +899,20 @@ export default function EditorPage() {
     }
 
     try {
-      const params = new URLSearchParams();
-      params.append('gameId', filterGame);
-      params.append('format', format);
-      if (filterStatus !== 'all') params.append('status', filterStatus);
+      // Export client-side dalla TM locale (IndexedDB), non /api (stub 501 nel desktop).
+      const rows = await listEditorTranslations({ gameId: filterGame, status: filterStatus });
+      const { content, mime } = buildTranslationExport(rows, format);
+      const blob = new Blob([content], { type: mime });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `translations.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
 
-      const response = await fetch(`/api/translations/export?${params}`);
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = response.headers.get('content-disposition')?.split('filename=')[1]?.replace(/"/g, '') || `translations.${format}`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-        
-        toast({ title: 'Esportazione completata', description: `Traduzioni esportate in ${format.toUpperCase()}` });
-      }
+      toast({ title: 'Esportazione completata', description: `Traduzioni esportate in ${format.toUpperCase()}` });
     } catch {
       toast({ title: 'error', description: 'Impossibile esportare', variant: 'destructive' });
     }

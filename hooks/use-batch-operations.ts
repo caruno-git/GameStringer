@@ -5,6 +5,8 @@ import { BatchResult, BatchOperationType, BatchOperationStatus } from '@/lib/typ
 import { batchOperationManager } from '@/lib/batch/batch-operation-manager';
 import { BatchItem } from '@/lib/batch/batch-processor';
 import { clientLogger } from '@/lib/client-logger';
+import { translateSmart } from '@/lib/ai/ai-translate-direct';
+import { listEditorTranslations, upsertEditorTranslation } from '@/lib/editor-translations-store';
 
 export interface UseBatchOperationsOptions {
   autoRefresh?: boolean;
@@ -224,22 +226,19 @@ export function useTranslationBatchOperations() {
       'translate',
       items,
       async (item) => {
-        // This would be replaced with actual translation API call
-        const response = await fetch('/api/translations/translate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-GS-Client': 'gamestringer' },
-          body: JSON.stringify({
-            translationId: item.id,
-            targetLanguage: (item.data as Record<string, unknown>).targetLanguage,
-            sourceLanguage: (item.data as Record<string, unknown>).sourceLanguage
-          })
+        // Traduzione client-side (translateSmart) + persistenza IndexedDB, non /api.
+        const rows = await listEditorTranslations();
+        const rec = rows.find((r) => r.id === item.id);
+        if (!rec) throw new Error('Record traduzione non trovato');
+        const d = item.data as Record<string, unknown>;
+        const res = await translateSmart({
+          texts: [String(rec.originalText ?? '')],
+          targetLanguage: String(d.targetLanguage ?? rec.targetLanguage ?? 'it'),
+          sourceLanguage: String(d.sourceLanguage ?? rec.sourceLanguage ?? 'en'),
         });
-
-        if (!response.ok) {
-          throw new Error(`Translation failed: ${response.statusText}`);
-        }
-
-        return response.json();
+        const translatedText = res.translations[0] ?? '';
+        await upsertEditorTranslation({ ...rec, translatedText, status: 'completed' });
+        return { translatedText };
       }
     );
   }, [batchOps]);
@@ -257,20 +256,10 @@ export function useTranslationBatchOperations() {
       'export',
       items,
       async (item) => {
-        const response = await fetch('/api/translations/export', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-GS-Client': 'gamestringer' },
-          body: JSON.stringify({
-            translationIds: [item.id],
-            format: (item.data as Record<string, unknown>).format
-          })
-        });
-
-        if (!response.ok) {
-          throw new Error(`Export failed: ${response.statusText}`);
-        }
-
-        return response.json();
+        // Export dalla TM locale (IndexedDB): restituisce il record, non /api.
+        const rows = await listEditorTranslations();
+        const rec = rows.find((r) => r.id === item.id);
+        return rec ?? {};
       }
     );
   }, [batchOps]);
@@ -288,14 +277,10 @@ export function useTranslationBatchOperations() {
       'status_update',
       items,
       async (item) => {
-        const response = await fetch('/api/translations/update-status', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-GS-Client': 'gamestringer' },
-          body: JSON.stringify({
-            translationId: item.id,
-            status: (item.data as Record<string, unknown>).status
-          })
-        });
+        // Aggiorna lo stato nel record IndexedDB, non /api.
+        const status = (item.data as Record<string, unknown>).status;
+        await upsertEditorTranslation({ id: item.id, status });
+        const response = { ok: true, json: async () => ({ id: item.id, status }), statusText: 'OK' } as unknown as Response;
 
         if (!response.ok) {
           throw new Error(`Status update failed: ${response.statusText}`);
