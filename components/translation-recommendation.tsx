@@ -476,7 +476,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
           
           if (result.success) {
             updateProgress(100, '✅ XUnity installato con successo!');
-            toast.success('BepInEx + XUnity AutoTranslator installato!');
+            toast.success(t('translationRecommendationComp.bepinexInstalled'));
           } else {
             throw new Error(result.message || 'Installazione fallita');
           }
@@ -522,7 +522,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
         
         // Per giochi Unity con XUnity, suggerisci di avviare il gioco
         updateProgress(100, '🎮 Avvia il gioco per traduzione automatica!');
-        toast.success('XUnity configurato! Avvia il gioco da Steam per la traduzione automatica.');
+        toast.success(t('translationRecommendationComp.xunityConfigured'));
         break;
 
       case 'neural_pro':
@@ -536,7 +536,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
         await new Promise(r => setTimeout(r, 500));
         
         updateProgress(100, '📝 Apri Neural Translator Pro per continuare');
-        toast.info('Per file di localizzazione, usa Neural Translator Pro manualmente.');
+        toast.info(t('translationRecommendationComp.useNeuralTranslatorPro'));
         break;
 
       case 'ocr':
@@ -577,11 +577,11 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
             }
           } else {
             updateProgress(100, '⚠️ Nessun file .pck trovato');
-            toast.warning('Nessun file PCK trovato. Prova estrazione manuale con gdsdecomp.');
+            toast.warning(t('translationRecommendationComp.noPckFound'));
           }
         } catch {
           updateProgress(100, '📦 Usa gdsdecomp per estrarre il PCK manualmente');
-          toast.info('Per Godot, usa gdsdecomp: https://github.com/bruvzg/gdsdecomp');
+          toast.info(t('translationRecommendationComp.godotHint'));
         }
         break;
 
@@ -802,7 +802,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
             // Prova cartella Data (VX/Ace)
             updateProgress(60, 'Cercando file RGSS...');
             updateProgress(100, '📦 Usa RPG Maker Trans per estrarre testi');
-            toast.info('Per RPG Maker VX/Ace, usa RPG Maker Trans');
+            toast.info(t('translationRecommendationComp.rpgMakerVxHint'));
           }
         } catch {
           updateProgress(100, '📝 Apri Neural Translator per traduzione manuale');
@@ -831,7 +831,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
           if (rpyFiles && rpyFiles.length > 0) {
             updateProgress(70, `Trovati ${rpyFiles.length} script .rpy!`);
             updateProgress(100, '✅ Script Ren\'Py pronti per traduzione!');
-            toast.success('Ren\'Py: file .rpy trovati. Traduci direttamente con Neural Translator.');
+            toast.success(t('translationRecommendationComp.renpyFound'));
           } else if (rpaFiles && rpaFiles.length > 0) {
             updateProgress(70, 'Estraendo archivi .rpa...');
             
@@ -842,14 +842,14 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
             
             if (result.success) {
               updateProgress(100, '✅ Archivi RPA estratti!');
-              toast.success('Ren\'Py: archivi estratti. Ora traduci i file .rpy');
+              toast.success(t('translationRecommendationComp.renpyExtracted'));
             }
           } else {
             updateProgress(100, '⚠️ Nessun file Ren\'Py trovato');
           }
         } catch {
           updateProgress(100, '📦 Usa UnRPA per estrarre manualmente');
-          toast.info('Per Ren\'Py, usa UnRPA: https://github.com/Lattyware/unrpa');
+          toast.info(t('translationRecommendationComp.renpyHint'));
         }
         break;
 
@@ -859,7 +859,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
         
         updateProgress(50, 'Wolf RPG rilevato...');
         updateProgress(100, '📦 Usa Wolf RPG Editor per estrarre testi');
-        toast.info('Per Wolf RPG, usa il tool ufficiale Wolf RPG Editor per esportare i testi');
+        toast.info(t('translationRecommendationComp.wolfRpgHint'));
         break;
 
       case 'kirikiri_patcher':
@@ -1315,8 +1315,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
               {recommendation.has_existing_patch && (
                 <span className="flex items-center gap-1 text-2xs text-emerald-400">
                   <CheckCircle2 className="h-3 w-3" />
-                  Patch installata
-                </span>
+                  {t('translationRecommendationComp.patchInstalled')}</span>
               )}
             </div>
           </div>
@@ -1386,13 +1385,11 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
         {recommendation.translatable_files_count != null && recommendation.translatable_files_count > 0 && (
           <span className="flex items-center gap-1.5 text-2xs text-blue-300/70 bg-blue-500/10 px-2 py-1 rounded-md">
             <FileText className="h-3 w-3" />
-            {recommendation.translatable_files_count} file
-          </span>
+            {recommendation.translatable_files_count}  {t('translationRecommendationComp.filesUnit')}</span>
         )}
         {recommendation.missing_italian && (
           <span className="text-2xs text-orange-300/80 bg-orange-500/10 px-2 py-1 rounded-md">
-            IT mancante
-          </span>
+            {t('translationRecommendationComp.itMissing')}</span>
         )}
       </div>
 
@@ -1417,8 +1414,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
             onClick={() => setShowConfirmDialog(true)}
           >
             <Wand2 className="h-4 w-4" />
-            Traduci Tutto
-          </button>
+            {t('translationRecommendationComp.translateAll')}</button>
         )}
         
         {/* Bottone manuale */}
@@ -1437,23 +1433,19 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-emerald-400">
               <Rocket className="h-5 w-5" />
-              Traduzione Automatica Completa
-            </DialogTitle>
+              {t('translationRecommendationComp.fullAutoTranslation')}</DialogTitle>
             <DialogDescription className="text-slate-400">
-              Vuoi usare l&apos;aiuto totale di GameStringer?
-            </DialogDescription>
+              {t('translationRecommendationComp.wantFullHelp')}</DialogDescription>
           </DialogHeader>
           
           <div className="space-y-3 py-2">
             <p className="text-sm text-slate-300">
-              GameStringer eseguirà automaticamente tutti gli step della strategia ottimale:
-            </p>
+              {t('translationRecommendationComp.willExecuteSteps')}</p>
             
             <div className="bg-slate-800/50 rounded-lg p-3 space-y-2">
               <div className="flex items-center gap-2 text-xs text-slate-400">
                 <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xs">1</span>
-                Scansione file traducibili
-              </div>
+                {t('translationRecommendationComp.scanTranslatableFiles')}</div>
               {strategy?.tools.map((tool, idx) => (
                 <div key={tool.id} className="flex items-center gap-2 text-xs text-slate-400">
                   <span className="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-2xs">{idx + 2}</span>
@@ -1462,12 +1454,11 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
               ))}
               <div className="flex items-center gap-2 text-xs text-slate-400">
                 <span className="w-5 h-5 rounded-full bg-violet-500/20 text-violet-400 flex items-center justify-center text-2xs">✓</span>
-                Controllo qualità + Applica patch
-              </div>
+                {t('translationRecommendationComp.qualityCheckApplyPatch')}</div>
             </div>
 
             <div className="space-y-1.5">
-              <p className="text-xs font-semibold text-slate-300">🔗 Chain Traduzione:</p>
+              <p className="text-xs font-semibold text-slate-300">🔗 {t('translationRecommendationComp.translationChain')}</p>
               <div className="grid gap-1">
                 {CHAIN_PRESETS.map((preset) => (
                   <button
@@ -1505,16 +1496,14 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
             {checkingChain ? (
               <div className="flex items-center gap-2 text-2xs text-slate-500 py-1">
                 <Loader2 className="h-3 w-3 animate-spin" />
-                Verifica requisiti...
-              </div>
+                {t('translationRecommendationComp.checkingRequirements')}</div>
             ) : chainWarnings.length > 0 && (
               <div className="space-y-1.5 max-h-[180px] overflow-y-auto">
                 {chainWarnings.filter(w => w.severity === 'critical').length > 0 && (
                   <div className="rounded-md border border-amber-500/40 bg-amber-500/10 p-2 space-y-1.5">
                     <p className="text-[11px] font-semibold text-amber-400 flex items-center gap-1.5">
                       <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
-                      Requisiti mancanti (la chain funzionerà con i provider disponibili)
-                    </p>
+                      {t('translationRecommendationComp.missingRequirements')}</p>
                     {chainWarnings.filter(w => w.severity === 'critical').map((w, i) => (
                       <div key={i} className="ml-5 space-y-0.5">
                         <p className="text-2xs text-amber-300/90 font-medium">{w.label}: {w.message}</p>
@@ -1543,8 +1532,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
                 {chainWarnings.filter(w => w.severity === 'warning').length > 0 && (
                   <details className="group">
                     <summary className="text-2xs text-slate-500 cursor-pointer hover:text-slate-400">
-                      + {chainWarnings.filter(w => w.severity === 'warning').length} provider opzionali non configurati
-                    </summary>
+                      + {chainWarnings.filter(w => w.severity === 'warning').length}  {t('translationRecommendationComp.optionalProvidersNotConfigured')}</summary>
                     <div className="mt-1 space-y-1 pl-2 border-l border-slate-700">
                       {chainWarnings.filter(w => w.severity === 'warning').map((w, i) => (
                         <div key={i} className="text-micro text-slate-500">
@@ -1662,8 +1650,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
 
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setShowConfirmDialog(false)} className="border-slate-600">
-              Annulla
-            </Button>
+              {t('translationRecommendationComp.cancel')}</Button>
             <Button 
               onClick={() => {
                 setChainPreset(selectedChain);
@@ -1672,8 +1659,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
               className="bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-white"
             >
               <Rocket className="h-4 w-4 mr-1" />
-              Avvia Traduzione
-            </Button>
+              {t('translationRecommendationComp.startTranslation')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -1693,8 +1679,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
               {autoState.isRunning ? 'Traduzione in corso...' : autoState.error ? 'Errore' : 'Completato!'}
             </DialogTitle>
             <DialogDescription className="sr-only">
-              Progresso della traduzione automatica
-            </DialogDescription>
+              {t('translationRecommendationComp.autoTranslationProgress')}</DialogDescription>
           </DialogHeader>
           
           <div className="space-y-3 py-2">
@@ -1772,8 +1757,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
                 <div className="bg-slate-800/50 rounded-lg p-3 space-y-2">
                   <p className="text-[11px] font-semibold text-slate-300 flex items-center gap-1.5">
                     <BarChart3 className="h-3.5 w-3.5 text-cyan-400" />
-                    Statistiche traduzione
-                  </p>
+                    {t('translationRecommendationComp.translationStats')}</p>
                   <div className="grid grid-cols-4 gap-2">
                     <div className="text-center p-1.5 bg-slate-900/50 rounded">
                       <p className="text-sm font-bold text-emerald-400">{translationStats.translatedStrings}</p>
@@ -1819,8 +1803,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
                   <div className="flex items-center justify-between">
                     <p className="text-[11px] font-semibold text-slate-300 flex items-center gap-1.5">
                       <ShieldCheck className="h-3.5 w-3.5" />
-                      Validazione qualità
-                    </p>
+                      {t('translationRecommendationComp.qualityValidation')}</p>
                     <span className={`text-sm font-bold ${
                       validationResult.score >= 90 ? 'text-emerald-400' :
                       validationResult.score >= 70 ? 'text-amber-400' : 'text-red-400'
@@ -1831,8 +1814,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
                   {validationResult.issues.length > 0 ? (
                     <details className="group">
                       <summary className="text-2xs text-slate-500 cursor-pointer hover:text-slate-400">
-                        {validationResult.issues.filter(i => i.severity === 'error').length} errori, {validationResult.issues.filter(i => i.severity === 'warning').length} warning su {validationResult.totalChecked} stringhe
-                      </summary>
+                        {validationResult.issues.filter(i => i.severity === 'error').length}  {t('translationRecommendationComp.errorsCount')} {validationResult.issues.filter(i => i.severity === 'warning').length}  {t('translationRecommendationComp.warningOn')} {validationResult.totalChecked}  {t('translationRecommendationComp.stringsUnit')}</summary>
                       <div className="mt-1.5 space-y-1 max-h-24 overflow-y-auto">
                         {validationResult.issues.slice(0, 10).map((issue, i) => (
                           <p key={i} className={`text-micro ${issue.severity === 'error' ? 'text-red-400' : 'text-amber-400/70'}`}>
@@ -1840,7 +1822,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
                           </p>
                         ))}
                         {validationResult.issues.length > 10 && (
-                          <p className="text-micro text-slate-500">...e altri {validationResult.issues.length - 10}</p>
+                          <p className="text-micro text-slate-500">{t('translationRecommendationComp.andOthers')} {validationResult.issues.length - 10}</p>
                         )}
                       </div>
                     </details>
@@ -1854,8 +1836,7 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
               <div className="bg-slate-800/50 rounded-lg p-3 space-y-2">
                 <p className="text-[11px] font-semibold text-slate-300 flex items-center gap-1.5">
                   <Download className="h-3.5 w-3.5 text-blue-400" />
-                  Esporta traduzioni
-                </p>
+                  {t('translationRecommendationComp.exportTranslations')}</p>
                 <div className="flex flex-wrap gap-1.5">
                   {[
                     { label: '.PO', fmt: 'po', desc: 'GNU gettext' },
@@ -1978,13 +1959,11 @@ export function TranslationRecommendation({ gamePath, gameName, gameId, onAction
                   onClick={cancelAutoTranslation}
                 >
                   <X className="h-4 w-4 mr-1" />
-                  Annulla
-                </Button>
+                  {t('translationRecommendationComp.cancel')}</Button>
               </>
             ) : (
               <Button onClick={() => setShowProgressDialog(false)} variant="outline" className="border-slate-600">
-                Chiudi
-              </Button>
+                {t('translationRecommendationComp.close')}</Button>
             )}
           </DialogFooter>
         </DialogContent>
