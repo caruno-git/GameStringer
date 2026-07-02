@@ -1916,11 +1916,10 @@ export default function TranslationWizardPage() {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6">
         <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-6 max-w-md">
-          <h2 className="text-red-400 font-bold mb-2">error di rendering</h2>
+          <h2 className="text-red-400 font-bold mb-2">{t('translationWizard.renderError')}</h2>
           <p className="text-slate-300 text-sm">{renderError}</p>
           <Button className="mt-4" onClick={() => window.location.reload()}>
-            Ricarica pagina
-          </Button>
+            {t('translationWizard.reloadPage')}</Button>
         </div>
       </div>
     );
@@ -1940,8 +1939,7 @@ export default function TranslationWizardPage() {
             </h1>
           </div>
           <p className="text-slate-400 text-sm">
-            Analizza automaticamente i games e scopri come tradurli
-          </p>
+            {t('translationWizard.subtitle')}</p>
         </div>
 
         {renderStepIndicator()}
@@ -1959,17 +1957,15 @@ export default function TranslationWizardPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Search className="h-5 w-5 text-purple-400" />
-                    Select a game
-                  </CardTitle>
+                    {t('translationWizard.selectGame')}</CardTitle>
                   <CardDescription>
-                    Scegli il game che vuoi tradurre dalla tua library
-                  </CardDescription>
+                    {t('translationWizard.selectGameDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="relative mb-4">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                     <Input
-                      aria-label="Search" placeholder="Search game..."
+                      aria-label={t('translationWizard.searchAria')} placeholder={t('translationWizard.searchGame')}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-10 bg-slate-900/50 border-slate-600"
@@ -2071,8 +2067,7 @@ export default function TranslationWizardPage() {
                     </div>
                     
                     <h2 className="text-xl font-semibold text-white mb-2">
-                      Analisi in corso...
-                    </h2>
+                      {t('translationWizard.analyzing')}</h2>
                     <p className="text-slate-400 mb-6">{selectedGame?.title}</p>
                     
                     <div className="max-w-md mx-auto">
@@ -2202,8 +2197,7 @@ export default function TranslationWizardPage() {
                             </Badge>
                             {strategy.canDoInline && (
                               <Badge className="text-micro h-4 bg-emerald-500/20 text-emerald-300 border-emerald-500/30">
-                                Traduzione diretta
-                              </Badge>
+                                {t('translationWizard.directTranslation')}</Badge>
                             )}
                           </div>
                           <p className="text-xs text-slate-400 leading-relaxed mb-2">{strategy.description}</p>
@@ -2221,7 +2215,7 @@ export default function TranslationWizardPage() {
                             <div className="mt-2 flex items-center gap-1.5">
                               <Info className="h-3 w-3 text-amber-400 shrink-0" />
                               <span className="text-2xs text-amber-300">
-                                Richiede: {strategy.requirements.join(', ')}
+                                {t('translationWizard.requires')}{strategy.requirements.join(', ')}
                               </span>
                             </div>
                           )}
@@ -2318,8 +2312,7 @@ export default function TranslationWizardPage() {
                   onClick={() => { setStep('select-game'); setAnalysisResult(null); }}
                   className="border-slate-600"
                 >
-                  ← Scegli altro game
-                </Button>
+                  {t('translationWizard.chooseAnotherGame')}</Button>
                 
                 <div className="flex items-center gap-3">
                   <Select value={targetLanguage} onValueChange={setTargetLanguage}>
@@ -2327,23 +2320,23 @@ export default function TranslationWizardPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="it">🇮🇹 Italiano</SelectItem>
-                      <SelectItem value="en">🇬🇧 English</SelectItem>
-                      <SelectItem value="es">🇪🇸 Español</SelectItem>
-                      <SelectItem value="de">🇩🇪 Deutsch</SelectItem>
-                      <SelectItem value="fr">🇫🇷 Français</SelectItem>
-                      <SelectItem value="pt">🇵🇹 Português</SelectItem>
+                      <SelectItem value="it">🇮🇹 {t('languages.it')}</SelectItem>
+                      <SelectItem value="en">🇬🇧 {t('languages.en')}</SelectItem>
+                      <SelectItem value="es">🇪🇸 {t('languages.es')}</SelectItem>
+                      <SelectItem value="de">🇩🇪 {t('languages.de')}</SelectItem>
+                      <SelectItem value="fr">🇫🇷 {t('languages.fr')}</SelectItem>
+                      <SelectItem value="pt">🇵🇹 {t('languages.pt')}</SelectItem>
                       <SelectItem value="ru">🇷🇺 Русский</SelectItem>
-                      <SelectItem value="pl">🇵🇱 Polski</SelectItem>
+                      <SelectItem value="pl">🇵🇱 {t('languages.pl')}</SelectItem>
                       <SelectItem value="zh">🇨🇳 中文</SelectItem>
                       <SelectItem value="ja">🇯🇵 日本語</SelectItem>
                       <SelectItem value="ko">🇰🇷 한국어</SelectItem>
-                      <SelectItem value="tr">🇹🇷 Türkçe</SelectItem>
-                      <SelectItem value="nl">🇳🇱 Nederlands</SelectItem>
-                      <SelectItem value="sv">🇸🇪 Svenska</SelectItem>
-                      <SelectItem value="cs">🇨🇿 Čeština</SelectItem>
-                      <SelectItem value="hu">🇭🇺 Magyar</SelectItem>
-                      <SelectItem value="ro">🇷🇴 Română</SelectItem>
+                      <SelectItem value="tr">🇹🇷 {t('languages.tr')}</SelectItem>
+                      <SelectItem value="nl">🇳🇱 {t('languages.nl')}</SelectItem>
+                      <SelectItem value="sv">🇸🇪 {t('languages.sv')}</SelectItem>
+                      <SelectItem value="cs">🇨🇿 {t('languages.cs')}</SelectItem>
+                      <SelectItem value="hu">🇭🇺 {t('languages.hu')}</SelectItem>
+                      <SelectItem value="ro">🇷🇴 {t('languages.ro')}</SelectItem>
                       <SelectItem value="ar">🇸🇦 العربية</SelectItem>
                       <SelectItem value="th">🇹🇭 ภาษาไทย</SelectItem>
                       <SelectItem value="uk">🇺🇦 Українська</SelectItem>
@@ -2356,8 +2349,7 @@ export default function TranslationWizardPage() {
                       className="bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700"
                     >
                       <Play className="h-4 w-4 mr-2" />
-                      Traduci Ora
-                    </Button>
+                      {t('translationWizard.translateNow')}</Button>
                   )}
                   {strategy?.id === 'community-patch' && (() => {
                     const ct = findCommunityTranslation(
@@ -2493,8 +2485,7 @@ export default function TranslationWizardPage() {
                       onClick={() => { setStep('select-game'); setAnalysisResult(null); setStrategy(null); }}
                       className="border-slate-600"
                     >
-                      ← Traduci altro gioco
-                    </Button>
+                      {t('translationWizard.translateAnotherGame')}</Button>
                     {strategy?.id === 'community-patch' && (() => {
                       const ct = findCommunityTranslation(
                         analysisResult?.game.title || '',
@@ -2507,8 +2498,7 @@ export default function TranslationWizardPage() {
                           onClick={() => window.open(ct.downloadUrl, '_blank')}
                         >
                           <Download className="h-4 w-4 mr-2" />
-                          Download Translation
-                        </Button>
+                          {t('translationWizard.downloadTranslation')}</Button>
                       ) : null;
                     })()}
                     {strategy?.id !== 'ocr' && strategy?.id !== 'telltale' && (
@@ -2522,8 +2512,7 @@ export default function TranslationWizardPage() {
                         }}
                       >
                         <FolderOpen className="h-4 w-4 mr-2" />
-                        Apri Cartella Gioco
-                      </Button>
+                        {t('translationWizard.openGameFolder')}</Button>
                     )}
                     {strategy?.dedicatedTool && strategy?.id !== 'community-patch' && (
                       <Button

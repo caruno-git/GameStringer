@@ -1,4 +1,21 @@
 {
+  "translationWizard": {
+    "renderError": "Render error",
+    "reloadPage": "Reload page",
+    "subtitle": "Automatically analyze games and discover how to translate them",
+    "selectGame": "Select a game",
+    "selectGameDesc": "Choose the game you want to translate from your library",
+    "searchAria": "Search",
+    "searchGame": "Search game...",
+    "analyzing": "Analysis in progress...",
+    "directTranslation": "Direct translation",
+    "requires": "Requires:",
+    "chooseAnotherGame": "← Choose another game",
+    "translateNow": "Translate Now",
+    "translateAnotherGame": "← Translate another game",
+    "downloadTranslation": "Download Translation",
+    "openGameFolder": "Open Game Folder"
+  },
   "videoExtractor": {
     "ffmpegHint": "To convert game videos, install FFmpeg and make sure it's in the PATH. Scanning and file analysis work without FFmpeg anyway.",
     "gameSheet": "Game Info",
@@ -2500,6 +2517,9 @@
     "cannotLoadPage": "Unable to load this page."
   },
   "languages": {
+    "cs": "Čeština",
+    "hu": "Magyar",
+    "ro": "Română",
     "tr": "Türkçe",
     "nl": "Nederlands",
     "sv": "Svenska",

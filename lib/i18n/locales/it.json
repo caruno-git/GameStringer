@@ -1,4 +1,21 @@
 {
+  "translationWizard": {
+    "renderError": "Errore di rendering",
+    "reloadPage": "Ricarica pagina",
+    "subtitle": "Analizza automaticamente i giochi e scopri come tradurli",
+    "selectGame": "Seleziona un gioco",
+    "selectGameDesc": "Scegli il gioco che vuoi tradurre dalla tua libreria",
+    "searchAria": "Cerca",
+    "searchGame": "Cerca gioco...",
+    "analyzing": "Analisi in corso...",
+    "directTranslation": "Traduzione diretta",
+    "requires": "Richiede:",
+    "chooseAnotherGame": "← Scegli altro gioco",
+    "translateNow": "Traduci Ora",
+    "translateAnotherGame": "← Traduci altro gioco",
+    "downloadTranslation": "Scarica traduzione",
+    "openGameFolder": "Apri Cartella Gioco"
+  },
   "videoExtractor": {
     "ffmpegHint": "Per convertire i video dei giochi, installa FFmpeg e assicurati che sia nel PATH. La scansione e l'analisi dei file funzionano comunque senza FFmpeg.",
     "gameSheet": "Scheda Gioco",
@@ -2500,6 +2517,9 @@
     "cannotLoadPage": "Impossibile caricare questa pagina."
   },
   "languages": {
+    "cs": "Čeština",
+    "hu": "Magyar",
+    "ro": "Română",
     "tr": "Türkçe",
     "nl": "Nederlands",
     "sv": "Svenska",
