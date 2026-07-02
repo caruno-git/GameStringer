@@ -1,4 +1,24 @@
 {
+  "translationBridge": {
+    "confirmClear": "Are you sure you want to clear all translations?",
+    "subtitle": "In-game translation system for Unity",
+    "test": "Test",
+    "addSinglePair": "Add a single original/translation pair",
+    "originalText": "Original Text",
+    "translation": "Translation",
+    "bulkImport": "Bulk Import",
+    "bulkImportDesc": "Load multiple translations in JSON format or line by line",
+    "lookupDesc": "Check if a string has a translation in the dictionary",
+    "resultLabel": "Result",
+    "searchTranslation": "Search Translation",
+    "setActivePair": "Set the active language pair",
+    "applyLanguages": "Apply Languages",
+    "clearDictionary": "Clear Dictionary",
+    "availablePairs": "Available pairs:",
+    "helloPh": "Hello, World!",
+    "ciaoPh": "Ciao, Mondo!",
+    "searchResultPh": "(enter text and press Search)"
+  },
   "voiceProfileManager": {
     "title": "Character Voice Profiles",
     "subtitle": "Preserve characters' personality and style during translation. Voice profiles are automatically injected into the translation prompt.",

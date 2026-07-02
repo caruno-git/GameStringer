@@ -207,7 +207,7 @@ export default function TranslationBridgePage() {
 
   // Clear dictionary
   const handleClear = async () => {
-    if (!confirm('Sei sicuro di voler cancellare tutte le traduzioni?')) return;
+    if (!confirm(t('translationBridge.confirmClear'))) return;
     
     setIsLoading(true);
     try {
@@ -244,8 +244,7 @@ export default function TranslationBridgePage() {
             <div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">{t('nav.translationBridge')}</h1>
               <p className="text-muted-foreground">
-                Sistema di traduzione in-game per Unity
-              </p>
+                {t('translationBridge.subtitle')}</p>
             </div>
           </div>
           
@@ -360,8 +359,7 @@ export default function TranslationBridgePage() {
               <Languages className="h-4 w-4 mr-2" />{t('activity.translations')}</TabsTrigger>
             <TabsTrigger value="test">
               <Zap className="h-4 w-4 mr-2" />
-              Test
-            </TabsTrigger>
+              {t('translationBridge.test')}</TabsTrigger>
             <TabsTrigger value="settings">
               <Settings className="h-4 w-4 mr-2" />{t('plugins.settings')}</TabsTrigger>
           </TabsList>
@@ -375,24 +373,23 @@ export default function TranslationBridgePage() {
                   <CardTitle className="text-lg flex items-center gap-2">
                     <Plus className="h-5 w-5" />{t('dictionaryManager.addTranslation')}</CardTitle>
                   <CardDescription>
-                    Aggiungi una singola coppia originale/traduzione
-                  </CardDescription>
+                    {t('translationBridge.addSinglePair')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label>Testo Originale ({getFlagEmoji(sourceLang === 'en' ? 'GB' : sourceLang.toUpperCase())})</Label>
+                    <Label>{t('translationBridge.originalText')} ({getFlagEmoji(sourceLang === 'en' ? 'GB' : sourceLang.toUpperCase())})</Label>
                     <Input
                       value={newOriginal}
                       onChange={(e) => setNewOriginal(e.target.value)}
-                      placeholder="Hello, World!"
+                      placeholder={t('translationBridge.helloPh')}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Traduzione ({getFlagEmoji(targetLang.toUpperCase())})</Label>
+                    <Label>{t('translationBridge.translation')} ({getFlagEmoji(targetLang.toUpperCase())})</Label>
                     <Input
                       value={newTranslated}
                       onChange={(e) => setNewTranslated(e.target.value)}
-                      placeholder="Ciao, Mondo!"
+                      placeholder={t('translationBridge.ciaoPh')}
                     />
                   </div>
                   <Button 
@@ -409,11 +406,9 @@ export default function TranslationBridgePage() {
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
                     <Upload className="h-5 w-5" />
-                    Import Massivo
-                  </CardTitle>
+                    {t('translationBridge.bulkImport')}</CardTitle>
                   <CardDescription>
-                    Carica più traduzioni in formato JSON o linea per linea
-                  </CardDescription>
+                    {t('translationBridge.bulkImportDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
@@ -448,8 +443,7 @@ World=Mondo`}
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Zap className="h-5 w-5" />{t('settings.testTranslation')}</CardTitle>
                 <CardDescription>
-                  Verifica se una stringa ha una traduzione nel dizionario
-                </CardDescription>
+                  {t('translationBridge.lookupDesc')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -458,16 +452,16 @@ World=Mondo`}
                     <Input
                       value={testInput}
                       onChange={(e) => setTestInput(e.target.value)}
-                      placeholder="Hello, World!"
+                      placeholder={t('translationBridge.helloPh')}
                       onKeyDown={(e) => e.key === 'Enter' && handleTestTranslation()}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>result</Label>
+                    <Label>{t('translationBridge.resultLabel')}</Label>
                     <Input
                       value={testResult ?? ''}
                       readOnly
-                      placeholder="(inserisci testo e premi Cerca)"
+                      placeholder={t('translationBridge.searchResultPh')}
                       className={testResult && testResult !== '(nessuna traduzione trovata)' 
                         ? 'border-green-500/50 bg-green-500/10' 
                         : testResult ? 'border-orange-500/50 bg-orange-500/10' : ''}
@@ -479,8 +473,7 @@ World=Mondo`}
                   disabled={isLoading || !testInput}
                 >
                   <Zap className="h-4 w-4 mr-2" />
-                  Cerca Traduzione
-                </Button>
+                  {t('translationBridge.searchTranslation')}</Button>
               </CardContent>
             </Card>
           </TabsContent>
@@ -492,8 +485,7 @@ World=Mondo`}
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Settings className="h-5 w-5" />{t('ueTranslator.configuration')}</CardTitle>
                 <CardDescription>
-                  Imposta la coppia di lingue attiva
-                </CardDescription>
+                  {t('translationBridge.setActivePair')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -504,13 +496,13 @@ World=Mondo`}
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="en">{getFlagEmoji('GB')} English</SelectItem>
+                        <SelectItem value="en">{getFlagEmoji('GB')} {t('languages.en')}</SelectItem>
                         <SelectItem value="ja">{getFlagEmoji('JP')} 日本語</SelectItem>
                         <SelectItem value="zh">{getFlagEmoji('CN')} 中文</SelectItem>
                         <SelectItem value="ko">{getFlagEmoji('KR')} 한국어</SelectItem>
-                        <SelectItem value="de">{getFlagEmoji('DE')} Deutsch</SelectItem>
-                        <SelectItem value="fr">{getFlagEmoji('FR')} Français</SelectItem>
-                        <SelectItem value="es">{getFlagEmoji('ES')} Español</SelectItem>
+                        <SelectItem value="de">{getFlagEmoji('DE')} {t('languages.de')}</SelectItem>
+                        <SelectItem value="fr">{getFlagEmoji('FR')} {t('languages.fr')}</SelectItem>
+                        <SelectItem value="es">{getFlagEmoji('ES')} {t('languages.es')}</SelectItem>
                         <SelectItem value="ru">{getFlagEmoji('RU')} Русский</SelectItem>
                       </SelectContent>
                     </Select>
@@ -522,17 +514,17 @@ World=Mondo`}
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="it">{getFlagEmoji('IT')} Italiano</SelectItem>
-                        <SelectItem value="en">{getFlagEmoji('GB')} English</SelectItem>
-                        <SelectItem value="de">{getFlagEmoji('DE')} Deutsch</SelectItem>
-                        <SelectItem value="fr">{getFlagEmoji('FR')} Français</SelectItem>
-                        <SelectItem value="es">{getFlagEmoji('ES')} Español</SelectItem>
+                        <SelectItem value="it">{getFlagEmoji('IT')} {t('languages.it')}</SelectItem>
+                        <SelectItem value="en">{getFlagEmoji('GB')} {t('languages.en')}</SelectItem>
+                        <SelectItem value="de">{getFlagEmoji('DE')} {t('languages.de')}</SelectItem>
+                        <SelectItem value="fr">{getFlagEmoji('FR')} {t('languages.fr')}</SelectItem>
+                        <SelectItem value="es">{getFlagEmoji('ES')} {t('languages.es')}</SelectItem>
                         <SelectItem value="ja">{getFlagEmoji('JP')} 日本語</SelectItem>
                         <SelectItem value="zh">{getFlagEmoji('CN')} 中文</SelectItem>
                         <SelectItem value="ko">{getFlagEmoji('KR')} 한국어</SelectItem>
                         <SelectItem value="ru">{getFlagEmoji('RU')} Русский</SelectItem>
-                        <SelectItem value="pt">{getFlagEmoji('BR')} Português</SelectItem>
-                        <SelectItem value="pl">{getFlagEmoji('PL')} Polski</SelectItem>
+                        <SelectItem value="pt">{getFlagEmoji('BR')} {t('languages.pt')}</SelectItem>
+                        <SelectItem value="pl">{getFlagEmoji('PL')} {t('languages.pl')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -541,12 +533,10 @@ World=Mondo`}
                 <div className="flex gap-3">
                   <Button onClick={handleSetLanguages} disabled={isLoading}>
                     <RefreshCw className="h-4 w-4 mr-2" />
-                    Applica Lingue
-                  </Button>
+                    {t('translationBridge.applyLanguages')}</Button>
                   <Button variant="destructive" onClick={handleClear} disabled={isLoading}>
                     <Trash2 className="h-4 w-4 mr-2" />
-                    Cancella Dizionario
-                  </Button>
+                    {t('translationBridge.clearDictionary')}</Button>
                 </div>
 
                 {/* Current Languages */}
@@ -560,7 +550,7 @@ World=Mondo`}
                     </p>
                     {dictStats.language_pairs.length > 0 && (
                       <p className="text-xs text-muted-foreground mt-2">
-                        Coppie disponibili: {dictStats.language_pairs.join(', ')}
+                        {t('translationBridge.availablePairs')} {dictStats.language_pairs.join(', ')}
                       </p>
                     )}
                   </div>
