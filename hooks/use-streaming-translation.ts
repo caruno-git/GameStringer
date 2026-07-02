@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useRef } from 'react';
+import { isTauri } from '@/lib/tauri-api';
 
 interface StreamingTranslationOptions {
   text: string;
@@ -47,6 +48,21 @@ export function useStreamingTranslation() {
     });
 
     try {
+      // /api/translate/stream è stub 501 nel desktop: niente SSE, si fa una traduzione
+      // non-stream via translateSmart (il risultato arriva tutto insieme).
+      if (isTauri()) {
+        const { translateSmart } = await import('@/lib/ai/ai-translate-direct');
+        const result = await translateSmart({
+          texts: [options.text],
+          targetLanguage: options.targetLanguage,
+          sourceLanguage: options.sourceLanguage,
+          context: options.context,
+        });
+        const fullText = result.translations[0] ?? options.text;
+        setState({ isStreaming: false, currentText: fullText, fullText, error: null, provider: result.provider });
+        return;
+      }
+
       const response = await fetch('/api/translate/stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-GS-Client': 'gamestringer' },

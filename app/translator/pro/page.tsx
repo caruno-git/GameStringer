@@ -120,6 +120,7 @@ type Step = 'select-game' | 'select-files' | 'configure' | 'translate' | 'result
 import { storageManager } from '@/lib/storage-manager';
 import { clientLogger } from '@/lib/client-logger';
 import { setSecureKey } from '@/lib/secure-key-store';
+import { isTauri } from '@/lib/tauri-api';
 
 export default function TranslatorProPage() {
   const { toast } = useToast();
@@ -1031,7 +1032,17 @@ export default function TranslatorProPage() {
       });
       return;
     }
-    
+
+    if (isTauri()) {
+      // /api/export/patch (generazione ZIP server-side) è stub 501 nel desktop.
+      toast({
+        title: 'Export patch non disponibile qui',
+        description: 'Nel desktop genera la patch dalla pagina del gioco (Esporta .gspack) o usa la patch XUnity.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     try {
       toast({
         title: 'Creazione patch...',
