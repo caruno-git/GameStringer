@@ -239,10 +239,10 @@ export function CharacterVoiceEditor({ gameId, onProfileSelect }: CharacterVoice
             </div>
             <div>
               <h1 className="text-lg font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
-                Character Voice AI
+                {t('characterVoiceEditor.title')}
               </h1>
               <p className="text-white/70 text-2xs drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
-                Profili personalità per traduzioni contestuali
+                {t('characterVoiceEditor.subtitle')}
               </p>
             </div>
           </div>
@@ -251,7 +251,7 @@ export function CharacterVoiceEditor({ gameId, onProfileSelect }: CharacterVoice
             <DialogTrigger asChild>
               <Button size="sm" className="bg-white/20 hover:bg-white/30 text-white border-0 shadow-lg">
                 <Plus className="h-4 w-4 mr-2" />
-                Nuovo Personaggio
+                {t('characterVoiceEditor.newCharacter')}
               </Button>
             </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -263,11 +263,11 @@ export function CharacterVoiceEditor({ gameId, onProfileSelect }: CharacterVoice
                   {/* Nome e Archetipo */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Nome personaggio</Label>
+                      <Label>{t('characterVoiceEditor.charName')}</Label>
                       <Input 
                         value={formName} 
                         onChange={e => setFormName(e.target.value)}
-                        placeholder="Es: Captain Blackbeard"
+                        placeholder={t('characterVoiceEditor.charNamePlaceholder')}
                       />
                     </div>
                     <div className="space-y-2">
@@ -287,42 +287,42 @@ export function CharacterVoiceEditor({ gameId, onProfileSelect }: CharacterVoice
 
                   {/* Personalità */}
                   <div className="space-y-2">
-                    <Label>Tratti (separati da virgola)</Label>
+                    <Label>{t('characterVoiceEditor.traits')}</Label>
                     <Input 
                       value={formTraits} 
                       onChange={e => setFormTraits(e.target.value)}
-                      placeholder="Es: coraggioso, sarcastico, leale"
+                      placeholder={t('characterVoiceEditor.traitsPlaceholder')}
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Umore</Label>
+                      <Label>{t('characterVoiceEditor.mood')}</Label>
                       <Select value={formMood} onValueChange={(v: string) => setFormMood(v as "mysterious" | "serious" | "cheerful" | "aggressive" | "calm" | "nervous")}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="cheerful">😊 Allegro</SelectItem>
-                          <SelectItem value="serious">😐 Serio</SelectItem>
-                          <SelectItem value="mysterious">🎭 Misterioso</SelectItem>
-                          <SelectItem value="aggressive">😠 Aggressivo</SelectItem>
-                          <SelectItem value="calm">😌 Calmo</SelectItem>
-                          <SelectItem value="nervous">😰 Nervoso</SelectItem>
+                          <SelectItem value="cheerful">{t('characterVoiceEditor.moodHappy')}</SelectItem>
+                          <SelectItem value="serious">{t('characterVoiceEditor.moodSerious')}</SelectItem>
+                          <SelectItem value="mysterious">{t('characterVoiceEditor.moodMysterious')}</SelectItem>
+                          <SelectItem value="aggressive">{t('characterVoiceEditor.moodAggressive')}</SelectItem>
+                          <SelectItem value="calm">{t('characterVoiceEditor.moodCalm')}</SelectItem>
+                          <SelectItem value="nervous">{t('characterVoiceEditor.moodNervous')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Età</Label>
+                      <Label>{t('characterVoiceEditor.age')}</Label>
                       <Select value={formAge} onValueChange={(v: string) => setFormAge(v as "child" | "teen" | "adult" | "elderly")}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="child">👶 Bambino</SelectItem>
-                          <SelectItem value="teen">🧑 Adolescente</SelectItem>
-                          <SelectItem value="adult">🧔 Adulto</SelectItem>
-                          <SelectItem value="elderly">👴 Anziano</SelectItem>
+                          <SelectItem value="child">{t('characterVoiceEditor.ageChild')}</SelectItem>
+                          <SelectItem value="teen">{t('characterVoiceEditor.ageTeen')}</SelectItem>
+                          <SelectItem value="adult">{t('characterVoiceEditor.ageAdult')}</SelectItem>
+                          <SelectItem value="elderly">{t('characterVoiceEditor.ageElder')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -331,33 +331,33 @@ export function CharacterVoiceEditor({ gameId, onProfileSelect }: CharacterVoice
                   {/* Stile parlato */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Formalità</Label>
+                      <Label>{t('characterVoiceEditor.formality')}</Label>
                       <Select value={formFormality} onValueChange={(v: string) => setFormFormality(v as "formal" | "informal" | "neutral" | "very_formal" | "very_informal")}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="very_formal">👔 Molto formale</SelectItem>
-                          <SelectItem value="formal">🎩 Formale</SelectItem>
-                          <SelectItem value="neutral">😐 Neutro</SelectItem>
-                          <SelectItem value="informal">👕 Informale</SelectItem>
-                          <SelectItem value="very_informal">🎸 Molto informale</SelectItem>
+                          <SelectItem value="very_formal">{t('characterVoiceEditor.formalityVeryFormal')}</SelectItem>
+                          <SelectItem value="formal">{t('characterVoiceEditor.formalityFormal')}</SelectItem>
+                          <SelectItem value="neutral">{t('characterVoiceEditor.formalityNeutral')}</SelectItem>
+                          <SelectItem value="informal">{t('characterVoiceEditor.formalityInformal')}</SelectItem>
+                          <SelectItem value="very_informal">{t('characterVoiceEditor.formalityVeryInformal')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Vocabolario</Label>
+                      <Label>{t('characterVoiceEditor.vocabulary')}</Label>
                       <Select value={formVocabulary} onValueChange={(v: string) => setFormVocabulary(v as "simple" | "archaic" | "sophisticated" | "standard" | "slang" | "technical")}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="archaic">📜 Arcaico</SelectItem>
-                          <SelectItem value="sophisticated">🎓 Sofisticato</SelectItem>
-                          <SelectItem value="standard">📝 Standard</SelectItem>
-                          <SelectItem value="simple">🔤 Semplice</SelectItem>
-                          <SelectItem value="slang">🗣️ Slang</SelectItem>
-                          <SelectItem value="technical">⚙️ Tecnico</SelectItem>
+                          <SelectItem value="archaic">{t('characterVoiceEditor.vocabArchaic')}</SelectItem>
+                          <SelectItem value="sophisticated">{t('characterVoiceEditor.vocabSophisticated')}</SelectItem>
+                          <SelectItem value="standard">{t('characterVoiceEditor.vocabStandard')}</SelectItem>
+                          <SelectItem value="simple">{t('characterVoiceEditor.vocabSimple')}</SelectItem>
+                          <SelectItem value="slang">{t('characterVoiceEditor.vocabSlang')}</SelectItem>
+                          <SelectItem value="technical">{t('characterVoiceEditor.vocabTechnical')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -365,30 +365,30 @@ export function CharacterVoiceEditor({ gameId, onProfileSelect }: CharacterVoice
 
                   {/* Pattern */}
                   <div className="space-y-2">
-                    <Label>Frasi tipiche (una per riga)</Label>
+                    <Label>{t('characterVoiceEditor.typicalPhrases')}</Label>
                     <Textarea 
                       value={formCatchphrases}
                       onChange={e => setFormCatchphrases(e.target.value)}
-                      placeholder="Arrr!&#10;Per mille balene!"
+                      placeholder={t('characterVoiceEditor.typicalPhrasesPlaceholder')}
                       rows={3}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Intercalari (separati da virgola)</Label>
+                    <Label>{t('characterVoiceEditor.fillers')}</Label>
                     <Input 
                       value={formFillerWords}
                       onChange={e => setFormFillerWords(e.target.value)}
-                      placeholder="ehm, tipo, cioè"
+                      placeholder={t('characterVoiceEditor.fillersPlaceholder')}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Sostituzioni preferite (parola=sostituzione, una per riga)</Label>
+                    <Label>{t('characterVoiceEditor.substitutions')}</Label>
                     <Textarea 
                       value={formPreferredWords}
                       onChange={e => setFormPreferredWords(e.target.value)}
-                      placeholder="money=dobloni&#10;friend=compare&#10;ship=vascello"
+                      placeholder={t('characterVoiceEditor.substitutionsPlaceholder')}
                       rows={3}
                     />
                   </div>
@@ -396,11 +396,11 @@ export function CharacterVoiceEditor({ gameId, onProfileSelect }: CharacterVoice
 
                 <DialogFooter>
                   <Button variant="outline" onClick={() => { setIsCreating(false); resetForm(); }}>
-                    Annulla
+                    {t('characterVoiceEditor.cancel')}
                   </Button>
                   <Button onClick={handleCreate}>
                     <Save className="h-4 w-4 mr-2" />
-                    Crea Personaggio
+                    {t('characterVoiceEditor.createCharacter')}
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -420,7 +420,7 @@ export function CharacterVoiceEditor({ gameId, onProfileSelect }: CharacterVoice
                 <div className="text-center py-8 text-gray-500">
                   <User className="h-12 w-12 mx-auto mb-2 opacity-30" />
                   <p className="text-sm">{t('common.nessunPersonaggio')}</p>
-                  <p className="text-xs">Crea il primo!</p>
+                  <p className="text-xs">{t('characterVoiceEditor.createFirst')}</p>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -460,7 +460,7 @@ export function CharacterVoiceEditor({ gameId, onProfileSelect }: CharacterVoice
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
-              Test Traduzione
+              {t('characterVoiceEditor.testTranslation')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -488,18 +488,18 @@ export function CharacterVoiceEditor({ gameId, onProfileSelect }: CharacterVoice
                   </div>
                   {selectedProfile.patterns.catchphrases.length > 0 && (
                     <p className="text-xs text-gray-400 mt-2 italic">
-                      &quot;{selectedProfile.patterns.catchphrases[0]}&quot;
+                      "{selectedProfile.patterns.catchphrases[0]}"
                     </p>
                   )}
                 </div>
 
                 {/* Test area */}
                 <div className="space-y-2">
-                  <Label className="text-xs">Testo originale (EN)</Label>
+                  <Label className="text-xs">{t('characterVoiceEditor.originalText')}</Label>
                   <Textarea
                     value={testText}
                     onChange={e => setTestText(e.target.value)}
-                    placeholder="Inserisci un dialogo da tradurre..."
+                    placeholder={t('characterVoiceEditor.originalTextPlaceholder')}
                     rows={3}
                   />
                 </div>
@@ -514,12 +514,12 @@ export function CharacterVoiceEditor({ gameId, onProfileSelect }: CharacterVoice
                   ) : (
                     <Sparkles className="h-4 w-4 mr-2" />
                   )}
-                  Traduci con Personalità
+                  {t('characterVoiceEditor.translateWithPersonality')}
                 </Button>
 
                 {translatedText && (
                   <div className="space-y-2">
-                    <Label className="text-xs">Traduzione (IT)</Label>
+                    <Label className="text-xs">{t('characterVoiceEditor.translation')}</Label>
                     <div className="p-3 bg-green-500/10 rounded-lg border border-green-500/30">
                       <p className="text-sm text-green-200">{translatedText}</p>
                     </div>
@@ -532,7 +532,7 @@ export function CharacterVoiceEditor({ gameId, onProfileSelect }: CharacterVoice
                       }}
                     >
                       <Copy className="h-3 w-3 mr-2" />
-                      Copia
+                      {t('characterVoiceEditor.copy')}
                     </Button>
                   </div>
                 )}
