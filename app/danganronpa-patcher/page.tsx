@@ -209,7 +209,7 @@ export default function DanganronpaPatcherPage() {
       const info = await invoke<DratInfo>('get_drat_info');
       setDratInfo(info);
     } catch (e: unknown) {
-      clientLogger.error('Errore caricamento info DRAT:', e);
+      clientLogger.error(t('danganronpaPatcher.errLoadDrat'), e);
     }
   };
 
@@ -218,7 +218,7 @@ export default function DanganronpaPatcherPage() {
       const info = await invoke<AllIcePatchInfo>('get_allice_patch_info');
       setAlliceInfo(info);
     } catch (e: unknown) {
-      clientLogger.error('Errore caricamento info All-Ice:', e);
+      clientLogger.error(t('danganronpaPatcher.errLoadAllIce'), e);
     }
   };
 
@@ -231,7 +231,7 @@ export default function DanganronpaPatcherPage() {
         loadBackups(games[0].path);
       }
     } catch (e: unknown) {
-      clientLogger.error('Errore ricerca giochi Steam:', e);
+      clientLogger.error(t('danganronpaPatcher.errSearchSteam'), e);
     }
   };
 
@@ -240,7 +240,7 @@ export default function DanganronpaPatcherPage() {
       const backupList = await invoke<WadFileInfo[]>('list_danganronpa_backups', { gamePath });
       setBackups(backupList);
     } catch (e: unknown) {
-      clientLogger.error('Errore caricamento backup:', e);
+      clientLogger.error(t('danganronpaPatcher.errLoadBackup'), e);
     }
   };
 
@@ -322,7 +322,7 @@ export default function DanganronpaPatcherPage() {
 
       setExporting(true);
       setExportResult(null);
-      toast.info('Creazione ZIP in corso... (~626 MB, potrebbe richiedere qualche minuto)');
+      toast.info(t('danganronpaPatcher.creatingZip'));
 
       const result = await invoke<{ success: boolean; zip_path: string; zip_size_mb: number; files_included: string[] }>('export_danganronpa_patch', {
         gamePath: selectedSteamGame.path,
@@ -377,7 +377,7 @@ export default function DanganronpaPatcherPage() {
       const stats = await invoke<LinDialogueStats>('get_lin_dialogue_stats', { dialogues });
       setLinStats(stats);
     } catch (e: unknown) {
-      clientLogger.error('Errore calcolo stats LIN:', e);
+      clientLogger.error(t('danganronpaPatcher.errCalcLin'), e);
     }
   };
 
@@ -735,8 +735,7 @@ export default function DanganronpaPatcherPage() {
                 <Button variant="outline" size="sm" className="bg-black/30 border-white/20 text-white hover:bg-black/50" asChild>
                   <a href={dratInfo.download_url} target="_blank" rel="noopener noreferrer">
                     <Download className="w-4 h-4 mr-2" />
-                    Scarica DRAT
-                    <ExternalLink className="w-3 h-3 ml-1" />
+                    {t('danganronpaPatcher.downloadDrat')}<ExternalLink className="w-3 h-3 ml-1" />
                   </a>
                 </Button>
               )
@@ -760,8 +759,7 @@ export default function DanganronpaPatcherPage() {
           {!game ? (
             <Button onClick={selectGameFolder} disabled={loading} size="xs" className="bg-emerald-600 hover:bg-emerald-500">
               {loading ? <Loader2 className="w-3 h-3 mr-2 animate-spin" /> : <FolderOpen className="w-3 h-3 mr-2" />}
-              Sfoglia
-            </Button>
+              {t('danganronpaPatcher.browse')}</Button>
           ) : (
             <div>
               <div className="flex items-center justify-between">
@@ -786,24 +784,19 @@ export default function DanganronpaPatcherPage() {
         <TabsList className="bg-slate-900/50 border border-slate-800/50">
           <TabsTrigger value="pak" className="flex items-center gap-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white">
             <Package className="w-3 h-3" />
-            File PAK
-          </TabsTrigger>
+            {t('danganronpaPatcher.filePak')}</TabsTrigger>
           <TabsTrigger value="po" className="flex items-center gap-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white">
             <FileText className="w-3 h-3" />
-            Traduzioni PO
-          </TabsTrigger>
+            {t('danganronpaPatcher.translationsPo')}</TabsTrigger>
           <TabsTrigger value="patch" className="flex items-center gap-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white">
             <Download className="w-3 h-3" />
-            Applica Patch
-          </TabsTrigger>
+            {t('danganronpaPatcher.applyPatch')}</TabsTrigger>
           <TabsTrigger value="lin" className="flex items-center gap-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white">
             <FileText className="w-3 h-3" />
-            Script LIN
-          </TabsTrigger>
+            {t('danganronpaPatcher.scriptLin')}</TabsTrigger>
           <TabsTrigger value="wad-extract" className="flex items-center gap-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white">
             <Search className="w-3 h-3" />
-            WAD Extractor
-          </TabsTrigger>
+            {t('danganronpaPatcher.wadExtractor')}</TabsTrigger>
         </TabsList>
 
         {/* PAK Tab */}
@@ -814,8 +807,7 @@ export default function DanganronpaPatcherPage() {
               <CardHeader className="py-1.5 px-3">
                 <CardTitle className="text-xs flex items-center gap-1.5">
                   <Package className="w-3 h-3 text-emerald-400" />
-                  File PAK
-                </CardTitle>
+                  {t('danganronpaPatcher.filePak')}</CardTitle>
               </CardHeader>
               <CardContent className="px-3 pb-2">
                 <div className="flex gap-1 mb-2">
@@ -877,20 +869,18 @@ export default function DanganronpaPatcherPage() {
                   <div>
                     <CardTitle className="text-xs flex items-center gap-1.5">
                       <FileText className="w-3 h-3 text-emerald-400" />
-                      Contenuto PAK
-                    </CardTitle>
+                      {t('danganronpaPatcher.pakContent')}</CardTitle>
                     {selectedPak && (
                       <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
                         {getPakTypeBadge(selectedPak.pak_type)}
-                        <span>{selectedPak.entries.length} file</span>
+                        <span>{selectedPak.entries.length} {t('danganronpaPatcher.filesLabel')}</span>
                       </div>
                     )}
                   </div>
                   {selectedPak && (
                     <Button onClick={extractAllPak} disabled={loading} size="xs" className="bg-emerald-600 hover:bg-emerald-500">
                       {loading ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Download className="w-3 h-3 mr-1" />}
-                      Estrai
-                    </Button>
+                      {t('danganronpaPatcher.extract')}</Button>
                   )}
                 </div>
               </CardHeader>
@@ -937,28 +927,26 @@ export default function DanganronpaPatcherPage() {
                     <div className="flex gap-3 text-xs">
                       <div className="flex items-center gap-1">
                         <Check className="w-4 h-4 text-green-500" />
-                        <span>{poStats.translated} tradotte</span>
+                        <span>{poStats.translated} {t('danganronpaPatcher.translated')}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <X className="w-4 h-4 text-red-500" />
-                        <span>{poStats.untranslated} mancanti</span>
+                        <span>{poStats.untranslated} {t('danganronpaPatcher.missing')}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <AlertCircle className="w-4 h-4 text-yellow-500" />
-                        <span>{poStats.fuzzy} fuzzy</span>
+                        <span>{poStats.fuzzy} {t('danganronpaPatcher.fuzzy')}</span>
                       </div>
                     </div>
                   </div>
                   <div className="flex gap-2">
                     <Button variant="outline" onClick={openPoFile} size="sm" className="h-8">
                       <Upload className="w-3 h-3 mr-1" />
-                      Apri
-                    </Button>
+                      {t('danganronpaPatcher.open')}</Button>
                     {poFile && (
                       <Button onClick={savePoFile} disabled={loading} size="xs" className="bg-emerald-600 hover:bg-emerald-500">
                         {loading ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Download className="w-3 h-3 mr-1" />}
-                        Salva
-                      </Button>
+                        {t('danganronpaPatcher.save')}</Button>
                     )}
                   </div>
                 </div>
@@ -976,8 +964,7 @@ export default function DanganronpaPatcherPage() {
                 {!poFile && (
                   <Button onClick={openPoFile} size="xs" className="bg-emerald-600 hover:bg-emerald-500">
                     <Upload className="w-3 h-3 mr-1" />
-                    Apri PO
-                  </Button>
+                    {t('danganronpaPatcher.openPo')}</Button>
                 )}
               </div>
               {poFile && (
@@ -985,7 +972,7 @@ export default function DanganronpaPatcherPage() {
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
-                      aria-label={t('common.cerca')} placeholder="Cerca testi..."
+                      aria-label={t('common.cerca')} placeholder={t('danganronpaPatcher.searchTexts')}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-9"
@@ -1082,8 +1069,7 @@ export default function DanganronpaPatcherPage() {
               <CardHeader className="py-1.5 px-3">
                 <CardTitle className="text-xs flex items-center gap-1.5">
                   <Globe className="w-3 h-3 text-emerald-400" />
-                  Giochi Steam Rilevati
-                  <span className="text-2xs font-normal text-muted-foreground ml-1">
+                  {t('danganronpaPatcher.steamGamesDetected')}<span className="text-2xs font-normal text-muted-foreground ml-1">
                     {steamGames.length > 0 
                       ? `${steamGames.length} trovati`
                       : 'Nessuno'}
@@ -1134,8 +1120,7 @@ export default function DanganronpaPatcherPage() {
               <CardHeader className="py-1.5 px-3">
                 <CardTitle className="text-xs flex items-center gap-1.5">
                   <Download className="w-3 h-3 text-emerald-400" />
-                  Applica Patch Italiana
-                </CardTitle>
+                  {t('danganronpaPatcher.applyItalianPatch')}</CardTitle>
               </CardHeader>
               <CardContent className="px-3 pb-2 space-y-2">
                 <Button 
@@ -1149,8 +1134,7 @@ export default function DanganronpaPatcherPage() {
                   ) : (
                     <Upload className="w-4 h-4 mr-2" />
                   )}
-                  Seleziona File WAD Patch
-                </Button>
+                  {t('danganronpaPatcher.selectWadPatch')}</Button>
 
                 {selectedSteamGame && selectedSteamGame.wad_files.length > 0 && (
                   <div className="space-y-2">
@@ -1165,8 +1149,7 @@ export default function DanganronpaPatcherPage() {
                           {wad.is_patched && (
                             <Badge className="bg-emerald-500/20 text-emerald-400 text-2xs">
                               <Check className="w-2.5 h-2.5 mr-1" />
-                              Patchato
-                            </Badge>
+                              {t('danganronpaPatcher.patched')}</Badge>
                           )}
                         </div>
                       </div>
@@ -1184,8 +1167,7 @@ export default function DanganronpaPatcherPage() {
               <CardHeader className="py-1.5 px-3">
                 <CardTitle className="text-xs flex items-center gap-1.5">
                   <RefreshCw className="w-3 h-3 text-emerald-400" />
-                  Backup Disponibili
-                </CardTitle>
+                  {t('danganronpaPatcher.backupsAvailable')}</CardTitle>
               </CardHeader>
               <CardContent className="px-3 pb-2">
                 <ScrollArea className="h-[100px]">
@@ -1235,8 +1217,7 @@ export default function DanganronpaPatcherPage() {
                     <Button variant="outline" size="xs" className="text-xs" asChild>
                       <a href={alliceInfo.website} target="_blank" rel="noopener noreferrer">
                         <Globe className="w-3 h-3 mr-1" />
-                        Sito Web
-                      </a>
+                        {t('danganronpaPatcher.website')}</a>
                     </Button>
                     <Button variant="outline" size="xs" className="text-xs" asChild>
                       <a href={alliceInfo.discord} target="_blank" rel="noopener noreferrer">
@@ -1278,8 +1259,7 @@ export default function DanganronpaPatcherPage() {
             <CardHeader className="py-1.5 px-3">
               <CardTitle className="text-xs flex items-center gap-1.5">
                 <Archive className="w-3 h-3 text-emerald-400" />
-                Esporta Patch Distribuibile
-                <span className="text-2xs font-normal text-muted-foreground ml-1">.zip con WAD, installer e istruzioni</span>
+                {t('danganronpaPatcher.exportPatch')}<span className="text-2xs font-normal text-muted-foreground ml-1">{t('danganronpaPatcher.exportPatchDesc')}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="px-3 pb-2 space-y-2">
@@ -1299,8 +1279,7 @@ export default function DanganronpaPatcherPage() {
                 </Button>
                 {!selectedSteamGame && (
                   <span className="text-xs text-muted-foreground">
-                    Seleziona prima un gioco dalla lista Steam
-                  </span>
+                    {t('danganronpaPatcher.selectGameFirst')}</span>
                 )}
               </div>
 
@@ -1308,8 +1287,7 @@ export default function DanganronpaPatcherPage() {
                 <div className="space-y-2">
                   <Progress value={undefined} className="h-2" />
                   <p className="text-xs text-muted-foreground">
-                    Compressione WAD (~626 MB)... potrebbe richiedere qualche minuto
-                  </p>
+                    {t('danganronpaPatcher.compressingWad')}</p>
                 </div>
               )}
 
@@ -1337,10 +1315,10 @@ export default function DanganronpaPatcherPage() {
 
               <div className="text-2xs text-muted-foreground space-y-1 p-2 rounded bg-slate-950/50 border border-slate-800">
                 <p className="font-medium text-slate-400">{t('visualNovelPage.zipContent')}</p>
-                <p>&#x2022; <span className="text-emerald-400/70">dr1_data_keyboard_us.wad</span> — WAD patchato italiano</p>
-                <p>&#x2022; <span className="text-emerald-400/70">install.bat</span> — Installer automatico Steam</p>
-                <p>&#x2022; <span className="text-emerald-400/70">LEGGIMI.txt</span> — Istruzioni installazione</p>
-                <p>&#x2022; <span className="text-emerald-400/70">translations.json</span> — Traduzioni sorgente</p>
+                <p>&#x2022; <span className="text-emerald-400/70">dr1_data_keyboard_us.wad</span> {t('danganronpaPatcher.descWadPatched')}</p>
+                <p>&#x2022; <span className="text-emerald-400/70">install.bat</span> {t('danganronpaPatcher.descInstaller')}</p>
+                <p>&#x2022; <span className="text-emerald-400/70">LEGGIMI.txt</span> {t('danganronpaPatcher.descReadme')}</p>
+                <p>&#x2022; <span className="text-emerald-400/70">translations.json</span> {t('danganronpaPatcher.descTranslations')}</p>
               </div>
             </CardContent>
           </Card>
@@ -1361,11 +1339,11 @@ export default function DanganronpaPatcherPage() {
                     <div className="flex gap-3 text-xs">
                       <div className="flex items-center gap-1">
                         <Check className="w-4 h-4 text-green-500" />
-                        <span>{linStats.translated} tradotte</span>
+                        <span>{linStats.translated} {t('danganronpaPatcher.translated')}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <X className="w-4 h-4 text-red-500" />
-                        <span>{linStats.untranslated} mancanti</span>
+                        <span>{linStats.untranslated} {t('danganronpaPatcher.missing')}</span>
                       </div>
                     </div>
                     <div className="flex gap-2 flex-wrap">
@@ -1385,16 +1363,13 @@ export default function DanganronpaPatcherPage() {
                       className="h-8 bg-purple-600 hover:bg-purple-500"
                     >
                       {loading ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Globe className="w-3 h-3 mr-1" />}
-                      Traduci con AI
-                    </Button>
+                      {t('danganronpaPatcher.translateWithAi')}</Button>
                     <Button variant="outline" onClick={importFromDrat} size="sm" className="h-8">
                       <Upload className="w-3 h-3 mr-1" />
-                      Import DRAT
-                    </Button>
+                      {t('danganronpaPatcher.importDrat')}</Button>
                     <Button variant="outline" onClick={loadLinDialogues} size="sm" className="h-8">
                       <Upload className="w-3 h-3 mr-1" />
-                      Carica JSON
-                    </Button>
+                      {t('danganronpaPatcher.loadJson')}</Button>
                     <Button onClick={saveLinDialogues} size="xs" className="bg-emerald-600 hover:bg-emerald-500">
                       <Download className="w-3 h-3 mr-1" />{t('glossaryManager.save')}</Button>
                     <Button size="sm" variant="outline" onClick={handleExportPO} disabled={linDialogues.length === 0} className="h-8" aria-label={t('common.esportaFilePo')}>
@@ -1414,15 +1389,13 @@ export default function DanganronpaPatcherPage() {
               <div className="flex items-center justify-between">
                 <CardTitle className="text-xs flex items-center gap-1.5">
                   <FileText className="w-3 h-3 text-emerald-400" />
-                  Dialoghi Script LIN
-                  {linDialogues.length > 0 && (
+                  {t('danganronpaPatcher.linDialogues')}{linDialogues.length > 0 && (
                     <Badge variant="outline" className="ml-2">{filteredLinDialogues.length} / {linDialogues.length}</Badge>
                   )}
                 </CardTitle>
                 <Button onClick={openLinFile} disabled={extractingLin} size="xs" className="bg-emerald-600 hover:bg-emerald-500">
                   {extractingLin ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Upload className="w-3 h-3 mr-1" />}
-                  Apri .LIN
-                </Button>
+                  {t('danganronpaPatcher.openLin')}</Button>
               </div>
               {linDialogues.length > 0 && (
                 <div className="mt-2 space-y-2">
@@ -1430,7 +1403,7 @@ export default function DanganronpaPatcherPage() {
                     <div className="relative flex-1">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <Input
-                        aria-label={t('common.cerca')} placeholder="Cerca dialoghi o personaggi..."
+                        aria-label={t('common.cerca')} placeholder={t('danganronpaPatcher.searchDialogues')}
                         value={linSearchTerm}
                         onChange={(e) => setLinSearchTerm(e.target.value)}
                         className="pl-9"
@@ -1455,8 +1428,7 @@ export default function DanganronpaPatcherPage() {
                         onChange={(e) => setLinShowUntranslated(e.target.checked)}
                         className="rounded border-slate-700"
                       />
-                      Solo non tradotti
-                    </label>
+                      {t('danganronpaPatcher.onlyUntranslated')}</label>
                     <div className="flex gap-1 ml-auto">
                       <Button
                         size="sm"
@@ -1464,16 +1436,14 @@ export default function DanganronpaPatcherPage() {
                         onClick={() => setLinViewMode('full')}
                         className="h-7 px-2"
                       >
-                        Espansa
-                      </Button>
+                        {t('danganronpaPatcher.expanded')}</Button>
                       <Button
                         size="sm"
                         variant={linViewMode === 'compact' ? 'default' : 'outline'}
                         onClick={() => setLinViewMode('compact')}
                         className="h-7 px-2"
                       >
-                        Compatta
-                      </Button>
+                        {t('danganronpaPatcher.compact')}</Button>
                     </div>
                   </div>
                 </div>
