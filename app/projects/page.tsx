@@ -323,6 +323,7 @@ function ProjectCard({
   onDelete: (p: UnifiedProject) => void;
   onExport: (p: UnifiedProject) => void;
 }) {
+  const { t } = useTranslation();
   const pct = percent(project.completedStrings, project.totalStrings);
   const sourceInfo = SOURCE_LABELS[project.source];
   const SourceIcon = sourceInfo.icon;
@@ -396,8 +397,7 @@ function ProjectCard({
         <div className="space-y-1">
           <div className="flex items-center justify-between text-2xs">
             <span className="text-slate-400">
-              {project.completedStrings.toLocaleString()} / {project.totalStrings.toLocaleString()} stringhe
-            </span>
+              {project.completedStrings.toLocaleString()} / {project.totalStrings.toLocaleString()}  {t('projectsPage.stringsUnit')}</span>
             <span className="text-slate-300 font-semibold">{pct}%</span>
           </div>
           <Progress value={pct} className="h-1.5" />
@@ -408,7 +408,7 @@ function ProjectCard({
           <div className="flex items-center gap-1.5 text-2xs text-slate-400">
             <TrendingUp className="w-3 h-3" />
             <span>
-              Quality: <span className="text-purple-300 font-semibold">{project.qualityScore.toFixed(1)}/3.0</span>
+              {t('projectsPage.qualityLabel')} <span className="text-purple-300 font-semibold">{project.qualityScore.toFixed(1)}/3.0</span>
             </span>
           </div>
         )}
@@ -419,8 +419,7 @@ function ProjectCard({
             <Link href={project.openHref} className="flex-1">
               <Button size="sm" variant="default" className="w-full h-7 text-2xs bg-violet-600 hover:bg-violet-500">
                 <FileText className="w-3 h-3 mr-1" />
-                Apri
-              </Button>
+                {t('projectsPage.open')}</Button>
             </Link>
           )}
           {project.source === 'quality' && (
@@ -430,7 +429,7 @@ function ProjectCard({
                 variant="ghost"
                 className="h-7 w-7 p-0 text-slate-400 hover:text-slate-200"
                 onClick={() => onExport(project)}
-                title="Esporta"
+                title={t('projectsPage.exportTitle')}
               >
                 <Download className="w-3 h-3" />
               </Button>
@@ -439,7 +438,7 @@ function ProjectCard({
                 variant="ghost"
                 className="h-7 w-7 p-0 text-slate-400 hover:text-red-400"
                 onClick={() => onDelete(project)}
-                title="Elimina"
+                title={t('projectsPage.deleteTitle')}
               >
                 <Trash2 className="w-3 h-3" />
               </Button>
@@ -475,7 +474,7 @@ export default function ProjectsPage() {
       setProjects(data);
     } catch (e: unknown) {
       clientLogger.error('[ProjectsPage] Load error:', e);
-      toast.error('Errore caricamento progetti');
+      toast.error(t('projectsPage.loadError'));
     } finally {
       setLoading(false);
     }
@@ -516,7 +515,7 @@ export default function ProjectsPage() {
     if (p.source === 'quality') {
       const qsId = p.id.replace(/^qs:/, '');
       qualityScoringService.deleteProject(qsId);
-      toast.success('Progetto eliminato');
+      toast.success(t('projectsPage.projectDeleted'));
       reload();
     }
   };
@@ -535,7 +534,7 @@ export default function ProjectsPage() {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        toast.success('Progetto esportato');
+        toast.success(t('projectsPage.projectExported'));
       }
     }
   };
@@ -554,11 +553,11 @@ export default function ProjectsPage() {
           toast.success(`Progetto "${project.gameName}" importato`);
           reload();
         } else {
-          toast.error('File non valido');
+          toast.error(t('projectsPage.invalidFile'));
         }
       } catch (err: unknown) {
         clientLogger.error('Import failed:', err);
-        toast.error('Errore importazione');
+        toast.error(t('projectsPage.importError'));
       }
     };
     input.click();
@@ -575,20 +574,17 @@ export default function ProjectsPage() {
           <div>
             <h1 className="text-2xl font-bold text-slate-100">{t('nav.projects')}</h1>
             <p className="text-sm text-slate-400">
-              Tutti i giochi che stai traducendo o hai già tradotto
-            </p>
+              {t('projectsPage.subtitle')}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={handleImport}>
             <Upload className="w-4 h-4 mr-2" />
-            Importa
-          </Button>
+            {t('projectsPage.importBtn')}</Button>
           <Link href="/auto-translate">
             <Button size="sm" className="bg-violet-600 hover:bg-violet-500">
               <Plus className="w-4 h-4 mr-2" />
-              Nuovo progetto
-            </Button>
+              {t('projectsPage.newProject')}</Button>
           </Link>
         </div>
       </div>
@@ -596,11 +592,11 @@ export default function ProjectsPage() {
       {/* Stats cards — nascosti quando non c'è ancora alcun progetto (impalcatura inerte) */}
       {projects.length > 0 && (
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        <StatCard label="Progetti totali" value={stats.total} icon={Rocket} color="text-violet-400" />
-        <StatCard label="In corso" value={stats.inProgress} icon={Clock} color="text-cyan-400" />
-        <StatCard label="Completati" value={stats.completed} icon={CheckCircle2} color="text-emerald-400" />
+        <StatCard label={t('projectsPage.totalProjectsLabel')} value={stats.total} icon={Rocket} color="text-violet-400" />
+        <StatCard label={t('projectsPage.inProgress')} value={stats.inProgress} icon={Clock} color="text-cyan-400" />
+        <StatCard label={t('projectsPage.completed')} value={stats.completed} icon={CheckCircle2} color="text-emerald-400" />
         <StatCard
-          label="Stringhe tradotte"
+          label={t('projectsPage.translatedStringsLabel')}
           value={`${stats.completedStrings.toLocaleString()} / ${stats.totalStrings.toLocaleString()}`}
           icon={FileText}
           color="text-amber-400"
@@ -614,7 +610,7 @@ export default function ProjectsPage() {
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
           <Input
-            placeholder="Cerca progetti..."
+            placeholder={t('projectsPage.searchPh')}
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="pl-9 h-9 bg-slate-800/50 border-slate-700"
@@ -627,10 +623,10 @@ export default function ProjectsPage() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tutti gli stati</SelectItem>
-            <SelectItem value="in_progress">In corso</SelectItem>
-            <SelectItem value="completed">Completati</SelectItem>
-            <SelectItem value="empty">Vuoti</SelectItem>
+            <SelectItem value="all">{t('projectsPage.allStatuses')}</SelectItem>
+            <SelectItem value="in_progress">{t('projectsPage.inProgress')}</SelectItem>
+            <SelectItem value="completed">{t('projectsPage.completed')}</SelectItem>
+            <SelectItem value="empty">{t('projectsPage.empty')}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -640,7 +636,7 @@ export default function ProjectsPage() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tutte le lingue</SelectItem>
+            <SelectItem value="all">{t('projectsPage.allLanguages')}</SelectItem>
             {availableLangs.map(lang => (
               <SelectItem key={lang} value={lang}>
                 {LANG_FLAGS[lang] || '🌐'} {lang.toUpperCase()}
@@ -654,11 +650,11 @@ export default function ProjectsPage() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tutte le fonti</SelectItem>
-            <SelectItem value="quality">Quality Scoring</SelectItem>
-            <SelectItem value="dictionary">Dictionary</SelectItem>
-            <SelectItem value="translation_memory">Translation Memory</SelectItem>
-            <SelectItem value="game">Game Library</SelectItem>
+            <SelectItem value="all">{t('projectsPage.allSources')}</SelectItem>
+            <SelectItem value="quality">{t('projectsPage.qualityScoring')}</SelectItem>
+            <SelectItem value="dictionary">{t('projectsPage.dictionary')}</SelectItem>
+            <SelectItem value="translation_memory">{t('projectsPage.translationMemory')}</SelectItem>
+            <SelectItem value="game">{t('projectsPage.gameLibrary')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -668,7 +664,7 @@ export default function ProjectsPage() {
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 text-slate-400">
           <Loader2 className="w-8 h-8 animate-spin mb-3" />
-          <p className="text-sm">Caricamento progetti...</p>
+          <p className="text-sm">{t('projectsPage.loadingProjects')}</p>
         </div>
       ) : filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -687,8 +683,7 @@ export default function ProjectsPage() {
             <Link href="/auto-translate">
               <Button className="bg-violet-600 hover:bg-violet-500">
                 <Plus className="w-4 h-4 mr-2" />
-                Inizia a tradurre
-              </Button>
+                {t('projectsPage.startTranslating')}</Button>
             </Link>
           )}
         </div>
