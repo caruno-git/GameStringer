@@ -272,31 +272,28 @@ export function WadExtractor() {
                   <div className="flex items-center gap-1">
                     <Database className="w-3.5 h-3.5 text-blue-400" />
                     <span className="font-medium">{stats.total.toLocaleString()}</span>
-                    <span className="text-muted-foreground text-xs">totali</span>
+                    <span className="text-muted-foreground text-xs">{t('wadExtractor.totalUnit')}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Check className="w-3.5 h-3.5 text-green-500" />
                     <span>{stats.translated.toLocaleString()}</span>
-                    <span className="text-muted-foreground text-xs">tradotte</span>
+                    <span className="text-muted-foreground text-xs">{t('wadExtractor.translatedUnit')}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <X className="w-3.5 h-3.5 text-red-500" />
                     <span>{(stats.total - stats.translated).toLocaleString()}</span>
-                    <span className="text-muted-foreground text-xs">mancanti</span>
+                    <span className="text-muted-foreground text-xs">{t('wadExtractor.missingUnit')}</span>
                   </div>
                 </div>
                 <div className="flex gap-2">
                   <Badge variant="outline" className="text-2xs">
                     <FileText className="w-2.5 h-2.5 mr-1" />
-                    {stats.dialogues} dialoghi
-                  </Badge>
+                    {stats.dialogues}  {t('wadExtractor.dialoguesUnit')}</Badge>
                   <Badge variant="outline" className="text-2xs">
                     <BarChart3 className="w-2.5 h-2.5 mr-1" />
-                    {stats.texts} testi
-                  </Badge>
+                    {stats.texts}  {t('wadExtractor.textsUnit')}</Badge>
                   <Badge variant="outline" className="text-2xs">
-                    {stats.uniqueFiles} file
-                  </Badge>
+                    {stats.uniqueFiles}  {t('wadExtractor.filesUnit')}</Badge>
                 </div>
               </div>
               <div className="flex gap-2">
@@ -308,12 +305,10 @@ export function WadExtractor() {
                   className="h-8 bg-purple-600 hover:bg-purple-500"
                 >
                   {translating ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Sparkles className="w-3 h-3 mr-1" />}
-                  Traduci AI
-                </Button>
+                  {t('wadExtractor.translateAi')}</Button>
                 <Button variant="outline" onClick={loadExtractedJson} size="sm" className="h-8">
                   <Upload className="w-3 h-3 mr-1" />
-                  Carica
-                </Button>
+                  {t('wadExtractor.load')}</Button>
                 <Button
                   onClick={saveTranslatedJson}
                   disabled={stats.translated === 0}
@@ -321,8 +316,7 @@ export function WadExtractor() {
                   className="h-8 bg-emerald-600 hover:bg-emerald-500"
                 >
                   <Download className="w-3 h-3 mr-1" />
-                  Esporta
-                </Button>
+                  {t('wadExtractor.export')}</Button>
               </div>
             </div>
             <Progress value={translating ? translateProgress : stats.percentage} className="h-2 bg-slate-800" />
@@ -337,18 +331,16 @@ export function WadExtractor() {
           <CardHeader className="py-3 px-4">
             <CardTitle className="text-sm flex items-center gap-2">
               <Terminal className="w-4 h-4 text-emerald-400" />
-              Estrazione WAD
-            </CardTitle>
+              {t('wadExtractor.wadExtraction')}</CardTitle>
             <CardDescription className="text-xs">
-              Estrai tutto il testo da un file WAD
-            </CardDescription>
+              {t('wadExtractor.extractAllText')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {/* WAD Path */}
             <div>
               <label className="text-xs text-muted-foreground">{t('wadExtractorComp.percorsoWadOpzionale')}</label>
               <Input
-                placeholder="C:\...\dr1_data_us.wad"
+                placeholder={t('wadExtractor.wadPathPh')}
                 value={wadPath}
                 onChange={(e) => setWadPath(e.target.value)}
                 className="text-xs h-8 mt-1"
@@ -376,28 +368,23 @@ export function WadExtractor() {
                   <div className={`w-5 h-5 rounded-full flex items-center justify-center text-2xs font-bold ${entries.length > 0 ? 'bg-emerald-500/20 border border-emerald-500/40' : 'bg-slate-800 border border-slate-700'}`}>
                     {entries.length > 0 ? <Check className="w-3 h-3" /> : '1'}
                   </div>
-                  Estrai testo (CLI)
-                </div>
+                  {t('wadExtractor.extractTextCli')}</div>
                 <div className={`flex items-center gap-2 text-xs ${entries.length > 0 ? 'text-emerald-400' : 'text-muted-foreground'}`}>
                   <div className={`w-5 h-5 rounded-full flex items-center justify-center text-2xs font-bold ${entries.length > 0 ? 'bg-emerald-500/20 border border-emerald-500/40' : 'bg-slate-800 border border-slate-700'}`}>
                     {entries.length > 0 ? <Check className="w-3 h-3" /> : '2'}
                   </div>
-                  Carica JSON
-                </div>
+                  {t('wadExtractor.loadJson')}</div>
                 <div className={`flex items-center gap-2 text-xs ${stats.translated > 0 ? 'text-emerald-400' : 'text-muted-foreground'}`}>
                   <div className={`w-5 h-5 rounded-full flex items-center justify-center text-2xs font-bold ${stats.translated > 0 ? 'bg-emerald-500/20 border border-emerald-500/40' : 'bg-slate-800 border border-slate-700'}`}>
                     {stats.translated > 0 ? <Check className="w-3 h-3" /> : '3'}
                   </div>
-                  Traduci (AI/manuale)
-                </div>
+                  {t('wadExtractor.translateAiManual')}</div>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <div className="w-5 h-5 rounded-full flex items-center justify-center text-2xs font-bold bg-slate-800 border border-slate-700">4</div>
-                  Esporta traduzioni
-                </div>
+                  {t('wadExtractor.exportTranslations')}</div>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <div className="w-5 h-5 rounded-full flex items-center justify-center text-2xs font-bold bg-slate-800 border border-slate-700">5</div>
-                  Applica patch (CLI)
-                </div>
+                  {t('wadExtractor.applyPatchCli')}</div>
               </div>
             </div>
 
@@ -408,8 +395,7 @@ export function WadExtractor() {
               className="w-full h-9 bg-emerald-600 hover:bg-emerald-500"
             >
               {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Upload className="w-4 h-4 mr-2" />}
-              Carica JSON Estratto
-            </Button>
+              {t('wadExtractor.loadExtractedJson')}</Button>
           </CardContent>
         </Card>
 
@@ -419,8 +405,7 @@ export function WadExtractor() {
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm flex items-center gap-2">
                 <Globe className="w-4 h-4 text-emerald-400" />
-                Testo Estratto
-                {entries.length > 0 && (
+                {t('wadExtractor.extractedText')}{entries.length > 0 && (
                   <Badge variant="outline" className="ml-2 text-xs">
                     {filteredEntries.length.toLocaleString()} / {entries.length.toLocaleString()}
                   </Badge>
@@ -434,16 +419,14 @@ export function WadExtractor() {
                     onClick={() => setViewMode('compact')}
                     className="h-7 px-2 text-xs"
                   >
-                    Compatta
-                  </Button>
+                    {t('wadExtractor.compact')}</Button>
                   <Button
                     size="sm"
                     variant={viewMode === 'full' ? 'default' : 'outline'}
                     onClick={() => setViewMode('full')}
                     className="h-7 px-2 text-xs"
                   >
-                    Espansa
-                  </Button>
+                    {t('wadExtractor.expanded')}</Button>
                 </div>
               )}
             </div>
@@ -453,7 +436,7 @@ export function WadExtractor() {
                   <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
-                      aria-label={t('common.cerca')} placeholder="Cerca testo, file..."
+                      aria-label={t('common.cerca')} placeholder={t('wadExtractor.searchPh')}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-9 h-8"
@@ -466,8 +449,7 @@ export function WadExtractor() {
                       onClick={() => setTypeFilter('all')}
                       className="h-8 text-xs"
                     >
-                      Tutti
-                    </Button>
+                      {t('wadExtractor.all')}</Button>
                     <Button
                       size="sm"
                       variant={typeFilter === 'dialogue' ? 'default' : 'outline'}
@@ -475,8 +457,7 @@ export function WadExtractor() {
                       className="h-8 text-xs"
                     >
                       <FileText className="w-3 h-3 mr-1" />
-                      Dialoghi
-                    </Button>
+                      {t('wadExtractor.dialogues')}</Button>
                     <Button
                       size="sm"
                       variant={typeFilter === 'text' ? 'default' : 'outline'}
@@ -484,8 +465,7 @@ export function WadExtractor() {
                       className="h-8 text-xs"
                     >
                       <Filter className="w-3 h-3 mr-1" />
-                      Testi
-                    </Button>
+                      {t('wadExtractor.texts')}</Button>
                   </div>
                 </div>
                 <label className="flex items-center gap-2 text-xs cursor-pointer">
@@ -495,7 +475,7 @@ export function WadExtractor() {
                     onChange={(e) => setShowUntranslated(e.target.checked)}
                     className="rounded border-slate-700"
                   />
-                  Solo non tradotti ({(stats.total - stats.translated).toLocaleString()})
+                  {t('wadExtractor.onlyUntranslated')} ({(stats.total - stats.translated).toLocaleString()})
                 </label>
               </div>
             )}
@@ -564,7 +544,7 @@ export function WadExtractor() {
                           </p>
                           {entry.raw && entry.raw !== entry.original && (
                             <p className="text-2xs text-muted-foreground mt-1 font-mono">
-                              Raw: {entry.raw.substring(0, 100)}{entry.raw.length > 100 ? '...' : ''}
+                              {t('wadExtractor.rawLabel')} {entry.raw.substring(0, 100)}{entry.raw.length > 100 ? '...' : ''}
                             </p>
                           )}
                         </div>
@@ -576,7 +556,7 @@ export function WadExtractor() {
                               onChange={(e) => setEditedText(e.target.value)}
                               className="font-mono text-sm bg-slate-950/50 border-slate-700"
                               rows={2}
-                              placeholder="Inserisci traduzione italiana..."
+                              placeholder={t('wadExtractor.translationPh')}
                             />
                             <div className="flex gap-2">
                               <Button
@@ -585,16 +565,14 @@ export function WadExtractor() {
                                 className="h-7 bg-emerald-600 hover:bg-emerald-500"
                               >
                                 <Check className="w-3 h-3 mr-1" />
-                                Salva
-                              </Button>
+                                {t('wadExtractor.save')}</Button>
                               <Button
                                 size="sm"
                                 variant="outline"
                                 onClick={() => setEditingIndex(null)}
                                 className="h-7"
                               >
-                                Annulla
-                              </Button>
+                                {t('wadExtractor.cancel')}</Button>
                             </div>
                           </div>
                         ) : (
@@ -612,8 +590,7 @@ export function WadExtractor() {
                   })}
                   {filteredEntries.length > 200 && (
                     <p className="text-center text-sm text-muted-foreground py-4">
-                      Mostrando 200 di {filteredEntries.length.toLocaleString()} stringhe. Usa la ricerca per filtrare.
-                    </p>
+                      {t('wadExtractor.showing200Of')} {filteredEntries.length.toLocaleString()}  {t('wadExtractor.stringsUseSearch')}</p>
                   )}
                 </div>
               ) : entries.length === 0 ? (
@@ -621,8 +598,7 @@ export function WadExtractor() {
                   <Database className="w-16 h-16 mx-auto mb-4 opacity-50" />
                   <p className="text-lg font-medium">{t('wadExtractorComp.nessunTestoWadCaricato')}</p>
                   <p className="text-sm mt-2 max-w-md mx-auto">
-                    Esegui il comando di estrazione nel terminale, poi carica il JSON risultante.
-                  </p>
+                    {t('wadExtractor.runCommandHint')}</p>
                   <div className="mt-4 p-3 rounded-lg bg-slate-950/50 border border-slate-800 max-w-lg mx-auto">
                     <code className="text-xs text-emerald-400 font-mono">
                       node scripts/extract-wad-text.mjs &quot;path/to/game.wad&quot; output.json
@@ -630,8 +606,7 @@ export function WadExtractor() {
                   </div>
                   <Button onClick={loadExtractedJson} className="mt-4 bg-emerald-600 hover:bg-emerald-500">
                     <Upload className="w-4 h-4 mr-2" />
-                    Carica JSON Estratto
-                  </Button>
+                    {t('wadExtractor.loadExtractedJson')}</Button>
                 </div>
               ) : (
                 <div className="text-center py-12 text-muted-foreground">
