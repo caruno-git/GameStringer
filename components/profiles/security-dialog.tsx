@@ -166,17 +166,17 @@ export function SecurityDialog({ open, onOpenChange, profileId, profileName }: S
   
   const handleChangePassword = async () => {
     if (!currentPassword) {
-      toast.error('Enter current password');
+      toast.error(t('securityDialog.enterCurrentPassword'));
       return;
     }
     
     if (newPassword.length < 4) {
-      toast.error('New password must be at least 4 characters');
+      toast.error(t('securityDialog.passwordMinLength'));
       return;
     }
     
     if (newPassword !== confirmPassword) {
-      toast.error('Le password non coincidono');
+      toast.error(t('securityDialog.passwordsDontMatch'));
       return;
     }
     
@@ -189,7 +189,7 @@ export function SecurityDialog({ open, onOpenChange, profileId, profileName }: S
     localStorage.setItem(`password_${profileId}`, btoa(newPassword));
     
     logActivity('Password changed');
-    toast.success('Password changed successfully!');
+    toast.success(t('securityDialog.passwordChanged'));
     
     setCurrentPassword('');
     setNewPassword('');
@@ -201,13 +201,13 @@ export function SecurityDialog({ open, onOpenChange, profileId, profileName }: S
     if (settings.twoFactorEnabled) {
       // Disable 2FA
       if (twoFactorCode !== '123456') { // Demo code
-        toast.error('Codice non valido');
+        toast.error(t('securityDialog.invalidCode'));
         return;
       }
       
       saveSecuritySettings({ ...settings, twoFactorEnabled: false });
       logActivity('2FA disabilitato');
-      toast.success('authentication a due fattori disabilitata');
+      toast.success(t('securityDialog.twoFaDisabledMsg'));
       setTwoFactorCode('');
       setIsSettingUp2FA(false);
     } else {
@@ -221,14 +221,14 @@ export function SecurityDialog({ open, onOpenChange, profileId, profileName }: S
       }
       
       if (twoFactorCode.length !== 6) {
-        toast.error('Enter a 6 digit code');
+        toast.error(t('securityDialog.enter6DigitCode'));
         return;
       }
       
       // Verify code (demo: accept any 6 digit code)
       saveSecuritySettings({ ...settings, twoFactorEnabled: true });
       logActivity('2FA abilitato');
-      toast.success('authentication a due fattori abilitata!');
+      toast.success(t('securityDialog.twoFaEnabledMsg'));
       setTwoFactorCode('');
       setIsSettingUp2FA(false);
     }
@@ -259,20 +259,17 @@ export function SecurityDialog({ open, onOpenChange, profileId, profileName }: S
           <TabsList className="grid grid-cols-4 w-full">
             <TabsTrigger value="password" className="text-xs">
               <Key className="h-3 w-3 mr-1" />
-              Password
-            </TabsTrigger>
+              {t('securityDialog.passwordTab')}</TabsTrigger>
             <TabsTrigger value="sessions" className="text-xs">
               <Clock className="h-3 w-3 mr-1" />
-              Sessions
-            </TabsTrigger>
+              {t('securityDialog.sessionsTab')}</TabsTrigger>
             <TabsTrigger value="2fa" className="text-xs">
               <Smartphone className="h-3 w-3 mr-1" />
               2FA
             </TabsTrigger>
             <TabsTrigger value="activity" className="text-xs">
               <History className="h-3 w-3 mr-1" />
-              Activity
-            </TabsTrigger>
+              {t('securityDialog.activityTab')}</TabsTrigger>
           </TabsList>
           
           {/* Password Tab */}
@@ -281,11 +278,9 @@ export function SecurityDialog({ open, onOpenChange, profileId, profileName }: S
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm flex items-center gap-2">
                   <Key className="h-4 w-4 mr-2" />
-                  Cambia Password
-                </CardTitle>
+                  {t('securityDialog.changePassword')}</CardTitle>
                 <CardDescription className="text-xs">
-                  Modifica la password del tuo profilo
-                </CardDescription>
+                  {t('securityDialog.changePasswordDesc')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <form onSubmit={(e) => { e.preventDefault(); handleChangePassword(); }} className="space-y-4">
@@ -345,13 +340,11 @@ export function SecurityDialog({ open, onOpenChange, profileId, profileName }: S
                     />
                     {confirmPassword && newPassword !== confirmPassword && (
                       <p className="text-xs text-red-500 flex items-center gap-1">
-                        <X className="h-3 w-3" /> Le password non coincidono
-                      </p>
+                        <X className="h-3 w-3" /> {t('securityDialog.passwordsDontMatch')}</p>
                     )}
                     {confirmPassword && newPassword === confirmPassword && (
                       <p className="text-xs text-green-500 flex items-center gap-1">
-                        <Check className="h-3 w-3" /> Le password coincidono
-                      </p>
+                        <Check className="h-3 w-3" /> {t('securityDialog.passwordsMatch')}</p>
                     )}
                   </div>
                   
@@ -365,8 +358,7 @@ export function SecurityDialog({ open, onOpenChange, profileId, profileName }: S
                     ) : (
                       <Key className="h-4 w-4 mr-2" />
                     )}
-                    Cambia Password
-                  </Button>
+                    {t('securityDialog.changePassword')}</Button>
                 </form>
               </CardContent>
             </Card>
@@ -378,29 +370,26 @@ export function SecurityDialog({ open, onOpenChange, profileId, profileName }: S
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm flex items-center gap-2">
                   <Clock className="h-4 w-4" />
-                  Session Management
-                </CardTitle>
+                  {t('securityDialog.sessionManagement')}</CardTitle>
                 <CardDescription className="text-xs">
-                  Configure timeout and auto-lock
-                </CardDescription>
+                  {t('securityDialog.sessionMgmtDesc')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <Label className="text-sm">{t('securityDialogComp.timeoutSessione')}</Label>
                     <p className="text-xs text-muted-foreground">
-                      Disconnect after inactivity
-                    </p>
+                      {t('securityDialog.disconnectAfterInactivity')}</p>
                   </div>
                   <select
                     value={settings.sessionTimeout}
                     onChange={(e) => saveSecuritySettings({ ...settings, sessionTimeout: Number(e.target.value) })}
                     className="bg-background border rounded-md px-3 py-1.5 text-sm"
                   >
-                    <option value={15}>15 minutes</option>
-                    <option value={30}>30 minutes</option>
-                    <option value={60}>1 hour</option>
-                    <option value={120}>2 hours</option>
+                    <option value={15}>{t('securityDialog.min15')}</option>
+                    <option value={30}>{t('securityDialog.min30')}</option>
+                    <option value={60}>{t('securityDialog.hour1')}</option>
+                    <option value={120}>{t('securityDialog.hours2')}</option>
                     <option value={0}>{t('securityDialogComp.never')}</option>
                   </select>
                 </div>
@@ -409,8 +398,7 @@ export function SecurityDialog({ open, onOpenChange, profileId, profileName }: S
                   <div className="space-y-0.5">
                     <Label className="text-sm">{t('securityDialogComp.autoLock')}</Label>
                     <p className="text-xs text-muted-foreground">
-                      Require password after inactivity
-                    </p>
+                      {t('securityDialog.requirePassword')}</p>
                   </div>
                   <Switch
                     checked={settings.autoLockEnabled}
@@ -428,10 +416,10 @@ export function SecurityDialog({ open, onOpenChange, profileId, profileName }: S
                       onChange={(e) => saveSecuritySettings({ ...settings, autoLockTimeout: Number(e.target.value) })}
                       className="bg-background border rounded-md px-3 py-1.5 text-sm"
                     >
-                      <option value={5}>5 minutes</option>
-                      <option value={10}>10 minutes</option>
-                      <option value={15}>15 minutes</option>
-                      <option value={30}>30 minutes</option>
+                      <option value={5}>{t('securityDialog.min5')}</option>
+                      <option value={10}>{t('securityDialog.min10')}</option>
+                      <option value={15}>{t('securityDialog.min15')}</option>
+                      <option value={30}>{t('securityDialog.min30')}</option>
                     </select>
                   </div>
                 )}
@@ -440,8 +428,7 @@ export function SecurityDialog({ open, onOpenChange, profileId, profileName }: S
                   <div className="space-y-0.5">
                     <Label className="text-sm">{t('securityDialogComp.notificheLogin')}</Label>
                     <p className="text-xs text-muted-foreground">
-                      Avvisa per nuovi accessi
-                    </p>
+                      {t('securityDialog.notifyNewLogins')}</p>
                   </div>
                   <Switch
                     checked={settings.loginNotifications}
@@ -452,8 +439,7 @@ export function SecurityDialog({ open, onOpenChange, profileId, profileName }: S
                 <div className="pt-4 border-t">
                   <Button variant="destructive" onClick={handleLogoutAllSessions} className="w-full">
                     <LogOut className="h-4 w-4 mr-2" />
-                    Disconnect All Sessions
-                  </Button>
+                    {t('securityDialog.disconnectAll')}</Button>
                 </div>
               </CardContent>
             </Card>
@@ -465,16 +451,14 @@ export function SecurityDialog({ open, onOpenChange, profileId, profileName }: S
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm flex items-center gap-2">
                   <Smartphone className="h-4 w-4" />
-                  Two-Factor Authentication
-                  {settings.twoFactorEnabled ? (
+                  {t('securityDialog.twoFactorAuth')}{settings.twoFactorEnabled ? (
                     <Badge className="bg-green-500 text-xs">{t('securityDialogComp.active')}</Badge>
                   ) : (
                     <Badge variant="secondary" className="text-xs">{t('securityDialogComp.inactive')}</Badge>
                   )}
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  Add an extra layer of security
-                </CardDescription>
+                  {t('securityDialog.addExtraSecurity')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {!settings.twoFactorEnabled && !isSettingUp2FA && (
@@ -483,12 +467,10 @@ export function SecurityDialog({ open, onOpenChange, profileId, profileName }: S
                       <Lock className="h-8 w-8 text-muted-foreground" />
                     </div>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Protect your account with a second authentication factor
-                    </p>
+                      {t('securityDialog.protectAccount')}</p>
                     <Button onClick={handleSetup2FA}>
                       <Smartphone className="h-4 w-4 mr-2" />
-                      Configure 2FA
-                    </Button>
+                      {t('securityDialog.configure2fa')}</Button>
                   </div>
                 )}
                 
@@ -498,8 +480,7 @@ export function SecurityDialog({ open, onOpenChange, profileId, profileName }: S
                       <p className="text-xs text-muted-foreground mb-2">{t('securityDialogComp.yourSecretCode')}</p>
                       <p className="text-2xl font-mono font-bold tracking-wider">{twoFactorSecret}</p>
                       <p className="text-xs text-muted-foreground mt-2">
-                        Save it in an authenticator app (Google Authenticator, Authy, etc.)
-                      </p>
+                        {t('securityDialog.saveInAuthApp')}</p>
                     </div>
                     
                     <div className="space-y-2">
@@ -516,12 +497,10 @@ export function SecurityDialog({ open, onOpenChange, profileId, profileName }: S
                     
                     <div className="flex gap-2">
                       <Button variant="outline" onClick={() => setIsSettingUp2FA(false)} className="flex-1">
-                        Cancel
-                      </Button>
+                        {t('securityDialog.cancel')}</Button>
                       <Button onClick={handleSetup2FA} className="flex-1">
                         <Check className="h-4 w-4 mr-2" />
-                        Verify
-                      </Button>
+                        {t('securityDialog.verify')}</Button>
                     </div>
                   </div>
                 )}
@@ -533,10 +512,9 @@ export function SecurityDialog({ open, onOpenChange, profileId, profileName }: S
                         <Unlock className="h-5 w-5 text-green-500" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-green-500">2FA Attivo</p>
+                        <p className="text-sm font-medium text-green-500">{t('securityDialog.twoFaActive')}</p>
                         <p className="text-xs text-muted-foreground">
-                          Il tuo account è protetto
-                        </p>
+                          {t('securityDialog.accountProtected')}</p>
                       </div>
                     </div>
                     
@@ -555,8 +533,7 @@ export function SecurityDialog({ open, onOpenChange, profileId, profileName }: S
                     
                     <Button variant="destructive" onClick={handleSetup2FA} className="w-full">
                       <X className="h-4 w-4 mr-2" />
-                      Disabilita 2FA
-                    </Button>
+                      {t('securityDialog.disable2fa')}</Button>
                   </div>
                 )}
               </CardContent>
@@ -571,11 +548,9 @@ export function SecurityDialog({ open, onOpenChange, profileId, profileName }: S
                   <div>
                     <CardTitle className="text-sm flex items-center gap-2">
                       <History className="h-4 w-4" />
-                      Activity History
-                    </CardTitle>
+                      {t('securityDialog.activityHistory')}</CardTitle>
                     <CardDescription className="text-xs">
-                      Recent logins and changes
-                    </CardDescription>
+                      {t('securityDialog.recentActivity')}</CardDescription>
                   </div>
                   <Button variant="ghost" size="sm" onClick={handleClearActivityLog}>
                     <Trash2 className="h-4 w-4" />
