@@ -119,6 +119,7 @@ type Step = 'select-game' | 'select-files' | 'configure' | 'translate' | 'result
 
 import { storageManager } from '@/lib/storage-manager';
 import { clientLogger } from '@/lib/client-logger';
+import { setSecureKey } from '@/lib/secure-key-store';
 
 export default function TranslatorProPage() {
   const { toast } = useToast();
@@ -398,12 +399,11 @@ export default function TranslatorProPage() {
     
     const keyName = keyMap[provider];
     if (keyName) {
-      // Save API key via API route
-      fetch('/api/secrets', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-GS-Client': 'gamestringer' },
-        body: JSON.stringify({ key: keyName, value: apiKey })
-      }).catch((err: unknown) => clientLogger.error(`Failed to save API key: ${String(err)}`));
+      // Salva nello store sicuro: in Tauri passa dal comando Rust (AES-256), non da
+      // fetch('/api/secrets') — quell'endpoint nel webview impacchettato non esiste,
+      // quindi la chiave (es. DeepSeek) non veniva mai salvata.
+      setSecureKey(keyName, apiKey)
+        .catch((err: unknown) => clientLogger.error(`Failed to save API key: ${String(err)}`));
     }
   }, [apiKey, provider]);
   

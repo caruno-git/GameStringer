@@ -19,33 +19,15 @@ export default function SubtitlesPage() {
 
   // Funzione di traduzione che usa l'API
   const handleTranslate = async (texts: string[], targetLang: string): Promise<string[]> => {
-    const translations: string[] = [];
-    
-    for (const text of texts) {
-      try {
-        const response = await fetch("/api/translate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            text,
-            targetLanguage: targetLang,
-            provider: "libre", // Usa provider gratuito di default
-          }),
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          translations.push(data.translatedText || text);
-        } else {
-          translations.push(text);
-        }
-      } catch (error: unknown) {
-        clientLogger.error("Translation error:", error);
-        translations.push(text);
-      }
+    // Traduzione client-side (translateSmart), non più /api/translate (ora stub 501).
+    try {
+      const { translateSmart } = await import('@/lib/ai/ai-translate-direct');
+      const result = await translateSmart({ texts, targetLanguage: targetLang });
+      return texts.map((text, i) => result.translations[i] ?? text);
+    } catch (error: unknown) {
+      clientLogger.error("Translation error:", error);
+      return texts; // fallback: testi originali
     }
-    
-    return translations;
   };
 
   return (

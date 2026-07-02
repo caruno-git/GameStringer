@@ -640,16 +640,9 @@ export default function StoresPage() {
     
     try {
       if (utilityId === 'howlongtobeat') {
-        // Test HowLongToBeat - fetch diretto (no API route)
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 8000);
-        const _response = await fetch('https://howlongtobeat.com', {
-          method: 'HEAD',
-          mode: 'no-cors',
-          signal: controller.signal,
-        });
-        clearTimeout(timeout);
-        // mode: no-cors returns opaque response (status 0) but means site is reachable
+        // Test HowLongToBeat via comando Rust (niente fetch diretto: CORS nel webview).
+        // Se la ricerca non lancia, il servizio è raggiungibile.
+        await invoke('get_howlongtobeat_info', { gameName: 'The Witcher 3' });
         setTestResults(prev => ({ ...prev, [utilityId]: { connected: true } }));
         toast.success(t('common.howlongtobeatRaggiungibile'));
       } else if (utilityId === 'steamgriddb') {
@@ -700,20 +693,10 @@ export default function StoresPage() {
       };
       const command = testCommandMap[providerId];
       if (!command) {
-        // Fallback all'API route per provider non supportati via Tauri
-        const backendProviderId = getBackendProviderId(providerId);
-        const response = await fetch('/api/stores/test-connection', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-GS-Client': 'gamestringer' },
-          body: JSON.stringify({ provider: backendProviderId }),
-        });
-        const result = await response.json() as { connected?: boolean; error?: string; message?: string };
-        setTestResults(prev => ({ ...prev, [providerId]: result }));
-        if (result.connected) {
-          toast.success(`Connessione ${providerId} verificata!`);
-        } else {
-          toast.error(`Problema con ${providerId}: ${result.error || 'connessione non riuscita'}`);
-        }
+        // Nessun comando Tauri per questo provider: niente fetch('/api/...'), che nel
+        // webview impacchettato non esiste. Segnaliamo che il test non è disponibile.
+        setTestResults(prev => ({ ...prev, [providerId]: { error: 'Test non disponibile per questo provider' } }));
+        toast.error(`Test non disponibile per ${providerId}`);
       } else {
         // Usa il comando Tauri per un test reale
         const result = await invoke<{ connected?: boolean; success?: boolean; error?: string; message?: string; games_count?: number }>(command);

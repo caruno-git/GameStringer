@@ -197,32 +197,25 @@ export function WadExtractor() {
       for (let i = 0; i < maxBatch; i += batchSize) {
         const batch = untranslated.slice(i, i + batchSize);
 
-        const results = await Promise.all(
-          batch.map(async (entry) => {
-            try {
-              const response = await fetch('/api/translate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  text: entry.original,
-                  sourceLanguage: 'en',
-                  targetLanguage: 'it',
-                  context: `Videogioco Danganronpa. Tipo: ${entry.type}. File: ${entry.file}`,
-                }),
-              });
-
-              if (response.ok) {
-                const data = await response.json();
-                return { original: entry.original, translation: data.translatedText };
-              }
-              return null;
-            } catch {
-              return null;
-            }
-          })
-        );
-
-        const valid = results.filter(r => r !== null);
+        // Traduzione client-side (translateSmart), non più /api/translate (stub 501).
+        let valid: { original: string; translation: string }[] = [];
+        try {
+          const { translateSmart } = await import('@/lib/ai/ai-translate-direct');
+          const result = await translateSmart({
+            texts: batch.map(e => e.original),
+            sourceLanguage: 'en',
+            targetLanguage: 'it',
+            context: 'Videogioco Danganronpa (estrazione WAD).',
+          });
+          valid = batch
+            .map((entry, idx) => {
+              const tr = result.translations[idx];
+              return tr ? { original: entry.original, translation: tr } : null;
+            })
+            .filter((r): r is { original: string; translation: string } => r !== null);
+        } catch {
+          valid = [];
+        }
         if (valid.length > 0) {
           setEntries(prev => {
             const updated = [...prev];

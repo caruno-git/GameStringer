@@ -161,3 +161,63 @@ pub async fn supabase_proxy_fetch(
         body,
     })
 }
+
+// ─── POST JSON generico (provider LLM cloud) ─────────────────────────────────
+//
+// I provider LLM (OpenAI, DeepSeek, Groq…) di norma NON mandano header CORS, quindi
+// una fetch diretta dal webview fallisce. Instradando la POST da Rust il vincolo CORS
+// non esiste. Il frontend passa url + header (incluso Authorization) + body JSON.
+
+#[derive(Serialize)]
+pub struct HttpJsonResponse {
+    pub status: u16,
+    pub ok: bool,
+    pub body: String,
+}
+
+#[tauri::command]
+pub async fn http_post_json(
+    url: String,
+    headers: Option<HashMap<String, String>>,
+    body: String,
+    timeout_ms: Option<u64>,
+) -> Result<HttpJsonResponse, String> {
+    if url.is_empty() {
+        return Err("URL vuoto".into());
+    }
+
+    let client = Client::builder()
+        .timeout(Duration::from_millis(timeout_ms.unwrap_or(120_000)))
+        .redirect(reqwest::redirect::Policy::limited(5))
+        .build()
+        .map_err(|e| format!("Client HTTP: {}", e))?;
+
+    let mut rb = client.post(&url);
+    let mut has_content_type = false;
+    if let Some(h) = headers {
+        for (k, v) in &h {
+            if k.eq_ignore_ascii_case("content-type") {
+                has_content_type = true;
+            }
+            rb = rb.header(k.as_str(), v.as_str());
+        }
+    }
+    if !has_content_type {
+        rb = rb.header("Content-Type", "application/json");
+    }
+
+    let resp = rb
+        .body(body)
+        .send()
+        .await
+        .map_err(|e| format!("POST {}: {}", url, e))?;
+
+    let status = resp.status();
+    let text = resp.text().await.map_err(|e| format!("Lettura body: {}", e))?;
+
+    Ok(HttpJsonResponse {
+        status: status.as_u16(),
+        ok: status.is_success(),
+        body: text,
+    })
+}

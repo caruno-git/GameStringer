@@ -3,6 +3,7 @@ import { type BatchHarvestResult, type HarvestInput } from '@/lib/context-harves
 import { type GameGenre } from './genre-prompts';
 import { clientLogger } from '@/lib/client-logger';
 import { ollamaFetch } from './ollama-http';
+import { httpPostJson } from './http-proxy';
 import { isTauri } from '@/lib/tauri-api';
 
 // Extracted modules
@@ -308,19 +309,17 @@ async function translateWithGroqGptOss(
 ): Promise<string[]> {
   const prompt = buildTranslationPrompt(opts);
 
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
+  // POST via backend Rust (aggira il CORS del webview per le API cloud).
+  const res = await httpPostJson(
+    'https://api.groq.com/openai/v1/chat/completions',
+    { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+    JSON.stringify({
       model: 'openai/gpt-oss-120b',
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.3,
       max_tokens: 8192,
     }),
-  });
+  );
 
   if (res.status === 429) {
     throw new Error(`RateLimit`);
@@ -351,31 +350,28 @@ async function translateWithOpenAI(
 ): Promise<string[]> {
   const prompt = buildTranslationPrompt(opts);
 
-  // Usa proxy server-side per evitare CORS
-  const res = await fetch('/api/llm-proxy', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-GS-Client': 'gamestringer' },
-    body: JSON.stringify({
-      endpoint: 'https://api.openai.com/v1/chat/completions',
-      apiKey,
-      payload: {
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.3,
-        max_tokens: 8192,
-      },
+  // POST diretta al provider via backend Rust (aggira il CORS del webview).
+  // Sostituisce il vecchio /api/llm-proxy (ora stub 501 nel build statico).
+  const res = await httpPostJson(
+    'https://api.openai.com/v1/chat/completions',
+    { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+    JSON.stringify({
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.3,
+      max_tokens: 8192,
     }),
-  });
+  );
 
   if (!res.ok) {
     const errData = await res.json().catch(() => ({}));
-    const status = errData?.status || res.status;
+    const status = res.status;
     if (status === 429) {
       blockProvider('openai', false);
       throw new Error('RateLimit');
     }
     blockProvider('openai');
-    throw new Error(`OpenAI ${status}: ${errData?.error || res.statusText}`);
+    throw new Error(`OpenAI ${status}: ${errData?.error?.message || errData?.error || status}`);
   }
 
   const data = await res.json();
