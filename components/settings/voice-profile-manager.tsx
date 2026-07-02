@@ -25,6 +25,7 @@ import {
   setDefaultVoiceProfile,
   extractVoiceProfilesFromStrings,
 } from '@/lib/voice/voice-profiles';
+import { useTranslation } from '@/lib/i18n';
 
 const TONE_OPTIONS: { value: VoiceTone; label: string }[] = [
   { value: 'formal', label: 'Formale' },
@@ -67,6 +68,7 @@ interface VoiceProfileManagerProps {
 }
 
 export function VoiceProfileManager({ gameId, gameStrings }: VoiceProfileManagerProps) {
+  const { t } = useTranslation();
   const [profiles, setProfiles] = useState<VoiceProfile[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [editingProfile, setEditingProfile] = useState<Partial<VoiceProfile> | null>(null);
@@ -136,20 +138,16 @@ export function VoiceProfileManager({ gameId, gameStrings }: VoiceProfileManager
       <CardHeader>
         <CardTitle as="h2" className="flex items-center gap-2 text-base">
           <Mic className="h-5 w-5" />
-          Profili Voce Personaggi
-        </CardTitle>
+          {t('voiceProfileManager.title')}</CardTitle>
         <CardDescription>
-          Preserva la personalità e lo stile dei personaggi durante la traduzione.
-          I profili voce vengono iniettati automaticamente nel prompt di traduzione.
-        </CardDescription>
+          {t('voiceProfileManager.subtitle')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Actions */}
         <div className="flex items-center gap-2 flex-wrap">
           <Button variant="outline" size="sm" onClick={handleCreateProfile}>
             <Plus className="h-3.5 w-3.5 mr-1.5" />
-            Nuovo Profilo
-          </Button>
+            {t('voiceProfileManager.newProfile')}</Button>
           {gameId && gameStrings && gameStrings.length > 0 && (
             <Button variant="outline" size="sm" onClick={handleAutoExtract} disabled={isExtracting}>
               <Sparkles className="h-3.5 w-3.5 mr-1.5" />
@@ -158,8 +156,7 @@ export function VoiceProfileManager({ gameId, gameStrings }: VoiceProfileManager
           )}
           {profiles.length > 0 && (
             <Badge variant="secondary" className="text-xs">
-              {profiles.length} profili
-            </Badge>
+              {profiles.length}  {t('voiceProfileManager.profilesUnit')}</Badge>
           )}
         </div>
 
@@ -167,8 +164,8 @@ export function VoiceProfileManager({ gameId, gameStrings }: VoiceProfileManager
         {profiles.length === 0 && !editingProfile && (
           <div className="text-center py-8 text-sm text-muted-foreground">
             <Mic className="h-8 w-8 mx-auto mb-2 opacity-30" />
-            <p>Nessun profilo voce configurato.</p>
-            <p className="text-xs mt-1">Crea un profilo manualmente o estrai automaticamente dalle stringhe del gioco.</p>
+            <p>{t('voiceProfileManager.noProfiles')}</p>
+            <p className="text-xs mt-1">{t('voiceProfileManager.noProfilesDesc')}</p>
           </div>
         )}
 
@@ -182,16 +179,16 @@ export function VoiceProfileManager({ gameId, gameStrings }: VoiceProfileManager
             
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label className="text-xs">Nome Personaggio</Label>
+                <Label className="text-xs">{t('voiceProfileManager.characterName')}</Label>
                 <Input
                   value={editingProfile.characterName || ''}
                   onChange={(e) => setEditingProfile({ ...editingProfile, characterName: e.target.value })}
-                  placeholder="es. Gandalf"
+                  placeholder={t('voiceProfileManager.namePh')}
                   className="h-8 text-sm"
                 />
               </div>
               <div className="space-y-1">
-                <Label className="text-xs">Tono</Label>
+                <Label className="text-xs">{t('voiceProfileManager.tone')}</Label>
                 <Select
                   value={editingProfile.tone || 'casual'}
                   onValueChange={(v) => setEditingProfile({ ...editingProfile, tone: v as VoiceTone })}
@@ -203,7 +200,7 @@ export function VoiceProfileManager({ gameId, gameStrings }: VoiceProfileManager
                 </Select>
               </div>
               <div className="space-y-1">
-                <Label className="text-xs">Formalità</Label>
+                <Label className="text-xs">{t('voiceProfileManager.formality')}</Label>
                 <Select
                   value={editingProfile.formality || 'neutral'}
                   onValueChange={(v) => setEditingProfile({ ...editingProfile, formality: v as VoiceFormality })}
@@ -215,7 +212,7 @@ export function VoiceProfileManager({ gameId, gameStrings }: VoiceProfileManager
                 </Select>
               </div>
               <div className="space-y-1">
-                <Label className="text-xs">Età</Label>
+                <Label className="text-xs">{t('voiceProfileManager.age')}</Label>
                 <Select
                   value={editingProfile.ageGroup || 'adult'}
                   onValueChange={(v) => setEditingProfile({ ...editingProfile, ageGroup: v as VoiceAgeGroup })}
@@ -229,42 +226,40 @@ export function VoiceProfileManager({ gameId, gameStrings }: VoiceProfileManager
             </div>
 
             <div className="space-y-1">
-              <Label className="text-xs">Personalità</Label>
+              <Label className="text-xs">{t('voiceProfileManager.personality')}</Label>
               <Input
                 value={editingProfile.personality || ''}
                 onChange={(e) => setEditingProfile({ ...editingProfile, personality: e.target.value })}
-                placeholder="es. Un saggio mago che parla per enigmi"
+                placeholder={t('voiceProfileManager.personalityPh')}
                 className="h-8 text-sm"
               />
             </div>
 
             <div className="space-y-1">
-              <Label className="text-xs">Pattern Vocali (separati da ;)</Label>
+              <Label className="text-xs">{t('voiceProfileManager.voicePatterns')}</Label>
               <Input
                 value={editingProfile.speechPatterns?.join('; ') || ''}
                 onChange={(e) => setEditingProfile({ ...editingProfile, speechPatterns: e.target.value.split(';').map(s => s.trim()).filter(Boolean) })}
-                placeholder="es. Usa parole arcaiche; Parola lentamente; Referenze alla natura"
+                placeholder={t('voiceProfileManager.patternsPh')}
                 className="h-8 text-sm"
               />
             </div>
 
             <div className="space-y-1">
-              <Label className="text-xs">Catchphrases (separati da ;)</Label>
+              <Label className="text-xs">{t('voiceProfileManager.catchphrasesField')}</Label>
               <Input
                 value={editingProfile.catchphrases?.join('; ') || ''}
                 onChange={(e) => setEditingProfile({ ...editingProfile, catchphrases: e.target.value.split(';').map(s => s.trim()).filter(Boolean) })}
-                placeholder="es. Per gli dei!; Hmm, interessante..."
+                placeholder={t('voiceProfileManager.catchphrasesPh')}
                 className="h-8 text-sm"
               />
             </div>
 
             <div className="flex gap-2 pt-1">
               <Button size="sm" onClick={handleSaveProfile} disabled={!editingProfile.characterName}>
-                Salva
-              </Button>
+                {t('voiceProfileManager.save')}</Button>
               <Button size="sm" variant="ghost" onClick={() => setEditingProfile(null)}>
-                Annulla
-              </Button>
+                {t('voiceProfileManager.cancel')}</Button>
             </div>
           </div>
         )}
@@ -280,7 +275,7 @@ export function VoiceProfileManager({ gameId, gameStrings }: VoiceProfileManager
                 <User className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm font-medium">{profile.characterName}</span>
                 {profile.autoExtracted && (
-                  <Badge variant="outline" className="text-[10px] px-1 py-0">Auto</Badge>
+                  <Badge variant="outline" className="text-[10px] px-1 py-0">{t('voiceProfileManager.auto')}</Badge>
                 )}
                 {defaultId === profile.id && (
                   <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />
@@ -298,42 +293,42 @@ export function VoiceProfileManager({ gameId, gameStrings }: VoiceProfileManager
               <div className="px-3 pb-3 space-y-2 border-t">
                 <div className="pt-2 grid grid-cols-3 gap-2 text-xs">
                   <div>
-                    <span className="text-muted-foreground">Formalità:</span>{' '}
+                    <span className="text-muted-foreground">{t('voiceProfileManager.formalityLabel')}</span>{' '}
                     {FORMALITY_OPTIONS.find(f => f.value === profile.formality)?.label}
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Età:</span>{' '}
+                    <span className="text-muted-foreground">{t('voiceProfileManager.ageLabel')}</span>{' '}
                     {AGE_OPTIONS.find(a => a.value === profile.ageGroup)?.label}
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Confidenza:</span>{' '}
+                    <span className="text-muted-foreground">{t('voiceProfileManager.confidenceLabel')}</span>{' '}
                     {Math.round(profile.confidence * 100)}%
                   </div>
                 </div>
                 
                 {profile.personality && (
-                  <p className="text-xs text-muted-foreground italic">&quot;{profile.personality}&quot;</p>
+                  <p className="text-xs text-muted-foreground italic">"{profile.personality}"</p>
                 )}
                 
                 {profile.speechPatterns.length > 0 && (
                   <div className="text-xs">
-                    <span className="text-muted-foreground">Pattern:</span>{' '}
+                    <span className="text-muted-foreground">{t('voiceProfileManager.patternLabel')}</span>{' '}
                     {profile.speechPatterns.join(', ')}
                   </div>
                 )}
                 
                 {profile.catchphrases.length > 0 && (
                   <div className="text-xs">
-                    <span className="text-muted-foreground">Catchphrases:</span>{' '}
+                    <span className="text-muted-foreground">{t('voiceProfileManager.catchphrasesLabel')}</span>{' '}
                     {profile.catchphrases.map(c => `"${c}"`).join(', ')}
                   </div>
                 )}
 
                 {profile.sampleDialogues.length > 0 && (
                   <div className="text-xs space-y-0.5">
-                    <span className="text-muted-foreground">Dialoghi di esempio:</span>
+                    <span className="text-muted-foreground">{t('voiceProfileManager.exampleDialogues')}</span>
                     {profile.sampleDialogues.slice(0, 3).map((d, i) => (
-                      <div key={i} className="pl-3 text-muted-foreground">• &quot;{d}&quot;</div>
+                      <div key={i} className="pl-3 text-muted-foreground">• "{d}"</div>
                     ))}
                   </div>
                 )}
@@ -347,12 +342,10 @@ export function VoiceProfileManager({ gameId, gameStrings }: VoiceProfileManager
                     setEditingProfile({ ...profile });
                   }}>
                     <Edit3 className="h-3 w-3 mr-1" />
-                    Modifica
-                  </Button>
+                    {t('voiceProfileManager.edit')}</Button>
                   <Button variant="ghost" size="sm" className="h-6 text-xs text-destructive" onClick={() => handleDelete(profile.id)}>
                     <Trash2 className="h-3 w-3 mr-1" />
-                    Elimina
-                  </Button>
+                    {t('voiceProfileManager.deleteBtn')}</Button>
                 </div>
               </div>
             )}
