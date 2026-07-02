@@ -1987,7 +1987,8 @@ async fn install_with_ipa(game_dir: &Path, exe_path: &Path, target_lang: &str, m
     
     // 3. Scarica XUnity versione IPA
     steps.push("Download XUnity.AutoTranslator (IPA)...".to_string());
-    match download_and_extract(XUNITY_IPA_URL, game_dir).await {
+    let ipa_url = resolve_gh_asset("bbepis/XUnity.AutoTranslator", &["ipa", ".zip"], &["il2cpp"], XUNITY_IPA_URL).await;
+    match download_and_extract(&ipa_url, game_dir).await {
         Ok(_) => steps.push("✓ XUnity.AutoTranslator installato".to_string()),
         Err(e) => return Err(format!("Errore installazione XUnity: {}", e)),
     }
@@ -2122,7 +2123,8 @@ pub async fn install_unity_autotranslator(game_path: String, game_exe_name: Stri
 
     // 2. Scarica e Installa XUnity.AutoTranslator
     steps.push("Download XUnity.AutoTranslator...".to_string());
-    match download_and_extract(xunity_url, game_dir).await {
+    let xunity_url = resolve_gh_asset("bbepis/XUnity.AutoTranslator", &["bepinex", ".zip"], &["il2cpp", "ipa"], xunity_url).await;
+    match download_and_extract(&xunity_url, game_dir).await {
         Ok(_) => steps.push("✓ XUnity.AutoTranslator installato".to_string()),
         Err(e) => return Err(format!("Errore installazione XUnity: {}", e)),
     }
@@ -2194,12 +2196,14 @@ async fn install_il2cpp_patch(game_dir: &Path, lang: &str, mode: &str, is_64bit:
 
     // 2. Scarica XUnity IL2CPP
     steps.push("Download XUnity.AutoTranslator IL2CPP...".to_string());
-    match download_and_extract(XUNITY_IL2CPP_URL, game_dir).await {
+    let xunity_il2cpp_url = resolve_gh_asset("bbepis/XUnity.AutoTranslator", &["il2cpp", ".zip"], &[], XUNITY_IL2CPP_URL).await;
+    match download_and_extract(&xunity_il2cpp_url, game_dir).await {
         Ok(_) => steps.push("✓ XUnity.AutoTranslator IL2CPP installato".to_string()),
         Err(e) => {
             // Fallback: prova versione standard (potrebbe funzionare con alcuni giochi)
             steps.push(format!("⚠ XUnity IL2CPP non disponibile ({}), provo versione standard...", e));
-            match download_and_extract(XUNITY_URL, game_dir).await {
+            let xunity_std_url = resolve_gh_asset("bbepis/XUnity.AutoTranslator", &["bepinex", ".zip"], &["il2cpp", "ipa"], XUNITY_URL).await;
+            match download_and_extract(&xunity_std_url, game_dir).await {
                 Ok(_) => steps.push("✓ XUnity.AutoTranslator (standard) installato".to_string()),
                 Err(e2) => return Err(format!("Errore installazione XUnity: {}", e2)),
             }
@@ -2383,7 +2387,8 @@ async fn ensure_tmp_fonts(game_dir: &Path, lang: &str, tmp_font: &str, steps: &m
         let _ = fs::create_dir_all(&cache_dir);
         steps.push("Download TMP Font AssetBundles (~129MB, solo la prima volta)...".to_string());
         let archive_path = cache_dir.join("TMP_Font_AssetBundles.7z");
-        match download_to_file(TMP_FONTS_URL, &archive_path).await {
+        let tmp_fonts_url = resolve_gh_asset("bbepis/XUnity.AutoTranslator", &["tmp", "font"], &[], TMP_FONTS_URL).await;
+        match download_to_file(&tmp_fonts_url, &archive_path).await {
             Ok(_) => match sevenz_rust::decompress_file(&archive_path, &cache_dir) {
                 Ok(_) => {
                     let _ = fs::remove_file(&archive_path);
@@ -2421,6 +2426,59 @@ fn find_file_recursive(dir: &Path, name: &str) -> Option<std::path::PathBuf> {
         }
     }
     None
+}
+
+/// Risolve dinamicamente l'URL di un asset di release GitHub, per non dipendere da nomi
+/// file/versioni hardcoded (che si rompono quando la release cambia — vedi UABEA 404).
+/// Cerca l'asset il cui nome (lowercase) contiene TUTTE le `contains` e NESSUNA delle
+/// `excludes`; prova /releases/latest e poi la lista (per asset su release più vecchie o
+/// pre-release). Se non trova nulla ritorna `fallback` (l'URL pinnato corrente): così la
+/// conversione è sempre sicura, al massimo ricade sul comportamento attuale.
+async fn resolve_gh_asset(repo: &str, contains: &[&str], excludes: &[&str], fallback: &str) -> String {
+    let apis = [
+        format!("https://api.github.com/repos/{}/releases/latest", repo),
+        format!("https://api.github.com/repos/{}/releases?per_page=30", repo),
+    ];
+    let client = Client::new();
+    for api in &apis {
+        let resp = match client
+            .get(api)
+            .header("Accept", "application/vnd.github+json")
+            .header("User-Agent", "GameStringer-Downloader")
+            .send()
+            .await
+        {
+            Ok(r) if r.status().is_success() => r,
+            _ => continue,
+        };
+        let json: serde_json::Value = match resp.json().await {
+            Ok(j) => j,
+            Err(_) => continue,
+        };
+        let releases: Vec<serde_json::Value> = if json.is_array() {
+            json.as_array().cloned().unwrap_or_default()
+        } else {
+            vec![json]
+        };
+        for release in &releases {
+            let assets = match release.get("assets").and_then(|a| a.as_array()) {
+                Some(a) => a,
+                None => continue,
+            };
+            for a in assets {
+                let name = a.get("name").and_then(|v| v.as_str()).unwrap_or("").to_lowercase();
+                let dl = a.get("browser_download_url").and_then(|v| v.as_str()).unwrap_or("");
+                if dl.is_empty() {
+                    continue;
+                }
+                if contains.iter().all(|c| name.contains(c)) && !excludes.iter().any(|e| name.contains(e)) {
+                    return dl.to_string();
+                }
+            }
+        }
+    }
+    log::warn!("resolve_gh_asset({}): nessun asset per {:?} (escl. {:?}), uso fallback", repo, contains, excludes);
+    fallback.to_string()
 }
 
 /// Scarica un file di grandi dimensioni in streaming (senza tenerlo tutto in RAM).
