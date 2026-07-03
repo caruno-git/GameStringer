@@ -1,4 +1,27 @@
 {
+  "visualTranslationEditor": {
+    "screenshotLoaded": "Screenshot loaded",
+    "imageExported": "Image exported",
+    "title": "Visual Translation Editor",
+    "subtitle": "Preview translations on game screenshots",
+    "loadScreenshot": "Load Screenshot",
+    "export": "Export",
+    "browse": "Browse",
+    "addText": "Add Text",
+    "duplicate": "Duplicate",
+    "deleteBtn": "Delete",
+    "overlayUnit": "overlay",
+    "overlaysLabel": "Overlay",
+    "noOverlays": "No overlays",
+    "properties": "Properties",
+    "bgOpacity": "Background Opacity:",
+    "quickStyles": "Quick Styles",
+    "exportDesc": "Choose how to export your work",
+    "exportImage": "Export as Image (PNG)",
+    "saveProject": "Save Project (.gsvte)",
+    "close": "Close",
+    "gameNamePh": "Game name"
+  },
   "fineTuningManager": {
     "title": "Fine-Tuning Infrastructure",
     "subtitle": "Generate training datasets from your human corrections and manage custom per-game models.",

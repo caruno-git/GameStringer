@@ -228,7 +228,7 @@ export function VisualTranslationEditor() {
         setImageData(event.target?.result as string);
         setOverlays([]);
         setSelectedOverlay(null);
-        toast.success('Screenshot loaded');
+        toast.success(t('visualTranslationEditor.screenshotLoaded'));
       };
       img.src = event.target?.result as string;
     };
@@ -358,7 +358,7 @@ export function VisualTranslationEditor() {
     link.download = `${projectName.replace(/\s+/g, '_')}_preview.png`;
     link.href = canvasRef.current.toDataURL('image/png');
     link.click();
-    toast.success('Image exported');
+    toast.success(t('visualTranslationEditor.imageExported'));
   };
 
   const exportProject = () => {
@@ -419,17 +419,14 @@ export function VisualTranslationEditor() {
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <ImageIcon className="h-7 w-7 text-pink-500" />
-            Visual Translation Editor
-          </h1>
+            {t('visualTranslationEditor.title')}</h1>
           <p className="text-muted-foreground">
-            Preview translations on game screenshots
-          </p>
+            {t('visualTranslationEditor.subtitle')}</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
             <Upload className="h-4 w-4 mr-2" />
-            Load Screenshot
-          </Button>
+            {t('visualTranslationEditor.loadScreenshot')}</Button>
           <input
             ref={fileInputRef}
             type="file"
@@ -439,8 +436,7 @@ export function VisualTranslationEditor() {
           />
           <Button variant="outline" onClick={() => setShowExportDialog(true)} disabled={!image}>
             <Download className="h-4 w-4 mr-2" />
-            Esporta
-          </Button>
+            {t('visualTranslationEditor.export')}</Button>
         </div>
       </div>
 
@@ -461,7 +457,7 @@ export function VisualTranslationEditor() {
                     value={gameName}
                     onChange={(e) => setGameName(e.target.value)}
                     className="w-36 h-8"
-                    placeholder="Game name"
+                    placeholder={t('visualTranslationEditor.gameNamePh')}
                   />
                 </div>
                 <div className="flex items-center gap-2">
@@ -514,8 +510,7 @@ export function VisualTranslationEditor() {
                       onClick={() => fileInputRef.current?.click()}
                     >
                       <FolderOpen className="h-4 w-4 mr-2" />
-                      Browse
-                    </Button>
+                      {t('visualTranslationEditor.browse')}</Button>
                   </div>
                 )}
               </div>
@@ -529,24 +524,21 @@ export function VisualTranslationEditor() {
                     onClick={() => setIsAddingOverlay(!isAddingOverlay)}
                   >
                     <Plus className="h-4 w-4 mr-1" />
-                    Add Text
-                  </Button>
+                    {t('visualTranslationEditor.addText')}</Button>
                   {selectedOverlay && (
                     <>
                       <Separator orientation="vertical" className="h-6" />
                       <Button variant="outline" size="sm" onClick={duplicateSelectedOverlay}>
                         <Copy className="h-4 w-4 mr-1" />
-                        Duplicate
-                      </Button>
+                        {t('visualTranslationEditor.duplicate')}</Button>
                       <Button variant="outline" size="sm" onClick={deleteSelectedOverlay}>
                         <Trash2 className="h-4 w-4 mr-1" />
-                        Delete
-                      </Button>
+                        {t('visualTranslationEditor.deleteBtn')}</Button>
                     </>
                   )}
                   <div className="flex-1" />
                   <Badge variant="outline">
-                    {overlays.length} overlay{overlays.length !== 1 ? 's' : ''}
+                    {overlays.length}  {t('visualTranslationEditor.overlayUnit')}{overlays.length !== 1 ? 's' : ''}
                   </Badge>
                 </div>
               )}
@@ -561,15 +553,14 @@ export function VisualTranslationEditor() {
             <CardHeader className="pb-2">
               <CardTitle className="text-sm flex items-center gap-2">
                 <Layers className="h-4 w-4" />
-                Overlay ({overlays.length})
+                {t('visualTranslationEditor.overlaysLabel')} ({overlays.length})
               </CardTitle>
             </CardHeader>
             <CardContent>
               <ScrollArea className="h-[150px]">
                 {overlays.length === 0 ? (
                   <p className="text-sm text-muted-foreground text-center py-4">
-                    No overlays
-                  </p>
+                    {t('visualTranslationEditor.noOverlays')}</p>
                 ) : (
                   <div className="space-y-1">
                     {overlays.map((overlay, _index) => (
@@ -614,8 +605,7 @@ export function VisualTranslationEditor() {
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm flex items-center gap-2">
                   <Edit3 className="h-4 w-4" />
-                  Proprietà
-                </CardTitle>
+                  {t('visualTranslationEditor.properties')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -752,7 +742,7 @@ export function VisualTranslationEditor() {
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="text-xs">Opacità Sfondo: {Math.round(selectedOverlayData.backgroundOpacity * 100)}%</Label>
+                  <Label className="text-xs">{t('visualTranslationEditor.bgOpacity')} {Math.round(selectedOverlayData.backgroundOpacity * 100)}%</Label>
                   <Slider
                     value={[selectedOverlayData.backgroundOpacity * 100]}
                     onValueChange={([v]) => updateSelectedOverlay({ backgroundOpacity: v / 100 })}
@@ -790,8 +780,7 @@ export function VisualTranslationEditor() {
             <CardHeader className="pb-2">
               <CardTitle className="text-sm flex items-center gap-2">
                 <Palette className="h-4 w-4" />
-                Stili Rapidi
-              </CardTitle>
+                {t('visualTranslationEditor.quickStyles')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-2">
@@ -826,18 +815,15 @@ export function VisualTranslationEditor() {
           <DialogHeader>
             <DialogTitle>{t('visualTranslationEditorComp.exportProject')}</DialogTitle>
             <DialogDescription>
-              Choose how to export your work
-            </DialogDescription>
+              {t('visualTranslationEditor.exportDesc')}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <Button className="w-full" onClick={exportImage}>
               <ImageIcon className="h-4 w-4 mr-2" />
-              Export as Image (PNG)
-            </Button>
+              {t('visualTranslationEditor.exportImage')}</Button>
             <Button variant="outline" className="w-full" onClick={exportProject}>
               <Save className="h-4 w-4 mr-2" />
-              Save Project (.gsvte)
-            </Button>
+              {t('visualTranslationEditor.saveProject')}</Button>
             <Separator />
             <div>
               <Label className="text-sm">{t('visualTranslationEditorComp.importProject')}</Label>
@@ -851,8 +837,7 @@ export function VisualTranslationEditor() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowExportDialog(false)}>
-              Close
-            </Button>
+              {t('visualTranslationEditor.close')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
