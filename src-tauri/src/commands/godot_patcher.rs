@@ -156,10 +156,10 @@ fn read_pck(data: &[u8]) -> Result<PckInfo, String> {
     let godot_patch = read_u32(data, &mut offset)?;
 
     // Layout header (verificato sul source Godot core/io/file_access_pack.cpp,
-    // valido per format v2=Godot4.0-4.3 e v3=Godot4.4+): dopo la versione vengono
-    // pack_flags(u32) e file_base(u64), poi 16 u32 reserved, poi SUBITO file_count
-    // e le directory entries. NON esiste alcun "dir_offset" separato (era un bug del
-    // parser precedente: leggeva 8 byte in più → disallineava ogni pck reale).
+    // branch 4.5): dopo la versione → pack_flags(u32) e file_base(u64). Poi cambia:
+    //  - V1/V2 (Godot ≤4.3): 16 u32 reserved, poi file_count e directory IN-LINE.
+    //  - V3 (Godot 4.4+): un dir_offset(u64) che punta alla directory, spesso IN FONDO
+    //    al file; si fa seek lì per leggere file_count + entries.
     let mut flags = 0u32;
     let mut files_base: u64 = 0;
 
@@ -174,9 +174,19 @@ fn read_pck(data: &[u8]) -> Result<PckInfo, String> {
         return Err("PCK con directory criptata (AES): estrazione non supportata senza la chiave del gioco".into());
     }
 
-    // Reserved (16 x u32 = 64 bytes)
-    for _ in 0..16 {
-        read_u32(data, &mut offset)?;
+    if pack_version >= 3 {
+        // V3: dir_offset (relativo all'inizio del pck; `data` parte già dal magic,
+        // quindi lo usiamo direttamente). Salta alla directory.
+        let dir_offset = read_u64(data, &mut offset)? as usize;
+        if dir_offset >= data.len() {
+            return Err(format!("dir_offset ({}) oltre i dati disponibili ({} byte): pck troncato o serve il file intero", dir_offset, data.len()));
+        }
+        offset = dir_offset;
+    } else {
+        // V1/V2: 16 u32 reserved, poi la directory in-line.
+        for _ in 0..16 {
+            read_u32(data, &mut offset)?;
+        }
     }
 
     let file_count = read_u32(data, &mut offset)?;
@@ -259,12 +269,15 @@ fn create_pck(
     godot_minor: u32,
     godot_patch: u32,
 ) -> Vec<u8> {
-    // Godot 4.4+ accetta SOLO pack_format_version 3; 4.0-4.3 usano v2. Il writer
-    // produce il formato "directory-first" reale di Godot (header → flags → file_base
-    // → 16 reserved → file_count → directory entries → dati a file_base), verificato
-    // sul source core/io/file_access_pack.cpp. Con REL_FILEBASE, file_base è relativo
-    // all'inizio del pck e gli offset delle entry sono relativi a file_base.
+    // Godot 4.4+ accetta SOLO pack_format_version 3; 4.0-4.3 usano v2 (verificato sul
+    // source core/io/file_access_pack.cpp branch 4.5). Header:
+    //  - V2: magic,ver,maj,min,patch, flags(u32), file_base(u64), 16 reserved(u32),
+    //        poi directory (file_count + entries) IN-LINE, poi i dati a file_base.
+    //  - V3: come sopra ma dopo file_base c'è dir_offset(u64) che punta alla directory;
+    //        qui la mettiamo subito dopo l'header (dir_offset = header_size).
+    // Con REL_FILEBASE gli offset delle entry sono relativi a file_base.
     let pack_version: u32 = if godot_major > 4 || (godot_major == 4 && godot_minor >= 4) { 3 } else { 2 };
+    let is_v3 = pack_version >= 3;
     let alignment: usize = 32;
 
     // Path con lunghezza allineata a 4 (come Godot).
@@ -274,12 +287,13 @@ fn create_pck(
         (pb, *d)
     }).collect();
 
-    // Header fisso = 20 (magic+ver+maj+min+patch) + 4 (flags) + 8 (file_base)
-    // + 64 (16 reserved) + 4 (file_count) = 100 byte.
-    let header_size = 20 + 4 + 8 + 64 + 4;
-    // Directory: per entry → path_len(4) + path + ofs(8) + size(8) + md5(16) + flags(4).
-    let dir_size: usize = entries.iter().map(|(pb, _)| 4 + pb.len() + 8 + 8 + 16 + 4).sum();
-    let mut file_base = header_size + dir_size;
+    // Header: 20 (magic+ver+maj+min+patch) + 4 (flags) + 8 (file_base)
+    //         + [8 dir_offset se v3] + 64 (16 reserved).
+    let header_size = 20 + 4 + 8 + if is_v3 { 8 } else { 0 } + 64;
+    let dir_offset = header_size; // directory subito dopo l'header
+    // Directory = file_count(4) + per entry: path_len(4) + path + ofs(8) + size(8) + md5(16) + flags(4).
+    let dir_size: usize = 4 + entries.iter().map(|(pb, _)| 4 + pb.len() + 8 + 8 + 16 + 4).sum::<usize>();
+    let mut file_base = dir_offset + dir_size;
     while file_base % alignment != 0 { file_base += 1; }
 
     // Blob dati con offset (relativi a file_base), ogni file allineato.
@@ -299,10 +313,13 @@ fn create_pck(
     write_u32_le(&mut buf, godot_patch);
     write_u32_le(&mut buf, PACK_REL_FILEBASE); // flags
     write_u64_le(&mut buf, file_base as u64);  // file_base (relativo all'inizio del pck)
+    if is_v3 {
+        write_u64_le(&mut buf, dir_offset as u64); // dir_offset (relativo all'inizio del pck)
+    }
     for _ in 0..16 { write_u32_le(&mut buf, 0); } // reserved
-    write_u32_le(&mut buf, entries.len() as u32); // file_count
 
-    // Directory entries (subito dopo file_count).
+    // Directory (a dir_offset == posizione corrente).
+    write_u32_le(&mut buf, entries.len() as u32); // file_count
     for (i, (pb, d)) in entries.iter().enumerate() {
         write_u32_le(&mut buf, pb.len() as u32);
         buf.extend_from_slice(pb);
@@ -1004,6 +1021,42 @@ mod tests {
         pck[20] |= PACK_DIR_ENCRYPTED as u8;
         let err = read_pck(&pck).unwrap_err();
         assert!(err.to_lowercase().contains("cript"), "atteso errore cripta: {}", err);
+    }
+
+    // Collaudo manuale su pck reale (non gira in CI). Legge SOLO l'header+directory
+    // (i primi MB: col formato v3 la directory è in testa) e stampa i file traducibili.
+    // Esegui: cargo test --lib godot_pck_real -- --ignored --nocapture
+    #[test]
+    #[ignore]
+    fn godot_pck_real_slaythespire2() {
+        let path = r"D:\SteamLibrary\steamapps\common\Slay the Spire 2\SlayTheSpire2.pck";
+        // Nel v3 la directory è in fondo (dir_offset) → serve il file intero (~1.8 GB).
+        let data = std::fs::read(path).expect("read pck");
+        let info = read_pck(&data).expect("read_pck deve leggere il pck v3");
+        eprintln!("PCK v{} (Godot {}.{}.{}) — {} file totali",
+            info.pack_version, info.godot_major, info.godot_minor, info.godot_patch, info.file_count);
+        // Conteggio per estensione (top).
+        use std::collections::HashMap;
+        let mut by_ext: HashMap<String, usize> = HashMap::new();
+        for e in &info.files {
+            let ext = e.path.rsplit('.').next().unwrap_or("").to_lowercase();
+            *by_ext.entry(ext).or_default() += 1;
+        }
+        let mut exts: Vec<_> = by_ext.into_iter().collect();
+        exts.sort_by(|a, b| b.1.cmp(&a.1));
+        eprintln!("Estensioni top: {:?}", &exts[..exts.len().min(15)]);
+        // File di LOCALIZZAZIONE nativa (translation/po/csv/loc/lang/i18n/strings).
+        let loc: Vec<&str> = info.files.iter()
+            .filter(|e| {
+                let p = e.path.to_lowercase();
+                p.ends_with(".translation") || p.ends_with(".po") || p.ends_with(".csv")
+                    || p.contains("locale") || p.contains("/lang") || p.contains("i18n")
+                    || p.contains("localization") || p.contains("strings")
+            })
+            .map(|e| e.path.as_str()).take(30).collect();
+        eprintln!("Localizzazione nativa trovata: {} (primi 30)", loc.len());
+        for p in &loc { eprintln!("  LOC: {}", p); }
+        assert_eq!(info.pack_version, 3, "StS2 deve essere pack v3");
     }
 
     // ── read_pck error cases ────────────────────────────────────
