@@ -382,7 +382,7 @@ export function CommunityChat() {
         <div>
           <h3 className="text-lg font-semibold text-slate-200">{t('common.chatOffline')}</h3>
           <p className="text-sm text-slate-400 mt-1 max-w-md">
-            Per usare la chat, configura il backend Supabase in <strong>Impostazioni → Community Hub Backend</strong>.
+            {t('communityChat.configBackend')} <strong>{t('communityChat.settingsPath')}</strong>.
           </p>
         </div>
       </div>
@@ -404,7 +404,7 @@ export function CommunityChat() {
           updatePresence('online');
           toast.success(t('common.connessoAllaChatCommunity'));
         } else {
-          toast.error('Devi prima effettuare il login in GameStringer.');
+          toast.error(t('communityChat.mustLogin'));
         }
       } catch (e: unknown) {
         toast.error(e instanceof Error ? e.message : 'Errore connessione');
@@ -418,13 +418,11 @@ export function CommunityChat() {
         <div>
           <h3 className="text-lg font-semibold text-slate-200">{t('common.accediPerChattare')}</h3>
           <p className="text-sm text-slate-400 mt-1 max-w-md">
-            Effettua il login in GameStringer per partecipare alla chat community.
-          </p>
+            {t('communityChat.loginPrompt')}</p>
         </div>
         <Button variant="outline" size="sm" onClick={handleRetrySync} className="gap-2">
           <LogIn className="h-4 w-4" />
-          Riprova connessione
-        </Button>
+          {t('communityChat.retryConnection')}</Button>
       </div>
     );
   }
@@ -447,7 +445,7 @@ export function CommunityChat() {
       <div className="w-56 flex-shrink-0 border-r border-slate-700/50 flex flex-col">
         {/* Rooms header */}
         <div className="p-3 border-b border-slate-700/30 flex items-center justify-between">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Stanze</span>
+          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t('communityChat.rooms')}</span>
           <Button variant="ghost" size="xs" className="w-6 p-0" onClick={() => setShowNewRoom(true)}>
             <Plus className="h-3.5 w-3.5" />
           </Button>
@@ -479,7 +477,7 @@ export function CommunityChat() {
           <div className="flex items-center gap-1.5 px-1 mb-1.5">
             <Users className="h-3 w-3 text-slate-500" />
             <span className="text-2xs font-bold text-slate-500 uppercase tracking-wider">
-              Online — {onlineUsers.length}
+              {t('communityChat.onlineLabel')} {onlineUsers.length}
             </span>
           </div>
           <div className="space-y-0.5 max-h-24 overflow-y-auto">
@@ -527,7 +525,7 @@ export function CommunityChat() {
             {messages.length === 0 && (
               <div className="flex flex-col items-center justify-center h-40 text-slate-500">
                 <MessageSquare className="h-8 w-8 mb-2 opacity-30" />
-                <span className="text-sm">Nessun messaggio. Inizia la conversazione!</span>
+                <span className="text-sm">{t('communityChat.noMessages')}</span>
               </div>
             )}
             {messages.map((msg, i) => {
@@ -560,7 +558,7 @@ export function CommunityChat() {
                           {msg.authorName || 'Utente'}
                         </span>
                         <span className="text-2xs text-slate-600">{formatTime(msg.createdAt)}</span>
-                        {msg.edited && <span className="text-micro text-slate-600">(modificato)</span>}
+                        {msg.edited && <span className="text-micro text-slate-600">{t('communityChat.edited')}</span>}
                         {(() => {
                           const lang = detectLangTag(msg.content);
                           return lang ? (
@@ -573,8 +571,7 @@ export function CommunityChat() {
                     {/* Reply preview */}
                     {msg.replyTo && (
                       <div className="text-2xs text-slate-500 border-l-2 border-slate-600 pl-2 mb-0.5 truncate">
-                        ↳ risposta a un messaggio
-                      </div>
+                        {t('communityChat.replyToMessage')}</div>
                     )}
 
                     <p className="text-[13px] text-slate-300 break-words leading-relaxed">{msg.content}</p>
@@ -655,9 +652,9 @@ export function CommunityChat() {
           <div className="px-3 py-1.5 bg-slate-800/50 border-t border-slate-700/30 flex items-center justify-between">
             <span className="text-[11px] text-slate-400">
               {editingMsg ? (
-                <>✏️ Modifica messaggio</>
+                <>✏️ {t('communityChat.editMessage')}</>
               ) : (
-                <>↳ Rispondi a <strong className="text-orange-400">{replyTo?.authorName}</strong></>
+                <>{t('communityChat.replyingTo')} <strong className="text-orange-400">{replyTo?.authorName}</strong></>
               )}
             </span>
             <Button
@@ -670,8 +667,7 @@ export function CommunityChat() {
                 setMessageInput('');
               }}
             >
-              Annulla
-            </Button>
+              {t('communityChat.cancel')}</Button>
           </div>
         )}
 
@@ -716,11 +712,11 @@ export function CommunityChat() {
           </DialogHeader>
           <div className="space-y-3">
             <div>
-              <Label className="text-xs">Nome</Label>
+              <Label className="text-xs">{t('communityChat.name')}</Label>
               <Input
                 value={newRoomName}
                 onChange={(e) => setNewRoomName(e.target.value)}
-                placeholder="es. Hollow Knight IT"
+                placeholder={t('communityChat.roomNamePh')}
                 className="mt-1"
               />
             </div>
@@ -729,7 +725,7 @@ export function CommunityChat() {
               <Textarea
                 value={newRoomDesc}
                 onChange={(e) => setNewRoomDesc(e.target.value)}
-                placeholder="Di cosa si parla in questa stanza?"
+                placeholder={t('communityChat.roomDescPh')}
                 className="mt-1"
                 rows={2}
               />
@@ -741,21 +737,19 @@ export function CommunityChat() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="general">💬 Generale</SelectItem>
-                  <SelectItem value="game">🎮 Gioco specifico</SelectItem>
-                  <SelectItem value="translation_request">🌍 Richiesta traduzione</SelectItem>
-                  <SelectItem value="feedback">🐛 Feedback & Bug</SelectItem>
+                  <SelectItem value="general">💬 {t('communityChat.catGeneral')}</SelectItem>
+                  <SelectItem value="game">🎮 {t('communityChat.catGame')}</SelectItem>
+                  <SelectItem value="translation_request">🌍 {t('communityChat.catTranslation')}</SelectItem>
+                  <SelectItem value="feedback">🐛 {t('communityChat.catFeedback')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowNewRoom(false)}>
-              Annulla
-            </Button>
+              {t('communityChat.cancel')}</Button>
             <Button onClick={handleCreateRoom} disabled={!newRoomName.trim()}>
-              Crea stanza
-            </Button>
+              {t('communityChat.createRoom')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
