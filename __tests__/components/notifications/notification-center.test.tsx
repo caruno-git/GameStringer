@@ -104,7 +104,7 @@ describe('NotificationCenter', () => {
       expect(screen.getByRole('dialog')).toBeInTheDocument();
       // Il mock globale di i18n (src/test/setup.ts) restituisce la key stessa
       expect(screen.getByText('common.notifications')).toBeInTheDocument();
-      expect(screen.getByText('2 new')).toBeInTheDocument();
+      expect(screen.getByText(/2\s+notificationCenter\.newLabel/)).toBeInTheDocument();
     });
 
     it('should not render when closed', () => {
@@ -194,7 +194,7 @@ describe('NotificationCenter', () => {
     it('should have accessible search input', () => {
       render(<NotificationCenter isOpen={true} onClose={vi.fn()} />);
       
-      const searchInput = screen.getByRole('textbox', { name: /search notifications/i });
+      const searchInput = screen.getByRole('textbox', { name: 'notificationCenter.searchAria' });
       expect(searchInput).toHaveAttribute('aria-describedby', 'search-help');
     });
   });
