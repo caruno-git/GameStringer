@@ -309,6 +309,14 @@ export default function EditorPage() {
   const { toast } = useToast();
   const { t } = useTranslation();
 
+  // Mount-guard: con output:'export' Next prerenderizza questa pagina a build-time.
+  // Alcuni componenti client (framer-motion, Radix Select/Popover) durante il
+  // prerender SSR possono schedulare uno setState che tocca `window` → build
+  // flaky ("window is not defined"). Rendendo solo un loader finché non montati
+  // lato client, il prerender resta deterministico e non esegue codice unsafe.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
   // --- Derived State ---
   const filteredTranslations = useMemo(() => {
     return translations.filter(t => {
@@ -935,6 +943,15 @@ export default function EditorPage() {
       default: return null;
     }
   };
+
+  // Prima del mount lato client, render minimale SSR-safe (vedi mount-guard sopra).
+  if (!mounted) {
+    return (
+      <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
+        <Loader2 className="h-6 w-6 animate-spin text-indigo-400" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] bg-transparent overflow-hidden">
