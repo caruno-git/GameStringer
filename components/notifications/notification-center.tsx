@@ -685,7 +685,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
           <div className="px-4 py-2 bg-muted/50 border-b text-sm text-muted-foreground">
             {t('notificationCenter.showing')} {processedNotifications.length}  {t('notificationCenter.of')} {notifications.length}  {t('notificationCenter.notificationsUnit')}{searchQuery && (
               <span className="ml-2">
-                • {t('notificationCenter.searchColon')} "{searchQuery}"</span>
+                • {t('notificationCenter.searchColon')} {'"'}{searchQuery}{'"'}</span>
             )}
           </div>
         )}

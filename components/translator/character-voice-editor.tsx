@@ -488,7 +488,7 @@ export function CharacterVoiceEditor({ gameId, onProfileSelect }: CharacterVoice
                   </div>
                   {selectedProfile.patterns.catchphrases.length > 0 && (
                     <p className="text-xs text-gray-400 mt-2 italic">
-                      "{selectedProfile.patterns.catchphrases[0]}"
+                      {'"'}{selectedProfile.patterns.catchphrases[0]}{'"'}
                     </p>
                   )}
                 </div>

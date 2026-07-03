@@ -307,7 +307,7 @@ export function VoiceProfileManager({ gameId, gameStrings }: VoiceProfileManager
                 </div>
                 
                 {profile.personality && (
-                  <p className="text-xs text-muted-foreground italic">"{profile.personality}"</p>
+                  <p className="text-xs text-muted-foreground italic">{'"'}{profile.personality}{'"'}</p>
                 )}
                 
                 {profile.speechPatterns.length > 0 && (
@@ -328,7 +328,7 @@ export function VoiceProfileManager({ gameId, gameStrings }: VoiceProfileManager
                   <div className="text-xs space-y-0.5">
                     <span className="text-muted-foreground">{t('voiceProfileManager.exampleDialogues')}</span>
                     {profile.sampleDialogues.slice(0, 3).map((d, i) => (
-                      <div key={i} className="pl-3 text-muted-foreground">• "{d}"</div>
+                      <div key={i} className="pl-3 text-muted-foreground">• {'"'}{d}{'"'}</div>
                     ))}
                   </div>
                 )}
