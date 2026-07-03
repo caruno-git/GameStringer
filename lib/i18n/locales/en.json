@@ -849,6 +849,12 @@
     "supportedFormats": "Supported Formats"
   },
   "gameDetail": {
+    "godotDetected": "Godot game detected",
+    "godotBridgeDesc": "Translate the localization files (.csv, .po, .tres) with the Godot Translator",
+    "openGodotTranslator": "Open Godot Translator",
+    "wolfDetected": "Wolf RPG game detected",
+    "wolfBridgeDesc": "Extract and patch the game files (.dat, .wolf) with the Wolf RPG Patcher",
+    "openWolfPatcher": "Open Wolf RPG Patcher",
     "confirmRemoveUnity": "Are you sure you want to remove the Unity AutoTranslator patch?",
     "confirmRemoveTranslation": "Are you sure you want to remove the translation patch?",
     "alertSaveError": "Error saving translation",
@@ -1446,6 +1452,8 @@
     "noStrings": "No strings extracted"
   },
   "wolfrpgPatcherPage": {
+    "detected": "Detected",
+    "selectFolderTitle": "Select the Wolf RPG game folder",
     "title": "Wolf RPG Patcher",
     "subtitle": "Extract and translate Wolf RPG Editor games",
     "noStrings": "No strings extracted"
@@ -5362,6 +5370,7 @@
     "updateError": "Update error"
   },
   "gameDetails": {
+    "gameLanguages": "Game languages",
     "mbUnit": "MB ·",
     "screenshots": "Screenshots",
     "noScreenshots": "No screenshots",
@@ -6782,6 +6791,24 @@
     "stepTranslateCloud": "AI translation (Cloud)",
     "stepTranslateOllama": "AI translation (Ollama)",
     "stepApplyPatch": "Applying patch (.gs_bak)",
+    "tyranoStepDetect": "Detecting TyranoScript (app.asar)",
+    "tyranoStepExtract": "Extracting strings (.ks)",
+    "tyranoStepApply": "Backup + repack app.asar",
+    "tyranoDone": "TyranoScript: {n}/{total} strings translated. Launch the game.",
+    "tyranoNoAsar": "This Electron game does not use app.asar (resources/app folder): automatic patching is not supported.",
+    "tyranoNoStrings": "No translatable strings found in the .ks files.",
+    "tyranoError": "TyranoScript: error ({hint})",
+    "paceSlowTitle": "Slow translation: ~{eta} left at this pace",
+    "paceSlowDesc": "With a cloud API key (Settings → Translation) the job resumes from the checkpoint and finishes in minutes. Alternatively, pull a faster local model (e.g. HY-MT 1.5 1.8B) from the Model Manager.",
+    "paceSlowAction": "Open Settings",
+    "unityRouteStep": "Unity → XUnity AutoTranslator (runtime)",
+    "unityRouteDone": "BepInEx + XUnity installed. Launch the game: strings are captured and translated at runtime.",
+    "unityRouteFail": "XUnity installation failed — see the Unity panel for details.",
+    "unrealStepDetect": "Detecting localization (.locres)",
+    "unrealStepTranslate": "AI translation → pak override (_P.pak)",
+    "unrealNoLocres": "No .locres files found: this Unreal game does not expose extractable localization. Use the Unreal panel or live OCR translation.",
+    "godotRouteMsg": "Godot has no automatic pipeline in String it!: use the dedicated Godot Translator to translate the localization files (.csv, .po, .tres).",
+    "godotRouteToast": "Godot: open the Godot Translator",
     "visDone": "Visionaire: {n}/{total} strings translated. Launch the game.",
     "visError": "Visionaire: error ({hint})",
     "hintApiKey": "valid API key?",

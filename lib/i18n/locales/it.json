@@ -849,6 +849,12 @@
     "supportedFormats": "Formati Supportati"
   },
   "gameDetail": {
+    "godotDetected": "Gioco Godot rilevato",
+    "godotBridgeDesc": "Traduci i file di localizzazione (.csv, .po, .tres) con il Godot Translator",
+    "openGodotTranslator": "Apri Godot Translator",
+    "wolfDetected": "Gioco Wolf RPG rilevato",
+    "wolfBridgeDesc": "Estrai e patcha i file di gioco (.dat, .wolf) con il Wolf RPG Patcher",
+    "openWolfPatcher": "Apri Wolf RPG Patcher",
     "confirmRemoveUnity": "Sei sicuro di voler rimuovere la patch Unity AutoTranslator?",
     "confirmRemoveTranslation": "Sei sicuro di voler rimuovere la patch di traduzione?",
     "alertSaveError": "Errore salvataggio traduzione",
@@ -1446,6 +1452,8 @@
     "noStrings": "Nessuna stringa estratta"
   },
   "wolfrpgPatcherPage": {
+    "detected": "Rilevato",
+    "selectFolderTitle": "Seleziona cartella gioco Wolf RPG",
     "title": "Wolf RPG Patcher",
     "subtitle": "Estrai e traduci giochi Wolf RPG Editor",
     "noStrings": "Nessuna stringa estratta"
@@ -5362,6 +5370,7 @@
     "updateError": "Errore aggiornamento"
   },
   "gameDetails": {
+    "gameLanguages": "Lingue del gioco",
     "mbUnit": "MB ·",
     "screenshots": "Screenshot",
     "noScreenshots": "Nessuno screenshot",
@@ -6782,6 +6791,24 @@
     "stepTranslateCloud": "Traduzione AI (Cloud)",
     "stepTranslateOllama": "Traduzione AI (Ollama)",
     "stepApplyPatch": "Applicazione patch (.gs_bak)",
+    "tyranoStepDetect": "Rilevamento TyranoScript (app.asar)",
+    "tyranoStepExtract": "Estrazione stringhe (.ks)",
+    "tyranoStepApply": "Backup + repack app.asar",
+    "tyranoDone": "TyranoScript: {n}/{total} stringhe tradotte. Avvia il gioco.",
+    "tyranoNoAsar": "Questo gioco Electron non usa app.asar (cartella resources/app): la patch automatica non è supportata.",
+    "tyranoNoStrings": "Nessuna stringa traducibile trovata nei file .ks.",
+    "tyranoError": "TyranoScript: errore ({hint})",
+    "paceSlowTitle": "Traduzione lenta: a questo ritmo mancano ~{eta}",
+    "paceSlowDesc": "Con una API key cloud (Impostazioni → Traduzione) il job riparte dal checkpoint e finisce in pochi minuti. In alternativa scarica un modello locale più veloce (es. HY-MT 1.5 1.8B) dal Model Manager.",
+    "paceSlowAction": "Apri Impostazioni",
+    "unityRouteStep": "Unity → XUnity AutoTranslator (runtime)",
+    "unityRouteDone": "BepInEx + XUnity installati. Avvia il gioco: le stringhe vengono catturate e tradotte a runtime.",
+    "unityRouteFail": "Installazione XUnity non riuscita — vedi il pannello Unity per i dettagli.",
+    "unrealStepDetect": "Rilevamento localizzazione (.locres)",
+    "unrealStepTranslate": "Traduzione AI → pak override (_P.pak)",
+    "unrealNoLocres": "Nessun file .locres trovato: questo gioco Unreal non espone localizzazione estraibile. Usa il pannello Unreal o la traduzione live OCR.",
+    "godotRouteMsg": "Godot non ha una pipeline automatica in String it!: usa il Godot Translator dedicato per tradurre i file di localizzazione (.csv, .po, .tres).",
+    "godotRouteToast": "Godot: apri il Godot Translator",
     "visDone": "Visionaire: {n}/{total} stringhe tradotte. Avvia il gioco.",
     "visError": "Visionaire: errore ({hint})",
     "hintApiKey": "API key valida?",

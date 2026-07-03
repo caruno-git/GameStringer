@@ -1,6 +1,7 @@
 {
   "name": "gamestringer",
   "private": true,
+  "license": "SEE LICENSE IN LICENSE",
   "scripts": {
     "dev": "node scripts/unified-dev-with-profiles.js",
     "dev:auto": "node scripts/simple-dev.js",

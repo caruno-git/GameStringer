@@ -48,7 +48,7 @@ You don't have to write Rust or TypeScript to help:
 - **Check existing issues and PRs** to avoid duplicate work.
 - **For large changes** (new engine, new tool, refactor, API change) please [open a Discussion](https://github.com/rouges78/GameStringer/discussions) or Issue first to discuss the approach. This saves everyone time.
 - **For small fixes** (typos, one-line bugs, obvious improvements) go straight to a PR.
-- **Read the** [`LICENSE`](LICENSE) — GameStringer is **Source-Available**, not OSI open source. By contributing, you agree your contributions fall under the same license.
+- **Read the** [`LICENSE`](LICENSE) — GameStringer is **Source-Available**, not OSI open source. By contributing, you agree your contributions fall under the same license, and you grant the GameStringer maintainer a perpetual, worldwide, royalty-free right to use, modify, and re-license your contribution (including under future versions of the license or commercial terms). This keeps the project free to evolve its licensing without having to track down every past contributor.
 - **Respect the** [anti-cheat warning](README.md#-supported-game-engines): GameStringer is for **single-player / offline** games. Contributions that weaken anti-cheat safeguards or target multiplayer titles will not be merged.
 
 ---

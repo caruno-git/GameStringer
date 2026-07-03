@@ -849,6 +849,12 @@
     "supportedFormats": "Supported Formats"
   },
   "gameDetail": {
+    "godotDetected": "Godotゲームを検出",
+    "godotBridgeDesc": "ローカライズファイル（.csv、.po、.tres）をGodot Translatorで翻訳",
+    "openGodotTranslator": "Godot Translatorを開く",
+    "wolfDetected": "Wolf RPGゲームを検出",
+    "wolfBridgeDesc": "ゲームファイル（.dat、.wolf）をWolf RPG Patcherで抽出・パッチ",
+    "openWolfPatcher": "Wolf RPG Patcherを開く",
     "confirmRemoveUnity": "Are you sure you want to remove the Unity AutoTranslator patch?",
     "confirmRemoveTranslation": "Are you sure you want to remove the translation patch?",
     "alertSaveError": "Error saving translation",
@@ -989,6 +995,24 @@
     "stepTranslateCloud": "AI翻訳（クラウド）",
     "stepTranslateOllama": "AI翻訳（Ollama）",
     "stepApplyPatch": "パッチを適用中（.gs_bak）",
+    "tyranoStepDetect": "TyranoScriptを検出（app.asar）",
+    "tyranoStepExtract": "文字列を抽出（.ks）",
+    "tyranoStepApply": "バックアップ + app.asarの再パック",
+    "tyranoDone": "TyranoScript：{n}/{total}件の文字列を翻訳しました。ゲームを起動してください。",
+    "tyranoNoAsar": "このElectronゲームはapp.asarを使用していません（resources/appフォルダー）：自動パッチは非対応です。",
+    "tyranoNoStrings": ".ksファイルに翻訳可能な文字列が見つかりません。",
+    "tyranoError": "TyranoScript：エラー（{hint}）",
+    "paceSlowTitle": "翻訳が低速です：このペースでは残り約{eta}",
+    "paceSlowDesc": "クラウドAPIキー（設定 → 翻訳）を使えば、ジョブはチェックポイントから再開し数分で完了します。または、Model Managerからより高速なローカルモデル（例：HY-MT 1.5 1.8B）を取得してください。",
+    "paceSlowAction": "設定を開く",
+    "unityRouteStep": "Unity → XUnity AutoTranslator（ランタイム）",
+    "unityRouteDone": "BepInEx + XUnityをインストールしました。ゲームを起動してください：文字列は実行時にキャプチャされ翻訳されます。",
+    "unityRouteFail": "XUnityのインストールに失敗しました — 詳細はUnityパネルを確認してください。",
+    "unrealStepDetect": "ローカライズを検出（.locres）",
+    "unrealStepTranslate": "AI翻訳 → pakオーバーライド（_P.pak）",
+    "unrealNoLocres": ".locresファイルが見つかりません：このUnrealゲームは抽出可能なローカライズを公開していません。UnrealパネルまたはライブOCR翻訳を使用してください。",
+    "godotRouteMsg": "GodotにはString it!の自動パイプラインがありません：専用のGodot Translatorでローカライズファイル（.csv、.po、.tres）を翻訳してください。",
+    "godotRouteToast": "Godot：Godot Translatorを開いてください",
     "visDone": "Visionaire：{n}/{total} 文字列を翻訳しました。ゲームを起動してください。",
     "visError": "Visionaire：エラー（{hint}）",
     "hintApiKey": "APIキーは有効ですか？",
@@ -1470,6 +1494,8 @@
     "noStrings": "文字列未抽出"
   },
   "wolfrpgPatcherPage": {
+    "detected": "検出しました",
+    "selectFolderTitle": "Wolf RPGゲームフォルダーを選択",
     "title": "Wolf RPGパッチャー",
     "subtitle": "Wolf RPG Editorゲームを抽出・翻訳",
     "noStrings": "文字列未抽出"
@@ -5325,6 +5351,7 @@
     "collaborations": "コラボレーション"
   },
   "gameDetails": {
+    "gameLanguages": "ゲームの言語",
     "mbUnit": "MB ·",
     "screenshots": "スクリーンショット",
     "noScreenshots": "スクリーンショットなし",

@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import {
   Gamepad2, Settings, Search, Play, Loader2,
-  ArrowLeft, Languages, Sparkles, Image as ImageIcon, Cpu, Globe, Clock, Brain, ChevronDown, Film
+  ArrowLeft, Languages, Sparkles, Image as ImageIcon, Cpu, Globe, Clock, Brain, ChevronDown, Film, Wrench
 } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -607,7 +607,7 @@ export default function GameDetailPage() {
           clientLogger.error('Impossibile trovare cartella gioco:', String(e));
           setPatchStatus({ success: false, message: 'Cartella del gioco non trovata' });
           setIsInstallingPatch(false);
-          return;
+          return false;
         }
       }
       
@@ -684,12 +684,14 @@ export default function GameDetailPage() {
         // Refresh game detected files to see new BepInEx files
         scanGameFiles();
       }
+      return result.success;
     } catch (error: unknown) {
       clientLogger.error('Errore installazione patch:', String(error));
       setPatchStatus({
         success: false,
         message: typeof error === 'string' ? error : 'Errore sconosciuto durante l\'installazione'
       });
+      return false;
     } finally {
       setIsInstallingPatch(false);
     }
@@ -1583,6 +1585,18 @@ export default function GameDetailPage() {
     }
     if (autoTranslateRunningRef.current || autoTranslateActive) return;
 
+    // Motori con percorso DIRETTO (branch dedicato in startAutoTranslate: hero
+    // file-based o instradamento esplicito). Il gate P.T. serve solo al workflow
+    // generico (execute_complete_workflow) → per questi niente dialog, si parte.
+    {
+      const engDirect = (game.engine || engineInfo?.engine || detectEngineByName(game.name || game.title || '') || '').toLowerCase();
+      const DIRECT_ENGINES = ['hendrix', "ren'py", 'renpy', 'visionaire', 'tyrano', 'nw.js', 'electron', 'rpg maker', 'rpgmaker', 'unity', 'unreal', 'godot'];
+      if (DIRECT_ENGINES.some(k => engDirect.includes(k))) {
+        startAutoTranslate();
+        return;
+      }
+    }
+
     try {
       const info = await invoke<{ cached: boolean; expired: boolean; age_minutes: number; difficulty_score: number | null }>(
         'has_cached_prediction',
@@ -1864,6 +1878,200 @@ export default function GameDetailPage() {
           setAutoTranslateProgress('');
           autoTranslateRunningRef.current = false;
         }
+        return;
+      }
+    }
+
+    // ── TyranoScript / Electron VN → pipeline hero file-based (.ks in app.asar) ──
+    // Estrae le stringhe dai file .ks con extract_tyrano_strings, traduce via
+    // cloud/Ollama e applica con apply_tyrano_patch (backup app.asar.bak
+    // automatico). Stesso trigger della strategia (riga detection): tyrano/nw.js/electron.
+    {
+      const engT = (game.engine || engineInfo?.engine || detectEngineByName(game.name || game.title || '') || '').toLowerCase();
+      if (engT.includes('tyrano') || engT.includes('nw.js') || engT.includes('electron')) {
+        const tgt = (targetLang || language || 'it').toLowerCase();
+        const t0 = Date.now();
+        // Backend automatico: cloud se è configurata una API key, altrimenti Ollama.
+        let useCloud = false;
+        try {
+          const s = JSON.parse(localStorage.getItem('gameStringerSettings') || '{}');
+          const tr = s.translation || {};
+          useCloud = !!(tr.apiKey || tr.openaiApiKey || tr.deepseekApiKey || tr.anthropicApiKey || tr.groqApiKey || tr.mistralApiKey || tr.openrouterApiKey);
+        } catch { /* nessuna key → Ollama */ }
+        const tyBackend: 'cloud' | 'ollama' = useCloud ? 'cloud' : 'ollama';
+        const tySteps = [
+          { label: `🔍 ${t('heroJob.tyranoStepDetect')}`, status: 'pending' as const },
+          { label: `📂 ${t('heroJob.tyranoStepExtract')}`, status: 'pending' as const },
+          { label: `✨ ${tyBackend === 'cloud' ? t('heroJob.stepTranslateCloud') : t('heroJob.stepTranslateOllama')}`, status: 'pending' as const },
+          { label: `🩹 ${t('heroJob.tyranoStepApply')}`, status: 'pending' as const },
+        ];
+        const tyStep = (idx: number, status: 'running' | 'done' | 'error', detail?: string) =>
+          setAutoTranslateSteps(prev => prev.map((s, i) => i === idx ? { ...s, status, detail } : i < idx ? { ...s, status: 'done' } : s));
+        // Tracking trasversale: guardia + progress globale + tray + Progetti
+        const tyTracker = startHeroTracking(progress, {
+          engineId: 'tyranoscript', engineLabel: 'TyranoScript', gamePath: game.installPath,
+          gameId: game.id || game.appid?.toString() || gameId, gameName: game.name || game.title,
+          gameImage: game.headerImage || game.coverUrl, sourceLang: 'ja', targetLang: tgt,
+          opTitle: t('heroJob.jobTitle').replace('{name}', game.name || game.title || 'TyranoScript'),
+          opDesc: t('heroJob.jobDescBg').replace('{engine}', `TyranoScript · ${tyBackend === 'cloud' ? 'Cloud' : 'Ollama'}`),
+        });
+        if (!tyTracker) {
+          toast.info(t('heroJob.alreadyRunning'));
+          setAutoTranslateBusy(false); autoTranslateRunningRef.current = false;
+          return;
+        }
+        setAutoTranslateError(null);
+        setAutoTranslateResult(null);
+        setAutoTranslateSteps([...tySteps]);
+        setAutoTranslateActive(true);
+        // Import fuori dal try: le costanti d'errore servono anche nel catch.
+        const tyMod = await import('@/lib/tyrano-translate');
+        const { TYRANO_ERR_NO_ASAR, TYRANO_ERR_NO_STRINGS } = tyMod;
+        try {
+          const r = await tyMod.runTyranoTranslation({
+            gamePath: game.installPath,
+            targetLang: tgt,
+            backend: tyBackend,
+            onProgress: (p) => {
+              if (p.phase === 'detect') tyStep(0, 'running');
+              else if (p.phase === 'extract') { tyStep(0, 'done'); tyStep(1, 'running'); }
+              else if (p.phase === 'translate') {
+                tyStep(1, 'done');
+                tyStep(2, 'running', `${p.done}/${p.total}`);
+                setAutoTranslateProgress(p.total ? `${p.done}/${p.total}` : '');
+                tyTracker.onProgress(p.done, p.total);
+              } else if (p.phase === 'apply') { tyStep(2, 'done'); tyStep(3, 'running'); }
+              else if (p.phase === 'done') tyStep(3, 'done');
+            },
+          });
+          tyStep(3, 'done', `${r.applied}/${r.total}`);
+          setAutoTranslateResult({
+            successRate: r.total ? Math.round((100 * r.translated) / r.total) : 0,
+            duration: Math.round((Date.now() - t0) / 1000),
+            deliverables: 1,
+            errors: Math.max(0, r.total - r.translated),
+            engine: 'TyranoScript',
+            targetLang: tgt,
+            stringsTranslated: r.translated,
+            stringsTotal: r.total,
+          });
+          await tyTracker.done(r.translated, r.total);
+          toast.success(t('heroJob.tyranoDone').replace('{n}', String(r.translated)).replace('{total}', String(r.total)));
+        } catch (e) {
+          const msg = e instanceof Error ? e.message : String(e);
+          // Errori "parlanti" dell'orchestratore → messaggi onesti e specifici.
+          const friendly = msg.includes(TYRANO_ERR_NO_ASAR)
+            ? t('heroJob.tyranoNoAsar')
+            : msg.includes(TYRANO_ERR_NO_STRINGS)
+              ? t('heroJob.tyranoNoStrings')
+              : t('heroJob.tyranoError').replace('{hint}', tyBackend === 'cloud' ? t('heroJob.hintApiKey') : t('heroJob.hintOllama'));
+          tyStep(msg.includes(TYRANO_ERR_NO_ASAR) || msg.includes(TYRANO_ERR_NO_STRINGS) ? 1 : 2, 'error', friendly);
+          clientLogger.error(`[Tyrano] traduzione fallita:`, e);
+          setAutoTranslateError(friendly);
+          await tyTracker.fail(new Error(friendly));
+          toast.error(friendly, { description: msg.startsWith('TYRANO_') ? undefined : msg });
+        } finally {
+          setAutoTranslateBusy(false);
+          setAutoTranslateProgress('');
+          autoTranslateRunningRef.current = false;
+        }
+        return;
+      }
+    }
+
+    // ── Unity → XUnity AutoTranslator (runtime, non file-based) ─────────
+    // Unity non ha una pipeline hero sui file: XUnity traduce a runtime.
+    // String it! instrada quindi all'installazione BepInEx+XUnity (stesso flusso
+    // del bottone patch), con messaggio onesto: "100% installato" ≠ tradotto,
+    // serve avviare il gioco per catturare e tradurre le stringhe.
+    {
+      const engUn = (game.engine || engineInfo?.engine || detectEngineByName(game.name || game.title || '') || '').toLowerCase();
+      if (engUn.includes('unity')) {
+        setAutoTranslateError(null);
+        setAutoTranslateResult(null);
+        setAutoTranslateActive(true);
+        setAutoTranslateSteps([{ label: `🩹 ${t('heroJob.unityRouteStep')}`, status: 'running' }]);
+        try {
+          const ok = await handleInstallUnityPatch();
+          if (ok) {
+            setAutoTranslateSteps([{ label: `🩹 ${t('heroJob.unityRouteStep')}`, status: 'done', detail: t('heroJob.unityRouteDone') }]);
+            toast.success(t('heroJob.unityRouteDone'));
+          } else {
+            setAutoTranslateSteps([{ label: `🩹 ${t('heroJob.unityRouteStep')}`, status: 'error', detail: t('heroJob.unityRouteFail') }]);
+            setAutoTranslateError(t('heroJob.unityRouteFail'));
+          }
+        } finally {
+          setAutoTranslateBusy(false);
+          setAutoTranslateProgress('');
+          autoTranslateRunningRef.current = false;
+        }
+        return;
+      }
+    }
+
+    // ── Unreal Engine → traduzione AI .locres → pak override (_P.pak) ───
+    // Se il gioco espone .locres, String it! usa direttamente il flusso
+    // "Migliora con AI" del pannello Unreal (upgradeUEWithAI, con toast e
+    // progress propri). Senza .locres: messaggio onesto, niente workflow generico.
+    {
+      const engUe = (game.engine || engineInfo?.engine || detectEngineByName(game.name || game.title || '') || '').toLowerCase();
+      if (engUe.includes('unreal')) {
+        setAutoTranslateError(null);
+        setAutoTranslateResult(null);
+        setAutoTranslateActive(true);
+        const ueSteps = [
+          { label: `🔍 ${t('heroJob.unrealStepDetect')}`, status: 'running' as const },
+          { label: `✨ ${t('heroJob.unrealStepTranslate')}`, status: 'pending' as const },
+        ];
+        setAutoTranslateSteps([...ueSteps]);
+        try {
+          const st = await invoke<{ has_locres?: boolean; locres_count?: number }>(
+            'get_unreal_localization_status', { gamePath: game.installPath }
+          ).catch(() => null);
+          // Serve locres_count > 0: has_locres può essere true con count 0 (es. pak
+          // criptati/formato custom) → l'estrazione scansionerebbe GB di pak per
+          // minuti prima di fallire. Con 0 stringhe diamo subito il messaggio onesto.
+          if (st?.has_locres && (st?.locres_count ?? 0) > 0) {
+            setAutoTranslateSteps([
+              { ...ueSteps[0], status: 'done', detail: `${st.locres_count || 0} .locres` },
+              { ...ueSteps[1], status: 'running' },
+            ]);
+            await upgradeUEWithAI(); // gestisce da sé toast/progress/errori
+            setAutoTranslateSteps([
+              { ...ueSteps[0], status: 'done', detail: `${st.locres_count || 0} .locres` },
+              { ...ueSteps[1], status: 'done' },
+            ]);
+          } else {
+            setAutoTranslateSteps([{ ...ueSteps[0], status: 'error', detail: t('heroJob.unrealNoLocres') }]);
+            setAutoTranslateError(t('heroJob.unrealNoLocres'));
+            toast.error(t('heroJob.unrealNoLocres'));
+          }
+        } finally {
+          setAutoTranslateBusy(false);
+          setAutoTranslateProgress('');
+          autoTranslateRunningRef.current = false;
+        }
+        return;
+      }
+    }
+
+    // ── Godot → pagina dedicata (niente dirottamento silenzioso) ────────
+    // Come per RPG Maker classico: messaggio onesto + azione esplicita verso
+    // il Godot Translator (che ora si precompila via ?gamePath=).
+    {
+      const engG = (game.engine || engineInfo?.engine || detectEngineByName(game.name || game.title || '') || '').toLowerCase();
+      if (engG.includes('godot')) {
+        const godotUrl = `/godot-translator?gamePath=${encodeURIComponent(game.installPath)}&gameName=${encodeURIComponent(game.title || game.name || '')}`;
+        setAutoTranslateActive(true);
+        setAutoTranslateError(t('heroJob.godotRouteMsg'));
+        setAutoTranslateSteps([{ label: t('gameDetail.godotDetected'), status: 'error', detail: t('heroJob.godotRouteMsg') }]);
+        toast(t('heroJob.godotRouteToast'), {
+          description: t('gameDetail.godotBridgeDesc'),
+          action: { label: t('gameDetail.openGodotTranslator'), onClick: () => router.push(godotUrl) },
+        });
+        setAutoTranslateBusy(false);
+        setAutoTranslateProgress('');
+        autoTranslateRunningRef.current = false;
         return;
       }
     }
@@ -2903,6 +3111,46 @@ export default function GameDetailPage() {
               onAssetsLoaded={setAssetsFiles}
               onDownloadingChange={setIsDownloadingUabea}
             />
+          )}
+
+          {/* ── Godot Translator (ponte alla pagina dedicata) ── */}
+          {(game.engine?.toLowerCase().includes('godot') || engineInfo?.engine?.toLowerCase().includes('godot')) && game.installPath && (
+            <div className="rounded-xl border border-sky-500/20 bg-gradient-to-r from-sky-950/50 to-blue-950/40 p-4 flex items-center gap-4">
+              <div className="shrink-0 h-11 w-11 rounded-xl bg-sky-500/15 border border-sky-500/25 flex items-center justify-center">
+                <Languages className="h-5 w-5 text-sky-300" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-bold text-sky-200">{t('gameDetail.godotDetected')}</h3>
+                <p className="text-xs text-sky-300/70">{t('gameDetail.godotBridgeDesc')}</p>
+              </div>
+              <Link
+                href={`/godot-translator?gamePath=${encodeURIComponent(game.installPath)}&gameName=${encodeURIComponent(game.title || game.name || '')}`}
+                className="shrink-0 h-9 px-4 flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-400 hover:to-blue-400 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-sky-500/25 transition-all no-underline"
+              >
+                <Languages className="h-3.5 w-3.5" />
+                {t('gameDetail.openGodotTranslator')}
+              </Link>
+            </div>
+          )}
+
+          {/* ── Wolf RPG Patcher (ponte alla pagina dedicata) ── */}
+          {(game.engine?.toLowerCase().includes('wolf') || engineInfo?.engine?.toLowerCase().includes('wolf')) && game.installPath && (
+            <div className="rounded-xl border border-emerald-500/20 bg-gradient-to-r from-emerald-950/50 to-teal-950/40 p-4 flex items-center gap-4">
+              <div className="shrink-0 h-11 w-11 rounded-xl bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center">
+                <Wrench className="h-5 w-5 text-emerald-300" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-bold text-emerald-200">{t('gameDetail.wolfDetected')}</h3>
+                <p className="text-xs text-emerald-300/70">{t('gameDetail.wolfBridgeDesc')}</p>
+              </div>
+              <Link
+                href={`/wolfrpg-patcher?gamePath=${encodeURIComponent(game.installPath)}&gameName=${encodeURIComponent(game.title || game.name || '')}`}
+                className="shrink-0 h-9 px-4 flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-emerald-500/25 transition-all no-underline"
+              >
+                <Wrench className="h-3.5 w-3.5" />
+                {t('gameDetail.openWolfPatcher')}
+              </Link>
+            </div>
           )}
 
           {/* ── GameMaker Translator ── */}

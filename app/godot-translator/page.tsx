@@ -126,6 +126,17 @@ export default function GodotTranslatorPage() {
       setModels(m);
       if (m.length && !model) setModel(m[0]);
     }).catch(() => {});
+    // Ponte dal game-detail: ?gamePath=…&gameName=… precompila il progetto
+    // senza folder picker. (Route con query params, convenzione del progetto.)
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      const gp = sp.get('gamePath');
+      if (gp) {
+        setProjectPath(gp);
+        setProjectName(sp.get('gameName') || gp.replace(/\\/g, '/').split('/').pop() || 'Godot Project');
+        log(`📁 ${gp}`);
+      }
+    } catch { /* niente query params */ }
   }, []); // eslint-disable-line
 
   const browse = useCallback(async () => {

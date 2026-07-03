@@ -849,6 +849,12 @@
     "supportedFormats": "Supported Formats"
   },
   "gameDetail": {
+    "godotDetected": "Εντοπίστηκε παιχνίδι Godot",
+    "godotBridgeDesc": "Μεταφράστε τα αρχεία τοπικοποίησης (.csv, .po, .tres) με το Godot Translator",
+    "openGodotTranslator": "Άνοιγμα Godot Translator",
+    "wolfDetected": "Εντοπίστηκε παιχνίδι Wolf RPG",
+    "wolfBridgeDesc": "Εξαγάγετε και επιδιορθώστε τα αρχεία του παιχνιδιού (.dat, .wolf) με το Wolf RPG Patcher",
+    "openWolfPatcher": "Άνοιγμα Wolf RPG Patcher",
     "confirmRemoveUnity": "Are you sure you want to remove the Unity AutoTranslator patch?",
     "confirmRemoveTranslation": "Are you sure you want to remove the translation patch?",
     "alertSaveError": "Error saving translation",
@@ -989,6 +995,24 @@
     "stepTranslateCloud": "Μετάφραση AI (Cloud)",
     "stepTranslateOllama": "Μετάφραση AI (Ollama)",
     "stepApplyPatch": "Εφαρμογή patch (.gs_bak)",
+    "tyranoStepDetect": "Ανίχνευση TyranoScript (app.asar)",
+    "tyranoStepExtract": "Εξαγωγή συμβολοσειρών (.ks)",
+    "tyranoStepApply": "Αντίγραφο ασφαλείας + επανασυσκευασία app.asar",
+    "tyranoDone": "TyranoScript: μεταφράστηκαν {n}/{total} συμβολοσειρές. Εκκινήστε το παιχνίδι.",
+    "tyranoNoAsar": "Αυτό το παιχνίδι Electron δεν χρησιμοποιεί app.asar (φάκελος resources/app): η αυτόματη επιδιόρθωση δεν υποστηρίζεται.",
+    "tyranoNoStrings": "Δεν βρέθηκαν μεταφράσιμες συμβολοσειρές στα αρχεία .ks.",
+    "tyranoError": "TyranoScript: σφάλμα ({hint})",
+    "paceSlowTitle": "Αργή μετάφραση: με αυτόν τον ρυθμό απομένουν ~{eta}",
+    "paceSlowDesc": "Με ένα cloud API key (Ρυθμίσεις → Μετάφραση) η εργασία συνεχίζει από το checkpoint και ολοκληρώνεται σε λίγα λεπτά. Εναλλακτικά, κατεβάστε ένα ταχύτερο τοπικό μοντέλο (π.χ. HY-MT 1.5 1.8B) από το Model Manager.",
+    "paceSlowAction": "Άνοιγμα Ρυθμίσεων",
+    "unityRouteStep": "Unity → XUnity AutoTranslator (χρόνος εκτέλεσης)",
+    "unityRouteDone": "Εγκαταστάθηκαν BepInEx + XUnity. Εκκινήστε το παιχνίδι: οι συμβολοσειρές καταγράφονται και μεταφράζονται κατά την εκτέλεση.",
+    "unityRouteFail": "Η εγκατάσταση του XUnity απέτυχε — δείτε το πλαίσιο Unity για λεπτομέρειες.",
+    "unrealStepDetect": "Ανίχνευση τοπικοποίησης (.locres)",
+    "unrealStepTranslate": "Μετάφραση AI → παράκαμψη pak (_P.pak)",
+    "unrealNoLocres": "Δεν βρέθηκαν αρχεία .locres: αυτό το παιχνίδι Unreal δεν εκθέτει εξαγώγιμη τοπικοποίηση. Χρησιμοποιήστε το πλαίσιο Unreal ή τη ζωντανή μετάφραση OCR.",
+    "godotRouteMsg": "Το Godot δεν έχει αυτόματη ροή στο String it!: χρησιμοποιήστε τον ειδικό Godot Translator για να μεταφράσετε τα αρχεία τοπικοποίησης (.csv, .po, .tres).",
+    "godotRouteToast": "Godot: ανοίξτε το Godot Translator",
     "visDone": "Visionaire: μεταφράστηκαν {n}/{total} κείμενα. Εκκινήστε το παιχνίδι.",
     "visError": "Visionaire: σφάλμα ({hint})",
     "hintApiKey": "έγκυρο κλειδί API;",
@@ -1470,6 +1494,8 @@
     "noStrings": "Δεν εξήχθησαν strings"
   },
   "wolfrpgPatcherPage": {
+    "detected": "Εντοπίστηκε",
+    "selectFolderTitle": "Επιλέξτε τον φάκελο του παιχνιδιού Wolf RPG",
     "title": "Wolf RPG Patcher",
     "subtitle": "Εξαγωγή και μετάφραση παιχνιδιών Wolf RPG Editor",
     "noStrings": "Δεν εξήχθησαν strings"
@@ -5386,6 +5412,7 @@
     "updateError": "Σφάλμα ενημέρωσης"
   },
   "gameDetails": {
+    "gameLanguages": "Γλώσσες παιχνιδιού",
     "mbUnit": "MB ·",
     "screenshots": "Στιγμιότυπα",
     "noScreenshots": "Χωρίς στιγμιότυπα",

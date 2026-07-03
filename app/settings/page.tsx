@@ -431,20 +431,29 @@ export default function SettingsPage() {
 
   const saveSettings = async () => {
     setIsSaving(true);
+    // Il disco è la fonte di verità. Scriviamo SEMPRE lo stato corrente su disco
+    // (save_app_settings) in modo indipendente da localStorage: nel webview Tauri
+    // localStorage.setItem può fallire (storage partizionato) e in passato faceva
+    // fallire l'intero salvataggio → le API key non venivano mai persistite.
+    let diskOk = false;
+    try {
+      const { invoke } = await import('@/lib/tauri-api');
+      await invoke('save_app_settings', { settings });
+      diskOk = true;
+    } catch (e: unknown) {
+      clientLogger.error(`save_app_settings fallito:`, String(e));
+    }
+    // Cache sincrona in localStorage (best-effort): se lancia, non è fatale
+    // perché la fonte di verità (disco) è già stata scritta sopra.
     try {
       localStorage.setItem('gameStringerSettings', JSON.stringify(settings));
       window.dispatchEvent(new Event('gs-display-changed'));
-      // Persistenza su disco (fonte di verità): localStorage da solo non è
-      // affidabile tra i riavvii del webview Tauri.
-      const { persistSettingsToDisk } = await import('@/lib/settings-persistence');
-      await persistSettingsToDisk();
-
-      toast.success(t('common.success'));
-    } catch {
-      toast.error(t('common.error'));
-    } finally {
-      setIsSaving(false);
+    } catch (e: unknown) {
+      clientLogger.warn('localStorage.setItem settings fallito (non fatale):', String(e));
     }
+    setIsSaving(false);
+    if (diskOk) toast.success(t('common.success'));
+    else toast.error(t('common.error'));
   };
 
   const resetSettings = () => {

@@ -101,6 +101,14 @@ export default function WolfRpgPatcherPage() {
 
   useEffect(() => {
     loadToolInfo();
+    // Ponte dal game-detail: ?gamePath=… precarica il gioco senza folder picker.
+    // (Route con query params, coerente con la convenzione del progetto.)
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      const gp = sp.get('gamePath');
+      if (gp) loadGameFromPath(gp);
+    } catch { /* niente query params */ }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -127,29 +135,30 @@ export default function WolfRpgPatcherPage() {
     }
   };
 
-  const selectGameFolder = async () => {
+  const loadGameFromPath = async (gamePath: string) => {
     try {
-      const selected = await open({
-        directory: true,
-        title: 'Seleziona cartella gioco Wolf RPG',
+      setLoading(true);
+      const detected = await invoke<WolfRpgGame>('detect_wolfrpg_game', {
+        gamePath,
       });
-      
-      if (selected) {
-        setLoading(true);
-        const detected = await invoke<WolfRpgGame>('detect_wolfrpg_game', {
-          gamePath: selected,
-        });
-        setGame(detected);
-        setStrings([]);
-        setStats(null);
-        setSelectedFile(null);
-        toast.success(`Rilevato: ${detected.title}`);
-      }
+      setGame(detected);
+      setStrings([]);
+      setStats(null);
+      setSelectedFile(null);
+      toast.success(`${t('wolfrpgPatcherPage.detected')}: ${detected.title}`);
     } catch (e: unknown) {
-      toast.error(`Errore: ${e}`);
+      toast.error(`${t('common.error')}: ${e}`);
     } finally {
       setLoading(false);
     }
+  };
+
+  const selectGameFolder = async () => {
+    const selected = await open({
+      directory: true,
+      title: t('wolfrpgPatcherPage.selectFolderTitle'),
+    }).catch(() => null);
+    if (selected) await loadGameFromPath(selected as string);
   };
 
   const extractFromFile = async (filePath: string) => {

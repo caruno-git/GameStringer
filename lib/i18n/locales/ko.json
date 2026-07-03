@@ -849,6 +849,12 @@
     "supportedFormats": "Supported Formats"
   },
   "gameDetail": {
+    "godotDetected": "Godot 게임 감지됨",
+    "godotBridgeDesc": "현지화 파일(.csv, .po, .tres)을 Godot Translator로 번역",
+    "openGodotTranslator": "Godot Translator 열기",
+    "wolfDetected": "Wolf RPG 게임 감지됨",
+    "wolfBridgeDesc": "게임 파일(.dat, .wolf)을 Wolf RPG Patcher로 추출하고 패치",
+    "openWolfPatcher": "Wolf RPG Patcher 열기",
     "confirmRemoveUnity": "Are you sure you want to remove the Unity AutoTranslator patch?",
     "confirmRemoveTranslation": "Are you sure you want to remove the translation patch?",
     "alertSaveError": "Error saving translation",
@@ -989,6 +995,24 @@
     "stepTranslateCloud": "AI 번역 (클라우드)",
     "stepTranslateOllama": "AI 번역 (Ollama)",
     "stepApplyPatch": "패치 적용 중 (.gs_bak)",
+    "tyranoStepDetect": "TyranoScript 감지 (app.asar)",
+    "tyranoStepExtract": "문자열 추출 (.ks)",
+    "tyranoStepApply": "백업 + app.asar 재패킹",
+    "tyranoDone": "TyranoScript: {n}/{total}개 문자열 번역 완료. 게임을 실행하세요.",
+    "tyranoNoAsar": "이 Electron 게임은 app.asar를 사용하지 않습니다(resources/app 폴더): 자동 패치가 지원되지 않습니다.",
+    "tyranoNoStrings": ".ks 파일에서 번역 가능한 문자열을 찾을 수 없습니다.",
+    "tyranoError": "TyranoScript: 오류 ({hint})",
+    "paceSlowTitle": "번역 속도가 느립니다: 이 속도라면 약 {eta} 남음",
+    "paceSlowDesc": "클라우드 API 키(설정 → 번역)를 사용하면 작업이 체크포인트에서 재개되어 몇 분 안에 완료됩니다. 또는 Model Manager에서 더 빠른 로컬 모델(예: HY-MT 1.5 1.8B)을 받아보세요.",
+    "paceSlowAction": "설정 열기",
+    "unityRouteStep": "Unity → XUnity AutoTranslator (런타임)",
+    "unityRouteDone": "BepInEx + XUnity 설치 완료. 게임을 실행하세요: 문자열이 런타임에 캡처되고 번역됩니다.",
+    "unityRouteFail": "XUnity 설치 실패 — 자세한 내용은 Unity 패널을 확인하세요.",
+    "unrealStepDetect": "현지화 감지 (.locres)",
+    "unrealStepTranslate": "AI 번역 → pak 오버라이드 (_P.pak)",
+    "unrealNoLocres": ".locres 파일을 찾을 수 없습니다: 이 Unreal 게임은 추출 가능한 현지화를 제공하지 않습니다. Unreal 패널 또는 라이브 OCR 번역을 사용하세요.",
+    "godotRouteMsg": "Godot에는 String it! 자동 파이프라인이 없습니다: 전용 Godot Translator로 현지화 파일(.csv, .po, .tres)을 번역하세요.",
+    "godotRouteToast": "Godot: Godot Translator를 여세요",
     "visDone": "Visionaire: {n}/{total} 문자열 번역됨. 게임을 실행하세요.",
     "visError": "Visionaire: 오류 ({hint})",
     "hintApiKey": "유효한 API 키?",
@@ -1470,6 +1494,8 @@
     "noStrings": "추출된 문자열 없음"
   },
   "wolfrpgPatcherPage": {
+    "detected": "감지됨",
+    "selectFolderTitle": "Wolf RPG 게임 폴더 선택",
     "title": "Wolf RPG 패처",
     "subtitle": "Wolf RPG Editor 게임 추출 및 번역",
     "noStrings": "추출된 문자열 없음"
@@ -3856,6 +3882,7 @@
     "dropFiles": "여기에 파일을 드롭하거나 클릭하여 선택"
   },
   "gameDetails": {
+    "gameLanguages": "게임 언어",
     "mbUnit": "MB ·",
     "screenshots": "스크린샷",
     "noScreenshots": "스크린샷 없음",

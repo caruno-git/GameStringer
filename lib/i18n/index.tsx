@@ -144,6 +144,38 @@ export function useTranslation() {
   return context;
 }
 
+/**
+ * Traduzione FUORI dai componenti React (tracker, orchestratori, toast da lib).
+ * Replica la risoluzione del provider: lingua del profilo da localStorage
+ * (gs_language_<profileId>, poi gameStringerSettings.system.language),
+ * lookup dot-notation con fallback EN, altrimenti la chiave cruda.
+ * Nota: legge la lingua a ogni chiamata → sempre allineata al profilo corrente.
+ */
+export function tStatic(key: string): string {
+  let lang: Language = 'en';
+  try {
+    const profileId = getCurrentProfileId();
+    const profileLang = profileId ? localStorage.getItem(`gs_language_${profileId}`) : null;
+    if (profileLang && translations[profileLang as Language]) {
+      lang = profileLang as Language;
+    } else {
+      const saved = localStorage.getItem('gameStringerSettings');
+      const sys = saved ? JSON.parse(saved).system : null;
+      if (sys?.language && translations[sys.language as Language]) lang = sys.language as Language;
+    }
+  } catch { /* SSR o storage non disponibile → EN */ }
+  const resolve = (l: Language): string | null => {
+    let value: unknown = translations[l];
+    for (const k of key.split('.')) {
+      if (value && typeof value === 'object' && k in (value as object)) {
+        value = (value as Record<string, unknown>)[k];
+      } else { return null; }
+    }
+    return typeof value === 'string' ? value : null;
+  };
+  return resolve(lang) ?? resolve('en') ?? key;
+}
+
 export { translations, type Language, type TranslationKeys };
 
 

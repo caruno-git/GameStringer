@@ -15,6 +15,7 @@
 
 import { projectService } from '@/lib/services/translation-projects';
 import type { ProgressState } from '@/lib/types/progress';
+import { tStatic } from '@/lib/i18n';
 
 export interface HeroTrackMeta {
   engineId: string;     // 'renpy' | 'hendrix' | 'rpgmaker' | 'visionaire'
@@ -115,11 +116,47 @@ export function startHeroTracking(progress: ProgressState, meta: HeroTrackMeta):
     } catch { /* tray non disponibile */ }
   };
 
+  // ── Advisor di ritmo ─────────────────────────────────────────────────
+  // Dopo un rodaggio di 5 minuti misura la velocità REALE del job; se a quel
+  // ritmo mancano più di 60 minuti, consiglia (una sola volta, via toast) di
+  // cambiare strategia: API key cloud (riparte dal checkpoint) o modello locale
+  // più leggero. Vale per tutti i motori hero senza modifiche ai call-site.
+  const ADVISOR_WARMUP_MS = 5 * 60_000;
+  const ADVISOR_ETA_MS = 60 * 60_000;
+  let advStartTime = 0;
+  let advStartDone = -1;
+  let advisorShown = false;
+  const paceAdvisor = (done: number, total: number) => {
+    if (advisorShown || total <= 0) return;
+    const now = Date.now();
+    if (!advStartTime) { advStartTime = now; advStartDone = done; return; }
+    const elapsed = now - advStartTime;
+    if (elapsed < ADVISOR_WARMUP_MS || done <= advStartDone) return;
+    const etaMs = ((total - done) * elapsed) / (done - advStartDone);
+    if (etaMs <= ADVISOR_ETA_MS) { advisorShown = true; return; } // ritmo sano: non rivalutare
+    advisorShown = true;
+    const hours = etaMs / 3_600_000;
+    const etaLabel = hours >= 1 ? `${Math.round(hours)} h` : `${Math.round(etaMs / 60_000)} min`;
+    void import('sonner').then(({ toast }) => {
+      toast.warning(tStatic('heroJob.paceSlowTitle').replace('{eta}', etaLabel), {
+        description: tStatic('heroJob.paceSlowDesc'),
+        duration: 30_000,
+        action: {
+          label: tStatic('heroJob.paceSlowAction'),
+          // Il click abbandona consapevolmente la run corrente (il checkpoint
+          // conserva il lavoro fatto): navigazione piena verso le Impostazioni.
+          onClick: () => { window.location.assign('/settings'); },
+        },
+      });
+    }).catch(() => {});
+  };
+
   return {
     onProgress: (done: number, total: number) => {
       void ensureProject(total);
       progress.updateProgress(opId, total > 0 ? (done / total) * 100 : 0, `${done}/${total}`);
       if (projectId) void projectService.updateProgress(projectId, done).catch(() => {});
+      paceAdvisor(done, total);
     },
     done: async (translated: number, total: number) => {
       await ensureProject(total);

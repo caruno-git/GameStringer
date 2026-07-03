@@ -849,6 +849,12 @@
     "supportedFormats": "Supported Formats"
   },
   "gameDetail": {
+    "godotDetected": "Обнаружена игра Godot",
+    "godotBridgeDesc": "Переведите файлы локализации (.csv, .po, .tres) в Godot Translator",
+    "openGodotTranslator": "Открыть Godot Translator",
+    "wolfDetected": "Обнаружена игра Wolf RPG",
+    "wolfBridgeDesc": "Извлеките и пропатчите файлы игры (.dat, .wolf) в Wolf RPG Patcher",
+    "openWolfPatcher": "Открыть Wolf RPG Patcher",
     "confirmRemoveUnity": "Are you sure you want to remove the Unity AutoTranslator patch?",
     "confirmRemoveTranslation": "Are you sure you want to remove the translation patch?",
     "alertSaveError": "Error saving translation",
@@ -989,6 +995,24 @@
     "stepTranslateCloud": "ИИ-перевод (Облако)",
     "stepTranslateOllama": "ИИ-перевод (Ollama)",
     "stepApplyPatch": "Применение патча (.gs_bak)",
+    "tyranoStepDetect": "Обнаружение TyranoScript (app.asar)",
+    "tyranoStepExtract": "Извлечение строк (.ks)",
+    "tyranoStepApply": "Резервная копия + пересборка app.asar",
+    "tyranoDone": "TyranoScript: переведено {n}/{total} строк. Запустите игру.",
+    "tyranoNoAsar": "Эта игра на Electron не использует app.asar (папка resources/app): автоматический патч не поддерживается.",
+    "tyranoNoStrings": "В файлах .ks не найдено переводимых строк.",
+    "tyranoError": "TyranoScript: ошибка ({hint})",
+    "paceSlowTitle": "Медленный перевод: при таком темпе осталось ~{eta}",
+    "paceSlowDesc": "С облачным API-ключом (Настройки → Перевод) задача продолжится с контрольной точки и завершится за минуты. Либо загрузите более быструю локальную модель (напр. HY-MT 1.5 1.8B) в Model Manager.",
+    "paceSlowAction": "Открыть настройки",
+    "unityRouteStep": "Unity → XUnity AutoTranslator (рантайм)",
+    "unityRouteDone": "BepInEx + XUnity установлены. Запустите игру: строки захватываются и переводятся во время выполнения.",
+    "unityRouteFail": "Установка XUnity не удалась — подробности в панели Unity.",
+    "unrealStepDetect": "Обнаружение локализации (.locres)",
+    "unrealStepTranslate": "ИИ-перевод → pak-переопределение (_P.pak)",
+    "unrealNoLocres": "Файлы .locres не найдены: эта игра на Unreal не предоставляет извлекаемую локализацию. Используйте панель Unreal или живой OCR-перевод.",
+    "godotRouteMsg": "У Godot нет автоматического конвейера в String it!: используйте специальный Godot Translator для перевода файлов локализации (.csv, .po, .tres).",
+    "godotRouteToast": "Godot: откройте Godot Translator",
     "visDone": "Visionaire: переведено {n}/{total} строк. Запустите игру.",
     "visError": "Visionaire: ошибка ({hint})",
     "hintApiKey": "ключ API верный?",
@@ -1470,6 +1494,8 @@
     "noStrings": "Строки не извлечены"
   },
   "wolfrpgPatcherPage": {
+    "detected": "Обнаружено",
+    "selectFolderTitle": "Выберите папку игры Wolf RPG",
     "title": "Wolf RPG Патчер",
     "subtitle": "Извлекайте и переводите Wolf RPG Editor",
     "noStrings": "Строки не извлечены"
@@ -3856,6 +3882,7 @@
     "dropFiles": "Перетащите файлы сюда или нажмите для выбора"
   },
   "gameDetails": {
+    "gameLanguages": "Языки игры",
     "mbUnit": "MB ·",
     "screenshots": "Скриншоты",
     "noScreenshots": "Нет скриншотов",

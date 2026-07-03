@@ -849,6 +849,12 @@
     "supportedFormats": "Supported Formats"
   },
   "gameDetail": {
+    "godotDetected": "检测到 Godot 游戏",
+    "godotBridgeDesc": "使用 Godot Translator 翻译本地化文件（.csv、.po、.tres）",
+    "openGodotTranslator": "打开 Godot Translator",
+    "wolfDetected": "检测到 Wolf RPG 游戏",
+    "wolfBridgeDesc": "使用 Wolf RPG Patcher 提取并修补游戏文件（.dat、.wolf）",
+    "openWolfPatcher": "打开 Wolf RPG Patcher",
     "confirmRemoveUnity": "Are you sure you want to remove the Unity AutoTranslator patch?",
     "confirmRemoveTranslation": "Are you sure you want to remove the translation patch?",
     "alertSaveError": "Error saving translation",
@@ -989,6 +995,24 @@
     "stepTranslateCloud": "AI 翻译（云端）",
     "stepTranslateOllama": "AI 翻译（Ollama）",
     "stepApplyPatch": "正在应用补丁（.gs_bak）",
+    "tyranoStepDetect": "检测 TyranoScript（app.asar）",
+    "tyranoStepExtract": "提取字符串（.ks）",
+    "tyranoStepApply": "备份 + 重新打包 app.asar",
+    "tyranoDone": "TyranoScript：已翻译 {n}/{total} 条字符串。请启动游戏。",
+    "tyranoNoAsar": "该 Electron 游戏不使用 app.asar（resources/app 文件夹）：不支持自动修补。",
+    "tyranoNoStrings": "在 .ks 文件中未找到可翻译的字符串。",
+    "tyranoError": "TyranoScript：错误（{hint}）",
+    "paceSlowTitle": "翻译速度较慢：按此速度还需约 {eta}",
+    "paceSlowDesc": "使用云 API 密钥（设置 → 翻译），任务将从检查点恢复并在几分钟内完成。或者从 Model Manager 下载更快的本地模型（如 HY-MT 1.5 1.8B）。",
+    "paceSlowAction": "打开设置",
+    "unityRouteStep": "Unity → XUnity AutoTranslator（运行时）",
+    "unityRouteDone": "已安装 BepInEx + XUnity。请启动游戏：字符串将在运行时被捕获并翻译。",
+    "unityRouteFail": "XUnity 安装失败 — 详情请查看 Unity 面板。",
+    "unrealStepDetect": "检测本地化（.locres）",
+    "unrealStepTranslate": "AI 翻译 → pak 覆盖（_P.pak）",
+    "unrealNoLocres": "未找到 .locres 文件：该 Unreal 游戏未提供可提取的本地化。请使用 Unreal 面板或实时 OCR 翻译。",
+    "godotRouteMsg": "Godot 在 String it! 中没有自动流程：请使用专用的 Godot Translator 翻译本地化文件（.csv、.po、.tres）。",
+    "godotRouteToast": "Godot：打开 Godot Translator",
     "visDone": "Visionaire：已翻译 {n}/{total} 条字符串。启动游戏。",
     "visError": "Visionaire：错误（{hint}）",
     "hintApiKey": "API 密钥有效？",
@@ -1470,6 +1494,8 @@
     "noStrings": "未提取到字符串"
   },
   "wolfrpgPatcherPage": {
+    "detected": "已检测到",
+    "selectFolderTitle": "选择 Wolf RPG 游戏文件夹",
     "title": "Wolf RPG补丁工具",
     "subtitle": "提取和翻译Wolf RPG Editor游戏",
     "noStrings": "未提取到字符串"
@@ -5325,6 +5351,7 @@
     "collaborations": "协作"
   },
   "gameDetails": {
+    "gameLanguages": "游戏语言",
     "mbUnit": "MB ·",
     "screenshots": "截图",
     "noScreenshots": "没有截图",

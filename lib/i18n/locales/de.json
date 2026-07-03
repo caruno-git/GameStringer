@@ -849,6 +849,12 @@
     "supportedFormats": "Supported Formats"
   },
   "gameDetail": {
+    "godotDetected": "Godot-Spiel erkannt",
+    "godotBridgeDesc": "Übersetze die Lokalisierungsdateien (.csv, .po, .tres) mit dem Godot Translator",
+    "openGodotTranslator": "Godot Translator öffnen",
+    "wolfDetected": "Wolf-RPG-Spiel erkannt",
+    "wolfBridgeDesc": "Extrahiere und patche die Spieldateien (.dat, .wolf) mit dem Wolf RPG Patcher",
+    "openWolfPatcher": "Wolf RPG Patcher öffnen",
     "confirmRemoveUnity": "Are you sure you want to remove the Unity AutoTranslator patch?",
     "confirmRemoveTranslation": "Are you sure you want to remove the translation patch?",
     "alertSaveError": "Error saving translation",
@@ -989,6 +995,24 @@
     "stepTranslateCloud": "KI-Übersetzung (Cloud)",
     "stepTranslateOllama": "KI-Übersetzung (Ollama)",
     "stepApplyPatch": "Patch anwenden (.gs_bak)",
+    "tyranoStepDetect": "Erkennung von TyranoScript (app.asar)",
+    "tyranoStepExtract": "Extraktion der Strings (.ks)",
+    "tyranoStepApply": "Backup + Repack von app.asar",
+    "tyranoDone": "TyranoScript: {n}/{total} Strings übersetzt. Starte das Spiel.",
+    "tyranoNoAsar": "Dieses Electron-Spiel verwendet kein app.asar (Ordner resources/app): automatisches Patchen wird nicht unterstützt.",
+    "tyranoNoStrings": "Keine übersetzbaren Strings in den .ks-Dateien gefunden.",
+    "tyranoError": "TyranoScript: Fehler ({hint})",
+    "paceSlowTitle": "Langsame Übersetzung: bei diesem Tempo noch ~{eta}",
+    "paceSlowDesc": "Mit einem Cloud-API-Key (Einstellungen → Übersetzung) setzt der Job am Checkpoint fort und ist in Minuten fertig. Alternativ lade ein schnelleres lokales Modell (z. B. HY-MT 1.5 1.8B) im Model Manager.",
+    "paceSlowAction": "Einstellungen öffnen",
+    "unityRouteStep": "Unity → XUnity AutoTranslator (runtime)",
+    "unityRouteDone": "BepInEx + XUnity installiert. Starte das Spiel: Strings werden zur Laufzeit erfasst und übersetzt.",
+    "unityRouteFail": "XUnity-Installation fehlgeschlagen — Details im Unity-Panel.",
+    "unrealStepDetect": "Erkennung der Lokalisierung (.locres)",
+    "unrealStepTranslate": "KI-Übersetzung → Pak-Override (_P.pak)",
+    "unrealNoLocres": "Keine .locres-Dateien gefunden: dieses Unreal-Spiel stellt keine extrahierbare Lokalisierung bereit. Nutze das Unreal-Panel oder die Live-OCR-Übersetzung.",
+    "godotRouteMsg": "Godot hat keine automatische Pipeline in String it!: Nutze den dedizierten Godot Translator, um die Lokalisierungsdateien (.csv, .po, .tres) zu übersetzen.",
+    "godotRouteToast": "Godot: Godot Translator öffnen",
     "visDone": "Visionaire: {n}/{total} Strings übersetzt. Starte das Spiel.",
     "visError": "Visionaire: Fehler ({hint})",
     "hintApiKey": "Gültiger API-Schlüssel?",
@@ -1470,6 +1494,8 @@
     "noStrings": "Keine Strings extrahiert"
   },
   "wolfrpgPatcherPage": {
+    "detected": "Erkannt",
+    "selectFolderTitle": "Wolf-RPG-Spielordner auswählen",
     "title": "Wolf RPG Patcher",
     "subtitle": "Extrahiere und übersetze Wolf RPG Editor Spiele",
     "noStrings": "Keine Strings extrahiert"
@@ -3812,6 +3838,7 @@
     "updateError": "Aktualisierungsfehler"
   },
   "gameDetails": {
+    "gameLanguages": "Spielsprachen",
     "mbUnit": "MB ·",
     "screenshots": "Screenshots",
     "noScreenshots": "Keine Screenshots",
