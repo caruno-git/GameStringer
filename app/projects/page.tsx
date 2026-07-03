@@ -20,6 +20,7 @@ import {
   BookOpen,
   Languages,
   TrendingUp,
+  Share2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -318,10 +319,12 @@ function ProjectCard({
   project,
   onDelete,
   onExport,
+  onPublish,
 }: {
   project: UnifiedProject;
   onDelete: (p: UnifiedProject) => void;
   onExport: (p: UnifiedProject) => void;
+  onPublish: (p: UnifiedProject) => void;
 }) {
   const { t } = useTranslation();
   const pct = percent(project.completedStrings, project.totalStrings);
@@ -421,6 +424,17 @@ function ProjectCard({
                 <FileText className="w-3 h-3 mr-1" />
                 {t('projectsPage.open')}</Button>
             </Link>
+          )}
+          {project.status === 'completed' && (
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-7 w-7 p-0 text-slate-400 hover:text-emerald-300"
+              onClick={() => onPublish(project)}
+              title={t('projectsPage.publishTitle')}
+            >
+              <Share2 className="w-3 h-3" />
+            </Button>
           )}
           {project.source === 'quality' && (
             <>
@@ -535,6 +549,52 @@ export default function ProjectsPage() {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         toast.success(t('projectsPage.projectExported'));
+      }
+    }
+  };
+
+  // Ponte verso il Patch Hub: pubblica il progetto completato via publishPack
+  // (Supabase). Il pack entra in stato "pending" (moderazione). Contenuto: export
+  // completo per i progetti quality, altrimenti un manifest con i metadati.
+  const handlePublish = async (p: UnifiedProject) => {
+    let content = '';
+    if (p.source === 'quality') {
+      const qsId = p.id.replace(/^qs:/, '');
+      content = qualityScoringService.exportProject(qsId) || '';
+    } else {
+      content = JSON.stringify({
+        gameId: p.gameId, gameName: p.gameName,
+        sourceLanguage: p.sourceLanguage, targetLanguage: p.targetLanguage,
+        totalStrings: p.totalStrings, completedStrings: p.completedStrings,
+        exportedAt: new Date().toISOString(),
+      }, null, 2);
+    }
+    if (!content) { toast.error(t('projectsPage.publishNoContent')); return; }
+
+    const safeName = `${p.gameName.replace(/[^\w-]/g, '_')}_${p.targetLanguage}.gsproj.json`;
+    const file = new File([content], safeName, { type: 'application/json' });
+    const tid = toast.loading(t('projectsPage.publishing'));
+    try {
+      const { publishPack } = await import('@/lib/social/community-hub-backend');
+      const pct = p.totalStrings > 0 ? Math.round((p.completedStrings / p.totalStrings) * 100) : 0;
+      await publishPack({
+        name: `${p.gameName} — ${p.targetLanguage.toUpperCase()}`,
+        gameId: p.gameId,
+        gameName: p.gameName,
+        sourceLanguage: p.sourceLanguage,
+        targetLanguage: p.targetLanguage,
+        totalStrings: p.totalStrings,
+        translatedStrings: p.completedStrings,
+        completionPercentage: pct,
+      }, [file]);
+      toast.success(t('projectsPage.publishSuccess'), { id: tid, description: t('projectsPage.publishModeration') });
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      if (msg.includes('autenticato')) {
+        toast.error(t('projectsPage.publishNeedLogin'), { id: tid });
+      } else {
+        clientLogger.error(`[Projects] publish failed:`, msg);
+        toast.error(t('projectsPage.publishError'), { id: tid, description: msg });
       }
     }
   };
@@ -695,6 +755,7 @@ export default function ProjectsPage() {
               project={project}
               onDelete={handleDelete}
               onExport={handleExport}
+              onPublish={handlePublish}
             />
           ))}
         </div>
