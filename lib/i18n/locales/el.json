@@ -5337,6 +5337,7 @@
     "updateError": "Σφάλμα ενημέρωσης"
   },
   "gameDetails": {
+    "mbUnit": "MB ·",
     "screenshots": "Στιγμιότυπα",
     "noScreenshots": "Χωρίς στιγμιότυπα",
     "noScreenshotsAvailable": "Δεν υπάρχουν διαθέσιμα στιγμιότυπα",

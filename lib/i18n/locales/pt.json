@@ -3807,6 +3807,7 @@
     "dropFiles": "Arraste arquivos aqui ou clique para selecionar"
   },
   "gameDetails": {
+    "mbUnit": "MB ·",
     "screenshots": "Capturas de tela",
     "noScreenshots": "Sem capturas",
     "noScreenshotsAvailable": "Nenhuma captura disponível",

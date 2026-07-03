@@ -3807,6 +3807,7 @@
     "dropFiles": "Перетащите файлы сюда или нажмите для выбора"
   },
   "gameDetails": {
+    "mbUnit": "MB ·",
     "screenshots": "Скриншоты",
     "noScreenshots": "Нет скриншотов",
     "noScreenshotsAvailable": "Скриншоты недоступны",

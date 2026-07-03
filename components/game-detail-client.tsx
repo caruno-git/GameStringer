@@ -2769,7 +2769,7 @@ export default function GameDetailPage() {
                     </span>
                   </div>
                   <p className="text-xs text-fuchsia-300/70">
-                    {fmvInfo.totalSizeMB.toFixed(0)} MB · {fmvInfo.formats.slice(0, 3).join(', ')}
+                    {fmvInfo.totalSizeMB.toFixed(0)}  {t('gameDetails.mbUnit')} {fmvInfo.formats.slice(0, 3).join(', ')}
                     {fmvInfo.formats.length > 3 ? ` +${fmvInfo.formats.length - 3}` : ''}
                     {' — '}{t('gameDetails.fmvExtractHint') || 'estrai, converti e traduci i video del gioco'}
                   </p>

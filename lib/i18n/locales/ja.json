@@ -5276,6 +5276,7 @@
     "collaborations": "コラボレーション"
   },
   "gameDetails": {
+    "mbUnit": "MB ·",
     "screenshots": "スクリーンショット",
     "noScreenshots": "スクリーンショットなし",
     "noScreenshotsAvailable": "スクリーンショットがありません",

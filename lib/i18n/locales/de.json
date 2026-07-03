@@ -3763,6 +3763,7 @@
     "updateError": "Aktualisierungsfehler"
   },
   "gameDetails": {
+    "mbUnit": "MB ·",
     "screenshots": "Screenshots",
     "noScreenshots": "Keine Screenshots",
     "noScreenshotsAvailable": "Keine Screenshots verfügbar",

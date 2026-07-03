@@ -3807,6 +3807,7 @@
     "dropFiles": "여기에 파일을 드롭하거나 클릭하여 선택"
   },
   "gameDetails": {
+    "mbUnit": "MB ·",
     "screenshots": "스크린샷",
     "noScreenshots": "스크린샷 없음",
     "noScreenshotsAvailable": "사용 가능한 스크린샷이 없습니다",

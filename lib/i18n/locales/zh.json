@@ -5276,6 +5276,7 @@
     "collaborations": "协作"
   },
   "gameDetails": {
+    "mbUnit": "MB ·",
     "screenshots": "截图",
     "noScreenshots": "没有截图",
     "noScreenshotsAvailable": "没有可用的截图",
