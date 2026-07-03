@@ -38,7 +38,16 @@
     "export": "Export",
     "fineTunedModels": "Fine-Tuned Models",
     "noModels": "No fine-tuned model. Generate a dataset and start training.",
-    "baseLabel": "Base:"
+    "baseLabel": "Base:",
+    "selectGame": "Juego",
+    "selectGamePlaceholder": "Selecciona un juego…",
+    "noGamesWithCorrections": "No hay correcciones guardadas: corrige traducciones en el editor para generar un dataset.",
+    "correctionsUnit": "correcciones",
+    "modelsAvailable": "modelos disponibles",
+    "ollamaUnavailable": "No disponible — inicia Ollama para el fine-tuning local",
+    "noCorrectionsFound": "No se encontraron correcciones para esta combinación",
+    "datasetCreated": "Dataset creado",
+    "approvedOnlyBadge": "Solo aprobadas"
   },
   "mainLayout": {
     "skipToContent": "Skip to main content",
@@ -2531,7 +2540,14 @@
   "ollamaManagerComp": {
     "verificaOllama": "Verificar Ollama...",
     "ollamaAiLocale": "Ollama — IA Local",
-    "avviaOllamaPerInstallareIModel": "Iniciar Ollama para instalar modelos"
+    "descrizioneBreve": "Ejecuta modelos de IA en local para traducir sin costes y sin enviar datos en línea.",
+    "spento": "Apagado",
+    "scaricaOllama": "Descargar Ollama",
+    "arresta": "Detener",
+    "gestisciModelli": "Gestionar modelos",
+    "erroreDownload": "Error de descarga",
+    "erroreAvvio": "Error de inicio",
+    "erroreArresto": "Error de detención"
   },
   "autoHookScannerComp": {
     "autohookScanner": "Auto-Hook Scanner",

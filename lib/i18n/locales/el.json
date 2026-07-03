@@ -38,7 +38,16 @@
     "export": "Export",
     "fineTunedModels": "Fine-Tuned Models",
     "noModels": "No fine-tuned model. Generate a dataset and start training.",
-    "baseLabel": "Base:"
+    "baseLabel": "Base:",
+    "selectGame": "Παιχνίδι",
+    "selectGamePlaceholder": "Επίλεξε παιχνίδι…",
+    "noGamesWithCorrections": "Δεν υπάρχουν αποθηκευμένες διορθώσεις: διόρθωσε μεταφράσεις στον editor για να δημιουργήσεις dataset.",
+    "correctionsUnit": "διορθώσεις",
+    "modelsAvailable": "διαθέσιμα μοντέλα",
+    "ollamaUnavailable": "Μη διαθέσιμο — εκκίνησε το Ollama για τοπικό fine-tuning",
+    "noCorrectionsFound": "Δεν βρέθηκαν διορθώσεις για αυτόν τον συνδυασμό",
+    "datasetCreated": "Το dataset δημιουργήθηκε",
+    "approvedOnlyBadge": "Μόνο εγκεκριμένες"
   },
   "mainLayout": {
     "skipToContent": "Skip to main content",
@@ -2651,7 +2660,14 @@
   "ollamaManagerComp": {
     "verificaOllama": "Έλεγχος Ollama...",
     "ollamaAiLocale": "Ollama — Τοπικό AI",
-    "avviaOllamaPerInstallareIModel": "Εκκίνησε το Ollama για να εγκαταστήσεις μοντέλα"
+    "descrizioneBreve": "Εκτέλεσε μοντέλα AI τοπικά για μετάφραση χωρίς κόστος και χωρίς αποστολή δεδομένων online.",
+    "spento": "Σταματημένο",
+    "scaricaOllama": "Λήψη Ollama",
+    "arresta": "Διακοπή",
+    "gestisciModelli": "Διαχείριση μοντέλων",
+    "erroreDownload": "Σφάλμα λήψης",
+    "erroreAvvio": "Σφάλμα εκκίνησης",
+    "erroreArresto": "Σφάλμα διακοπής"
   },
   "autoHookScannerComp": {
     "autohookScanner": "Auto-Hook Scanner",

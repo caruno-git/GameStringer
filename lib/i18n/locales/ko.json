@@ -38,7 +38,16 @@
     "export": "Export",
     "fineTunedModels": "Fine-Tuned Models",
     "noModels": "No fine-tuned model. Generate a dataset and start training.",
-    "baseLabel": "Base:"
+    "baseLabel": "Base:",
+    "selectGame": "게임",
+    "selectGamePlaceholder": "게임 선택…",
+    "noGamesWithCorrections": "저장된 수정이 없습니다. 에디터에서 번역을 수정하면 데이터셋을 생성할 수 있습니다.",
+    "correctionsUnit": "개 수정",
+    "modelsAvailable": "개 모델 사용 가능",
+    "ollamaUnavailable": "사용 불가 — 로컬 파인튜닝을 위해 Ollama를 시작하세요",
+    "noCorrectionsFound": "이 조합에 대한 수정을 찾을 수 없습니다",
+    "datasetCreated": "데이터셋 생성됨",
+    "approvedOnlyBadge": "승인됨만"
   },
   "mainLayout": {
     "skipToContent": "Skip to main content",
@@ -2531,7 +2540,14 @@
   "ollamaManagerComp": {
     "verificaOllama": "Ollama 확인...",
     "ollamaAiLocale": "Ollama — 로컬 AI",
-    "avviaOllamaPerInstallareIModel": "모델을 설치하려면 Ollama 시작"
+    "descrizioneBreve": "AI 모델을 로컬에서 실행하여 비용 없이, 데이터 전송 없이 번역하세요.",
+    "spento": "중지됨",
+    "scaricaOllama": "Ollama 다운로드",
+    "arresta": "중지",
+    "gestisciModelli": "모델 관리",
+    "erroreDownload": "다운로드 오류",
+    "erroreAvvio": "시작 오류",
+    "erroreArresto": "중지 오류"
   },
   "autoHookScannerComp": {
     "autohookScanner": "Auto-Hook 스캔너",

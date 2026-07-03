@@ -38,7 +38,16 @@
     "export": "Export",
     "fineTunedModels": "Fine-Tuned Models",
     "noModels": "No fine-tuned model. Generate a dataset and start training.",
-    "baseLabel": "Base:"
+    "baseLabel": "Base:",
+    "selectGame": "Игра",
+    "selectGamePlaceholder": "Выберите игру…",
+    "noGamesWithCorrections": "Нет сохранённых правок: исправьте переводы в редакторе, чтобы создать датасет.",
+    "correctionsUnit": "правок",
+    "modelsAvailable": "моделей доступно",
+    "ollamaUnavailable": "Недоступно — запустите Ollama для локального fine-tuning",
+    "noCorrectionsFound": "Правки для этой комбинации не найдены",
+    "datasetCreated": "Датасет создан",
+    "approvedOnlyBadge": "Только одобренные"
   },
   "mainLayout": {
     "skipToContent": "Skip to main content",
@@ -2531,7 +2540,14 @@
   "ollamaManagerComp": {
     "verificaOllama": "Проверить Ollama...",
     "ollamaAiLocale": "Ollama — Локальный AI",
-    "avviaOllamaPerInstallareIModel": "Запустить Ollama для установки моделей"
+    "descrizioneBreve": "Запускайте AI-модели локально, чтобы переводить бесплатно и без отправки данных в сеть.",
+    "spento": "Остановлен",
+    "scaricaOllama": "Скачать Ollama",
+    "arresta": "Остановить",
+    "gestisciModelli": "Управление моделями",
+    "erroreDownload": "Ошибка загрузки",
+    "erroreAvvio": "Ошибка запуска",
+    "erroreArresto": "Ошибка остановки"
   },
   "autoHookScannerComp": {
     "autohookScanner": "Сканер Auto-Hook",

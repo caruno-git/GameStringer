@@ -38,7 +38,16 @@
     "export": "Export",
     "fineTunedModels": "Fine-Tuned Models",
     "noModels": "No fine-tuned model. Generate a dataset and start training.",
-    "baseLabel": "Base:"
+    "baseLabel": "Base:",
+    "selectGame": "ゲーム",
+    "selectGamePlaceholder": "ゲームを選択…",
+    "noGamesWithCorrections": "保存された修正がありません。エディタで翻訳を修正するとデータセットを生成できます。",
+    "correctionsUnit": "件の修正",
+    "modelsAvailable": "個のモデルが利用可能",
+    "ollamaUnavailable": "利用不可 — ローカルファインチューニングには Ollama を起動してください",
+    "noCorrectionsFound": "この組み合わせの修正が見つかりません",
+    "datasetCreated": "データセットを作成しました",
+    "approvedOnlyBadge": "承認済みのみ"
   },
   "mainLayout": {
     "skipToContent": "Skip to main content",
@@ -2531,7 +2540,14 @@
   "ollamaManagerComp": {
     "verificaOllama": "Ollama を確認...",
     "ollamaAiLocale": "Ollama — ローカル AI",
-    "avviaOllamaPerInstallareIModel": "モデルをインストールするために Ollama を起動"
+    "descrizioneBreve": "AI モデルをローカルで実行し、コストなし・データ送信なしで翻訳できます。",
+    "spento": "停止中",
+    "scaricaOllama": "Ollama をダウンロード",
+    "arresta": "停止",
+    "gestisciModelli": "モデルを管理",
+    "erroreDownload": "ダウンロードエラー",
+    "erroreAvvio": "起動エラー",
+    "erroreArresto": "停止エラー"
   },
   "autoHookScannerComp": {
     "autohookScanner": "自動フックスキャナー",

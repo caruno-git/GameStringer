@@ -38,7 +38,16 @@
     "export": "Export",
     "fineTunedModels": "Fine-Tuned Models",
     "noModels": "No fine-tuned model. Generate a dataset and start training.",
-    "baseLabel": "Base:"
+    "baseLabel": "Base:",
+    "selectGame": "游戏",
+    "selectGamePlaceholder": "选择游戏…",
+    "noGamesWithCorrections": "没有已保存的修正：请在编辑器中修正翻译以生成数据集。",
+    "correctionsUnit": "条修正",
+    "modelsAvailable": "个可用模型",
+    "ollamaUnavailable": "不可用 — 启动 Ollama 以进行本地微调",
+    "noCorrectionsFound": "未找到此组合的修正",
+    "datasetCreated": "数据集已创建",
+    "approvedOnlyBadge": "仅已批准"
   },
   "mainLayout": {
     "skipToContent": "Skip to main content",
@@ -2531,7 +2540,14 @@
   "ollamaManagerComp": {
     "verificaOllama": "验证 Ollama...",
     "ollamaAiLocale": "Ollama — 本地 AI",
-    "avviaOllamaPerInstallareIModel": "启动 Ollama 以安装模型"
+    "descrizioneBreve": "在本地运行 AI 模型，免费翻译且不向网络发送数据。",
+    "spento": "已停止",
+    "scaricaOllama": "下载 Ollama",
+    "arresta": "停止",
+    "gestisciModelli": "管理模型",
+    "erroreDownload": "下载错误",
+    "erroreAvvio": "启动错误",
+    "erroreArresto": "停止错误"
   },
   "autoHookScannerComp": {
     "autohookScanner": "自动挂钩扫描器",
