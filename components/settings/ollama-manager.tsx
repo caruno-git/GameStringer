@@ -1,21 +1,26 @@
 'use client';
 
+// Card sottile: lifecycle Ollama (stato, download, avvio, arresto).
+// La gestione dei modelli (pull, delete, speed test, A/B) vive SOLO nel
+// Model Manager (/ollama-manager) — niente UI duplicata qui.
+
 import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { 
-  Download, 
-  Play, 
-  Square, 
-  RefreshCw, 
-  CheckCircle2, 
-  XCircle, 
+import {
+  Download,
+  Play,
+  Square,
+  RefreshCw,
+  CheckCircle2,
+  XCircle,
   Loader2,
   Server,
   Cpu,
-  HardDrive
+  ArrowRight,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslation } from '@/lib/i18n';
@@ -29,21 +34,8 @@ interface OllamaStatus {
   install_path: string;
 }
 
-interface OllamaModelInfo {
-  name: string;
-  size: string;
-  description: string;
-}
-
 interface DownloadProgress {
   stage: string;
-  progress: number;
-  message: string;
-}
-
-interface PullProgress {
-  model: string;
-  status: string;
   progress: number;
   message: string;
 }
@@ -54,8 +46,6 @@ export function OllamaManager() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [downloadProgress, setDownloadProgress] = useState<DownloadProgress | null>(null);
-  const [pullProgress, setPullProgress] = useState<PullProgress | null>(null);
-  const [recommendedModels, setRecommendedModels] = useState<OllamaModelInfo[]>([]);
   const [isTauri, setIsTauri] = useState(false);
 
   const checkStatus = useCallback(async () => {
@@ -113,85 +103,32 @@ export function OllamaManager() {
     }
   }, []);
 
-  const loadRecommendedModels = useCallback(async () => {
-    try {
-      if (typeof window !== 'undefined' && ((window as unknown as Record<string, unknown>).__TAURI_INTERNALS__ || (window as unknown as Record<string, unknown>).__TAURI_IPC__)) {
-        const { invoke } = await import('@tauri-apps/api/core');
-        const models = await invoke<OllamaModelInfo[]>('get_recommended_ollama_models');
-        setRecommendedModels(models);
-      } else {
-        setRecommendedModels([
-          // Traduzione specializzata
-          { name: 'huihui_ai/hy-mt1.5-abliterated:7b', size: '~4.5 GB', description: '⭐ Tencent HY-MT 1.5 7B — #1 WMT25, batte Google Translate in 30/31 lingue. Senza censura.' },
-          { name: 'huihui_ai/hy-mt1.5-abliterated:1.8b', size: '~1.2 GB', description: 'Tencent HY-MT 1.5 1.8B — Ultra-leggera e velocissima. Ideale per batch massicci.' },
-          { name: 'translategemma:12b', size: '~8.0 GB', description: 'Google TranslateGemma 12B — 55 lingue, qualità alta.' },
-          { name: 'translategemma:2b', size: '~1.5 GB', description: 'Google TranslateGemma 2B — 55 lingue, veloce e leggero.' },
-          // MoE ultra-veloci (Marzo 2026)
-          { name: 'qwen3.5:35b-a3b', size: '~4.5 GB', description: '🚀 Qwen 3.5 35B-A3B (MoE) — 35B parametri, attiva solo 3B. Qualità top!' },
-          { name: 'lfm2:24b', size: '~3.5 GB', description: '🚀 LFM2 24B-A2B (MoE) — Liquid AI, attiva solo 2B. Velocissimo su 8GB RAM!' },
-          // Multilingue general purpose
-          { name: 'glm4:8b', size: '~5.0 GB', description: '🆕 GLM-4.7 Flash 8B — Zhipu AI, tuttofare veloce.' },
-          { name: 'qwen3:8b', size: '~5.2 GB', description: 'Alibaba Qwen3 8B — Top multilingue, eccellente su CJK e europee.' },
-          { name: 'qwen3:4b', size: '~2.6 GB', description: 'Alibaba Qwen3 4B — Compatto, buon rapporto qualità/velocità.' },
-          { name: 'gemma3:12b', size: '~8.1 GB', description: 'Google Gemma 3 12B — Prosa pulita, 128K context.' },
-          { name: 'gemma3:4b', size: '~2.8 GB', description: 'Google Gemma 3 4B — Leggera, gira su 8GB RAM.' },
-          // Reasoning
-          { name: 'deepseek-r1:14b', size: '~9.0 GB', description: 'DeepSeek R1 14B — Chain-of-thought, ragionamento complesso.' },
-          { name: 'deepseek-r1:7b', size: '~4.7 GB', description: 'DeepSeek R1 7B — Chain-of-thought leggero, gira su 8GB.' },
-          { name: 'phi4:14b', size: '~8.5 GB', description: 'Microsoft Phi-4 14B — Miglior ragionamento per GB.' },
-          { name: 'phi4-mini', size: '~2.4 GB', description: 'Microsoft Phi-4 Mini 3.8B — Ultra-leggero.' },
-          // Grandi
-          { name: 'llama3.3:8b', size: '~5.0 GB', description: 'Meta Llama 3.3 8B — Miglior all-rounder classe 8B.' },
-          { name: 'mistral-small3.1:24b', size: '~14 GB', description: 'Mistral Small 3.1 24B — Il più veloce (~50 tok/s).' },
-          { name: 'deepseek-r1:32b', size: '~19 GB', description: 'DeepSeek R1 32B — Ragionamento top. Richiede 24GB+ VRAM.' },
-          { name: 'llama3.3:70b', size: '~40 GB', description: 'Meta Llama 3.3 70B — Top assoluto. Richiede 48GB+ VRAM.' },
-        ]);
-      }
-    } catch (error: unknown) {
-      clientLogger.error('[OllamaManager] Load models error:', error);
-    }
-  }, []);
-
   useEffect(() => {
     checkStatus();
-    loadRecommendedModels();
-  }, [checkStatus, loadRecommendedModels]);
+  }, [checkStatus]);
 
-  // Listen for Tauri events
+  // Progress del download dell'installer (evento Tauri)
   useEffect(() => {
-    let unlisten1: (() => void) | null = null;
-    let unlisten2: (() => void) | null = null;
+    let unlisten: (() => void) | null = null;
 
-    const setupListeners = async () => {
+    const setupListener = async () => {
       if (typeof window !== 'undefined' && ((window as unknown as Record<string, unknown>).__TAURI_INTERNALS__ || (window as unknown as Record<string, unknown>).__TAURI_IPC__)) {
         try {
           const { listen } = await import('@tauri-apps/api/event');
-          
-          unlisten1 = await listen<DownloadProgress>('ollama-download-progress', (event) => {
+          unlisten = await listen<DownloadProgress>('ollama-download-progress', (event) => {
             setDownloadProgress(event.payload);
           }) as unknown as () => void;
-          
-          unlisten2 = await listen<PullProgress>('ollama-pull-progress', (event) => {
-            setPullProgress(event.payload);
-            if (event.payload.status === 'success') {
-              setTimeout(() => {
-                setPullProgress(null);
-                checkStatus();
-              }, 2000);
-            }
-          }) as unknown as () => void;
         } catch (e: unknown) {
-          clientLogger.error('Failed to setup Tauri listeners:', e);
+          clientLogger.error('Failed to setup Tauri listener:', e);
         }
       }
     };
 
-    setupListeners();
+    setupListener();
     return () => {
-      if (unlisten1) unlisten1();
-      if (unlisten2) unlisten2();
+      if (unlisten) unlisten();
     };
-  }, [checkStatus]);
+  }, []);
 
   const handleDownload = async () => {
     if (!isTauri) {
@@ -204,7 +141,7 @@ export function OllamaManager() {
       await invoke<string>('download_ollama');
       toast.success(t('common.installerOllamaAvviato'));
     } catch (error: unknown) {
-      toast.error(`Errore download: ${error}`);
+      toast.error(`${t('ollamaManagerComp.erroreDownload')}: ${error}`);
     } finally {
       setActionLoading(null);
       setDownloadProgress(null);
@@ -223,7 +160,7 @@ export function OllamaManager() {
       }
       await checkStatus();
     } catch (error: unknown) {
-      toast.error(`Errore avvio: ${error}`);
+      toast.error(`${t('ollamaManagerComp.erroreAvvio')}: ${error}`);
     } finally {
       setActionLoading(null);
     }
@@ -239,35 +176,16 @@ export function OllamaManager() {
       }
       await checkStatus();
     } catch (error: unknown) {
-      toast.error(`Errore arresto: ${error}`);
+      toast.error(`${t('ollamaManagerComp.erroreArresto')}: ${error}`);
     } finally {
       setActionLoading(null);
-    }
-  };
-
-  const handlePullModel = async (modelName: string) => {
-    if (!isTauri) {
-      toast.info(`Esegui: ollama pull ${modelName}`);
-      return;
-    }
-    setActionLoading(`pull-${modelName}`);
-    try {
-      const { invoke } = await import('@tauri-apps/api/core');
-      await invoke<string>('pull_ollama_model', { modelName });
-      toast.success(`Modello ${modelName} installato!`);
-      await checkStatus();
-    } catch (error: unknown) {
-      toast.error(`Errore pull: ${error}`);
-    } finally {
-      setActionLoading(null);
-      setPullProgress(null);
     }
   };
 
   if (loading) {
     return (
       <Card>
-        <CardContent className="flex items-center justify-center py-8">
+        <CardContent className="flex items-center justify-center py-6">
           <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
           <span className="ml-2 text-sm text-muted-foreground">{t('ollamaManagerComp.verificaOllama')}</span>
         </CardContent>
@@ -303,27 +221,26 @@ export function OllamaManager() {
             ) : (
               <Badge variant="outline" className="bg-zinc-500/10 text-zinc-400 border-zinc-500/30 text-xs">
                 <div className="h-2 w-2 rounded-full bg-zinc-500 mr-1" />
-                Spento
+                {t('ollamaManagerComp.spento')}
               </Badge>
             )}
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={checkStatus}>
+            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={checkStatus} aria-label={t('common.aggiorna')}>
               <RefreshCw className="h-3.5 w-3.5" />
             </Button>
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3">
         <p className="text-xs text-muted-foreground">
-          Ollama permette di eseguire modelli AI localmente per tradurre senza limiti e senza costi.
-          Nessun dato viene inviato online.
+          {t('ollamaManagerComp.descrizioneBreve')}
         </p>
 
-        {/* Azioni principali */}
-        <div className="flex flex-wrap gap-2">
+        {/* Azioni lifecycle + link Model Manager */}
+        <div className="flex flex-wrap items-center gap-2">
           {!status?.installed && (
-            <Button 
-              size="sm" 
-              onClick={handleDownload} 
+            <Button
+              size="sm"
+              onClick={handleDownload}
               disabled={actionLoading === 'download'}
               className="bg-orange-600 hover:bg-orange-500"
             >
@@ -332,14 +249,14 @@ export function OllamaManager() {
               ) : (
                 <Download className="h-3.5 w-3.5 mr-1.5" />
               )}
-              Scarica Ollama
+              {t('ollamaManagerComp.scaricaOllama')}
             </Button>
           )}
 
           {status?.installed && !status?.running && (
-            <Button 
-              size="sm" 
-              onClick={handleStart} 
+            <Button
+              size="sm"
+              onClick={handleStart}
               disabled={actionLoading === 'start'}
               className="bg-green-600 hover:bg-green-500"
             >
@@ -348,15 +265,15 @@ export function OllamaManager() {
               ) : (
                 <Play className="h-3.5 w-3.5 mr-1.5" />
               )}
-              Avvia Ollama
+              {t('common.avviaOllama')}
             </Button>
           )}
 
           {status?.running && (
-            <Button 
-              size="sm" 
-              variant="outline" 
-              onClick={handleStop} 
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleStop}
               disabled={actionLoading === 'stop'}
             >
               {actionLoading === 'stop' ? (
@@ -364,9 +281,22 @@ export function OllamaManager() {
               ) : (
                 <Square className="h-3.5 w-3.5 mr-1.5" />
               )}
-              Arresta
+              {t('ollamaManagerComp.arresta')}
             </Button>
           )}
+
+          <Link href="/ollama-manager" className="ml-auto">
+            <Button size="sm" variant="outline" className="gap-1.5 border-orange-500/30 text-orange-400 hover:text-orange-300 hover:bg-orange-500/10">
+              <Cpu className="h-3.5 w-3.5" />
+              {t('ollamaManagerComp.gestisciModelli')}
+              {status?.running && (
+                <Badge variant="secondary" className="text-2xs px-1.5 py-0 font-mono">
+                  {status.models.length}
+                </Badge>
+              )}
+              <ArrowRight className="h-3 w-3" />
+            </Button>
+          </Link>
         </div>
 
         {/* Download progress */}
@@ -380,90 +310,7 @@ export function OllamaManager() {
           </div>
         )}
 
-        {/* Modelli installati */}
-        {status?.running && status.models.length > 0 && (
-          <div className="space-y-2">
-            <h4 className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-              <Cpu className="h-3.5 w-3.5" />
-              Modelli installati ({status.models.length})
-            </h4>
-            <div className="flex flex-wrap gap-1.5">
-              {status.models.map((model) => (
-                <Badge key={model} variant="secondary" className="text-xs font-mono">
-                  {model}
-                </Badge>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Pull progress */}
-        {pullProgress && (
-          <div className="space-y-1.5 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-blue-400">{pullProgress.message}</span>
-              <span className="text-blue-300 font-mono">{pullProgress.progress}%</span>
-            </div>
-            <Progress value={pullProgress.progress} className="h-1.5" />
-          </div>
-        )}
-
-        {/* Modelli consigliati */}
-        <div className="space-y-2">
-          <h4 className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-            <HardDrive className="h-3.5 w-3.5" />
-            Modelli consigliati per traduzione
-          </h4>
-          {!status?.running && (
-            <p className="text-2xs text-amber-400/80">{t('ollamaManagerComp.avviaOllamaPerInstallareIModel')}</p>
-          )}
-          <div className="grid gap-2">
-            {recommendedModels.map((model) => {
-              const modelBase = model.name.split(':')[0];
-              const isInstalled = (status?.models || []).some(m => 
-                m.startsWith(modelBase) || m.includes(modelBase.split('/').pop() || '')
-              );
-              const isPulling = actionLoading === `pull-${model.name}`;
-              return (
-                <div key={model.name} className="flex items-center justify-between p-2.5 rounded-lg bg-muted/50 border">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono font-medium">{model.name}</span>
-                      <Badge variant="outline" className="text-2xs px-1.5 py-0">{model.size}</Badge>
-                      {isInstalled && (
-                        <Badge className="text-2xs px-1.5 py-0 bg-green-500/20 text-green-500 border-green-500/30">
-                          <CheckCircle2 className="h-2.5 w-2.5 mr-0.5" />
-                          Installato
-                        </Badge>
-                      )}
-                    </div>
-                    <p className="text-2xs text-muted-foreground mt-0.5 truncate">{model.description}</p>
-                  </div>
-                  {!isInstalled && (
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="ml-2 h-7 text-xs shrink-0"
-                      onClick={() => handlePullModel(model.name)}
-                      disabled={isPulling || !!pullProgress || !status?.running}
-                    >
-                      {isPulling ? (
-                        <Loader2 className="h-3 w-3 animate-spin" />
-                      ) : (
-                        <>
-                          <Download className="h-3 w-3 mr-1" />
-                          Pull
-                        </>
-                      )}
-                    </Button>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Info */}
+        {/* Info versione */}
         {status?.installed && status.version && (
           <p className="text-2xs text-muted-foreground">
             {status.version} — {status.install_path}
@@ -473,4 +320,3 @@ export function OllamaManager() {
     </Card>
   );
 }
-
