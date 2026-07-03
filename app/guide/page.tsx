@@ -140,8 +140,7 @@ export default function GuidePage() {
             <Wrench className="h-3 w-3" /> {g.tabTools}
           </TabsTrigger>
           <TabsTrigger value="advanced" className="text-xs gap-1">
-            <Brain className="h-3 w-3" /> Avanzate
-          </TabsTrigger>
+            <Brain className="h-3 w-3" /> {t('guidePage.advancedTab')}</TabsTrigger>
           <TabsTrigger value="shortcuts" className="text-xs gap-1">
             <Keyboard className="h-3 w-3" /> {g.tabShortcuts}
           </TabsTrigger>
@@ -416,7 +415,7 @@ export default function GuidePage() {
                                       </div>
                                       <span className="text-white">{tool.name}</span>
                                       {tool.isNew && <Badge className="text-2xs px-1 py-0 h-3.5 bg-amber-500/20 text-amber-400 border-amber-500/30">NEW</Badge>}
-                                      {tool.experimental && <Badge className="text-2xs px-1 py-0 h-3.5 bg-amber-500/20 text-amber-400 border-amber-500/30">Labs</Badge>}
+                                      {tool.experimental && <Badge className="text-2xs px-1 py-0 h-3.5 bg-amber-500/20 text-amber-400 border-amber-500/30">{t('guidePage.labsTab')}</Badge>}
                                     </CardTitle>
                                   </CardHeader>
                                   <CardContent className="py-1 px-3 pb-2">
@@ -505,8 +504,7 @@ export default function GuidePage() {
                     <Badge variant="outline" className="ml-auto text-2xs border-purple-500/40 text-purple-300">v1.9.0</Badge>
                   </CardTitle>
                   <CardDescription className="text-xs">
-                    Analizza in profondità un gioco <em>prima</em> di tradurlo: difficoltà, engine, volume stringhe, DRM, encoding, tempi stimati LLM e chain suggerite.
-                  </CardDescription>
+                    {t('guidePage.ptDescA')} <em>{t('guidePage.ptDescBefore')}</em>  {t('guidePage.ptDescB')}</CardDescription>
                 </CardHeader>
                 <CardContent className="p-3 space-y-3">
                   {/* Pipeline diagram */}
@@ -548,8 +546,7 @@ export default function GuidePage() {
                     </div>
                     <div className="rounded border border-slate-700/40 bg-slate-900/40 p-2">
                       <div className="flex items-center gap-1.5 text-2xs font-semibold text-purple-300 mb-1">
-                        <ShieldCheck className="h-3 w-3" /> DRM & Encoding
-                      </div>
+                        <ShieldCheck className="h-3 w-3" /> {t('guidePage.drmEncoding')}</div>
                       <p className="text-2xs text-muted-foreground">{t('guidePage.ptDrmDesc')}</p>
                     </div>
                     <div className="rounded border border-slate-700/40 bg-slate-900/40 p-2">
@@ -567,8 +564,7 @@ export default function GuidePage() {
                   </div>
 
                   <Tip variant="info">
-                    Come si apre: <strong>icona Brain (viola)</strong> sulla game card in libreria (hover) oppure dal bottone <strong>P.T.</strong> nella pagina dettaglio gioco. Output: report esportabile + bottone &quot;Esegui workflow&quot;.
-                  </Tip>
+                    {t('guidePage.howToOpen')} <strong>{t('guidePage.brainIcon')}</strong>  {t('guidePage.onGameCard')} <strong>P.T.</strong>  {t('guidePage.ptOutput')}</Tip>
                 </CardContent>
               </Card>
 
@@ -577,47 +573,45 @@ export default function GuidePage() {
                 <CardHeader className="py-2 px-3">
                   <CardTitle className="text-sm flex items-center gap-2">
                     <FlaskConical className="w-4 h-4 text-sky-400" />
-                    Dry Run Scanner — Scansione sicura dell&apos;intera libreria
-                    <Badge variant="outline" className="ml-auto text-2xs border-sky-500/40 text-sky-300">v1.9.0</Badge>
+                    {t('guidePage.dryRunTitle')}<Badge variant="outline" className="ml-auto text-2xs border-sky-500/40 text-sky-300">v1.9.0</Badge>
                   </CardTitle>
                   <CardDescription className="text-xs">
-                    Analizza <strong>tutti</strong> i tuoi giochi Steam (800+) in batch <strong>senza modificare nessun file</strong>. Identifica quali sono traducibili e con quale engine.
-                  </CardDescription>
+                    {t('guidePage.dryAnalyze')} <strong>{t('guidePage.dryAll')}</strong>  {t('guidePage.dryGamesBatch')} <strong>{t('guidePage.dryNoModify')}</strong> {t('guidePage.dryIdentify')}</CardDescription>
                 </CardHeader>
                 <CardContent className="p-3 space-y-3">
                   {/* Flow diagram */}
                   <div className="rounded-lg border border-sky-500/20 bg-slate-950/40 p-3">
-                    <div className="text-2xs text-sky-300 font-semibold mb-2 uppercase tracking-wider">Flusso dry run</div>
+                    <div className="text-2xs text-sky-300 font-semibold mb-2 uppercase tracking-wider">{t('guidePage.dryRunFlow')}</div>
                     <div className="flex items-start gap-2 text-2xs">
                       <div className="flex flex-col items-center gap-1 flex-1">
                         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/15 border border-sky-500/40">
                           <Database className="h-3.5 w-3.5 text-sky-300" />
                         </div>
                         <div className="text-center font-semibold text-sky-200">Steam Library</div>
-                        <div className="text-[9px] text-muted-foreground">800+ giochi</div>
+                        <div className="text-[9px] text-muted-foreground">{t('guidePage.games800')}</div>
                       </div>
                       <ArrowRight className="h-3 w-3 text-sky-500/50 mt-3 shrink-0" />
                       <div className="flex flex-col items-center gap-1 flex-1">
                         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/15 border border-sky-500/40">
                           <Scan className="h-3.5 w-3.5 text-sky-300" />
                         </div>
-                        <div className="text-center font-semibold text-sky-200">Engine Detect</div>
-                        <div className="text-[9px] text-muted-foreground">+ string count</div>
+                        <div className="text-center font-semibold text-sky-200">{t('guidePage.engineDetect')}</div>
+                        <div className="text-[9px] text-muted-foreground">{t('guidePage.stringCount')}</div>
                       </div>
                       <ArrowRight className="h-3 w-3 text-sky-500/50 mt-3 shrink-0" />
                       <div className="flex flex-col items-center gap-1 flex-1">
                         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/15 border border-sky-500/40">
                           <Layers className="h-3.5 w-3.5 text-sky-300" />
                         </div>
-                        <div className="text-center font-semibold text-sky-200">Categorizza</div>
-                        <div className="text-[9px] text-muted-foreground">ready/err/nosup</div>
+                        <div className="text-center font-semibold text-sky-200">{t('guidePage.categorize')}</div>
+                        <div className="text-[9px] text-muted-foreground">{t('guidePage.readyErrNosup')}</div>
                       </div>
                       <ArrowRight className="h-3 w-3 text-sky-500/50 mt-3 shrink-0" />
                       <div className="flex flex-col items-center gap-1 flex-1">
                         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/15 border border-sky-500/40">
                           <FileText className="h-3.5 w-3.5 text-sky-300" />
                         </div>
-                        <div className="text-center font-semibold text-sky-200">Report JSON</div>
+                        <div className="text-center font-semibold text-sky-200">{t('guidePage.reportJson')}</div>
                         <div className="text-[9px] text-muted-foreground">DATA_DIR</div>
                       </div>
                     </div>
@@ -625,21 +619,21 @@ export default function GuidePage() {
 
                   <div className="grid grid-cols-3 gap-2">
                     <div className="rounded border border-emerald-500/30 bg-emerald-950/20 p-2 text-center">
-                      <div className="text-sm font-bold text-emerald-300">✓ Ready</div>
+                      <div className="text-sm font-bold text-emerald-300">{t('guidePage.catReady')}</div>
                       <div className="text-[10px] text-muted-foreground">{t('guidePage.dryReady')}</div>
                     </div>
                     <div className="rounded border border-amber-500/30 bg-amber-950/20 p-2 text-center">
-                      <div className="text-sm font-bold text-amber-300">⚠ Errors</div>
+                      <div className="text-sm font-bold text-amber-300">{t('guidePage.catErrors')}</div>
                       <div className="text-[10px] text-muted-foreground">{t('guidePage.dryErrors')}</div>
                     </div>
                     <div className="rounded border border-slate-500/30 bg-slate-950/40 p-2 text-center">
-                      <div className="text-sm font-bold text-slate-300">— Unsupported</div>
+                      <div className="text-sm font-bold text-slate-300">{t('guidePage.catUnsupported')}</div>
                       <div className="text-[10px] text-muted-foreground">{t('common.engineIgnotoOSenzaStringhe')}</div>
                     </div>
                   </div>
 
                   <Tip variant="success">
-                    Come si lancia: bottone <strong>Dry Run</strong> nel pannello in cima alla pagina <NavLink href="/library">Libreria</NavLink>. Progress real-time, nessun file toccato. Al termine, report JSON salvato in <code className="text-[10px] bg-slate-800 px-1 rounded">DATA_DIR/dry_run_report.json</code>.
+                    {t('guidePage.howToLaunch')} <strong>Dry Run</strong>  {t('guidePage.inTopPanel')} <NavLink href="/library">{t('guidePage.library')}</NavLink> {t('guidePage.dryLaunchDesc')} <code className="text-[10px] bg-slate-800 px-1 rounded">DATA_DIR/dry_run_report.json</code>.
                   </Tip>
                 </CardContent>
               </Card>
@@ -653,8 +647,7 @@ export default function GuidePage() {
                     <Badge variant="outline" className="ml-auto text-2xs border-amber-500/40 text-amber-300">v1.9.0</Badge>
                   </CardTitle>
                   <CardDescription className="text-xs">
-                    Ordina tutti i giochi analizzati dal <strong>più facile</strong> al <strong>più difficile</strong> da tradurre. Perfetto per decidere da dove cominciare.
-                  </CardDescription>
+                    {t('guidePage.sortGames')} <strong>{t('guidePage.easiest')}</strong>  {t('guidePage.toWord')} <strong>{t('guidePage.hardest')}</strong>  {t('guidePage.sortDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent className="p-3 space-y-3">
                   {/* Sample ranking visualization */}
@@ -684,8 +677,7 @@ export default function GuidePage() {
                   </div>
 
                   <Tip variant="info">
-                    Dove si trova: <NavLink href="/prediction-tool/ranking">/prediction-tool/ranking</NavLink>. Clicca un gioco nella lista per aprire direttamente il suo report P.T. completo.
-                  </Tip>
+                    {t('guidePage.whereToFind')} <NavLink href="/prediction-tool/ranking">/prediction-tool/ranking</NavLink> {t('guidePage.ptWhereDesc')}</Tip>
                 </CardContent>
               </Card>
 
@@ -694,12 +686,10 @@ export default function GuidePage() {
                 <CardHeader className="py-2 px-3">
                   <CardTitle className="text-sm flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-indigo-400" />
-                    &quot;String it!&quot; — Traduzione in un click
-                    <Badge variant="outline" className="ml-auto text-2xs border-indigo-500/40 text-indigo-300">v1.9.0</Badge>
+                    {t('guidePage.stringItTitle')}<Badge variant="outline" className="ml-auto text-2xs border-indigo-500/40 text-indigo-300">v1.9.0</Badge>
                   </CardTitle>
                   <CardDescription className="text-xs">
-                    Bottone viola <Sparkles className="inline h-3 w-3 text-indigo-400" /> che appare in <em>hover</em> sulla game card: lancia direttamente il Translation Wizard precompilato con tutto ciò che serve (appid, engine, path).
-                  </CardDescription>
+                    {t('guidePage.purpleButton')} <Sparkles className="inline h-3 w-3 text-indigo-400" />  {t('guidePage.thatAppearsIn')} <em>{t('guidePage.hover')}</em>  {t('guidePage.stringItDesc')}</CardDescription>
                 </CardHeader>
               </Card>
 
