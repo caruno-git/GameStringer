@@ -28,10 +28,12 @@ import {
   type FineTuningDataset,
   type FineTuningModel,
 } from '@/lib/ai/fine-tuning';
+import { getCorrections } from '@/lib/ai/adaptive-mt';
+import { toast } from 'sonner';
 import { useTranslation } from '@/lib/i18n';
 
 export function FineTuningManager({ gameId }: { gameId?: string }) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [datasets, setDatasets] = useState<FineTuningDataset[]>([]);
   const [models, setModels] = useState<FineTuningModel[]>([]);
   const [ollamaStatus, setOllamaStatus] = useState<{ available: boolean; models: string[] }>({ available: false, models: [] });
@@ -40,10 +42,25 @@ export function FineTuningManager({ gameId }: { gameId?: string }) {
   const [targetLang, setTargetLang] = useState('it');
   const [approvedOnly, setApprovedOnly] = useState(true);
   const [exportFormat, setExportFormat] = useState<'openai' | 'ollama' | 'alpaca' | 'chatml'>('openai');
+  // In Impostazioni il componente è montato senza gameId: senza questo selettore
+  // il bottone "Genera" restava disabilitato per sempre (bug pannello Fine-Tuning).
+  const [selectedGameId, setSelectedGameId] = useState('');
+  const [gamesWithCorrections, setGamesWithCorrections] = useState<Array<{ id: string; count: number }>>([]);
+
+  const effectiveGameId = gameId || selectedGameId;
 
   const reload = useCallback(() => {
     setDatasets(getDatasets(gameId));
     setModels(getModels(gameId));
+    if (!gameId) {
+      const counts = new Map<string, number>();
+      for (const c of getCorrections()) {
+        counts.set(c.gameId, (counts.get(c.gameId) || 0) + 1);
+      }
+      setGamesWithCorrections([...counts.entries()]
+        .map(([id, count]) => ({ id, count }))
+        .sort((a, b) => b.count - a.count));
+    }
   }, [gameId]);
 
   useEffect(() => {
@@ -52,10 +69,21 @@ export function FineTuningManager({ gameId }: { gameId?: string }) {
   }, [reload]);
 
   const handleGenerate = async () => {
-    if (!gameId) return;
+    if (!effectiveGameId) return;
     setIsGenerating(true);
     try {
-      generateDatasetFromCorrections(gameId, sourceLang, targetLang, { approvedOnly });
+      const available = getCorrections({
+        gameId: effectiveGameId,
+        sourceLanguage: sourceLang,
+        targetLanguage: targetLang,
+        ...(approvedOnly ? { approved: true } : {}),
+      });
+      if (available.length === 0) {
+        toast.error(t('fineTuningManager.noCorrectionsFound'));
+        return;
+      }
+      const { dataset } = generateDatasetFromCorrections(effectiveGameId, sourceLang, targetLang, { approvedOnly });
+      toast.success(`${t('fineTuningManager.datasetCreated')}: ${dataset.exampleCount} ${t('fineTuningManager.totalExamples')}`);
       reload();
     } finally {
       setIsGenerating(false);
@@ -96,14 +124,14 @@ export function FineTuningManager({ gameId }: { gameId?: string }) {
           <div className="flex-1">
             <div className="text-sm font-medium">Ollama</div>
             <div className="text-xs text-muted-foreground">
-              {ollamaStatus.available 
-                ? `${ollamaStatus.models.length} modelli disponibili`
-                : 'Non disponibile — avvia Ollama per il fine-tuning locale'
+              {ollamaStatus.available
+                ? `${ollamaStatus.models.length} ${t('fineTuningManager.modelsAvailable')}`
+                : t('fineTuningManager.ollamaUnavailable')
               }
             </div>
           </div>
           <Badge variant={ollamaStatus.available ? 'default' : 'destructive'} className="text-xs">
-            {ollamaStatus.available ? 'Online' : 'Offline'}
+            {ollamaStatus.available ? t('offlineIndicatorComp.online') : t('offlineIndicatorComp.offline')}
           </Badge>
         </div>
 
@@ -114,7 +142,32 @@ export function FineTuningManager({ gameId }: { gameId?: string }) {
           <h3 className="text-sm font-semibold flex items-center gap-1.5">
             <Database className="h-4 w-4" />
             {t('fineTuningManager.generateDataset')}</h3>
-          
+
+          {/* Selettore gioco: solo quando il componente è montato senza gameId (Impostazioni) */}
+          {!gameId && (
+            gamesWithCorrections.length > 0 ? (
+              <div className="space-y-1">
+                <Label className="text-xs">{t('fineTuningManager.selectGame')}</Label>
+                <Select value={selectedGameId} onValueChange={setSelectedGameId}>
+                  <SelectTrigger className="h-8 text-sm">
+                    <SelectValue placeholder={t('fineTuningManager.selectGamePlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {gamesWithCorrections.map(g => (
+                      <SelectItem key={g.id} value={g.id}>
+                        {g.id} ({g.count} {t('fineTuningManager.correctionsUnit')})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                {t('fineTuningManager.noGamesWithCorrections')}
+              </p>
+            )
+          )}
+
           <div className="grid grid-cols-3 gap-3">
             <div className="space-y-1">
               <Label className="text-xs">{t('fineTuningManager.fromLang')}</Label>
@@ -143,7 +196,7 @@ export function FineTuningManager({ gameId }: { gameId?: string }) {
               <Switch checked={approvedOnly} onCheckedChange={setApprovedOnly} />
               <Label className="text-xs">{t('fineTuningManager.onlyApproved')}</Label>
             </div>
-            <Button size="sm" onClick={handleGenerate} disabled={!gameId || isGenerating}>
+            <Button size="sm" onClick={handleGenerate} disabled={!effectiveGameId || isGenerating}>
               {isGenerating ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Database className="h-3.5 w-3.5 mr-1.5" />}
               {t('fineTuningManager.generate')}</Button>
           </div>
@@ -169,10 +222,10 @@ export function FineTuningManager({ gameId }: { gameId?: string }) {
                 <div className="text-sm font-medium">{ds.name}</div>
                 <div className="text-xs text-muted-foreground">
                   {ds.exampleCount}  {t('fineTuningManager.examplesUnit')} {ds.sourceLanguage}→{ds.targetLanguage}
-                  {ds.approvedOnly && ' • Solo approvati'}
+                  {ds.approvedOnly && ` • ${t('fineTuningManager.approvedOnlyBadge')}`}
                 </div>
                 <div className="text-[10px] text-muted-foreground mt-0.5">
-                  {new Date(ds.createdAt).toLocaleString('it', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                  {new Date(ds.createdAt).toLocaleString(language, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                 </div>
               </div>
               <div className="flex gap-1.5">
@@ -213,7 +266,7 @@ export function FineTuningManager({ gameId }: { gameId?: string }) {
                   <div className="text-sm font-medium">{model.name}</div>
                   <div className="text-xs text-muted-foreground">
                     {t('fineTuningManager.baseLabel')} {model.baseModel} • v{model.version}
-                    {model.metrics.loss && ` • Loss: ${model.metrics.loss.toFixed(4)}`}
+                    {model.metrics?.loss != null && ` • Loss: ${model.metrics.loss.toFixed(4)}`}
                   </div>
                 </div>
               </div>
