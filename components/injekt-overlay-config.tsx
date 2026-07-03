@@ -183,8 +183,7 @@ export function InjektOverlayConfig({ config, onConfigChange }: InjektOverlayCon
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Palette className="w-5 h-5" />
-                Colors and Style
-              </CardTitle>
+                {t('injektOverlayConfigComp.colorsStyle')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -262,7 +261,7 @@ export function InjektOverlayConfig({ config, onConfigChange }: InjektOverlayCon
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <Label>{t('injektOverlayConfigComp.dimensioneFont')}</Label>
-                    <span className="text-sm text-muted-foreground">{localConfig.fontSize}px</span>
+                    <span className="text-sm text-muted-foreground">{localConfig.fontSize}{t('injektOverlayConfigComp.pxUnit')}</span>
                   </div>
                   <Slider
                     value={[localConfig.fontSize]}
@@ -277,7 +276,7 @@ export function InjektOverlayConfig({ config, onConfigChange }: InjektOverlayCon
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <Label>{t('injektOverlayConfigComp.raggioBordo')}</Label>
-                  <span className="text-sm text-muted-foreground">{localConfig.borderRadius}px</span>
+                  <span className="text-sm text-muted-foreground">{localConfig.borderRadius}{t('injektOverlayConfigComp.pxUnit')}</span>
                 </div>
                 <Slider
                   value={[localConfig.borderRadius]}
@@ -291,7 +290,7 @@ export function InjektOverlayConfig({ config, onConfigChange }: InjektOverlayCon
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <Label>{t('injektOverlayConfigComp.padding')}</Label>
-                  <span className="text-sm text-muted-foreground">{localConfig.padding}px</span>
+                  <span className="text-sm text-muted-foreground">{localConfig.padding}{t('injektOverlayConfigComp.pxUnit')}</span>
                 </div>
                 <Slider
                   value={[localConfig.padding]}
@@ -308,8 +307,7 @@ export function InjektOverlayConfig({ config, onConfigChange }: InjektOverlayCon
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5" />
-                Effetti
-              </CardTitle>
+                {t('injektOverlayConfigComp.effects')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
@@ -346,7 +344,7 @@ export function InjektOverlayConfig({ config, onConfigChange }: InjektOverlayCon
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <Label>{t('injektOverlayConfigComp.sfocaturaOmbra')}</Label>
-                      <span className="text-sm text-muted-foreground">{localConfig.shadowBlur}px</span>
+                      <span className="text-sm text-muted-foreground">{localConfig.shadowBlur}{t('injektOverlayConfigComp.pxUnit')}</span>
                     </div>
                     <Slider
                       value={[localConfig.shadowBlur]}
@@ -374,7 +372,7 @@ export function InjektOverlayConfig({ config, onConfigChange }: InjektOverlayCon
                 <div className="ml-6 space-y-2">
                   <div className="flex justify-between">
                     <Label>{t('injektOverlayConfigComp.intensitàSfocatura')}</Label>
-                    <span className="text-sm text-muted-foreground">{localConfig.blurAmount}px</span>
+                    <span className="text-sm text-muted-foreground">{localConfig.blurAmount}{t('injektOverlayConfigComp.pxUnit')}</span>
                   </div>
                   <Slider
                     value={[localConfig.blurAmount]}
@@ -394,8 +392,7 @@ export function InjektOverlayConfig({ config, onConfigChange }: InjektOverlayCon
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Move className="w-5 h-5" />
-                Positioning
-              </CardTitle>
+                {t('injektOverlayConfigComp.positioning')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -421,7 +418,7 @@ export function InjektOverlayConfig({ config, onConfigChange }: InjektOverlayCon
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <Label>{t('injektOverlayConfigComp.offsetX')}</Label>
-                    <span className="text-sm text-muted-foreground">{localConfig.offset.x}px</span>
+                    <span className="text-sm text-muted-foreground">{localConfig.offset.x}{t('injektOverlayConfigComp.pxUnit')}</span>
                   </div>
                   <Slider
                     value={[localConfig.offset.x]}
@@ -435,7 +432,7 @@ export function InjektOverlayConfig({ config, onConfigChange }: InjektOverlayCon
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <Label>{t('injektOverlayConfigComp.offsetY')}</Label>
-                    <span className="text-sm text-muted-foreground">{localConfig.offset.y}px</span>
+                    <span className="text-sm text-muted-foreground">{localConfig.offset.y}{t('injektOverlayConfigComp.pxUnit')}</span>
                   </div>
                   <Slider
                     value={[localConfig.offset.y]}
@@ -451,7 +448,7 @@ export function InjektOverlayConfig({ config, onConfigChange }: InjektOverlayCon
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <Label>{t('injektOverlayConfigComp.larghezzaMassima')}</Label>
-                    <span className="text-sm text-muted-foreground">{localConfig.maxWidth}px</span>
+                    <span className="text-sm text-muted-foreground">{localConfig.maxWidth}{t('injektOverlayConfigComp.pxUnit')}</span>
                   </div>
                   <Slider
                     value={[localConfig.maxWidth]}
@@ -465,7 +462,7 @@ export function InjektOverlayConfig({ config, onConfigChange }: InjektOverlayCon
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <Label>{t('injektOverlayConfigComp.altezzaMassima')}</Label>
-                    <span className="text-sm text-muted-foreground">{localConfig.maxHeight}px</span>
+                    <span className="text-sm text-muted-foreground">{localConfig.maxHeight}{t('injektOverlayConfigComp.pxUnit')}</span>
                   </div>
                   <Slider
                     value={[localConfig.maxHeight]}
@@ -485,8 +482,7 @@ export function InjektOverlayConfig({ config, onConfigChange }: InjektOverlayCon
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Layers className="w-5 h-5" />
-                Animazioni
-              </CardTitle>
+                {t('injektOverlayConfigComp.animations')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
@@ -524,7 +520,7 @@ export function InjektOverlayConfig({ config, onConfigChange }: InjektOverlayCon
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <Label>{t('injektOverlayConfigComp.animationDuration')}</Label>
-                      <span className="text-sm text-muted-foreground">{localConfig.animationDuration}ms</span>
+                      <span className="text-sm text-muted-foreground">{localConfig.animationDuration}{t('injektOverlayConfigComp.msUnit')}</span>
                     </div>
                     <Slider
                       value={[localConfig.animationDuration]}
@@ -545,8 +541,7 @@ export function InjektOverlayConfig({ config, onConfigChange }: InjektOverlayCon
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Settings2 className="w-5 h-5" />
-                Behavior
-              </CardTitle>
+                {t('injektOverlayConfigComp.behavior')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
@@ -586,7 +581,7 @@ export function InjektOverlayConfig({ config, onConfigChange }: InjektOverlayCon
                 <div className="ml-6 space-y-2">
                   <div className="flex justify-between">
                     <Label>{t('injektOverlayConfigComp.hideDelay')}</Label>
-                    <span className="text-sm text-muted-foreground">{localConfig.autoHideDelay}ms</span>
+                    <span className="text-sm text-muted-foreground">{localConfig.autoHideDelay}{t('injektOverlayConfigComp.msUnit')}</span>
                   </div>
                   <Slider
                     value={[localConfig.autoHideDelay]}
@@ -604,7 +599,7 @@ export function InjektOverlayConfig({ config, onConfigChange }: InjektOverlayCon
                   type="text"
                   value={localConfig.hotkey}
                   onChange={(e) => handleChange('hotkey', e.target.value)}
-                  placeholder="e.g. Ctrl+Shift+T"
+                  placeholder={t('injektOverlayConfigComp.hotkeyPh')}
                 />
               </div>
             </CardContent>
@@ -614,20 +609,17 @@ export function InjektOverlayConfig({ config, onConfigChange }: InjektOverlayCon
             <div className="flex gap-2">
               <Button variant="outline" onClick={resetToDefaults}>
                 <RotateCcw className="w-4 h-4 mr-2" />
-                Reset to Default
-              </Button>
+                {t('injektOverlayConfigComp.resetDefault')}</Button>
               
               <Button variant="outline" onClick={exportConfig}>
                 <Download className="w-4 h-4 mr-2" />
-                Export
-              </Button>
+                {t('injektOverlayConfigComp.export')}</Button>
               
               <Label htmlFor="import-overlay-config" className="cursor-pointer">
                 <Button variant="outline" asChild>
                   <span>
                     <Upload className="w-4 h-4 mr-2" />
-                    Import
-                  </span>
+                    {t('injektOverlayConfigComp.importBtn')}</span>
                 </Button>
                 <Input
                   id="import-overlay-config"
@@ -647,11 +639,9 @@ export function InjektOverlayConfig({ config, onConfigChange }: InjektOverlayCon
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Monitor className="w-5 h-5" />
-            Overlay Preview
-          </CardTitle>
+            {t('injektOverlayConfigComp.overlayPreview')}</CardTitle>
           <CardDescription>
-            Preview how the overlay will look in-game
-          </CardDescription>
+            {t('injektOverlayConfigComp.previewDesc')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg overflow-hidden" style={{ height: '300px' }}>
