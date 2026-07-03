@@ -55,6 +55,7 @@ export function FineTuningManager({ gameId }: { gameId?: string }) {
     if (!gameId) {
       const counts = new Map<string, number>();
       for (const c of getCorrections()) {
+        if (!c.gameId) continue; // correzioni senza gioco: non selezionabili qui
         counts.set(c.gameId, (counts.get(c.gameId) || 0) + 1);
       }
       setGamesWithCorrections([...counts.entries()]
