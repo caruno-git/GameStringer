@@ -189,16 +189,46 @@ fn count_ks_strings(content: &str) -> u32 {
     c
 }
 
+/// Euristica: riga che è codice JavaScript/config TyranoScript, NON testo da tradurre.
+/// Conservativa: scatta solo su segnali JS forti (variabili di stato tf./sf./mp./TG. con
+/// assegnazione, jQuery/DOM, keyword JS a inizio riga, statement con chiamata + `;`),
+/// così non scarta dialoghi normali. Serve per il codice inline sfuggito ai blocchi
+/// [iscript] (es. Homicipher, pieno di `tf.config_* = ...` e `$(...).css(...)`).
+fn is_code_line(t: &str) -> bool {
+    let has_var = t.contains("tf.") || t.contains("sf.") || t.contains("mp.") || t.contains("TG.");
+    if has_var && t.contains('=') { return true; }
+    if t.starts_with("$(") || t.contains(".css(") || t.contains(".html(")
+        || t.contains(".append(") || t.contains(".attr(") { return true; }
+    let kw = ["function ", "var ", "let ", "const ", "return ", "if(", "if (",
+              "for(", "for (", "while(", "} else", "});", "})"];
+    if kw.iter().any(|k| t.starts_with(k)) { return true; }
+    if t.ends_with(';') && (t.contains("()") || t.contains(").")
+        || t.contains("parseInt") || t.contains("JSON.")) { return true; }
+    false
+}
+
 fn parse_ks_strings(content: &str, filename: &str) -> Vec<TyranoString> {
     let mut strings = Vec::new();
     let mut id_counter = 0u32;
     let mut current_char: Option<String> = None;
+    let mut in_code_block = false; // dentro [iscript]/[html] → salta tutto
     let tag_re = regex::Regex::new(r"\[[^\]]*\]").unwrap();
     let link_re = regex::Regex::new(r"\[link[^\]]*\](.*?)\[endlink\]").unwrap();
 
     for (ln, line) in content.lines().enumerate() {
         let t = line.trim();
+
+        // Blocchi di codice TyranoScript: [iscript]…[endscript] (JavaScript) e
+        // [html]…[endhtml] (HTML raw) non contengono testo di dialogo → saltali.
+        let tl = t.to_lowercase();
+        if tl.contains("[iscript]") || tl.contains("[html]") { in_code_block = true; continue; }
+        if tl.contains("[endscript]") || tl.contains("[endhtml]") { in_code_block = false; continue; }
+        if in_code_block { continue; }
+
         if t.is_empty() || t.starts_with(';') || t.starts_with('*') { continue; }
+
+        // Codice inline sfuggito ai blocchi (config/JS): non è testo traducibile.
+        if is_code_line(t) { continue; }
 
         // Character name: #Name
         if t.starts_with('#') {
@@ -867,6 +897,49 @@ Hello, Alice.
         assert_eq!(result.len(), 5);
         let types: Vec<&str> = result.iter().map(|s| s.string_type.as_str()).collect();
         assert_eq!(types, vec!["name", "dialogue", "name", "dialogue", "choice"]);
+    }
+
+    #[test]
+    fn parse_ks_strings_skips_iscript_block() {
+        // Il JavaScript dentro [iscript]…[endscript] NON deve essere estratto come testo.
+        let input = "\
+Real dialogue line.
+[iscript]
+tf.current_auto_speed = parseInt(TG.config);
+$(\".bgm_img_2\").css(\"visibility\", tf.config_visible);
+[endscript]
+Another real line.
+";
+        let result = parse_ks_strings(input, "scene.ks");
+        let originals: Vec<&str> = result.iter().map(|s| s.original.as_str()).collect();
+        assert_eq!(originals, vec!["Real dialogue line.", "Another real line."]);
+    }
+
+    #[test]
+    fn parse_ks_strings_skips_inline_code_lines() {
+        // Codice/config sfuggito ai blocchi: assegnazioni tf./sf., jQuery, keyword JS.
+        let input = "\
+tf.config_num_bgm = 5;
+sf.volume = 100;
+$(\"#box\").html(\"x\");
+function foo() {
+Valid narration text here.
+";
+        let result = parse_ks_strings(input, "s.ks");
+        let originals: Vec<&str> = result.iter().map(|s| s.original.as_str()).collect();
+        assert_eq!(originals, vec!["Valid narration text here."]);
+    }
+
+    #[test]
+    fn is_code_line_detects_code_but_not_dialogue() {
+        assert!(is_code_line("tf.config_x = 1;"));
+        assert!(is_code_line("$(\".img\").css(\"opacity\", 0);"));
+        assert!(is_code_line("function init() {"));
+        assert!(is_code_line("return true;"));
+        // Dialoghi normali NON devono essere scambiati per codice.
+        assert!(!is_code_line("Hello, how are you?"));
+        assert!(!is_code_line("I paid 5 dollars for it."));
+        assert!(!is_code_line("Wait... what happened here?"));
     }
 
     // ========================================================================
