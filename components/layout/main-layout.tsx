@@ -545,8 +545,7 @@ export function MainLayout({ children }: MainLayoutProps) {
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[9999] focus:bg-cyan-600 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:text-sm focus:font-medium focus:shadow-lg"
         >
-          Vai al contenuto principale
-        </a>
+          {t('mainLayout.skipToContent')}</a>
 
         {/* Sidebar */}
         <aside 
@@ -946,7 +945,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                       if (!hasResults) {
                         return (
                           <div className="py-6 text-center text-sm text-slate-500">
-                            {t('commandPalette.noResults')} &quot;{searchQuery}&quot;
+                            {t('commandPalette.noResults')} {'"'}{searchQuery}{'"'}
                           </div>
                         );
                       }
@@ -956,7 +955,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                           {/* Pages section */}
                           {filteredNav.length > 0 && (
                             <>
-                              <div className="px-3 py-1.5 text-xs font-medium text-slate-500 uppercase tracking-wider">Pagine</div>
+                              <div className="px-3 py-1.5 text-xs font-medium text-slate-500 uppercase tracking-wider">{t('mainLayout.pages')}</div>
                               {filteredNav.map((item) => {
                                 const Icon = item.icon;
                                 return (
@@ -983,7 +982,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                           {filteredGames.length > 0 && (
                             <>
                               <div className="px-3 py-1.5 text-xs font-medium text-emerald-500 uppercase tracking-wider mt-2 flex items-center gap-1.5">
-                                <Gamepad2 className="h-3 w-3" /> Giochi ({filteredGames.length})
+                                <Gamepad2 className="h-3 w-3" /> {t('mainLayout.games')} ({filteredGames.length})
                               </div>
                               {filteredGames.map((game) => (
                                 <Link
@@ -1016,8 +1015,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                           {/* Hint for short queries */}
                           {q.length < 2 && libraryGames.length > 0 && (
                             <div className="px-3 py-2 text-xs text-slate-500 italic border-t border-slate-800/50 mt-2">
-                              Scrivi 2+ caratteri per cercare tra {libraryGames.length} giochi...
-                            </div>
+                              {t('mainLayout.searchHint')} {libraryGames.length}  {t('mainLayout.gamesUnit')}</div>
                           )}
                         </div>
                       );
@@ -1119,7 +1117,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                     <span className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 border border-white/20 shadow-sm">
                       <span className="w-full h-full bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2060%2030%22%3E%3CclipPath%20id%3D%22a%22%3E%3Cpath%20d%3D%22M0%200v30h60V0z%22%2F%3E%3C%2FclipPath%3E%3CclipPath%20id%3D%22b%22%3E%3Cpath%20d%3D%22M30%2015h30v15zv15H0zH0V0zV0h30z%22%2F%3E%3C%2FclipPath%3E%3Cg%20clip-path%3D%22url(%23a)%22%3E%3Cpath%20d%3D%22M0%200v30h60V0z%22%20fill%3D%22%23012169%22%2F%3E%3Cpath%20d%3D%22M0%200l60%2030m0-30L0%2030%22%20stroke%3D%22%23fff%22%20stroke-width%3D%226%22%2F%3E%3Cpath%20d%3D%22M0%200l60%2030m0-30L0%2030%22%20clip-path%3D%22url(%23b)%22%20stroke%3D%22%23C8102E%22%20stroke-width%3D%224%22%2F%3E%3Cpath%20d%3D%22M30%200v30M0%2015h60%22%20stroke%3D%22%23fff%22%20stroke-width%3D%2210%22%2F%3E%3Cpath%20d%3D%22M30%200v30M0%2015h60%22%20stroke%3D%22%23C8102E%22%20stroke-width%3D%226%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E')] bg-cover bg-center block w-full h-full" />
                     </span>
-                    <span className="flex-1">English</span>
+                    <span className="flex-1">{t('languages.en')}</span>
                     {language === 'en' && <Check className="h-4 w-4 text-blue-400" />}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setLanguage('it')} className="gap-3">
@@ -1128,7 +1126,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                       <span className="w-1/3 bg-white" />
                       <span className="w-1/3 bg-red-500" />
                     </span>
-                    <span className="flex-1">Italiano</span>
+                    <span className="flex-1">{t('languages.it')}</span>
                     {language === 'it' && <Check className="h-4 w-4 text-blue-400" />}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -1138,7 +1136,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                       <span className="h-2/4 bg-yellow-400" />
                       <span className="h-1/4 bg-red-600" />
                     </span>
-                    <span className="flex-1">Español</span>
+                    <span className="flex-1">{t('languages.es')}</span>
                     {language === 'es' && <Check className="h-4 w-4 text-blue-400" />}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setLanguage('fr')} className="gap-3">
@@ -1147,7 +1145,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                       <span className="w-1/3 bg-white" />
                       <span className="w-1/3 bg-red-500" />
                     </span>
-                    <span className="flex-1">Français</span>
+                    <span className="flex-1">{t('languages.fr')}</span>
                     {language === 'fr' && <Check className="h-4 w-4 text-blue-400" />}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setLanguage('de')} className="gap-3">
@@ -1156,7 +1154,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                       <span className="h-1/3 bg-red-500" />
                       <span className="h-1/3 bg-yellow-400" />
                     </span>
-                    <span className="flex-1">Deutsch</span>
+                    <span className="flex-1">{t('languages.de')}</span>
                     {language === 'de' && <Check className="h-4 w-4 text-blue-400" />}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setLanguage('ja')} className="gap-3">
@@ -1186,7 +1184,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                       <span className="w-2/5 bg-green-600" />
                       <span className="w-3/5 bg-yellow-400" />
                     </span>
-                    <span className="flex-1">Português</span>
+                    <span className="flex-1">{t('languages.pt')}</span>
                     {language === 'pt' && <Check className="h-4 w-4 text-blue-400" />}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setLanguage('ru')} className="gap-3">
@@ -1203,7 +1201,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                       <span className="h-1/2 bg-white" />
                       <span className="h-1/2 bg-red-500" />
                     </span>
-                    <span className="flex-1">Polski</span>
+                    <span className="flex-1">{t('languages.pl')}</span>
                     {language === 'pl' && <Check className="h-4 w-4 text-blue-400" />}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setLanguage('el')} className="gap-3">
@@ -1230,7 +1228,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-1.5 px-2 py-1 text-2xs font-medium text-slate-400 hover:text-indigo-400 hover:bg-slate-800/50 rounded-md transition-all"
-                  title="Visita gamestringer.ai"
+                  title={t('mainLayout.visitSite')}
                 >
                   <Globe className="w-3 h-3" />
                   <span>gamestringer.ai</span>

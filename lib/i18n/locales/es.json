@@ -1,4 +1,12 @@
 {
+  "mainLayout": {
+    "skipToContent": "Skip to main content",
+    "pages": "Pages",
+    "games": "Games",
+    "searchHint": "Type 2+ characters to search among",
+    "gamesUnit": "games...",
+    "visitSite": "Visit gamestringer.ai"
+  },
   "customPromptSettings": {
     "settingsSaved": "Custom Prompt settings saved",
     "settingsReset": "Settings reset",

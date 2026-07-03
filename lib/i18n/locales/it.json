@@ -1,4 +1,12 @@
 {
+  "mainLayout": {
+    "skipToContent": "Vai al contenuto principale",
+    "pages": "Pagine",
+    "games": "Giochi",
+    "searchHint": "Scrivi 2+ caratteri per cercare tra",
+    "gamesUnit": "giochi...",
+    "visitSite": "Visita gamestringer.ai"
+  },
   "customPromptSettings": {
     "settingsSaved": "Impostazioni Custom Prompt salvate",
     "settingsReset": "Impostazioni ripristinate",
