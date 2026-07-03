@@ -91,8 +91,10 @@ class ClientLogger {
       level,
       message,
       component,
-      url: window.location.href,
-      userAgent: navigator.userAgent,
+      // Guard: in ambiente test (dopo il teardown di jsdom) o SSR, window/navigator
+      // possono non esistere → un log tardivo di una async non cancellata crasherebbe.
+      url: typeof window !== 'undefined' ? window.location.href : '',
+      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
       sessionId: this.getSessionId(),
       userId: this.getUserId(),
       metadata: metadata ? this.sanitizeData(metadata) as Record<string, unknown> : undefined

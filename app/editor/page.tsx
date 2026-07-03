@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { 
   FileText, Save, Languages, Search, Edit3, 
   CheckCircle, AlertCircle, Copy, Download, Upload,
@@ -315,7 +315,16 @@ export default function EditorPage() {
   // flaky ("window is not defined"). Rendendo solo un loader finché non montati
   // lato client, il prerender resta deterministico e non esegue codice unsafe.
   const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
+  // isMountedRef: le fetch async (fetchGames/fetchGameProjects) possono risolvere
+  // DOPO che il componente è smontato (tipico nei test: l'env jsdom viene distrutto
+  // mentre una invoke è ancora in volo) → un setState tardivo tocca `window` via
+  // React e crasha. Guardiamo il ref prima di ogni setState post-await.
+  const isMountedRef = useRef(true);
+  useEffect(() => {
+    setMounted(true);
+    isMountedRef.current = true;
+    return () => { isMountedRef.current = false; };
+  }, []);
 
   // --- Derived State ---
   const filteredTranslations = useMemo(() => {
@@ -526,6 +535,7 @@ export default function EditorPage() {
       // Lista giochi dal backend Tauri (get_games), non da /api (stub 501 nel desktop).
       const { invoke } = await import('@tauri-apps/api/core');
       const data = await invoke<GameApiItem[]>('get_games');
+      if (!isMountedRef.current) return;
       setGames((ensureArray(data) as GameApiItem[]).map((g) => ({
         id: g.id,
         title: g.title,
@@ -643,11 +653,11 @@ export default function EditorPage() {
         }
       }
       
-      setGameProjects(Array.from(projectsMap.values()));
+      if (isMountedRef.current) setGameProjects(Array.from(projectsMap.values()));
     } catch (error: unknown) {
       clientLogger.error(`Error loading game projects: ${String(error)}`);
     } finally {
-      setIsLoading(false);
+      if (isMountedRef.current) setIsLoading(false);
     }
   };
 
