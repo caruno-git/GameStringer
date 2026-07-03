@@ -1,4 +1,22 @@
 {
+  "fineTuningManager": {
+    "title": "Fine-Tuning Infrastructure",
+    "subtitle": "Generate training datasets from your human corrections and manage custom per-game models.",
+    "generateDataset": "Generate Dataset",
+    "fromLang": "From language",
+    "toLang": "To language",
+    "exportFormat": "Export Format",
+    "onlyApproved": "Only approved corrections",
+    "generate": "Generate",
+    "datasetLabel": "Dataset",
+    "totalExamples": "total examples",
+    "noDataset": "No dataset. Correct some translations and generate your first dataset.",
+    "examplesUnit": "examples •",
+    "export": "Export",
+    "fineTunedModels": "Fine-Tuned Models",
+    "noModels": "No fine-tuned model. Generate a dataset and start training.",
+    "baseLabel": "Base:"
+  },
   "mainLayout": {
     "skipToContent": "Skip to main content",
     "pages": "Pages",

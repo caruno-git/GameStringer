@@ -28,8 +28,10 @@ import {
   type FineTuningDataset,
   type FineTuningModel,
 } from '@/lib/ai/fine-tuning';
+import { useTranslation } from '@/lib/i18n';
 
 export function FineTuningManager({ gameId }: { gameId?: string }) {
+  const { t } = useTranslation();
   const [datasets, setDatasets] = useState<FineTuningDataset[]>([]);
   const [models, setModels] = useState<FineTuningModel[]>([]);
   const [ollamaStatus, setOllamaStatus] = useState<{ available: boolean; models: string[] }>({ available: false, models: [] });
@@ -83,11 +85,9 @@ export function FineTuningManager({ gameId }: { gameId?: string }) {
       <CardHeader>
         <CardTitle as="h2" className="flex items-center gap-2 text-base">
           <Brain className="h-5 w-5" />
-          Fine-Tuning Infrastructure
-        </CardTitle>
+          {t('fineTuningManager.title')}</CardTitle>
         <CardDescription>
-          Genera dataset di training dalle tue correzioni umane e gestisci modelli per-game personalizzati.
-        </CardDescription>
+          {t('fineTuningManager.subtitle')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Ollama Status */}
@@ -113,20 +113,19 @@ export function FineTuningManager({ gameId }: { gameId?: string }) {
         <div className="space-y-3">
           <h3 className="text-sm font-semibold flex items-center gap-1.5">
             <Database className="h-4 w-4" />
-            Genera Dataset
-          </h3>
+            {t('fineTuningManager.generateDataset')}</h3>
           
           <div className="grid grid-cols-3 gap-3">
             <div className="space-y-1">
-              <Label className="text-xs">Da lingua</Label>
+              <Label className="text-xs">{t('fineTuningManager.fromLang')}</Label>
               <Input value={sourceLang} onChange={(e) => setSourceLang(e.target.value)} className="h-8 text-sm" />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">A lingua</Label>
+              <Label className="text-xs">{t('fineTuningManager.toLang')}</Label>
               <Input value={targetLang} onChange={(e) => setTargetLang(e.target.value)} className="h-8 text-sm" />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Formato Export</Label>
+              <Label className="text-xs">{t('fineTuningManager.exportFormat')}</Label>
               <Select value={exportFormat} onValueChange={(v) => setExportFormat(v as typeof exportFormat)}>
                 <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -142,12 +141,11 @@ export function FineTuningManager({ gameId }: { gameId?: string }) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Switch checked={approvedOnly} onCheckedChange={setApprovedOnly} />
-              <Label className="text-xs">Solo correzioni approvate</Label>
+              <Label className="text-xs">{t('fineTuningManager.onlyApproved')}</Label>
             </div>
             <Button size="sm" onClick={handleGenerate} disabled={!gameId || isGenerating}>
               {isGenerating ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Database className="h-3.5 w-3.5 mr-1.5" />}
-              Genera
-            </Button>
+              {t('fineTuningManager.generate')}</Button>
           </div>
         </div>
 
@@ -157,14 +155,12 @@ export function FineTuningManager({ gameId }: { gameId?: string }) {
         <div className="space-y-3">
           <h3 className="text-sm font-semibold flex items-center gap-1.5">
             <FileJson className="h-4 w-4" />
-            Dataset ({datasets.length}) — {totalExamples} esempi totali
-          </h3>
+            {t('fineTuningManager.datasetLabel')} ({datasets.length}) — {totalExamples}  {t('fineTuningManager.totalExamples')}</h3>
 
           {datasets.length === 0 && (
             <div className="text-center py-4 text-sm text-muted-foreground">
               <Database className="h-6 w-6 mx-auto mb-1 opacity-30" />
-              Nessun dataset. Correggi alcune traduzioni e genera il tuo primo dataset.
-            </div>
+              {t('fineTuningManager.noDataset')}</div>
           )}
 
           {datasets.map(ds => (
@@ -172,7 +168,7 @@ export function FineTuningManager({ gameId }: { gameId?: string }) {
               <div>
                 <div className="text-sm font-medium">{ds.name}</div>
                 <div className="text-xs text-muted-foreground">
-                  {ds.exampleCount} esempi • {ds.sourceLanguage}→{ds.targetLanguage}
+                  {ds.exampleCount}  {t('fineTuningManager.examplesUnit')} {ds.sourceLanguage}→{ds.targetLanguage}
                   {ds.approvedOnly && ' • Solo approvati'}
                 </div>
                 <div className="text-[10px] text-muted-foreground mt-0.5">
@@ -182,8 +178,7 @@ export function FineTuningManager({ gameId }: { gameId?: string }) {
               <div className="flex gap-1.5">
                 <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => handleDownload(ds)}>
                   <Download className="h-3 w-3 mr-1" />
-                  Export
-                </Button>
+                  {t('fineTuningManager.export')}</Button>
                 <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(ds.id)}>
                   <Trash2 className="h-3 w-3" />
                 </Button>
@@ -198,14 +193,13 @@ export function FineTuningManager({ gameId }: { gameId?: string }) {
         <div className="space-y-3">
           <h3 className="text-sm font-semibold flex items-center gap-1.5">
             <Cpu className="h-4 w-4" />
-            Modelli Fine-Tuned ({models.length})
+            {t('fineTuningManager.fineTunedModels')} ({models.length})
           </h3>
 
           {models.length === 0 && (
             <div className="text-center py-4 text-sm text-muted-foreground">
               <Brain className="h-6 w-6 mx-auto mb-1 opacity-30" />
-              Nessun modello fine-tuned. Genera un dataset e avvia il training.
-            </div>
+              {t('fineTuningManager.noModels')}</div>
           )}
 
           {models.map(model => (
@@ -218,7 +212,7 @@ export function FineTuningManager({ gameId }: { gameId?: string }) {
                 <div>
                   <div className="text-sm font-medium">{model.name}</div>
                   <div className="text-xs text-muted-foreground">
-                    Base: {model.baseModel} • v{model.version}
+                    {t('fineTuningManager.baseLabel')} {model.baseModel} • v{model.version}
                     {model.metrics.loss && ` • Loss: ${model.metrics.loss.toFixed(4)}`}
                   </div>
                 </div>
