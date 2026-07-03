@@ -5,7 +5,7 @@
 //! Formato PCK (da pck_packer.cpp ufficiale Godot):
 //!   Header:
 //!     u32 magic (0x43504447 = "GDPC")
-//!     u32 pack_format_version (1=Godot3, 2=Godot4)
+//!     u32 pack_format_version (1=Godot3, 2=Godot4.0-4.3, 3=Godot4.4+)
 //!     u32 ver_major, u32 ver_minor, u32 ver_patch
 //!     u32 flags (v2: bit0=rel_filebase, bit1=encrypted_dir)
 //!     u64 files_base (solo se flags & REL_FILEBASE)
@@ -28,8 +28,11 @@ use std::path::{Path, PathBuf};
 use serde::{Deserialize, Serialize};
 
 const PCK_MAGIC: u32 = 0x43504447; // "GDPC"
-const PACK_REL_FILEBASE: u32 = 1;
-const _PACK_DIR_ENCRYPTED: u32 = 2;
+// Bit dei pack_flags — ordine come nel source Godot (file_access_pack.h):
+// PACK_DIR_ENCRYPTED = 1<<0, PACK_REL_FILEBASE = 1<<1. (Prima erano invertiti →
+// un pck REL_FILEBASE come StS2, flags=2, veniva letto come criptato/offset errato.)
+const PACK_DIR_ENCRYPTED: u32 = 1 << 0; // 1
+const PACK_REL_FILEBASE: u32 = 1 << 1;  // 2
 
 // ═══════════════════════════════════════════════════════════════════
 // DATA STRUCTURES
@@ -125,6 +128,7 @@ fn write_u64_le(buf: &mut Vec<u8>, v: u64) {
     buf.extend_from_slice(&v.to_le_bytes());
 }
 
+#[allow(dead_code)] // usato solo nei test dopo il rewrite di create_pck (inline padding)
 fn pad_to(buf: &mut Vec<u8>, alignment: usize) {
     let rest = buf.len() % alignment;
     if rest > 0 {
@@ -151,25 +155,28 @@ fn read_pck(data: &[u8]) -> Result<PckInfo, String> {
     let godot_minor = read_u32(data, &mut offset)?;
     let godot_patch = read_u32(data, &mut offset)?;
 
+    // Layout header (verificato sul source Godot core/io/file_access_pack.cpp,
+    // valido per format v2=Godot4.0-4.3 e v3=Godot4.4+): dopo la versione vengono
+    // pack_flags(u32) e file_base(u64), poi 16 u32 reserved, poi SUBITO file_count
+    // e le directory entries. NON esiste alcun "dir_offset" separato (era un bug del
+    // parser precedente: leggeva 8 byte in più → disallineava ogni pck reale).
     let mut flags = 0u32;
     let mut files_base: u64 = 0;
-    let mut _dir_offset: u64 = 0;
 
     if pack_version >= 2 {
         flags = read_u32(data, &mut offset)?;
         files_base = read_u64(data, &mut offset)?;
-        _dir_offset = read_u64(data, &mut offset)?;
+    }
+
+    // Directory criptata (bit0 PACK_DIR_ENCRYPTED): l'indice è cifrato con la chiave
+    // di build del gioco → non leggibile senza. Errore onesto invece di leggere garbage.
+    if flags & PACK_DIR_ENCRYPTED != 0 {
+        return Err("PCK con directory criptata (AES): estrazione non supportata senza la chiave del gioco".into());
     }
 
     // Reserved (16 x u32 = 64 bytes)
     for _ in 0..16 {
         read_u32(data, &mut offset)?;
-    }
-
-    // Per v1 e v2 senza REL_FILEBASE, la directory è subito dopo l'header
-    // Per v2 con REL_FILEBASE e dir_offset, cerca lì
-    if pack_version >= 2 && _dir_offset > 0 {
-        offset = _dir_offset as usize;
     }
 
     let file_count = read_u32(data, &mut offset)?;
@@ -213,12 +220,10 @@ fn read_pck(data: &[u8]) -> Result<PckInfo, String> {
             0
         };
 
-        // Calcola offset assoluto
-        let abs_offset = if flags & PACK_REL_FILEBASE != 0 {
-            files_base + file_offset
-        } else {
-            file_offset
-        };
+        // Godot: gli offset nelle directory entry sono sempre relativi a file_base.
+        // Con REL_FILEBASE, file_base è relativo all'inizio del pck (pck_start_pos),
+        // che scan_godot_pck riapplica aggiungendo `start`. Standalone → start=0.
+        let abs_offset = files_base + file_offset;
 
         files.push(PckFileEntry {
             path,
@@ -254,113 +259,63 @@ fn create_pck(
     godot_minor: u32,
     godot_patch: u32,
 ) -> Vec<u8> {
-    let pack_version: u32 = if godot_major >= 4 { 2 } else { 1 };
+    // Godot 4.4+ accetta SOLO pack_format_version 3; 4.0-4.3 usano v2. Il writer
+    // produce il formato "directory-first" reale di Godot (header → flags → file_base
+    // → 16 reserved → file_count → directory entries → dati a file_base), verificato
+    // sul source core/io/file_access_pack.cpp. Con REL_FILEBASE, file_base è relativo
+    // all'inizio del pck e gli offset delle entry sono relativi a file_base.
+    let pack_version: u32 = if godot_major > 4 || (godot_major == 4 && godot_minor >= 4) { 3 } else { 2 };
     let alignment: usize = 32;
-    let mut buf: Vec<u8> = Vec::new();
 
-    // ── Header ───────────────────────────────────────
+    // Path con lunghezza allineata a 4 (come Godot).
+    let entries: Vec<(Vec<u8>, &[u8])> = files.iter().map(|(p, d)| {
+        let mut pb = p.as_bytes().to_vec();
+        while pb.len() % 4 != 0 { pb.push(0); }
+        (pb, *d)
+    }).collect();
+
+    // Header fisso = 20 (magic+ver+maj+min+patch) + 4 (flags) + 8 (file_base)
+    // + 64 (16 reserved) + 4 (file_count) = 100 byte.
+    let header_size = 20 + 4 + 8 + 64 + 4;
+    // Directory: per entry → path_len(4) + path + ofs(8) + size(8) + md5(16) + flags(4).
+    let dir_size: usize = entries.iter().map(|(pb, _)| 4 + pb.len() + 8 + 8 + 16 + 4).sum();
+    let mut file_base = header_size + dir_size;
+    while file_base % alignment != 0 { file_base += 1; }
+
+    // Blob dati con offset (relativi a file_base), ogni file allineato.
+    let mut data_blob: Vec<u8> = Vec::new();
+    let mut offsets: Vec<u64> = Vec::with_capacity(entries.len());
+    for (_, d) in &entries {
+        offsets.push(data_blob.len() as u64);
+        data_blob.extend_from_slice(d);
+        while data_blob.len() % alignment != 0 { data_blob.push(0); }
+    }
+
+    let mut buf: Vec<u8> = Vec::with_capacity(file_base + data_blob.len());
     write_u32_le(&mut buf, PCK_MAGIC);
     write_u32_le(&mut buf, pack_version);
     write_u32_le(&mut buf, godot_major);
     write_u32_le(&mut buf, godot_minor);
     write_u32_le(&mut buf, godot_patch);
+    write_u32_le(&mut buf, PACK_REL_FILEBASE); // flags
+    write_u64_le(&mut buf, file_base as u64);  // file_base (relativo all'inizio del pck)
+    for _ in 0..16 { write_u32_le(&mut buf, 0); } // reserved
+    write_u32_le(&mut buf, entries.len() as u32); // file_count
 
-    let _flags_pos;
-    let files_base_pos;
-    let dir_offset_pos;
-
-    if pack_version >= 2 {
-        _flags_pos = buf.len();
-        write_u32_le(&mut buf, PACK_REL_FILEBASE); // flags
-        files_base_pos = buf.len();
-        write_u64_le(&mut buf, 0); // files_base — aggiornato dopo
-        dir_offset_pos = buf.len();
-        write_u64_le(&mut buf, 0); // dir_offset — aggiornato dopo
-    } else {
-        _flags_pos = 0;
-        files_base_pos = 0;
-        dir_offset_pos = 0;
+    // Directory entries (subito dopo file_count).
+    for (i, (pb, d)) in entries.iter().enumerate() {
+        write_u32_le(&mut buf, pb.len() as u32);
+        buf.extend_from_slice(pb);
+        write_u64_le(&mut buf, offsets[i]);
+        write_u64_le(&mut buf, d.len() as u64);
+        let digest = md5::compute(d);
+        buf.extend_from_slice(&digest.0);
+        write_u32_le(&mut buf, 0); // per-file flags (no encryption, no removal)
     }
 
-    // Reserved (16 x u32)
-    for _ in 0..16 {
-        write_u32_le(&mut buf, 0);
-    }
-
-    // Align per primo file
-    pad_to(&mut buf, alignment);
-    let files_base = buf.len() as u64;
-
-    // Aggiorna files_base nell'header
-    if pack_version >= 2 {
-        let base_bytes = files_base.to_le_bytes();
-        buf[files_base_pos..files_base_pos + 8].copy_from_slice(&base_bytes);
-    }
-
-    // ── Dati file ────────────────────────────────────
-    struct FileInfo {
-        path: String,
-        offset_relative: u64,
-        size: u64,
-        md5: [u8; 16],
-    }
-    let mut file_infos: Vec<FileInfo> = Vec::new();
-
-    for (path, data) in files {
-        let offset_relative = (buf.len() as u64) - files_base;
-        let size = data.len() as u64;
-
-        // MD5
-        let digest = md5::compute(data);
-        let mut md5 = [0u8; 16];
-        md5.copy_from_slice(&digest.0);
-
-        // Scrivi dati
-        buf.extend_from_slice(data);
-
-        // Padding
-        pad_to(&mut buf, alignment);
-
-        file_infos.push(FileInfo {
-            path: path.to_string(),
-            offset_relative,
-            size,
-            md5,
-        });
-    }
-
-    // ── Directory ────────────────────────────────────
-    pad_to(&mut buf, alignment);
-    let dir_offset = buf.len() as u64;
-
-    // Aggiorna dir_offset nell'header
-    if pack_version >= 2 {
-        let dir_bytes = dir_offset.to_le_bytes();
-        buf[dir_offset_pos..dir_offset_pos + 8].copy_from_slice(&dir_bytes);
-    }
-
-    write_u32_le(&mut buf, file_infos.len() as u32);
-
-    for fi in &file_infos {
-        let path_bytes = fi.path.as_bytes();
-        // Pad path length to multiple of 4
-        let padded_len = (path_bytes.len() + 3) & !3;
-        write_u32_le(&mut buf, padded_len as u32);
-        buf.extend_from_slice(path_bytes);
-        // Null-pad to alignment
-        for _ in path_bytes.len()..padded_len {
-            buf.push(0);
-        }
-
-        write_u64_le(&mut buf, fi.offset_relative);
-        write_u64_le(&mut buf, fi.size);
-        buf.extend_from_slice(&fi.md5);
-
-        if pack_version >= 2 {
-            write_u32_le(&mut buf, 0); // flags (no encryption, no removal)
-        }
-    }
-
+    // Pad fino a file_base, poi i dati.
+    while buf.len() < file_base { buf.push(0); }
+    buf.extend_from_slice(&data_blob);
     buf
 }
 
@@ -912,28 +867,24 @@ mod tests {
     // ── PCK round-trip tests (create → read) ────────────────────
 
     #[test]
-    fn test_create_pck_v1_directory_not_after_header() {
-        // BUG DOCUMENTATION: create_pck writes v1 PCKs with the directory
-        // AFTER file data, but read_pck expects the directory right after
-        // the header for v1 (no dir_offset field). This means v1 PCKs
-        // created by create_pck cannot be read back by read_pck.
-        // This only affects Godot 3.x; Godot 4.x (v2) works correctly.
+    fn test_pck_roundtrip_v3_godot45() {
+        // Godot 4.4+ usa pack_format_version 3. Round-trip col formato reale
+        // (directory-first): create → read → file e contenuto corretti.
         let files: Vec<(&str, &[u8])> = vec![
-            ("res://test.txt", b"Hello Godot 3!"),
+            ("res://locale/it.translation", b"binary-ish translation data"),
+            ("res://ui/menu.tscn", b"[node name=\"Label\" text=\"Start\"]"),
         ];
-        let pck_data = create_pck(&files, 3, 5, 0);
-
-        // Verify header is valid (magic + version can be read)
-        let mut offset = 0;
-        assert_eq!(read_u32(&pck_data, &mut offset).unwrap(), PCK_MAGIC);
-        assert_eq!(read_u32(&pck_data, &mut offset).unwrap(), 1); // pack_version
-
-        // read_pck will succeed but find 0 files because the directory
-        // offset points to file data bytes, not the actual directory
+        let pck_data = create_pck(&files, 4, 5, 1);
         let info = read_pck(&pck_data).unwrap();
-        assert_eq!(info.pack_version, 1);
-        assert_eq!(info.godot_major, 3);
-        // file_count will be wrong (reads file data bytes as file_count)
+        assert_eq!(info.pack_version, 3);
+        assert_eq!(info.godot_major, 4);
+        assert_eq!(info.godot_minor, 5);
+        assert_eq!(info.file_count, 2);
+        assert_eq!(info.files[0].path, "res://locale/it.translation");
+        // Contenuto estraibile all'offset assoluto calcolato dal reader.
+        let e = &info.files[0];
+        let extracted = &pck_data[e.offset as usize..(e.offset + e.size) as usize];
+        assert_eq!(extracted, b"binary-ish translation data");
     }
 
     #[test]
@@ -1035,11 +986,24 @@ mod tests {
     }
 
     #[test]
-    fn test_pck_v1_has_no_flags() {
-        let files: Vec<(&str, &[u8])> = vec![("res://f.txt", b"x")];
-        let pck_data = create_pck(&files, 3, 0, 0);
-        let info = read_pck(&pck_data).unwrap();
-        assert_eq!(info.flags, 0);
+    fn test_pck_version_selection_by_godot_version() {
+        // Godot 4.4+ → pack_format_version 3; 4.0-4.3 → v2.
+        let f: Vec<(&str, &[u8])> = vec![("res://f.txt", b"x")];
+        assert_eq!(read_pck(&create_pck(&f, 4, 4, 0)).unwrap().pack_version, 3);
+        assert_eq!(read_pck(&create_pck(&f, 4, 5, 1)).unwrap().pack_version, 3);
+        assert_eq!(read_pck(&create_pck(&f, 4, 3, 0)).unwrap().pack_version, 2);
+        assert_eq!(read_pck(&create_pck(&f, 4, 0, 0)).unwrap().pack_version, 2);
+    }
+
+    #[test]
+    fn test_pck_dir_encrypted_returns_error() {
+        // Un pck con bit PACK_DIR_ENCRYPTED settato deve dare errore onesto,
+        // non leggere garbage (directory cifrata → serve la chiave del gioco).
+        let mut pck = create_pck(&[("res://f.txt", b"x")], 4, 5, 0);
+        // flags è a offset 20 (dopo magic+ver+maj+min+patch): setta bit0.
+        pck[20] |= PACK_DIR_ENCRYPTED as u8;
+        let err = read_pck(&pck).unwrap_err();
+        assert!(err.to_lowercase().contains("cript"), "atteso errore cripta: {}", err);
     }
 
     // ── read_pck error cases ────────────────────────────────────
