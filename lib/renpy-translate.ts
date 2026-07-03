@@ -12,6 +12,7 @@
 // de-escapa la chiave e ri-escapa il valore in modo coerente).
 
 import { invoke } from '@/lib/tauri-api';
+import { cleanGamePath } from '@/lib/game-path';
 import {
   loadVoiceProfiles,
   getVoiceProfile,
@@ -185,7 +186,7 @@ export async function runRenpyTranslation(opts: {
     } catch { /* voce non disponibile → fallback al nome */ }
   }
 
-  const progressPath = `${opts.gamePath}/gs_renpy_progress_${tgt}.json`;
+  const progressPath = `${cleanGamePath(opts.gamePath)}/gs_renpy_progress_${tgt}.json`;
 
   // -- Resume: carica checkpoint precedente --
   const byOriginal: Record<string, string> = {};

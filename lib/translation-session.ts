@@ -5,6 +5,7 @@
 
 import { invoke } from '@tauri-apps/api/core';
 import { clientLogger } from '@/lib/client-logger';
+import { cleanGamePath } from '@/lib/game-path';
 
 /** Statistiche di una sessione di traduzione */
 export interface TranslationStats {
@@ -99,7 +100,8 @@ export interface GameGlossary {
 const CHECKPOINT_FILENAME = 'translation_checkpoint.json';
 
 function getCheckpointPath(gamePath: string): string {
-  return `${gamePath}/GameStringer_Translation/${CHECKPOINT_FILENAME}`;
+  // cleanGamePath: evita separatori doppi/misti se gamePath arriva con slash finale.
+  return `${cleanGamePath(gamePath)}/GameStringer_Translation/${CHECKPOINT_FILENAME}`;
 }
 
 /** Salva checkpoint (backup incrementale) */

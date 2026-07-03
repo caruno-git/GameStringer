@@ -14,7 +14,8 @@
 // orchestratore lib/<engine>-translate.ts + ramo in startAutoTranslate.
 
 import { invoke } from '@/lib/tauri-api';
-import { get, set } from 'idb-keyval';
+import { get, set, del } from 'idb-keyval';
+import { gamePathKey } from '@/lib/game-path';
 import { translateWithFallbackBatched } from '@/lib/ai/ai-translate-direct';
 
 export type TyranoBackend = 'ollama' | 'cloud';
@@ -108,10 +109,23 @@ export async function runTyranoTranslation(opts: {
 
   const src = guessSourceLang(all.map(s => s.original));
 
-  // Checkpoint per questo gioco+lingua: id stringa -> testo tradotto
-  const ckptKey = `gs_tyrano_ckpt_${opts.gamePath}_${tgt}`;
-  const translations: Record<string, string> =
+  // Checkpoint per questo gioco+lingua: id stringa -> testo tradotto.
+  // gamePathKey: chiave stabile anche se il path arriva con separatori/casing diversi.
+  const ckptKey = `gs_tyrano_ckpt_${gamePathKey(opts.gamePath)}_${tgt}`;
+  let translations: Record<string, string> =
     (await get<Record<string, string>>(ckptKey).catch(() => undefined)) || {};
+  if (Object.keys(translations).length === 0) {
+    // Migrazione: checkpoint salvati prima della normalizzazione (chiave col path grezzo)
+    const legacyKey = `gs_tyrano_ckpt_${opts.gamePath}_${tgt}`;
+    if (legacyKey !== ckptKey) {
+      const legacy = await get<Record<string, string>>(legacyKey).catch(() => undefined);
+      if (legacy && Object.keys(legacy).length > 0) {
+        translations = legacy;
+        await set(ckptKey, legacy).catch(() => {});
+        await del(legacyKey).catch(() => {});
+      }
+    }
+  }
 
   const todo = all.filter(s => translations[s.id] === undefined);
   let done = total - todo.length;

@@ -15,6 +15,7 @@
 // (stringhe in eventi/JSON senza speaker affidabile). La leva di coerenza è il glossario.
 
 import { invoke } from '@/lib/tauri-api';
+import { cleanGamePath } from '@/lib/game-path';
 import { loadGlossary, type GlossaryPair } from '@/lib/renpy-translate';
 
 export interface RpgmakerProgress {
@@ -82,7 +83,7 @@ export async function runRpgmakerTranslation(opts: {
   const glossary = opts.glossary ?? await loadGlossary(src, tgt, opts.gameId);
 
   // -- Resume: checkpoint JSON { original: translated } --
-  const progressPath = `${opts.gamePath}/gs_rpgmaker_progress_${tgt}.json`;
+  const progressPath = `${cleanGamePath(opts.gamePath)}/gs_rpgmaker_progress_${tgt}.json`;
   const byOriginal: Record<string, string> = {};
   try {
     const raw = await invoke<string>('read_file_content', { filePath: progressPath });

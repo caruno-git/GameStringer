@@ -16,6 +16,7 @@
 import { projectService } from '@/lib/services/translation-projects';
 import type { ProgressState } from '@/lib/types/progress';
 import { tStatic } from '@/lib/i18n';
+import { gamePathKey } from '@/lib/game-path';
 
 export interface HeroTrackMeta {
   engineId: string;     // 'renpy' | 'hendrix' | 'rpgmaker' | 'visionaire'
@@ -42,7 +43,9 @@ if (!_g.__gsHeroRunning) _g.__gsHeroRunning = new Set<string>();
 const RUNNING = _g.__gsHeroRunning;
 
 export function heroKey(engineId: string, gamePath: string): string {
-  return `${engineId}:${gamePath}`;
+  // Path normalizzato: lo stesso gioco deve produrre la stessa chiave anche se
+  // il path arriva con separatori/casing/slash finale diversi tra un lancio e l'altro.
+  return `${engineId}:${gamePathKey(gamePath)}`;
 }
 
 export function isHeroJobRunning(engineId: string, gamePath: string): boolean {
@@ -58,7 +61,7 @@ export function startHeroTracking(progress: ProgressState, meta: HeroTrackMeta):
   if (RUNNING.has(key)) return null;
   RUNNING.add(key);
 
-  const opId = `${meta.engineId}-${meta.gamePath}`;
+  const opId = `${meta.engineId}-${gamePathKey(meta.gamePath)}`;
   progress.startOperation(opId, {
     title: meta.opTitle || `Translation — ${meta.gameName || meta.engineLabel}`,
     description: meta.opDesc || `${meta.engineLabel} · background`,
@@ -69,9 +72,10 @@ export function startHeroTracking(progress: ProgressState, meta: HeroTrackMeta):
 
   let projectId: string | null = null;
   let creating: Promise<void> | null = null;
-  // Fallback id: se manca il gameId (es. gioco aggiunto a mano) usa il path, che è
-  // comunque stabile per gioco → il progetto si crea sempre.
-  const gid = meta.gameId || meta.gamePath;
+  // Fallback id: se manca il gameId (es. gioco aggiunto a mano) usa il path
+  // NORMALIZZATO, così lo stesso gioco non genera progetti duplicati quando il
+  // path arriva con separatori/casing diversi.
+  const gid = meta.gameId || gamePathKey(meta.gamePath);
 
   const ensureProject = async (total: number) => {
     if (!gid) return;

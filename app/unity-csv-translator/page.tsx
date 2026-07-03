@@ -4,6 +4,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { get, set, del } from 'idb-keyval';
 import { ollamaFetch } from '@/lib/ai/ollama-http';
 import { invoke } from '@tauri-apps/api/core';
+import { gamePathKey } from '@/lib/game-path';
 import { open as dialogOpen, save as dialogSave } from '@tauri-apps/plugin-dialog';
 import {
   FileText, FolderOpen, Search, Loader2, CheckCircle2,
@@ -85,7 +86,9 @@ export default function UnityCsvTranslatorPage() {
   // Incremental translation state
   const [incrementalDiff, setIncrementalDiff] = useState<IncrementalDiff | null>(null);
 
-  const getCheckpointKey = useCallback((path: string) => `unity_csv_checkpoint_${path.replace(/[^a-zA-Z0-9]/g, '_')}`, []);
+  // gamePathKey: stesso gioco → stessa chiave anche con casing/slash finale diversi
+  // (prima `E:\Games\Foo` e `e:\games\foo\` producevano checkpoint distinti).
+  const getCheckpointKey = useCallback((path: string) => `unity_csv_checkpoint_${gamePathKey(path).replace(/[^a-z0-9]/g, '_')}`, []);
 
   const saveCheckpoint = useCallback(async (csvTables: CsvTable[], inks: { text: string; source_file: string; translated: string; done: boolean }[]) => {
     if (!checkpointKeyRef.current) return;
@@ -231,7 +234,16 @@ export default function UnityCsvTranslatorPage() {
       // Check for existing checkpoint and restore
       const cpKey = getCheckpointKey(gamePath);
       checkpointKeyRef.current = cpKey;
-      const cp = await loadCheckpoint(cpKey);
+      let cp = await loadCheckpoint(cpKey);
+      if (!cp) {
+        // Migrazione: checkpoint salvati prima della normalizzazione del path
+        // (chiave con casing originale). Se trovato, verrà risalvato con la chiave nuova.
+        const legacyKey = `unity_csv_checkpoint_${gamePath.replace(/[^a-zA-Z0-9]/g, '_')}`;
+        if (legacyKey !== cpKey) {
+          cp = await loadCheckpoint(legacyKey);
+          if (cp) await del(legacyKey);
+        }
+      }
       if (cp) {
         let restored = 0;
         for (const cpTable of cp.csv) {

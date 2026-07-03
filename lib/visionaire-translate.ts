@@ -9,7 +9,8 @@
 // orchestratore lib/<engine>-translate.ts + ramo in startAutoTranslate.
 
 import { invoke } from '@/lib/tauri-api';
-import { get, set } from 'idb-keyval';
+import { get, set, del } from 'idb-keyval';
+import { gamePathKey } from '@/lib/game-path';
 import { translateWithFallbackBatched } from '@/lib/ai/ai-translate-direct';
 import { projectService } from '@/lib/services/translation-projects';
 
@@ -86,10 +87,23 @@ export async function runVisionaireTranslation(opts: {
   );
   const total = info.total_strings;
 
-  // Checkpoint per questo gioco+lingua: index -> testo tradotto
-  const ckptKey = `gs_vis_ckpt_${opts.gamePath}_${tgt}`;
-  const translations: Record<number, string> =
+  // Checkpoint per questo gioco+lingua: index -> testo tradotto.
+  // gamePathKey: chiave stabile anche se il path arriva con separatori/casing diversi.
+  const ckptKey = `gs_vis_ckpt_${gamePathKey(opts.gamePath)}_${tgt}`;
+  let translations: Record<number, string> =
     (await get<Record<number, string>>(ckptKey).catch(() => undefined)) || {};
+  if (Object.keys(translations).length === 0) {
+    // Migrazione: checkpoint salvati prima della normalizzazione (chiave col path grezzo)
+    const legacyKey = `gs_vis_ckpt_${opts.gamePath}_${tgt}`;
+    if (legacyKey !== ckptKey) {
+      const legacy = await get<Record<number, string>>(legacyKey).catch(() => undefined);
+      if (legacy && Object.keys(legacy).length > 0) {
+        translations = legacy;
+        await set(ckptKey, legacy).catch(() => {});
+        await del(legacyKey).catch(() => {});
+      }
+    }
+  }
 
   // Registra il gioco nella pagina "Progetti" (IndexedDB), così appare appena
   // si inizia a lavorarci e mostra il progresso reale.
