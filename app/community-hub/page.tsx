@@ -1,5 +1,11 @@
 'use client';
 
+// Community Hub — redesign 2026-07:
+// - Tab persistenti (Panoramica / Discussioni / Pack) invece del layout monolitico
+// - Panoramica "viva": attività recente, ultimi pack, news traduzioni, categorie
+// - Visual alleggerito: niente gradienti/glow, gerarchia da bordi + accenti
+// - Esperienza guidata quando la community è vuota (in CommunityOverview)
+
 import { useState, useEffect } from 'react';
 import {
   MessageSquare,
@@ -8,10 +14,11 @@ import {
   Package,
   Download,
   Flame,
+  LayoutDashboard,
 } from 'lucide-react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n';
-import { ForumHome, ThreadView, NewThread } from '@/components/forum';
+import { ForumHome, CommunityOverview, ThreadView, NewThread } from '@/components/forum';
 import { FriendsSidebar, NotificationsPanel, OnlineIndicator, ChatPanel } from '@/components/social';
 import { SocialOnboarding } from '@/components/social/social-onboarding';
 import { useProfiles } from '@/hooks/use-profiles';
@@ -23,6 +30,7 @@ import { cn } from '@/lib/utils';
 import type { ForumThread } from '@/lib/social/forum';
 
 type View = 'home' | 'thread' | 'new';
+type HomeTab = 'overview' | 'threads' | 'packs';
 
 // ─── KPI Card ────────────────────────────────────────────────────────────────
 
@@ -72,6 +80,10 @@ export default function CommunityHubPage() {
   const initialSearch = searchParams.get('query') || undefined;
 
   const [view, setView] = useState<View>('home');
+  // Se arrivo con ?category o ?query vado dritto alle discussioni
+  const [homeTab, setHomeTab] = useState<HomeTab>(initialCategory || initialSearch ? 'threads' : 'overview');
+  const [threadsCategory, setThreadsCategory] = useState<string | undefined>(initialCategory);
+  const [threadsKey, setThreadsKey] = useState(0); // forza remount di ForumHome quando cambio categoria dalla Panoramica
   const [selectedThread, setSelectedThread] = useState<ForumThread | null>(null);
   const [newThreadCategory, setNewThreadCategory] = useState<string | undefined>(initialCategory);
   const [showFriendsSidebar, setShowFriendsSidebar] = useState(true);
@@ -94,12 +106,12 @@ export default function CommunityHubPage() {
     }
   }, [userId, t]);
 
-  // Load forum stats per hero
+  // Forum stats per la riga KPI
   useEffect(() => {
     getForumStats().then(setStats).catch(() => { /* silenzioso */ });
     const interval = setInterval(() => {
       getForumStats().then(setStats).catch(() => { /* silenzioso */ });
-    }, 60000); // refresh every minute
+    }, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -123,115 +135,150 @@ export default function CommunityHubPage() {
     setView('thread');
   };
 
+  const goDiscussions = (categorySlug?: string) => {
+    setThreadsCategory(categorySlug);
+    setThreadsKey((k) => k + 1);
+    setHomeTab('threads');
+  };
+
+  const TABS: { id: HomeTab; label: string; icon: typeof MessageSquare }[] = [
+    { id: 'overview', label: t('communityHub.tabOverview') || 'Panoramica', icon: LayoutDashboard },
+    { id: 'threads', label: t('communityHub.tabThreads') || 'Discussioni', icon: MessageSquare },
+    { id: 'packs', label: t('communityHub.tabPacks') || 'Pack', icon: Package },
+  ];
+
+  const kpiVisible =
+    !!stats && (stats.total_threads + stats.total_packs + stats.total_downloads + stats.active_users) > 0;
+
   return (
     <TooltipProvider>
       <div className="h-full flex relative overflow-hidden">
         {/* Main Content */}
         <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
           {/* ═══════════════════════════════════════════════════════════════ */}
-          {/* HERO — visible only in home view                                 */}
+          {/* HEADER — solo in vista home                                      */}
           {/* ═══════════════════════════════════════════════════════════════ */}
           {view === 'home' && (
-            <div className="px-6 pt-5 pb-4">
-              {/* Title row */}
-              <div className="flex items-start justify-between gap-4 mb-4">
+            <div className="px-6 pt-5 pb-0 border-b border-slate-800/70 bg-slate-950/40 sticky top-0 z-10 backdrop-blur-sm">
+              {/* Riga titolo + azioni */}
+              <div className="flex items-start justify-between gap-4 mb-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-violet-500/10 flex items-center justify-center">
-                    <Users className="h-5 w-5 text-violet-400" />
+                  <div className="w-9 h-9 rounded-lg bg-violet-500/10 flex items-center justify-center">
+                    <Users className="h-4 w-4 text-violet-400" />
                   </div>
                   <div>
-                    <h1 className="text-xl font-semibold text-slate-200">
+                    <h1 className="text-lg font-semibold text-slate-100 leading-tight">
                       {t('communityHub.title')}
                     </h1>
-                    <p className="text-slate-500 text-xs mt-0.5">
+                    <p className="text-slate-500 text-xs">
                       {t('communityHub.subtitle')}
                     </p>
                   </div>
                 </div>
 
-                  {/* Actions toolbar */}
-                  <div className="flex items-center gap-2">
-                    <OnlineIndicator />
-                    {userId && <NotificationsPanel userId={userId} />}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => router.push('/patch-hub')}
-                      className="text-slate-400 hover:text-amber-300 hover:bg-amber-500/10 transition-all"
-                      title={t('patchHub.title') || 'Patch Hub'}
-                      aria-label="Patch Hub"
-                    >
-                      <Package className="h-5 w-5" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setShowChat(!showChat)}
-                      className={cn(
-                        'transition-all',
-                        showChat ? 'text-violet-400 bg-violet-500/10' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-                      )}
-                      title="Chat"
-                      aria-label="Chat"
-                    >
-                      <MessageCircle className="h-5 w-5" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setShowFriendsSidebar(!showFriendsSidebar)}
-                      className={cn(
-                        'transition-all',
-                        showFriendsSidebar ? 'text-violet-400 bg-violet-500/10' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-                      )}
-                      title="Amici"
-                      aria-label="Amici"
-                    >
-                      <Users className="h-5 w-5" />
-                    </Button>
-                  </div>
+                <div className="flex items-center gap-1.5">
+                  <OnlineIndicator />
+                  {userId && <NotificationsPanel userId={userId} />}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => router.push('/patch-hub')}
+                    className="text-slate-400 hover:text-amber-300 hover:bg-amber-500/10"
+                    title={t('patchHub.title') || 'Patch Hub'}
+                    aria-label="Patch Hub"
+                  >
+                    <Package className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowChat(!showChat)}
+                    className={cn(
+                      showChat ? 'text-violet-400 bg-violet-500/10' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                    )}
+                    title="Chat"
+                    aria-label="Chat"
+                  >
+                    <MessageCircle className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowFriendsSidebar(!showFriendsSidebar)}
+                    className={cn(
+                      showFriendsSidebar ? 'text-violet-400 bg-violet-500/10' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                    )}
+                    title={t('communityHub.friends') || 'Amici'}
+                    aria-label="Amici"
+                  >
+                    <Users className="h-5 w-5" />
+                  </Button>
                 </div>
+              </div>
 
-                {/* KPI Grid — nascosta finché non c'è attività reale (niente impalcatura a 0) */}
-                {!!stats && (stats.total_threads + stats.total_packs + stats.total_downloads + stats.active_users) > 0 && (
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                  <KpiCard
-                    icon={MessageSquare}
-                    label={t('forum.threadsLabel') || 'Discussioni'}
-                    value={stats?.total_threads ?? 0}
-                    accent="violet"
-                  />
-                  <KpiCard
-                    icon={Package}
-                    label={t('communityHub.translationPacks') || 'Translation Pack'}
-                    value={stats?.total_packs ?? 0}
-                    accent="indigo"
-                  />
-                  <KpiCard
-                    icon={Download}
-                    label={t('forum.downloads') || 'Download'}
-                    value={stats?.total_downloads ?? 0}
-                    accent="emerald"
-                  />
-                  <KpiCard
-                    icon={Flame}
-                    label={t('communityHub.activeUsers') || 'Utenti Attivi'}
-                    value={stats?.active_users ?? 0}
-                    accent="rose"
-                  />
+              {/* KPI compatti (solo con attività reale) */}
+              {kpiVisible && (
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 mb-3">
+                  <KpiCard icon={MessageSquare} label={t('forum.threadsLabel') || 'Discussioni'} value={stats!.total_threads} accent="violet" />
+                  <KpiCard icon={Package} label={t('communityHub.translationPacks') || 'Translation Pack'} value={stats!.total_packs} accent="indigo" />
+                  <KpiCard icon={Download} label={t('forum.downloads') || 'Download'} value={stats!.total_downloads} accent="emerald" />
+                  <KpiCard icon={Flame} label={t('communityHub.activeUsers') || 'Utenti Attivi'} value={stats!.active_users} accent="rose" />
                 </div>
-                )}
+              )}
+
+              {/* Tab */}
+              <nav className="flex items-center gap-1" role="tablist">
+                {TABS.map(({ id, label, icon: Icon }) => {
+                  const active = homeTab === id;
+                  return (
+                    <button
+                      key={id}
+                      role="tab"
+                      aria-selected={active}
+                      onClick={() => setHomeTab(id)}
+                      className={cn(
+                        'flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors',
+                        active
+                          ? 'border-violet-500 text-slate-100'
+                          : 'border-transparent text-slate-500 hover:text-slate-300'
+                      )}
+                    >
+                      <Icon className="h-4 w-4" />
+                      {label}
+                    </button>
+                  );
+                })}
+              </nav>
             </div>
           )}
 
           {/* ═══════════════════════════════════════════════════════════════ */}
           {/* CONTENT                                                          */}
           {/* ═══════════════════════════════════════════════════════════════ */}
-          <div className="px-6 pb-6">
-            {view === 'home' && (
+          <div className="px-6 py-5">
+            {view === 'home' && homeTab === 'overview' && (
+              <CommunityOverview
+                onOpenThread={handleOpenThread}
+                onNewThread={handleNewThread}
+                onGoDiscussions={goDiscussions}
+                onGoPacks={() => setHomeTab('packs')}
+              />
+            )}
+
+            {view === 'home' && homeTab === 'threads' && (
               <ForumHome
-                initialCategory={initialCategory}
+                key={`threads-${threadsKey}`}
+                initialCategory={threadsCategory}
                 initialSearch={initialSearch}
+                onOpenThread={handleOpenThread}
+                onNewThread={handleNewThread}
+              />
+            )}
+
+            {view === 'home' && homeTab === 'packs' && (
+              <ForumHome
+                key="packs"
+                packsOnly
                 onOpenThread={handleOpenThread}
                 onNewThread={handleNewThread}
               />
@@ -284,13 +331,9 @@ export default function CommunityHubPage() {
           />
         )}
       </div>
-      
+
       {/* Onboarding Tutorial */}
       <SocialOnboarding />
     </TooltipProvider>
   );
 }
-
-
-
-
