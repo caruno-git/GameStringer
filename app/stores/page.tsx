@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import {
   Card,
 } from "@/components/ui/card";
-import { CheckCircle, Plug, Unplug, XCircle, Loader2, AlertCircle, CheckCircle2, Clock, Trophy, Gamepad2, BarChart3, Store as StoreIcon, ChevronDown, ExternalLink } from 'lucide-react';
+import { CheckCircle, Plug, Unplug, XCircle, Loader2, AlertCircle, CheckCircle2, Clock, Trophy, Gamepad2, BarChart3, Store as StoreIcon, ChevronDown, ExternalLink, Globe, Search } from 'lucide-react';
 
 import React, { useState, useEffect } from 'react';
 import Image, { StaticImageData } from 'next/image';
@@ -31,17 +31,22 @@ type _Store = {
   icon?: React.ReactNode;
 };
 
+// appUrl: pagina ufficiale di download/info dell'app desktop dello store
 const storesConfig = [
-  { id: 'steam', name: 'Steam', logoUrl: '/logos/steam.png', descKey: 'steamDesc' },
-  { id: 'epic', name: 'Epic Games', logoUrl: '/logos/epic-games.png', descKey: 'epicDesc' },
-  { id: 'ubisoft', name: 'Ubisoft Connect', logoUrl: '/logos/ubisoft-connect.png', descKey: 'ubisoftDesc' },
-  { id: 'itchio', name: 'itch.io', logoUrl: '/logos/itch-io.png', descKey: 'itchioDesc' },
-  { id: 'gog', name: 'GOG', logoUrl: '/logos/gog.png', descKey: 'gogDesc' },
-  { id: 'origin', name: 'EA App / Origin', logoUrl: '/logos/ea-app.png', descKey: 'originDesc' },
-  { id: 'battlenet', name: 'Battle.net', logoUrl: '/logos/battlenet.png', descKey: 'battlenetDesc' },
-  { id: 'rockstar', name: 'Rockstar', logoUrl: '/logos/rockstar.png', descKey: 'rockstarDesc' },
-  { id: 'xbox', name: 'Xbox Game Pass', logoUrl: '/logos/xbox.png', descKey: 'xboxDesc' },
-  { id: 'amazon', name: 'Amazon Games', logoUrl: '/logos/amazon.png', descKey: 'amazonDesc' },
+  { id: 'steam', name: 'Steam', logoUrl: '/logos/steam.png', descKey: 'steamDesc', appUrl: 'https://store.steampowered.com/about/' },
+  { id: 'epic', name: 'Epic Games', logoUrl: '/logos/epic-games.png', descKey: 'epicDesc', appUrl: 'https://store.epicgames.com/download' },
+  { id: 'ubisoft', name: 'Ubisoft Connect', logoUrl: '/logos/ubisoft-connect.png', descKey: 'ubisoftDesc', appUrl: 'https://ubisoftconnect.com/' },
+  { id: 'itchio', name: 'itch.io', logoUrl: '/logos/itch-io.png', descKey: 'itchioDesc', appUrl: 'https://itch.io/app' },
+  { id: 'gog', name: 'GOG', logoUrl: '/logos/gog.png', descKey: 'gogDesc', appUrl: 'https://www.gog.com/galaxy' },
+  { id: 'origin', name: 'EA App / Origin', logoUrl: '/logos/ea-app.png', descKey: 'originDesc', appUrl: 'https://www.ea.com/ea-app' },
+  { id: 'battlenet', name: 'Battle.net', logoUrl: '/logos/battlenet.png', descKey: 'battlenetDesc', appUrl: 'https://download.battle.net/' },
+  { id: 'rockstar', name: 'Rockstar', logoUrl: '/logos/rockstar.png', descKey: 'rockstarDesc', appUrl: 'https://socialclub.rockstargames.com/rockstar-games-launcher' },
+  { id: 'xbox', name: 'Xbox Game Pass', logoUrl: '/logos/xbox.png', descKey: 'xboxDesc', appUrl: 'https://www.xbox.com/apps/xbox-app-on-pc' },
+  { id: 'amazon', name: 'Amazon Games', logoUrl: '/logos/amazon.png', descKey: 'amazonDesc', appUrl: 'https://gaming.amazon.com/amazon-games-app' },
+  // ── Store extra a rilevamento locale (2026-07-04): indie/casual spesso non localizzati ──
+  { id: 'humble', name: 'Humble App', logoUrl: '/logos/humble.png', descKey: 'humbleDesc', appUrl: 'https://www.humblebundle.com/app' },
+  { id: 'gamejolt', name: 'Game Jolt', logoUrl: '/logos/gamejolt.png', descKey: 'gamejoltDesc', appUrl: 'https://gamejolt.com/app' },
+  { id: 'bigfish', name: 'Big Fish Games', logoUrl: '/logos/bigfish.png', descKey: 'bigfishDesc', appUrl: 'https://www.bigfishgames.com/download-games/gamemanager/' },
 ];
 
 const utilityServicesConfig = [
@@ -49,16 +54,21 @@ const utilityServicesConfig = [
   { id: 'steamgriddb', name: 'SteamGridDB', iconType: 'gamepad', descKey: 'steamgriddbDesc' },
   { id: 'achievements', name: 'Achievements', iconType: 'trophy', descKey: 'achievementsDesc' },
   { id: 'playtime', name: 'Playtime Stats', iconType: 'chart', descKey: 'playtimeDesc' },
+  { id: 'pcgw', name: 'PCGamingWiki', iconType: 'globe', descKey: 'pcgwDesc' },
+  { id: 'itapatches', name: 'Patch ITA Finder', iconType: 'search', descKey: 'itaPatchesDesc' },
 ];
 
 const connectableProviders = ['steam', 'epic', 'ubisoft', 'itchio', 'gog', 'origin', 'battlenet', 'rockstar', 'amazon'];
-const autoDetectProviders = ['xbox'];
-const connectableUtilities = ['howlongtobeat', 'steamgriddb', 'achievements', 'playtime'];
+// Store a solo rilevamento locale (nessuna credenziale)
+const EXTRA_DETECT_IDS = ['humble', 'gamejolt', 'bigfish'];
+const autoDetectProviders = ['xbox', ...EXTRA_DETECT_IDS];
+const connectableUtilities = ['howlongtobeat', 'steamgriddb', 'achievements', 'playtime', 'pcgw', 'itapatches'];
 
 // Cache globale in-memory per evitare ri-detection ad ogni mount
 interface StoresCache {
   xboxDetected: boolean | null;
   amazonDetected: boolean | null;
+  extraDetected: Record<string, boolean | null>;
   ubisoftConnected: boolean;
   detectionDone: boolean;
 }
@@ -67,11 +77,16 @@ if (!_g.__gsStoresCache) {
   _g.__gsStoresCache = {
     xboxDetected: null as boolean | null,
     amazonDetected: null as boolean | null,
+    extraDetected: { humble: null, gamejolt: null, bigfish: null } as Record<string, boolean | null>,
     ubisoftConnected: false,
     detectionDone: false,
   };
 }
 const _storesCache = _g.__gsStoresCache as StoresCache;
+// Retrocompat: cache creata da una versione precedente della pagina senza extraDetected
+if (!_storesCache.extraDetected) {
+  _storesCache.extraDetected = { humble: null, gamejolt: null, bigfish: null };
+}
 
 export default function StoresPage() {
   const { t } = useTranslation();
@@ -240,6 +255,7 @@ export default function StoresPage() {
   const [testResults, setTestResults] = useState<Record<string, { connected?: boolean; error?: string; message?: string }>>({});
   const [xboxDetected, setXboxDetected] = useState<boolean | null>(_storesCache.xboxDetected);
   const [amazonDetected, setAmazonDetected] = useState<boolean | null>(_storesCache.amazonDetected);
+  const [extraDetected, setExtraDetected] = useState<Record<string, boolean | null>>(_storesCache.extraDetected);
 
   // Store auto-rilevati (Xbox/Amazon) che l'utente ha disconnesso manualmente.
   // La rilevazione di sistema li riproporrebbe sempre: questo elenco li nasconde
@@ -266,6 +282,53 @@ export default function StoresPage() {
   };
   const reenableDetectedStore = (id: string) => persistIgnored(ignoredStores.filter(s => s !== id));
 
+  // Conteggio giochi per store dalla cache libreria (idb-keyval, zero chiamate backend).
+  // I valori `platform` sono display-name ('Steam', 'Epic Games', 'itch.io'…) → match via regex.
+  const [libraryCounts, setLibraryCounts] = useState<Record<string, number>>({});
+  useEffect(() => {
+    let cancelled = false;
+    const PLATFORM_MATCHERS: Record<string, RegExp> = {
+      steam: /steam/,
+      gog: /gog/,
+      epic: /epic/,
+      ubisoft: /ubisoft|uplay/,
+      itchio: /itch/,
+      origin: /origin|ea app|electronic arts/,
+      battlenet: /battle\.?net|blizzard/,
+      rockstar: /rockstar/,
+      xbox: /xbox|game pass|microsoft/,
+      amazon: /amazon/,
+      humble: /humble/,
+      gamejolt: /jolt/,
+      bigfish: /big ?fish/,
+    };
+    const compute = async () => {
+      try {
+        const { get } = await import('idb-keyval');
+        const games = await get<Array<{ platform?: string }>>('gs_library_games');
+        if (cancelled || !Array.isArray(games)) return;
+        const counts: Record<string, number> = {};
+        for (const g of games) {
+          const p = (g?.platform || '').toLowerCase();
+          if (!p) continue;
+          for (const [storeId, re] of Object.entries(PLATFORM_MATCHERS)) {
+            if (re.test(p)) {
+              counts[storeId] = (counts[storeId] || 0) + 1;
+              break;
+            }
+          }
+        }
+        if (!cancelled) setLibraryCounts(counts);
+      } catch { /* silenzioso — la card ricade sulla descrizione */ }
+    };
+    compute();
+    window.addEventListener('gs-library-updated', compute);
+    return () => {
+      cancelled = true;
+      window.removeEventListener('gs-library-updated', compute);
+    };
+  }, []);
+
   useEffect(() => {
     if (_storesCache.detectionDone) return;
     _storesCache.detectionDone = true;
@@ -277,6 +340,29 @@ export default function StoresPage() {
       setAmazonDetected(detected);
       _storesCache.amazonDetected = detected;
     }).catch(() => { setAmazonDetected(false); _storesCache.amazonDetected = false; });
+    // Store extra a rilevamento locale
+    const extraChecks: Array<[string, string]> = [
+      ['humble', 'is_humble_installed'],
+      ['gamejolt', 'is_gamejolt_installed'],
+      ['bigfish', 'is_bigfish_installed'],
+    ];
+    for (const [id, cmd] of extraChecks) {
+      invoke<boolean>(cmd)
+        .then(detected => {
+          setExtraDetected(prev => {
+            const next = { ...prev, [id]: detected };
+            _storesCache.extraDetected = next;
+            return next;
+          });
+        })
+        .catch(() => {
+          setExtraDetected(prev => {
+            const next = { ...prev, [id]: false };
+            _storesCache.extraDetected = next;
+            return next;
+          });
+        });
+    }
   }, []);
   
   // Utility services state
@@ -304,7 +390,7 @@ export default function StoresPage() {
 
   const isConnected = (providerId: string): boolean => {
     // Check for utility services
-    if (['howlongtobeat', 'steamgriddb', 'achievements', 'playtime'].includes(providerId)) {
+    if (['howlongtobeat', 'steamgriddb', 'achievements', 'playtime', 'pcgw', 'itapatches'].includes(providerId)) {
       return utilityPreferences[providerId]?.enabled || false;
     }
     
@@ -321,6 +407,11 @@ export default function StoresPage() {
     // Amazon: auto-detect O credenziali (rispetta la disconnessione manuale)
     if (providerId === 'amazon') {
       return (amazonDetected === true && !ignoredStores.includes('amazon')) || isProviderConnected('amazon-credentials');
+    }
+
+    // Store extra a solo rilevamento locale (Humble, Game Jolt, Big Fish)
+    if (EXTRA_DETECT_IDS.includes(providerId)) {
+      return extraDetected[providerId] === true && !ignoredStores.includes(providerId);
     }
     
     // Check for other store providers
@@ -366,6 +457,16 @@ export default function StoresPage() {
         localStorage.setItem('gamestringer_utility_prefs', JSON.stringify(newPrefs));
         setUtilityPreferences(newPrefs);
         toast.success('Playtime Stats attivato!');
+      } else if (utilityId === 'pcgw') {
+        const newPrefs = { ...utilityPreferences, [utilityId]: { enabled: true } };
+        localStorage.setItem('gamestringer_utility_prefs', JSON.stringify(newPrefs));
+        setUtilityPreferences(newPrefs);
+        toast.success(t('stores.pcgwActivated'));
+      } else if (utilityId === 'itapatches') {
+        const newPrefs = { ...utilityPreferences, [utilityId]: { enabled: true } };
+        localStorage.setItem('gamestringer_utility_prefs', JSON.stringify(newPrefs));
+        setUtilityPreferences(newPrefs);
+        toast.success(t('stores.itaPatchesActivated'));
       } else if (utilityId === 'steamgriddb') {
         setIsSteamGridDBModalOpen(true);
         setLoadingProvider(null);
@@ -660,9 +761,19 @@ export default function StoresPage() {
         // If no error thrown, the API key works
         setTestResults(prev => ({ ...prev, [utilityId]: { connected: true } }));
         toast.success('SteamGridDB funziona correttamente!');
+      } else if (utilityId === 'pcgw') {
+        const result = await invoke<string>('test_pcgw_connection');
+        setTestResults(prev => ({ ...prev, [utilityId]: { connected: true, message: result } }));
+        toast.success(result);
+      } else if (utilityId === 'itapatches') {
+        const result = await invoke<string>('test_ita_patch_search');
+        setTestResults(prev => ({ ...prev, [utilityId]: { connected: true, message: result } }));
+        toast.success(result);
       }
     } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : 'Test fallito';
+      const msg = error instanceof Error ? error.message
+        : typeof error === 'string' && error ? error
+        : 'Test fallito';
       if (error instanceof DOMException && error.name === 'AbortError') {
         setTestResults(prev => ({ ...prev, [utilityId]: { error: 'Timeout - servizio non raggiungibile' } }));
         toast.error(`${utilityId}: Timeout connessione`);
@@ -698,23 +809,39 @@ export default function StoresPage() {
         setTestResults(prev => ({ ...prev, [providerId]: { error: t('stores.notAvailable') } }));
         toast.error(t('stores.notAvailable'));
       } else {
-        // Usa il comando Tauri per un test reale
-        const result = await invoke<{ connected?: boolean; success?: boolean; error?: string; message?: string; games_count?: number }>(command);
-        const connected = result?.connected ?? result?.success ?? false;
-        const testResult = {
-          connected,
-          message: result?.message || (connected ? 'Connesso' : 'Non connesso'),
-          error: result?.error,
-        };
-        setTestResults(prev => ({ ...prev, [providerId]: testResult }));
-        if (connected) {
-          toast.success(`Connessione ${providerId} verificata!${result?.games_count ? ` (${result.games_count} giochi)` : ''}`);
+        // Usa il comando Tauri per un test reale.
+        // NB: alcuni comandi (ubisoft, gog, amazon…) risolvono con una STRINGA
+        // descrittiva su successo, altri (steam, epic…) con un oggetto.
+        const result = await invoke<{ connected?: boolean; success?: boolean; error?: string; message?: string; games_count?: number } | string>(command);
+        if (typeof result === 'string') {
+          // Ok(String) dal backend: successo, salvo il caso "❌ ..." (es. credenziali scadute)
+          const ok = !result.trim().startsWith('❌');
+          setTestResults(prev => ({ ...prev, [providerId]: { connected: ok, message: result, error: ok ? undefined : result } }));
+          if (ok) {
+            toast.success(result);
+          } else {
+            toast.error(`${providerId}: ${result}`);
+          }
         } else {
-          toast.error(`Problema con ${providerId}: ${result?.error || 'connessione non riuscita'}`);
+          const connected = result?.connected ?? result?.success ?? false;
+          const testResult = {
+            connected,
+            message: result?.message || (connected ? 'Connesso' : 'Non connesso'),
+            error: result?.error,
+          };
+          setTestResults(prev => ({ ...prev, [providerId]: testResult }));
+          if (connected) {
+            toast.success(`Connessione ${providerId} verificata!${result?.games_count ? ` (${result.games_count} giochi)` : ''}`);
+          } else {
+            toast.error(`Problema con ${providerId}: ${result?.error || 'connessione non riuscita'}`);
+          }
         }
       }
     } catch (error: unknown) {
-      const errMsg = error instanceof Error ? error.message : 'Test fallito';
+      // Tauri rigetta con una stringa: non buttarla via con un generico "Test fallito"
+      const errMsg = error instanceof Error ? error.message
+        : typeof error === 'string' && error ? error
+        : 'Test fallito';
       toast.error(`Errore nel test di ${providerId}: ${errMsg}`);
       setTestResults(prev => ({ ...prev, [providerId]: { error: errMsg } }));
     }
@@ -741,6 +868,7 @@ export default function StoresPage() {
         const connectedStores = storesConfig.filter(s => {
           if (s.id === 'xbox') return xboxDetected === true;
           if (s.id === 'amazon') return amazonDetected === true;
+          if (EXTRA_DETECT_IDS.includes(s.id)) return extraDetected[s.id] === true;
           return isConnected(s.id);
         }).length;
         const activeUtilities = utilityServicesConfig.filter(s => isConnected(s.id)).length;
@@ -770,17 +898,34 @@ export default function StoresPage() {
           const currentLoading = loadingProvider === store.id;
           const xboxActive = store.id === 'xbox' && xboxDetected === true && !ignoredStores.includes('xbox');
           const amazonActive = store.id === 'amazon' && amazonDetected === true && !ignoredStores.includes('amazon');
+          const isExtraDetect = EXTRA_DETECT_IDS.includes(store.id);
+          const extraActive = isExtraDetect && extraDetected[store.id] === true && !ignoredStores.includes(store.id);
           const connected = store.id === 'xbox' ? xboxActive
+            : isExtraDetect ? extraActive
             : isConnected(store.id);
-          const isDetecting = (store.id === 'xbox' && xboxDetected === null);
+          const isDetecting = (store.id === 'xbox' && xboxDetected === null)
+            || (isExtraDetect && extraDetected[store.id] === null);
 
           const autoDetectStatus = store.id === 'xbox'
-            ? (xboxDetected === null ? 'Detecting...' : xboxDetected ? 'Xbox App / Game Pass detected' : 'Xbox App not found')
+            ? (xboxDetected === null
+                ? (t('stores.detecting') || 'Detecting...')
+                : xboxDetected
+                  ? (t('stores.xboxDetectedLabel') || 'Xbox App / Game Pass detected')
+                  : (t('stores.xboxNotFound') || 'Xbox App not found'))
             : store.id === 'amazon' && amazonActive
-            ? 'Amazon Games detected'
+            ? (t('stores.amazonDetectedLabel') || 'Amazon Games detected')
+            : isExtraDetect
+            ? (extraDetected[store.id] === null
+                ? (t('stores.detecting') || 'Detecting...')
+                : extraDetected[store.id]
+                  ? (t('stores.appDetected') || '{name} rilevato').replace('{name}', store.name)
+                  : (t('stores.appNotFound') || '{name} non trovato').replace('{name}', store.name))
             : null;
 
           const autoDetectCommand = store.id === 'xbox' ? 'test_xbox_connection'
+            : store.id === 'humble' ? 'test_humble_connection'
+            : store.id === 'gamejolt' ? 'test_gamejolt_connection'
+            : store.id === 'bigfish' ? 'test_bigfish_connection'
             : null;
 
           return (
@@ -794,6 +939,12 @@ export default function StoresPage() {
                     <div className="h-6 w-6 rounded bg-[#107c10] flex items-center justify-center text-white text-2xs font-bold">X</div>
                   ) : store.id === 'amazon' ? (
                     <div className="h-6 w-6 rounded bg-[#ff9900] flex items-center justify-center text-black text-2xs font-bold">A</div>
+                  ) : store.id === 'humble' ? (
+                    <div className="h-6 w-6 rounded bg-[#cb272c] flex items-center justify-center text-white text-2xs font-bold">H</div>
+                  ) : store.id === 'gamejolt' ? (
+                    <div className="h-6 w-6 rounded bg-[#191919] flex items-center justify-center text-[#ccff00] text-2xs font-bold">GJ</div>
+                  ) : store.id === 'bigfish' ? (
+                    <div className="h-6 w-6 rounded bg-[#0e5aa7] flex items-center justify-center text-white text-2xs font-bold">BF</div>
                   ) : store.logoUrl ? (
                     <Image
                       src={store.logoUrl}
@@ -816,22 +967,37 @@ export default function StoresPage() {
                     )}
                   </div>
                   <p className="text-micro text-muted-foreground line-clamp-1">
-                    {autoDetectStatus ?? t(`stores.${store.descKey}`)}
+                    {connected && libraryCounts[store.id]
+                      ? (t('stores.gamesImported') || '{count} giochi importati').replace('{count}', libraryCounts[store.id].toLocaleString())
+                      : autoDetectStatus ?? t(`stores.${store.descKey}`)}
                   </p>
                 </div>
               </div>
               <div className="flex gap-1">
               {connected ? (
                   <>
+                    {/* Stato connesso = positivo (verde). Il rosso "Disconnetti" appare solo al hover. */}
                     <Button
                       size="sm"
-                      variant="destructive"
-                      className="flex-1 h-7 text-2xs"
+                      variant="outline"
+                      className="flex-1 h-7 text-2xs group/disc border-emerald-500/40 text-emerald-400 bg-emerald-500/5 hover:border-red-500/50 hover:text-red-400 hover:bg-red-500/10"
                       disabled={isLoading || currentLoading}
                       onClick={() => handleDisconnect(store.id)}
                     >
-                      {currentLoading ? <Loader2 className="animate-spin h-3 w-3 mr-1" /> : <Unplug className="h-3 w-3 mr-1" />}
-                      {t('stores.disconnect')}
+                      {currentLoading ? (
+                        <Loader2 className="animate-spin h-3 w-3 mr-1" />
+                      ) : (
+                        <>
+                          <span className="flex items-center gap-1 group-hover/disc:hidden">
+                            <CheckCircle className="h-3 w-3" />
+                            {t('stores.connected')}
+                          </span>
+                          <span className="hidden items-center gap-1 group-hover/disc:flex">
+                            <Unplug className="h-3 w-3" />
+                            {t('stores.disconnect')}
+                          </span>
+                        </>
+                      )}
                     </Button>
                     {store.id === 'steam' && (
                       <Button
@@ -877,15 +1043,26 @@ export default function StoresPage() {
                   </>
                 ) : isConnectable ? (
                   <>
+                    {/* Rockstar non è ancora supportato: bottone disabilitato + "Prossimamente" */}
                     <Button
                       size="sm"
                       variant="outline"
-                      className="flex-1 h-7 text-2xs border-orange-500/50 text-orange-400 hover:bg-orange-500/10 hover:border-orange-400"
-                      disabled={isLoading || currentLoading}
+                      className={`flex-1 h-7 text-2xs ${
+                        store.id === 'rockstar'
+                          ? 'border-slate-700 text-slate-500 cursor-not-allowed'
+                          : 'border-orange-500/50 text-orange-400 hover:bg-orange-500/10 hover:border-orange-400'
+                      }`}
+                      disabled={store.id === 'rockstar' || isLoading || currentLoading}
                       onClick={() => handleConnect(store.id)}
                     >
-                      {currentLoading ? <Loader2 className="animate-spin h-3 w-3 mr-1" /> : <Plug className="h-3 w-3 mr-1" />}
-                      {t('stores.connect')}
+                      {currentLoading ? (
+                        <Loader2 className="animate-spin h-3 w-3 mr-1" />
+                      ) : store.id === 'rockstar' ? (
+                        <Clock className="h-3 w-3 mr-1" />
+                      ) : (
+                        <Plug className="h-3 w-3 mr-1" />
+                      )}
+                      {store.id === 'rockstar' ? t('stores.comingSoon') : t('stores.connect')}
                     </Button>
                     {store.id === 'gog' && (
                       <>
@@ -955,6 +1132,19 @@ export default function StoresPage() {
                   )}
                 </Button>
               ) : null}
+              {/* Link alla pagina di download dell'app dello store — sempre visibile.
+                  GOG escluso: ha già i suoi pulsanti dedicati (account/Galaxy). */}
+              {store.appUrl && store.id !== 'gog' && (
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-7 w-7 text-slate-400 hover:text-slate-200"
+                  title={(t('stores.downloadApp') || "Scarica l'app {name}").replace('{name}', store.name)}
+                  onClick={() => shellOpen(store.appUrl).catch(() => window.open(store.appUrl, '_blank'))}
+                >
+                  <ExternalLink className="h-3 w-3" />
+                </Button>
+              )}
               </div>
             </Card>
           );
@@ -1008,6 +1198,8 @@ export default function StoresPage() {
                   {service.iconType === 'gamepad' && <Gamepad2 className="h-4 w-4 text-orange-500" />}
                   {service.iconType === 'trophy' && <Trophy className="h-4 w-4 text-yellow-500" />}
                   {service.iconType === 'chart' && <BarChart3 className="h-4 w-4 text-green-500" />}
+                  {service.iconType === 'globe' && <Globe className="h-4 w-4 text-cyan-500" />}
+                  {service.iconType === 'search' && <Search className="h-4 w-4 text-emerald-500" />}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1">
@@ -1024,15 +1216,28 @@ export default function StoresPage() {
               <div className="flex gap-1">
                     {connected ? (
                       <>
+                  {/* Servizio attivo = positivo (verde), "Disattiva" solo al hover — coerente con gli store */}
                   <Button
                     size="sm"
-                    variant="destructive"
-                    className="flex-1 h-7 text-2xs"
+                    variant="outline"
+                    className="flex-1 h-7 text-2xs group/deact border-emerald-500/40 text-emerald-400 bg-emerald-500/5 hover:border-red-500/50 hover:text-red-400 hover:bg-red-500/10"
                     disabled={isLoading || currentLoading}
                     onClick={() => handleDisconnectUtility(service.id)}
                   >
-                    {currentLoading ? <Loader2 className="animate-spin h-3 w-3 mr-1" /> : <Unplug className="h-3 w-3 mr-1" />}
-                    {t('stores.deactivate')}
+                    {currentLoading ? (
+                      <Loader2 className="animate-spin h-3 w-3 mr-1" />
+                    ) : (
+                      <>
+                        <span className="flex items-center gap-1 group-hover/deact:hidden">
+                          <CheckCircle className="h-3 w-3" />
+                          {t('stores.active')}
+                        </span>
+                        <span className="hidden items-center gap-1 group-hover/deact:flex">
+                          <Unplug className="h-3 w-3" />
+                          {t('stores.deactivate')}
+                        </span>
+                      </>
+                    )}
                   </Button>
                   <Button
                     variant="outline"

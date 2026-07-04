@@ -1,4 +1,4 @@
-use crate::commands::{steam, epic, gog, origin, ubisoft, battlenet, itchio, rockstar, amazon, xbox, library};
+use crate::commands::{steam, epic, gog, origin, ubisoft, battlenet, itchio, rockstar, amazon, xbox, library, extra_stores};
 use crate::models::*;
 use log;
 use serde_json;
@@ -868,7 +868,10 @@ pub async fn get_games_fast() -> Result<Vec<GameInfo>, String> {
     let itchio_task = tokio::spawn(itchio::get_itchio_installed_games());
     let rockstar_task = tokio::spawn(rockstar::get_rockstar_installed_games());
     let amazon_task = tokio::spawn(amazon::get_amazon_installed_games());
-    
+    let humble_task = tokio::spawn(extra_stores::get_humble_installed_games());
+    let gamejolt_task = tokio::spawn(extra_stores::get_gamejolt_installed_games());
+    let bigfish_task = tokio::spawn(extra_stores::get_bigfish_installed_games());
+
     // 1. Steam Result
     match steam_task.await {
         Ok(Ok(steam_games)) => {
@@ -1124,7 +1127,43 @@ pub async fn get_games_fast() -> Result<Vec<GameInfo>, String> {
         Ok(Err(e)) => log::warn!("⚠️ Amazon Games errore: {}", e),
         Err(e) => log::error!("🔥 Panic in Amazon task: {}", e),
     }
-    
+
+    // Extra stores: Humble App, Game Jolt, Big Fish (rilevamento locale)
+    for (task, label) in [
+        (humble_task, "Humble App"),
+        (gamejolt_task, "Game Jolt"),
+        (bigfish_task, "Big Fish Games"),
+    ] {
+        match task.await {
+            Ok(Ok(store_games)) => {
+                log::info!("🎮 {}: {} giochi trovati", label, store_games.len());
+                for g in store_games {
+                    let game_info = GameInfo {
+                        id: g.id.clone(),
+                        title: g.name.clone(),
+                        platform: g.platform.clone(),
+                        install_path: Some(g.path.clone()),
+                        executable_path: g.executable.clone(),
+                        icon: None,
+                        image_url: None,
+                        header_image: None,
+                        is_installed: true,
+                        steam_app_id: None,
+                        is_vr: is_vr_game(&g.name),
+                        engine: detect_game_engine_smart(&g.name, Some(&g.path)),
+                        last_played: g.last_modified,
+                        is_shared: false,
+                        supported_languages: Some(vec!["english".to_string()]),
+                        genres: Some(vec!["Game".to_string()]), added_date: None,
+                    };
+                    all_games.push(game_info);
+                }
+            }
+            Ok(Err(e)) => log::warn!("⚠️ {} errore: {}", label, e),
+            Err(e) => log::error!("🔥 Panic in {} task: {}", label, e),
+        }
+    }
+
     let elapsed = start_time.elapsed();
     log::info!("✅ CARICAMENTO PARALLELO COMPLETATO: {} giochi in {:?} (metodo Rai Pal)", all_games.len(), elapsed);
     

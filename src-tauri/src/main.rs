@@ -936,7 +936,24 @@ fn main() {
             commands::xbox::get_xbox_installed_games,
             commands::xbox::is_xbox_installed,
             commands::xbox::test_xbox_connection,
-            
+
+            // Extra stores (Humble App, Game Jolt, Big Fish) — rilevamento locale
+            commands::extra_stores::is_humble_installed,
+            commands::extra_stores::get_humble_installed_games,
+            commands::extra_stores::test_humble_connection,
+            commands::extra_stores::is_gamejolt_installed,
+            commands::extra_stores::get_gamejolt_installed_games,
+            commands::extra_stores::test_gamejolt_connection,
+            commands::extra_stores::is_bigfish_installed,
+            commands::extra_stores::get_bigfish_installed_games,
+            commands::extra_stores::test_bigfish_connection,
+
+            // Translation lookup (PCGamingWiki + ricerca patch ITA)
+            commands::translation_lookup::pcgw_check_language,
+            commands::translation_lookup::test_pcgw_connection,
+            commands::translation_lookup::get_ita_patch_search_links,
+            commands::translation_lookup::test_ita_patch_search,
+
             // Extension System (Vortex-inspired)
             commands::extensions::init_extension_system,
             commands::extensions::get_installed_extensions,

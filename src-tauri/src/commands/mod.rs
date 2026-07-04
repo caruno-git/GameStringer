@@ -11,6 +11,8 @@ pub mod itchio;
 pub mod rockstar;
 pub mod amazon;
 pub mod xbox;
+pub mod extra_stores;
+pub mod translation_lookup;
 pub mod library;
 pub mod store_detection;
 pub mod launcher;
