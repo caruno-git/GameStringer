@@ -12,7 +12,9 @@
 use crate::commands::library::InstalledGame;
 use log::{info, warn};
 use std::path::{Path, PathBuf};
+#[cfg(windows)]
 use winreg::enums::*;
+#[cfg(windows)]
 use winreg::RegKey;
 
 // ============================================================================
@@ -264,6 +266,7 @@ fn bigfish_detected() -> bool {
 }
 
 /// Giochi Big Fish dalle chiavi di registro Uninstall (prefisso "BFG-").
+#[cfg(windows)]
 fn bigfish_registry_games() -> Vec<(String, String)> {
     let mut found = Vec::new();
     let hives = [
@@ -296,6 +299,12 @@ fn bigfish_registry_games() -> Vec<(String, String)> {
         }
     }
     found
+}
+
+/// Su piattaforme non-Windows non esiste il registro: nessun gioco Big Fish via registry.
+#[cfg(not(windows))]
+fn bigfish_registry_games() -> Vec<(String, String)> {
+    Vec::new()
 }
 
 #[tauri::command]
