@@ -228,8 +228,10 @@ const it = {
   otherFunctions: 'altre funzioni',
   btnSave: 'Salva', btnInstall: 'Installa', btnRescan: 'Ri-Scansiona', btnTranslate: 'Traduci', btnStartTranslation: 'Avvia Traduzione',
   // v1.10 — Traduzione un-click, background e Progetti
-  novTitle: 'Novità — Traduzione un-click, in background e Progetti',
+  novTitle: 'Novità — Patch Hub, traduzione un-click e Progetti',
   novDesc: 'Dal dettaglio di un gioco, «Traduci Tutto / STRING IT!» avvia l\'intera traduzione automatica per il motore rilevato: Visionaire Studio, Ren\'Py, Hendrix e RPG Maker MV/MZ.',
+  novHubT: 'Patch Hub (scarica e pubblica)',
+  novHubDPre: 'Sfoglia i pacchetti di traduzione della community, scaricali nella tua libreria locale .gspack con un click o pubblica i tuoi. Apri',
   novCloudT: 'Cloud o Ollama (automatico)',
   novCloudDPre: 'Se in',
   novCloudDPost: '→ AI hai salvato una API key (es. Gemini) usa il cloud (veloce); altrimenti Ollama offline. Lo step mostra quale.',
@@ -361,9 +363,11 @@ const en: GT = {
   // Misc
   otherFunctions: 'other functions',
   btnSave: 'Save', btnInstall: 'Install', btnRescan: 'Re-Scan', btnTranslate: 'Translate', btnStartTranslation: 'Start Translation',
-  // v1.10 — One-click translation, background and Projects
-  novTitle: 'New — One-click translation, background and Projects',
+  // v1.11 — Patch Hub, one-click translation and Projects
+  novTitle: 'New — Patch Hub, one-click translation and Projects',
   novDesc: 'From a game\'s detail page, "Translate All / STRING IT!" runs the full automatic translation for the detected engine: Visionaire Studio, Ren\'Py, Hendrix and RPG Maker MV/MZ.',
+  novHubT: 'Patch Hub (download & publish)',
+  novHubDPre: 'Browse community translation packs, download them to your local .gspack library with one click, or publish your own. Open',
   novCloudT: 'Cloud or Ollama (automatic)',
   novCloudDPre: 'If in',
   novCloudDPost: '→ AI you saved an API key (e.g. Gemini) it uses the cloud (fast); otherwise Ollama offline. The step shows which one.',

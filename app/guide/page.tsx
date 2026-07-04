@@ -458,7 +458,7 @@ export default function GuidePage() {
                   <CardTitle className="text-sm flex items-center gap-2">
                     <Rocket className="w-4 h-4 text-blue-400" />
                     {g.novTitle}
-                    <Badge variant="outline" className="ml-auto text-2xs border-blue-500/40 text-blue-300">v1.10</Badge>
+                    <Badge variant="outline" className="ml-auto text-2xs border-blue-500/40 text-blue-300">v1.11</Badge>
                   </CardTitle>
                   <CardDescription className="text-xs">{g.novDesc}</CardDescription>
                 </CardHeader>
@@ -487,6 +487,12 @@ export default function GuidePage() {
                         <CheckCircle2 className="h-3 w-3" /> {g.novTrayT}
                       </div>
                       <p className="text-2xs text-muted-foreground">{g.novTrayD}</p>
+                    </div>
+                    <div className="rounded border border-slate-700/40 bg-slate-900/40 p-2 md:col-span-2">
+                      <div className="flex items-center gap-1.5 text-2xs font-semibold text-blue-300 mb-1">
+                        <Database className="h-3 w-3" /> {g.novHubT}
+                      </div>
+                      <p className="text-2xs text-muted-foreground">{g.novHubDPre} <NavLink href="/patch-hub">Patch Hub</NavLink></p>
                     </div>
                   </div>
 
