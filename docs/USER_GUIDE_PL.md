@@ -1,5 +1,13 @@
 ﻿# GameStringer - Kompletny przewodnik
 
+## 🆕 Nowości w v1.11.2
+
+- **Więcej sklepów**: Humble App, Game Jolt i Big Fish Games są teraz wykrywane automatycznie.
+- **Wyszukiwanie tłumaczeń**: sprawdza przez PCGamingWiki, czy gra ma już Twój język, oraz linki do wyszukiwania włoskich fanowskich łatek.
+- **Publikacja w Patch Hub**: wyślij ukończony projekt do społecznościowego Patch Hub w jednym kroku (Projekty → Opublikuj).
+- **Nowe silniki**: pipeline chmurowy dla TyranoScript oraz przepisany parser `.pck`, który czyta prawdziwe archiwa Godot 4.4+.
+- **Unity**: lokalny most Ollama dla XUnity (CustomTranslate); pobierania (BepInEx/XUnity/TMP/UABEA) przez API GitHub.
+
 ## Spis treści
 
 1. [Konfiguracja początkowa](#faza-1-konfiguracja-początkowa)

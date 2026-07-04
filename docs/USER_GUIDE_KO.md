@@ -1,5 +1,13 @@
 ﻿# GameStringer - 완전 가이드
 
+## 🆕 v1.11.2 새로운 기능
+
+- **더 많은 스토어**: 이제 Humble App, Game Jolt, Big Fish Games를 자동 감지합니다.
+- **번역 조회**: PCGamingWiki로 게임에 내 언어가 이미 포함됐는지 확인하고, 이탈리아어 팬 패치 검색 링크도 제공합니다.
+- **Patch Hub에 게시**: 완료된 프로젝트를 한 번에 커뮤니티 Patch Hub로 전송합니다(프로젝트 → 게시).
+- **새 엔진**: TyranoScript 클라우드 파이프라인과, 실제 Godot 4.4+ 아카이브를 읽는 새로 작성된 `.pck` 파서.
+- **Unity**: XUnity용 로컬 Ollama 브리지(CustomTranslate); 다운로드(BepInEx/XUnity/TMP/UABEA)는 GitHub API로 처리.
+
 ## 목차
 
 1. [초기 설정](#단계1-초기-설정)

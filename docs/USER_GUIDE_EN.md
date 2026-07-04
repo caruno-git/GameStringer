@@ -1,5 +1,13 @@
 ﻿# GameStringer - Complete Guide
 
+## 🆕 New in v1.11.2
+
+- **More stores**: Humble App, Game Jolt and Big Fish Games are now auto-detected (see Phase 2).
+- **Translation lookup**: check whether a game already ships your language via PCGamingWiki, plus Italian fan-patch search links.
+- **Publish to Patch Hub**: send a completed project to the community Patch Hub in one step (Projects → Publish).
+- **New engines**: TyranoScript cloud pipeline and a rewritten Godot `.pck` parser that reads real Godot 4.4+ archives (see Phase 4).
+- **Unity**: local Ollama bridge for XUnity (CustomTranslate); asset downloads (BepInEx/XUnity/TMP/UABEA) resolve from the GitHub API.
+
 ## Table of Contents
 
 1. [Initial Setup](#phase-1-initial-setup)
@@ -49,7 +57,7 @@ Launch GameStringer. On first run, the profile creation screen appears.
 
 ### Supported Stores
 
-Steam, Epic Games, GOG, Ubisoft Connect, Origin/EA, Battle.net, Itch.io, Rockstar, Amazon Games.
+Steam, Epic Games, GOG, Ubisoft Connect, Origin/EA, Battle.net, Itch.io, Rockstar, Amazon Games, Humble App, Game Jolt, Big Fish Games.
 
 ### Steam Configuration (Priority)
 
@@ -93,7 +101,7 @@ Sidebar → **"Translate Game"** (Auto-Translate). The heart of GameStringer.
 
 ### Detected Engines
 
-Unity (Mono/IL2CPP), Unreal Engine, Godot, RPG Maker, Ren'Py, Source Engine, CryEngine, RE Engine, Frostbite, id Tech, Creation Engine, Construct, AGS, Defold, Love2D.
+Unity (Mono/IL2CPP), Unreal Engine, Godot (incl. 4.4+ `.pck`), RPG Maker, Ren'Py, TyranoScript, Visionaire, Source Engine, CryEngine, RE Engine, Frostbite, id Tech, Creation Engine, Construct, AGS, Defold, Love2D.
 
 ---
 

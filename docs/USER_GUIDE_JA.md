@@ -1,5 +1,13 @@
 ﻿# GameStringer - 完全ガイド
 
+## 🆕 v1.11.2 の新機能
+
+- **対応ストア追加**: Humble App、Game Jolt、Big Fish Games を自動検出。
+- **翻訳ルックアップ**: PCGamingWiki でゲームに自分の言語が同梱済みか確認、イタリア語の有志パッチ検索リンクも。
+- **Patch Hub へ公開**: 完成したプロジェクトをワンステップでコミュニティの Patch Hub に送信（プロジェクト → 公開）。
+- **新エンジン**: TyranoScript のクラウドパイプラインと、Godot 4.4+ の実アーカイブを読む書き直した `.pck` パーサー。
+- **Unity**: XUnity 向けローカル Ollama ブリッジ（CustomTranslate）。ダウンロード（BepInEx/XUnity/TMP/UABEA）は GitHub API 経由。
+
 ## 目次
 
 1. [初期設定](#フェーズ1-初期設定)

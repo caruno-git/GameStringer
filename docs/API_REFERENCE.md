@@ -296,6 +296,28 @@ Testa la connessione a uno store.
 }
 ```text
 
+### 🖥️ Comandi desktop (Tauri invoke) — v1.11.2
+
+Nella build desktop questi comandi sono esposti via `invoke()` (non REST). Nuovi in v1.11.2:
+
+**Extra store (rilevamento locale):**
+
+- `is_humble_installed` · `get_humble_installed_games` · `test_humble_connection`
+- `is_gamejolt_installed` · `get_gamejolt_installed_games` · `test_gamejolt_connection`
+- `is_bigfish_installed` · `get_bigfish_installed_games` · `test_bigfish_connection`
+
+**Ricerca traduzioni:**
+
+- `pcgw_check_language(game, language)` — verifica la disponibilità della lingua su PCGamingWiki
+- `test_pcgw_connection`
+- `get_ita_patch_search_links(game_name)` — link di ricerca per patch ITA fan-made
+- `test_ita_patch_search`
+
+```ts
+import { invoke } from '@tauri-apps/api/core';
+const games = await invoke('get_humble_installed_games');
+```
+
 ### 🔑 Auth API
 
 #### `POST /api/auth/signin`

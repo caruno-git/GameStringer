@@ -1,5 +1,13 @@
 ﻿# GameStringer - 完整指南
 
+## 🆕 v1.11.2 新功能
+
+- **更多商店**：现在可自动检测 Humble App、Game Jolt 和 Big Fish Games。
+- **翻译查询**：通过 PCGamingWiki 检查游戏是否已自带你的语言，并提供意大利语民间补丁搜索链接。
+- **发布到 Patch Hub**：一步将已完成的项目发送到社区 Patch Hub（项目 → 发布）。
+- **新引擎**：TyranoScript 云管线，以及重写的 `.pck` 解析器，可读取真实的 Godot 4.4+ 归档。
+- **Unity**：面向 XUnity 的本地 Ollama 桥接（CustomTranslate）；下载（BepInEx/XUnity/TMP/UABEA）通过 GitHub API 解析。
+
 ## 目录
 
 1. [初始设置](#阶段1-初始设置)

@@ -101,14 +101,14 @@ Get the latest release from **[GitHub Releases](https://github.com/rouges78/Game
 
 | Platform | File | Notes |
 |----------|------|-------|
-| **Windows** | `GameStringer_1.10.2_x64-setup.exe` | Installer (recommended) |
-| **Windows** | `GameStringer_1.10.2_x64-portable.zip` | No install needed |
-| **Windows** | `GameStringer_1.10.2_x64_en-US.msi` | MSI alternative |
-| **macOS** | `GameStringer_1.10.2_x64.dmg` | Intel Mac |
-| **macOS** | `GameStringer_1.10.2_aarch64.dmg` | Apple Silicon |
-| **Linux** | `GameStringer_1.10.2_amd64.AppImage` | Universal (recommended) |
-| **Linux** | `GameStringer_1.10.2_amd64.deb` | Debian / Ubuntu |
-| **Linux** | `GameStringer-1.10.2-1.x86_64.rpm` | Fedora / RHEL |
+| **Windows** | `GameStringer_1.11.2_x64-setup.exe` | Installer (recommended) |
+| **Windows** | `GameStringer_1.11.2_x64-portable.zip` | No install needed |
+| **Windows** | `GameStringer_1.11.2_x64_en-US.msi` | MSI alternative |
+| **macOS** | `GameStringer_1.11.2_x64.dmg` | Intel Mac |
+| **macOS** | `GameStringer_1.11.2_aarch64.dmg` | Apple Silicon |
+| **Linux** | `GameStringer_1.11.2_amd64.AppImage` | Universal (recommended) |
+| **Linux** | `GameStringer_1.11.2_amd64.deb` | Debian / Ubuntu |
+| **Linux** | `GameStringer-1.11.2-1.x86_64.rpm` | Fedora / RHEL |
 
 **Requirements:** Windows 10+, macOS 10.15+, or Linux (Ubuntu 22.04+, Fedora 38+). 4 GB RAM (8 GB+ for local AI), 500 MB disk. Releases are **code-signed** and **auto-updated** via Tauri Updater.
 
@@ -117,7 +117,7 @@ Get the latest release from **[GitHub Releases](https://github.com/rouges78/Game
 ## 🚀 How it works
 
 1. **Install** GameStringer and launch it
-2. **Your game library loads automatically** — Steam, Epic, GOG, Origin, Ubisoft, Amazon, itch.io (800+ games detected in seconds)
+2. **Your game library loads automatically** — Steam, Epic, GOG, Origin, Ubisoft, Amazon, itch.io, Humble App, Game Jolt, Big Fish (800+ games detected in seconds)
 3. **Pick a game** → optionally run **P.T. (Prediction Tool)** to see difficulty, estimated time, best LLM chain
 4. Click **"String it!"** — GameStringer scans, extracts, translates, and patches automatically
 5. **Play in your language** — backups are always created before patching
@@ -186,6 +186,18 @@ GameStringer supports **20+ engines** with varying levels of depth:
 
 ## ✨ Features
 
+### 🆕 New in v1.11.2
+
+- **More stores** — local install detection for **Humble App, Game Jolt and Big Fish Games**, on top of the existing launchers
+- **Translation lookup** — check whether a game already ships your language via **PCGamingWiki**, plus quick **Italian fan-patch search links** from the game view
+- **Publish to Patch Hub** — send a completed project to the community **Patch Hub** in one step (`app/projects` → publish, reuses `publishPack`)
+- **Community Hub overview** — new landing panel with recent activity, latest packs and categories
+- **Italian translation news** — added curated fan-translation RSS feeds (Ctrl+Trad, OldGamesItalia, Romhacking.it, Language Pack Italia, Q-Gin, …)
+- **String it! everywhere** — one-click routing for Unity/Unreal/Godot + a **TyranoScript** cloud pipeline
+- **Unity** — local **Ollama** bridge for XUnity (CustomTranslate); BepInEx/XUnity/TMP/UABEA downloads resolve from the GitHub API
+- **Godot** — rewritten `.pck` parser reads real **Godot 4.4+** archives (verified on *Slay the Spire 2*)
+- **Desktop reliability** — removed the last web `/api` calls: editor uses the local TM, and translate/export/voice/store calls go through the native backend
+
 ### 🆕 New in v1.10.2
 
 - **Auto-updater fix** — resolved a stuck "Preparing…" state where the update never started downloading. A stale React update object was passed to `downloadAndInstall` and the `updating` flag was never reset; now auto-update reliably starts, downloads, and installs (`components/notifications/auto-updater.tsx`, `hooks/use-tauri-updater.ts`)
@@ -238,7 +250,7 @@ GameStringer supports **20+ engines** with varying levels of depth:
 
 ### 📚 Game Library
 
-- **Auto-detect**: Steam (with Family Sharing), Epic, GOG Galaxy, Origin/EA, Ubisoft Connect, Amazon Games, itch.io
+- **Auto-detect**: Steam (with Family Sharing), Epic, GOG Galaxy, Origin/EA, Ubisoft Connect, Amazon Games, itch.io, Humble App, Game Jolt, Big Fish Games
 - **800+ games** recognized from installed libraries in seconds
 - **Game cards** with cover art, metadata, engine badge, VR badge, install status
 - **Hover quick actions**: String it!, Batch, Community, P.T. — all one click

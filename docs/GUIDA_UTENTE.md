@@ -1,5 +1,13 @@
 ﻿# 📖 GameStringer - Guida Utente Completa
 
+## 🆕 Novità v1.11.2
+
+- **Più store**: ora vengono rilevati automaticamente anche Humble App, Game Jolt e Big Fish Games.
+- **Ricerca traduzioni**: verifica se un gioco ha già la tua lingua tramite PCGamingWiki, con link di ricerca per patch ITA fan-made.
+- **Pubblica sul Patch Hub**: invia un progetto completato al Patch Hub della community in un passo (Progetti → Pubblica).
+- **Nuovi motori**: pipeline cloud per TyranoScript e parser `.pck` riscritto che legge i veri archivi Godot 4.4+.
+- **Unity**: bridge Ollama locale per XUnity (CustomTranslate); i download (BepInEx/XUnity/TMP/UABEA) si risolvono via GitHub API.
+
 ## Indice
 
 1. [Panoramica](#panoramica)
@@ -65,12 +73,12 @@
 
 GameStringer è un sistema avanzato per la traduzione automatica e manuale di videogiochi. Supporta:
 
-- **Motori di gioco**: Unity, Unreal Engine, RPG Maker, Ren'Py, Godot, Telltale, Wolf RPG, Kirikiri e altri
+- **Motori di gioco**: Unity, Unreal Engine, RPG Maker, Ren'Py, Godot (incl. 4.4+), Telltale, Wolf RPG, Kirikiri, TyranoScript, Visionaire e altri
 - **Formati file**: CSV, JSON, XML, PO/POT, YAML, TXT, SRT, VTT, ASS/SSA e altri
 - **Provider AI**: Claude, Gemini, GPT, DeepSeek, Mistral, Groq, Ollama, **LM Studio** (locale), **Alocai ModelWiz** (MT gaming), **Qwen 3**, **NLLB-200** (18+ provider)
 - **Lingue**: 200+ lingue supportate (con NLLB-200)
 - **UI Multilingua**: IT, EN, ES, FR, DE, JA, ZH, KO, PT, RU, PL (11 lingue)
-- **Store Gaming**: Steam, Epic Games, GOG, Origin, Battle.net, Ubisoft, itch.io, Amazon Games
+- **Store Gaming**: Steam, Epic Games, GOG, Origin, Battle.net, Ubisoft, itch.io, Amazon Games, Humble App, Game Jolt, Big Fish Games
 - **NUOVO v1.0.5**: Voice Clone Studio, VR Text Overlay, Quality Gates, Player Feedback
 - **NUOVO v1.0.6**: Qwen 3 (lingue asiatiche), NLLB-200 (200 lingue), bug fixes
 - **NUOVO v1.0.7**: Community Hub, GitHub Discussions, Licenza v1.1
