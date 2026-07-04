@@ -128,3 +128,7 @@ gs-hook/testapp/overlay_test_server.ps1
 i18n-report.txt
 
 scripts/_*.js
+
+# Agent / skill tooling (non parte dell'app)
+.agents/
+skills-lock.json
