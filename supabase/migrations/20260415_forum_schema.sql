@@ -155,13 +155,16 @@ CREATE POLICY "Auth insert posts" ON forum_posts FOR INSERT WITH CHECK (auth.uid
 DROP POLICY IF EXISTS "Auth insert reactions" ON forum_reactions;
 CREATE POLICY "Auth insert reactions" ON forum_reactions FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
--- Solo autore può modificare
+-- Solo autore può modificare. Cast ::text su entrambi i lati: nel DB di
+-- produzione author_id/user_id è TEXT (schema storico forum-schema.sql),
+-- in un DB creato da zero da questa migration è UUID — senza cast la
+-- replay su Supabase Preview fallisce con "operator does not exist: text = uuid".
 DROP POLICY IF EXISTS "Author update threads" ON forum_threads;
-CREATE POLICY "Author update threads" ON forum_threads FOR UPDATE USING (author_id = auth.uid());
+CREATE POLICY "Author update threads" ON forum_threads FOR UPDATE USING (author_id::text = auth.uid()::text);
 DROP POLICY IF EXISTS "Author update posts" ON forum_posts;
-CREATE POLICY "Author update posts" ON forum_posts FOR UPDATE USING (author_id = auth.uid());
+CREATE POLICY "Author update posts" ON forum_posts FOR UPDATE USING (author_id::text = auth.uid()::text);
 DROP POLICY IF EXISTS "Author delete reactions" ON forum_reactions;
-CREATE POLICY "Author delete reactions" ON forum_reactions FOR DELETE USING (user_id = auth.uid());
+CREATE POLICY "Author delete reactions" ON forum_reactions FOR DELETE USING (user_id::text = auth.uid()::text);
 
 -- ─── FUNZIONI ────────────────────────────────────────────────────────────────
 
@@ -187,6 +190,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS on_post_insert ON forum_posts;
 CREATE TRIGGER on_post_insert
   AFTER INSERT ON forum_posts
   FOR EACH ROW
@@ -215,6 +219,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS on_reaction_change ON forum_reactions;
 CREATE TRIGGER on_reaction_change
   AFTER INSERT OR DELETE ON forum_reactions
   FOR EACH ROW
