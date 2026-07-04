@@ -1,5 +1,89 @@
 # GameStringer Changelog
 
+## 🔧 v1.11.2 - 2026-07-04
+
+- ✨ community: Add Community Hub overview panel with recent activity
+- ✨ news: Add Italian fan-translation RSS feeds; skip Next proxy under Tauri
+- ✨ stores: Detect Humble/GameJolt/BigFish installs + PCGW & ITA-patch lookup
+- ✨ projects: Publish completed project to Patch Hub (reuses publishPack, 7 i18n keys x12 langs)
+- ✨ engines: Wire String it! routing for Unity/Unreal/Godot + TyranoScript cloud pipeline
+- ✨ unity: Local Ollama translation bridge for XUnity (CustomTranslate)
+- 🐛 stores: Gate Big Fish registry reads behind cfg(windows) to fix Linux build
+- 🐛 supabase: Make forum migration replay-safe on preview branches
+- 🐛 i18n: Correct hardcoded-strings baseline to actual count (1432)
+- 🐛 settings: Skip corrections without gameId in fine-tuning game selector (tsc)
+- 🐛 checkpoint: Normalize gamePath identity keys (separators, casing, trailing slash) with legacy key migration
+- 🐛 settings: Fine-tuning panel usable without gameId (game selector, generate feedback, defensive metrics, locale-aware dates)
+- 🐛 godot: V3 directory-at-end (dir_offset) — correctly reads real Godot 4.4+ pck (verified on Slay the Spire 2: 15658 files, JSON localization found)
+- 🐛 godot: Correct .pck parser — remove phantom dir_offset, fix inverted flag bits, support format v3 (Godot 4.4+), reject encrypted dir
+- 🐛 tyrano: Iscript-aware .ks parser — skip [iscript]/[html] blocks and inline JS/config lines
+- 🐛 editor,logger: Guard setState/log after unmount to stop 'window is not defined' test leaks
+- 🐛 editor: Mount-guard to prevent flaky 'window is not defined' during static-export prerender
+- 🐛 lint: Escape literal quotes in JSX to satisfy react/no-unescaped-entities
+- 🐛 Handle last unguarded /api calls in Tauri (stream translate, export patch)
+- 🐛 unity-ink: Guard tool in Tauri (backend not ported; no more 501s)
+- 🐛 editor: Load project translations from IndexedDB TM (last /api removed)
+- 🐛 editor: Migrate translations CRUD to IndexedDB (drop dead /api routes)
+- 🐛 editor: Load game list via get_games (Tauri) instead of /api/games
+- 🐛 Guard legacy /api calls in Tauri (injekt stats, voice transcribe)
+- 🐛 unity: Resolve BepInEx download assets from GitHub API (drop hardcoded URLs)
+- 🐛 unity: Resolve XUnity/TMP download assets from GitHub API (drop hardcoded URLs)
+- 🐛 unity: Resolve UABEA download asset from GitHub API (fix 404)
+- 🐛 Save API keys + cloud LLM/store calls via Rust (drop dead /api routes)
+- 🐛 projects: Register hero project eagerly (id fallback to path) so jobs always appear in Projects
+- 🐛 forum: Make likes work (reactions read/delete policies + like_count trigger)
+- ♻️ settings: Slim Ollama card to lifecycle only, link Model Manager for models (dedup)
+- • Fill EN-fallback strings + missing guidePage keys across 10 locales
+- • Add ollamaManagerComp + fineTuningManager keys (12 langs), drop orphan key
+- • De-hardcode visual-translation-editor (toolbar, overlays, properties, export dialog)
+- • De-hardcode fine-tuning-manager (dataset/model panels, add useTranslation)
+- • De-hardcode main-layout (command palette, language selector, skip link)
+- • De-hardcode game-detail-client MB unit (rest are dev logs/brands)
+- • De-hardcode community-chat (offline/login prompts, messages, room dialog)
+- • De-hardcode injekt-overlay-config (section headers, px/ms units, actions)
+- • De-hardcode guide page (P.T./Dry Run/ranking/String it cards, flow diagram)
+- • De-hardcode custom-prompt-settings (persona/tone/prompt config, voice, toasts)
+- • De-hardcode inline-translator (title, language selectors, cost, actions)
+- • De-hardcode lip-sync-panel (audio input, recognizer, stats, engine targets)
+- • De-hardcode smart-context-panel (stats units, tabs, character/term forms)
+- • De-hardcode retro-ocr-panel (preprocessing params, controls, tips)
+- • De-hardcode secrets-dashboard (toasts, status cards, validate/generate panels)
+- • De-hardcode ai-translation-assistant (toasts, language selectors, translate controls)
+- • De-hardcode ocr-translator page (capture, upload, provider options, VLM desc)
+- • De-hardcode dubbing page (labs warning, config panels, pipeline, segments)
+- • De-hardcode file-selector (wizard banner, search, upload, file lists)
+- • De-hardcode steam-family-sharing (toasts, detect/analyze panels, shared games list)
+- • De-hardcode prediction-tool ranking page (stats, table headers, empty state)
+- • De-hardcode auto-translate page (diff, hints, progress units, patch results)
+- • De-hardcode live-ocr-overlay (controls, capture modes, language selectors, stats)
+- • De-hardcode gamemaker-translator (tabs, stats, pagination, note)
+- • De-hardcode context-harvester page (input, stats, constraints, saved harvests)
+- • De-hardcode ocr-image-processor (settings panel, upload area, results)
+- • De-hardcode translator/mtpe page (workflow steps, language selectors, review stats)
+- • De-hardcode injekt-ui-enhanced (stats, tabs, process list, profile management)
+- • De-hardcode editor page (notifications, explorer, translation area, glossary)
+- • De-hardcode settings page (API key headers, input placeholders)
+- • De-hardcode translator/pro page (AI recommendation, language selectors, cost estimate, export)
+- • De-hardcode translation-bridge page (add/import/lookup panels, language pair selectors)
+- • De-hardcode voice-profile-manager (form fields, expanded profile view, placeholders)
+- • De-hardcode projects page (card, filters, stat labels, toasts)
+- • De-hardcode emulator-translator (capture/screenshot UI, advanced settings, footer stats)
+- • De-hardcode translation-profile-manager (stats, form, actions, dialogs)
+- • De-hardcode notification-center (sort/filter controls, bulk actions, a11y labels)
+- • De-hardcode unity-csv-translator (tables, diff banner, ink, checkpoint, inject stats)
+- • De-hardcode binary-patcher page (extract/translate/review flow, anti-cheat, labels)
+- • De-hardcode translation-recommendation (engine toasts, chain UI, validation)
+- • De-hardcode wad-extractor (stats, workflow steps, filters, labels)
+- • De-hardcode rom-patcher-ui (apply/create patch flows, format info, labels)
+- • De-hardcode community-translations (form, filters, reviews, language/category options)
+- • De-hardcode unity-ink-translator (steps, stats, preview, log labels)
+- • De-hardcode security-dialog (tabs, password/session/2FA labels and toasts)
+- • De-hardcode cover-picker component (sources, filters, API key panel)
+- • De-hardcode bethesda-patcher page (labels, filters, export options)
+- • De-hardcode unity-localization page (labels, filters, export options)
+- • De-hardcode cri-patcher page (labels, badges, export options)
+- • De-hardcode translation-wizard page labels and language autonyms
+
 ## 🔧 v1.11.1 - 2026-06-26
 
 - ✨ site: Add engine-coverage, safety and product-facts infographics (11 languages)
