@@ -112,14 +112,20 @@ export const DEFAULT_FEED_SOURCES: NewsFeedSource[] = [
   { id: 'gamestranslator', name: 'GamesTranslator.it', url: 'https://www.gamestranslator.it', rssUrl: 'https://www.gamestranslator.it/index.php?/discover/&type=core_File&changeType=new&format=rss', category: 'translations', icon: '🇮🇹', enabled: false, language: 'it', description: 'La più grande community italiana di fan translation per videogiochi (RSS bloccato da CORS)' },
   { id: 'romhacking_translations', name: 'RomHacking Translations', url: 'https://www.romhacking.net/translations/', rssUrl: 'https://www.romhacking.net/rss/translations/', category: 'translations', icon: '🌍', enabled: false, language: 'en', description: 'Database globale di traduzioni fan per ROM retro (RSS non disponibile)' },
   { id: 'romhackplaza', name: 'RomHack Plaza', url: 'https://romhackplaza.org', rssUrl: 'https://romhackplaza.org/feed/', category: 'translations', icon: '🌍', enabled: true, language: 'en', description: 'Hacks, fan translations and homebrew games' },
-  // ── Nuove fonti aggiunte 2026-05-20 (da testare in app) ──
-  { id: 'ctrltrad', name: 'Ctrl+Trad', url: 'https://ctrltrad.itch.io', rssUrl: 'https://ctrltrad.itch.io/devlog.rss', category: 'translations', icon: '🇮🇹', enabled: false, language: 'it', description: 'Creator italiano di patch ITA per giochi Steam/GOG indie e AA non localizzati (itch.io devlog RSS — da verificare in app)' },
-  { id: 'oldgamesitalia', name: 'OldGamesItalia', url: 'https://www.oldgamesitalia.net/forum/', rssUrl: 'https://www.oldgamesitalia.net/forum/index.php?app=core&module=global&section=rss&type=forums&id=1', category: 'translations', icon: '🇮🇹', enabled: false, language: 'it', description: 'Storica community italiana di traduzioni amatoriali e retrogaming (Invision Forum RSS — da verificare in app)' },
-  { id: 'romhacking_it', name: 'Romhacking.it', url: 'https://romhacking.it', rssUrl: 'https://romhacking.it/feed/', category: 'translations', icon: '🇮🇹', enabled: false, language: 'it', description: 'Community italiana dedicata a ROM hacking e traduzioni retro (WordPress RSS — da verificare in app)' },
-  { id: 'pcgw_italian_translations', name: 'PCGW — Italian Fan Translations', url: 'https://www.pcgamingwiki.com/wiki/List_of_Italian_fan_translations', rssUrl: 'https://www.pcgamingwiki.com/w/api.php?action=feedrecentchanges&format=xml&days=30&limit=20&titles=List_of_Italian_fan_translations', category: 'translations', icon: '🇮🇹', enabled: false, language: 'it', description: 'MediaWiki feed delle modifiche alla lista PCGamingWiki delle traduzioni ITA fan-made (da verificare in app)' },
-  { id: '2duerighe', name: '2duerighe Videogiochi', url: 'https://www.2duerighe.com/videogiochi/', rssUrl: 'https://www.2duerighe.com/videogiochi/feed/', category: 'translations', icon: '🇮🇹', enabled: false, language: 'it', description: 'Editoriali italiani su localizzazione fan-made vs ufficiale (WordPress RSS — da verificare in app)' },
-  // ── Nuova fonte aggiunta 2026-06-19 (da testare in app) ──
-  { id: 'languagepack_it', name: 'Language Pack Italia', url: 'https://www.languagepack.it/category/traduzioni/trad-giochi/', rssUrl: 'https://www.languagepack.it/category/traduzioni/trad-giochi/feed/', category: 'translations', icon: '🇮🇹', enabled: false, language: 'it', description: 'Repository ITA molto attivo di traduzioni giochi/mod, con app desktop "LPI Hub" (WordPress RSS categoria Traduzioni Giochi — fallback feed generale https://www.languagepack.it/feed/ — da verificare in app per CORS/formato)' },
+  // ── Nuove fonti aggiunte 2026-05-20 (abilitate 2026-07-04 per test in app) ──
+  { id: 'ctrltrad', name: 'Ctrl+Trad', url: 'https://ctrltrad.itch.io', rssUrl: 'https://ctrltrad.itch.io/devlog.rss', category: 'translations', icon: '🇮🇹', enabled: true, language: 'it', description: 'Creator italiano di patch ITA per giochi Steam/GOG indie e AA non localizzati (sito attivo verificato 2026-07-04; devlog RSS itch.io standard)' },
+  { id: 'oldgamesitalia', name: 'OldGamesItalia', url: 'https://www.oldgamesitalia.net/forum/', rssUrl: 'https://www.oldgamesitalia.net/forum/index.php?app=core&module=global&section=rss&type=forums&id=1', category: 'translations', icon: '🇮🇹', enabled: true, language: 'it', description: 'Storica community italiana di traduzioni amatoriali e retrogaming (sito attivo verificato 2026-07-04; Invision Forum RSS)' },
+  // NB 2026-07-04: romhacking.it NON è WordPress — /feed/ non esiste. Il feed reale è quello del forum SMF (board News), verificato funzionante (application/rss+xml).
+  { id: 'romhacking_it', name: 'Romhacking.it', url: 'https://romhacking.it', rssUrl: 'https://romhacking.it/forums/index.php?type=rss2;action=.xml;sa=news;boards=1', category: 'translations', icon: '🇮🇹', enabled: true, language: 'it', description: 'Community italiana dedicata a ROM hacking e traduzioni retro (feed SMF del forum, verificato 2026-07-04)' },
+  { id: 'pcgw_italian_translations', name: 'PCGW — Italian Fan Translations', url: 'https://www.pcgamingwiki.com/wiki/List_of_Italian_fan_translations', rssUrl: 'https://www.pcgamingwiki.com/w/api.php?action=feedrecentchanges&format=xml&days=30&limit=20&titles=List_of_Italian_fan_translations', category: 'translations', icon: '🇮🇹', enabled: true, language: 'it', description: 'MediaWiki feed delle modifiche alla lista PCGamingWiki delle traduzioni ITA fan-made (sito attivo verificato 2026-07-04)' },
+  { id: '2duerighe', name: '2duerighe Videogiochi', url: 'https://www.2duerighe.com/videogiochi/', rssUrl: 'https://www.2duerighe.com/videogiochi/feed/', category: 'translations', icon: '🇮🇹', enabled: true, language: 'it', description: 'Editoriali italiani su localizzazione fan-made vs ufficiale (sito attivo verificato 2026-07-04; WordPress RSS)' },
+  // ── Nuova fonte aggiunta 2026-06-19 (abilitata 2026-07-04 per test in app) ──
+  { id: 'languagepack_it', name: 'Language Pack Italia', url: 'https://www.languagepack.it/category/traduzioni/trad-giochi/', rssUrl: 'https://www.languagepack.it/category/traduzioni/trad-giochi/feed/', category: 'translations', icon: '🇮🇹', enabled: true, language: 'it', description: 'Repository ITA molto attivo di traduzioni giochi/mod, con app desktop "LPI Hub" (sito WordPress attivo verificato 2026-07-04; fallback feed generale https://www.languagepack.it/feed/)' },
+  // ── Nuova fonte aggiunta 2026-07-04 ──
+  // Feed principale verificato funzionante (WordPress, lastBuildDate odierno). È un feed gaming
+  // generalista IT con buona copertura traduzioni ITA; esiste anche il feed per tag più mirato:
+  // https://www.q-gin.info/argomento/traduzione-italiana/feed/ (standard WP, non verificato).
+  { id: 'qgin', name: 'Q-Gin', url: 'https://www.q-gin.info', rssUrl: 'https://www.q-gin.info/feed/', category: 'translations', icon: '🇮🇹', enabled: true, language: 'it', description: 'Notizie gaming italiane con copertura dedicata a traduzioni amatoriali ITA e mod (feed verificato 2026-07-04)' },
 ];
 
 const FEEDS_STORAGE_KEY = 'gamestringer_news_feeds_config';
@@ -214,18 +220,22 @@ class NewsFeedService {
       // Tauri non disponibile (es. browser puro) — fallback
     }
 
-    // 2) Proxy locale Next.js (dev mode — nessun CORS)
-    try {
-      const proxyUrl = `/api/rss-proxy?url=${encodeURIComponent(url)}`;
-      const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(15000) });
-      if (res.ok) {
-        const text = await res.text();
-        if (text.includes('<rss') || text.includes('<feed') || text.includes('<channel') || text.includes('<?xml')) {
-          return text;
+    // 2) Proxy locale Next.js — SOLO fuori da Tauri: nel build desktop la route
+    // /api/rss-proxy è uno stub force-static che risponde sempre 501 (vedi
+    // app/api/rss-proxy/route.ts), quindi chiamarla è solo rumore nel log.
+    if (!isTauri()) {
+      try {
+        const proxyUrl = `/api/rss-proxy?url=${encodeURIComponent(url)}`;
+        const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(15000) });
+        if (res.ok) {
+          const text = await res.text();
+          if (text.includes('<rss') || text.includes('<feed') || text.includes('<channel') || text.includes('<?xml')) {
+            return text;
+          }
         }
+      } catch {
+        // API route non disponibile — fallback
       }
-    } catch {
-      // API route non disponibile — fallback
     }
 
     // 3) Fallback: fetch diretto (funziona se il server manda CORS headers)

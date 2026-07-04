@@ -17,16 +17,19 @@ pub async fn fetch_rss_feed(url: String) -> Result<String, String> {
         return Err("URL vuoto".into());
     }
 
+    // UA browser-like: Cloudflare (itch.io, romhackplaza, …) blocca gli UA
+    // non-browser tipo "GameStringer/1.5 RSS Reader" con 403/challenge.
     let client = Client::builder()
         .timeout(Duration::from_secs(12))
         .redirect(reqwest::redirect::Policy::limited(5))
-        .user_agent("GameStringer/1.5 RSS Reader")
+        .user_agent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
         .build()
         .map_err(|e| format!("Client HTTP: {}", e))?;
 
     let resp = client
         .get(&url)
         .header("Accept", "application/rss+xml, application/atom+xml, application/xml, text/xml, */*")
+        .header("Accept-Language", "it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7")
         .send()
         .await
         .map_err(|e| format!("Fetch {}: {}", url, e))?;
