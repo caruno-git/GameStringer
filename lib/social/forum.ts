@@ -321,18 +321,21 @@ function generateSlug(title: string): string {
 }
 
 /**
- * author_id da usare per le scritture nel forum. La RLS "authenticated insert" pretende
- * author_id = auth.uid(), quindi serve l'uid dell'utente Supabase ottenuto dal bridge
- * profilo-locale → Supabase (autoSyncGSToSupabase). Se il bridge è giù, ricade sull'id
- * locale, coperto dal fallback RLS "Community insert ...". import dinamico per evitare cicli.
+ * author_id/user_id da usare per le scritture nel forum. La RLS "Auth insert *"
+ * (migration 20260704) pretende <col> = auth.uid() e ruolo `authenticated`, quindi serve
+ * l'uid dell'utente Supabase ottenuto dal bridge profilo-locale → Supabase
+ * (autoSyncGSToSupabase). Ritorna null se il bridge è giù o non c'è sessione: NON esiste
+ * più un fallback RLS "Community insert ..." (rimosso da 20260704), perciò i chiamanti
+ * devono evitare l'insert — verrebbe comunque respinta dalla RLS — e segnalare "riprova".
+ * import dinamico per evitare cicli.
  */
-async function resolveAuthorId(localId: string): Promise<string> {
+async function resolveAuthorId(_localId: string): Promise<string | null> {
   try {
     const { autoSyncGSToSupabase } = await import('./community-chat');
-    const uid = await autoSyncGSToSupabase();
-    if (uid) return uid;
-  } catch { /* bridge non disponibile → fallback id locale */ }
-  return localId;
+    return await autoSyncGSToSupabase();
+  } catch {
+    return null; // bridge non disponibile → il chiamante fa bail-out
+  }
 }
 
 export async function createThread(input: CreateThreadInput, author: { id: string; name: string; avatar?: string }): Promise<ForumThread | null> {
@@ -345,6 +348,10 @@ export async function createThread(input: CreateThreadInput, author: { id: strin
   }
 
   const authorId = await resolveAuthorId(author.id);
+  if (!authorId) {
+    console.warn('[Forum] Bridge auth non disponibile: creazione thread rimandata (riprova tra poco)');
+    return null;
+  }
   const { data, error } = await supabase
     .from('forum_threads')
     .insert({
@@ -429,6 +436,10 @@ export async function getPosts(threadId: string, userId?: string): Promise<Forum
 export async function createPost(input: CreatePostInput, author: { id: string; name: string; avatar?: string }): Promise<ForumPost | null> {
   const supabase = await getSupabase();
   const authorId = await resolveAuthorId(author.id);
+  if (!authorId) {
+    console.warn('[Forum] Bridge auth non disponibile: risposta rimandata (riprova tra poco)');
+    return null;
+  }
   const { data, error } = await supabase
     .from('forum_posts')
     .insert({
@@ -499,12 +510,20 @@ export async function markAsSolution(postId: string, threadId: string): Promise<
 export async function toggleLike(userId: string, threadId?: string, postId?: string): Promise<boolean> {
   const supabase = await getSupabase();
   if (!threadId && !postId) return false;
+
+  // Serve una sessione Supabase reale: la RLS "Auth insert reactions" (20260704)
+  // pretende user_id = auth.uid() e ruolo authenticated. Bridge giù → niente like.
+  const uid = await resolveAuthorId(userId);
+  if (!uid) {
+    console.warn('[Forum] Bridge auth non disponibile: like rimandato (riprova tra poco)');
+    return false;
+  }
   
   // Check se esiste già
   let query = supabase
     .from('forum_reactions')
     .select('id')
-    .eq('user_id', userId)
+    .eq('user_id', uid)
     .eq('reaction_type', 'like');
   
   if (threadId) query = query.eq('thread_id', threadId);
@@ -524,7 +543,7 @@ export async function toggleLike(userId: string, threadId?: string, postId?: str
     const { error } = await supabase
       .from('forum_reactions')
       .insert({
-        user_id: userId,
+        user_id: uid,
         thread_id: threadId || null,
         post_id: postId || null,
         reaction_type: 'like',
@@ -590,7 +609,7 @@ export async function searchForum(query: string, limit = 20): Promise<ForumThrea
     .or(`title.ilike.%${query}%,content.ilike.%${query}%`)
     .order('created_at', { ascending: false })
     .limit(limit);
-  
+
   if (error) return [];
   return data || [];
 }

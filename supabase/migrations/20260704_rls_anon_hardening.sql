@@ -164,18 +164,35 @@ CREATE POLICY "notif_insert_sender" ON public.notifications
 -- ════════════════════════════════════════════════════════════════════════════
 -- SEZIONE C — Igiene forum + RPC (⚠️ verificare che il bridge auth.uid() funzioni)
 -- ════════════════════════════════════════════════════════════════════════════
--- Le policy "Community insert*" sono ruolo public e controllano solo
--- author_id IS NOT NULL → un anon può postare con autore FALSIFICATO. Erano un
--- fallback (migration 20260626) per quando il bridge auth.uid() non risolveva.
--- Rimuoverle SOLO se ora l'app posta sempre come utente Supabase autenticato,
--- altrimenti il forum smette di accettare post. Restano le "Authenticated insert*"
--- (author_id = auth.uid()). Testare su preview.
+-- Finora ogni tabella forum aveva DUE policy INSERT, entrambe deboli:
+--   • "Community insert*" (ruolo public, solo author_id IS NOT NULL) → un anon poteva
+--     postare con autore FALSIFICATO (fallback della migration 20260626);
+--   • "Auth insert*" (auth.uid() IS NOT NULL) → non legava la riga all'utente.
+-- Le sostituiamo con UNA sola policy per tabella: ruolo `authenticated` + WITH CHECK
+-- che lega author_id/user_id ad auth.uid(). NB CRITICO: droppare ENTRAMBE senza
+-- ricreare lascerebbe la tabella con RLS attiva e ZERO policy INSERT → il forum non
+-- accetta più né thread né post né like. Quindi qui si DROPPA **e si RICREA**.
+-- Cast ::text: in produzione author_id/user_id sono TEXT (schema storico forum-schema.sql).
+-- ⚠️ Richiede che l'app posti sempre come utente Supabase autenticato (bridge
+--    autoSyncGSToSupabase → auth.uid()); il client fa bail-out se il bridge è giù.
+
+-- forum_threads
 DROP POLICY IF EXISTS "Community insert threads" ON public.forum_threads;
 DROP POLICY IF EXISTS "Auth insert threads"      ON public.forum_threads;
+CREATE POLICY "Auth insert threads" ON public.forum_threads
+  FOR INSERT TO authenticated WITH CHECK (author_id::text = auth.uid()::text);
+
+-- forum_posts
 DROP POLICY IF EXISTS "Community insert posts"   ON public.forum_posts;
 DROP POLICY IF EXISTS "Auth insert posts"        ON public.forum_posts;
+CREATE POLICY "Auth insert posts" ON public.forum_posts
+  FOR INSERT TO authenticated WITH CHECK (author_id::text = auth.uid()::text);
+
+-- forum_reactions
 DROP POLICY IF EXISTS "Auth insert reactions"    ON public.forum_reactions;
 DROP POLICY IF EXISTS "Community insert reactions" ON public.forum_reactions;
+CREATE POLICY "Auth insert reactions" ON public.forum_reactions
+  FOR INSERT TO authenticated WITH CHECK (user_id::text = auth.uid()::text);
 
 -- RPC SECURITY DEFINER: togli l'esecuzione ad anon (restano per authenticated).
 -- update_user_presence accetta un p_user_id arbitrario → spoof presenza da anon.
