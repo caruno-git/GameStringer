@@ -7054,5 +7054,45 @@
     "costShort": "成本",
     "recommendedMethod": "推荐方法",
     "localizationFoldersFound": "找到的本地化文件夹"
+  },
+  "aiQuality": {
+    "title": "AI translation quality",
+    "desc": "Optional passes that improve consistency and style using local models (Ollama), without sending data to external servers.",
+    "reflectionTitle": "Self-correction (Reflection)",
+    "reflectionDesc": "A second pass re-reads the riskiest strings (placeholders, long dialogue, glossary terms) and rewrites them when needed, using the same provider as the translation.",
+    "semanticTitle": "Semantic translation memory",
+    "semanticDesc": "Retrieves past translations and glossary entries conceptually similar to the current text — including paraphrases, synonyms and inflections — via local Ollama embeddings.",
+    "embeddingTitle": "Embedding model",
+    "embeddingDesc": "Ollama model used for semantic search. In automatic mode the best installed one is picked.",
+    "embeddingAuto": "Automatic (detect best)",
+    "modeAuto": "Automatic",
+    "modeOff": "Off",
+    "modeAlways": "Always",
+    "reflectionAutoHint": "Only risky strings, with a per-batch cap to keep costs down.",
+    "reflectionAlwaysHint": "Reviews every eligible string in the batch: more accurate, but slower and costlier.",
+    "reflectionOffHint": "No second pass: the translation is returned as-is.",
+    "semanticAutoHint": "Enables semantic search when an embedding model is available in Ollama.",
+    "semanticOffHint": "Uses keyword matching only (classic behaviour).",
+    "detectedModelLabel": "Detected model",
+    "statusUnavailable": "No embedding model in Ollama",
+    "statusChecking": "Checking…",
+    "noEmbedderHint": "Install a model with \"ollama pull nomic-embed-text\" (lightweight) or \"ollama pull bge-m3\" (multilingual, ideal for JA/ZH/KO → EN).",
+    "refresh": "Refresh status"
+  },
+  "loreRetrieval": {
+    "semantic": "semantic",
+    "keyword": "keywords",
+    "semanticHint": "Dialogues found by meaning similarity (local embeddings)",
+    "keywordHint": "Dialogues found by keyword match (TF-IDF)"
+  },
+  "semanticIndex": {
+    "hint": "Pre-computes translation-memory embeddings for the chosen pair, so the first batches find the index ready.",
+    "sourceLabel": "Source",
+    "button": "Index now",
+    "indexing": "Indexing…",
+    "doneLabel": "Indexed",
+    "vectors": "vectors",
+    "emptyTm": "No translations in memory for this pair.",
+    "unavailable": "Enable semantic TM and install an embedding model to pre-index."
   }
 }
