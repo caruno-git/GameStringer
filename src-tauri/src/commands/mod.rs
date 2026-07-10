@@ -74,6 +74,8 @@ pub mod notifications;
 
 // === Shared utilities ===
 pub mod encoding_utils;
+// Elaborazione immagini nativa (crop/resize/JPEG) per il path VLM
+pub mod image_process;
 
 // === Game engine patchers (cross-platform, file-based) ===
 pub mod unity_patcher;

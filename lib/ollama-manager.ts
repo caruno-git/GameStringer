@@ -363,6 +363,29 @@ export async function listInstalledModels(): Promise<OllamaModel[]> {
 
 /** Pull (download) un modello — restituisce un ReadableStream per progress */
 export async function pullModel(modelName: string, onProgress?: (status: string, completed?: number, total?: number) => void): Promise<void> {
+  // In Tauri il fetch streaming diretto verso 127.0.0.1:11434 è bloccato dal CORS
+  // del webview (vedi lib/ai/ollama-http.ts): instradiamo via comando Rust
+  // `pull_ollama_model`, che streamma lato backend ed emette eventi di progresso.
+  if (typeof window !== 'undefined' && ((window as unknown as Record<string, unknown>).__TAURI_INTERNALS__ || (window as unknown as Record<string, unknown>).__TAURI_IPC__)) {
+    const { invoke } = await import('@tauri-apps/api/core');
+    const { listen } = await import('@tauri-apps/api/event');
+    const unlisten = await listen<{ model: string; status: string; progress: number; message?: string }>(
+      'ollama-pull-progress',
+      (event) => {
+        if (event.payload.model !== modelName) return;
+        // Il Rust emette progress in percentuale: mappiamo su completed/total=100
+        onProgress?.(event.payload.status || '', event.payload.progress, 100);
+      }
+    );
+    try {
+      await invoke<string>('pull_ollama_model', { modelName });
+      onProgress?.('success', 100, 100);
+      return;
+    } finally {
+      unlisten();
+    }
+  }
+
   const res = await fetch(`${OLLAMA_URL}/api/pull`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -408,6 +431,37 @@ export async function speedTest(modelName: string, testText?: string): Promise<S
 
   const startTime = Date.now();
   let firstTokenTime = 0;
+
+  // In Tauri lo streaming fetch diretto è bloccato dal CORS del webview:
+  // usiamo ollamaFetch (via Rust) con stream:false e le metriche restituite da Ollama.
+  if (typeof window !== 'undefined' && ((window as unknown as Record<string, unknown>).__TAURI_INTERNALS__ || (window as unknown as Record<string, unknown>).__TAURI_IPC__)) {
+    const res = await ollamaFetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: modelName,
+        messages: [{ role: 'user', content: prompt }],
+        stream: false,
+        options: { temperature: 0.1, num_predict: 300 },
+      }),
+      timeoutMs: 120000,
+    });
+    if (!res.ok) throw new Error(`Speed test fallito: HTTP ${res.status}`);
+    const json = await res.json();
+    const totalTimeMs = Date.now() - startTime;
+    const evalRate = json.eval_count / (json.eval_duration / 1e9) || 0;
+    const promptEvalRate = json.prompt_eval_count / (json.prompt_eval_duration / 1e9) || 0;
+    // Senza streaming il primo token non è osservabile: stimiamo col tempo di prompt eval
+    const firstTokenMs = json.prompt_eval_duration ? Math.round(json.prompt_eval_duration / 1e6) : totalTimeMs;
+    return {
+      model: modelName,
+      tokensPerSecond: evalRate || ((json.eval_count || 0) / (totalTimeMs / 1000)),
+      totalTokens: json.eval_count || 0,
+      totalTimeMs,
+      firstTokenMs,
+      promptEvalRate,
+    };
+  }
 
   const res = await fetch(`${OLLAMA_URL}/api/chat`, {
     method: 'POST',

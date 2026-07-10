@@ -18,7 +18,9 @@ import {
   type LiveTranslationConfig,
   type LiveTranslationEvent,
   type LiveTranslationStats,
+  type TranslationMode,
 } from '@/lib/live-translation-engine';
+import type { VlmProvider } from '@/lib/ocr/vlm-batch-translate';
 import { useGlobalHotkeys } from '@/hooks/use-global-hotkeys';
 
 interface LogEntry {
@@ -61,6 +63,8 @@ export default function LiveTranslatePage() {
   const [ocrLang, setOcrLang] = useState('eng');
   const [provider, setProvider] = useState('groq');
   const [intervalMs, setIntervalMs] = useState(2000);
+  const [mode, setMode] = useState<TranslationMode>('fast');
+  const [vlmProvider, setVlmProvider] = useState<VlmProvider>('ollama');
 
   // Engine state
   const [stats, setStats] = useState<LiveTranslationStats>(liveTranslationEngine.getStats());
@@ -81,16 +85,16 @@ export default function LiveTranslatePage() {
     const unsubscribe = liveTranslationEngine.on((event: LiveTranslationEvent) => {
       switch (event.type) {
         case 'started':
-          addLog('Live Translation avviato', 'success');
+          addLog(t('common.ltLogStarted'), 'success');
           break;
         case 'stopped':
-          addLog('Live Translation fermato', 'warning');
+          addLog(t('common.ltLogStopped'), 'warning');
           break;
         case 'paused':
-          addLog('In pausa', 'warning');
+          addLog(t('common.ltLogPaused'), 'warning');
           break;
         case 'resumed':
-          addLog('Ripreso', 'success');
+          addLog(t('common.ltLogResumed'), 'success');
           break;
         case 'frame':
           if (event.texts.length > 0) {
@@ -102,10 +106,10 @@ export default function LiveTranslatePage() {
           }
           break;
         case 'skipped':
-          addLog(`Skip: ${event.reason}`, 'skip');
+          addLog(`${t('common.ltLogSkip')}: ${event.reason}`, 'skip');
           break;
         case 'error':
-          addLog(`Errore: ${event.message}`, 'error');
+          addLog(`${t('common.ltLogError')}: ${event.message}`, 'error');
           break;
         case 'stats':
           setStats(event.stats);
@@ -130,9 +134,11 @@ export default function LiveTranslatePage() {
       ocrLanguage: ocrLang as 'eng',
       provider,
       captureIntervalMs: intervalMs,
+      mode,
+      vlmProvider,
     };
     liveTranslationEngine.start(config);
-  }, [targetLang, sourceLang, ocrLang, provider, intervalMs]);
+  }, [targetLang, sourceLang, ocrLang, provider, intervalMs, mode, vlmProvider]);
 
   const handleStop = useCallback(() => {
     liveTranslationEngine.stop();
@@ -164,9 +170,9 @@ export default function LiveTranslatePage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className={`w-3 h-3 rounded-full ${isRunning ? 'bg-green-500 animate-pulse' : 'bg-zinc-600'}`} />
-          <h1 className="text-2xl font-bold">Live Translation</h1>
+          <h1 className="text-2xl font-bold">{t('common.ltTitle')}</h1>
           <Badge variant={isRunning ? 'default' : 'secondary'} className={isRunning ? 'bg-green-600' : ''}>
-            {isRunning ? (stats.isPaused ? 'PAUSED' : 'ACTIVE') : 'IDLE'}
+            {isRunning ? (stats.isPaused ? t('common.ltStatusPaused') : t('common.ltStatusActive')) : t('common.ltStatusIdle')}
           </Badge>
         </div>
 
@@ -174,16 +180,16 @@ export default function LiveTranslatePage() {
         <div className="flex gap-2">
           {!isRunning ? (
             <Button onClick={handleStart} className="bg-green-600 hover:bg-green-700 gap-2">
-              <Play className="h-4 w-4" /> Start
+              <Play className="h-4 w-4" /> {t('common.ltStart')}
             </Button>
           ) : (
             <>
               <Button onClick={handlePauseResume} variant="outline" className="gap-2">
                 {stats.isPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
-                {stats.isPaused ? 'Resume' : 'Pause'}
+                {stats.isPaused ? t('common.ltResume') : t('common.ltPause')}
               </Button>
               <Button onClick={handleStop} variant="destructive" className="gap-2">
-                <Square className="h-4 w-4" /> Stop
+                <Square className="h-4 w-4" /> {t('common.ltStop')}
               </Button>
             </>
           )}
@@ -196,13 +202,13 @@ export default function LiveTranslatePage() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm flex items-center gap-2">
-                <Languages className="h-4 w-4" /> Configurazione
+                <Languages className="h-4 w-4" /> {t('common.ltConfig')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Source language (OCR) */}
               <div>
-                <label className="text-xs text-muted-foreground mb-1 block">Lingua sorgente (OCR)</label>
+                <label className="text-xs text-muted-foreground mb-1 block">{t('common.ltSourceOcr')}</label>
                 <Select value={ocrLang} onValueChange={setOcrLang} disabled={isRunning}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -244,12 +250,53 @@ export default function LiveTranslatePage() {
                 </Select>
               </div>
 
+              {/* Translation mode (VLM visual context) */}
+              <div>
+                <label className="text-xs text-muted-foreground mb-1 block">{t('common.modalitaTraduzione')}</label>
+                <Select value={mode} onValueChange={(v) => setMode(v as TranslationMode)} disabled={isRunning}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="fast">
+                      <span className="flex items-center gap-2"><Zap className="h-3 w-3 text-yellow-500" /> {t('common.modalitaFast')}</span>
+                    </SelectItem>
+                    <SelectItem value="vlm-hybrid">
+                      <span className="flex items-center gap-2"><Eye className="h-3 w-3 text-cyan-400" /> {t('common.modalitaVlmHybrid')}</span>
+                    </SelectItem>
+                    <SelectItem value="vlm-full">
+                      <span className="flex items-center gap-2"><Eye className="h-3 w-3 text-purple-400" /> {t('common.modalitaVlmFull')}</span>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* VLM provider (only for vlm-* modes) */}
+              {mode !== 'fast' && (
+                <div>
+                  <label className="text-xs text-muted-foreground mb-1 block">{t('common.providerVlm')}</label>
+                  <Select value={vlmProvider} onValueChange={(v) => setVlmProvider(v as VlmProvider)} disabled={isRunning}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ollama">
+                        <span className="flex items-center gap-2"><Monitor className="h-3 w-3" /> {t('common.vlmProviderOllama')}</span>
+                      </SelectItem>
+                      <SelectItem value="openai">
+                        <span className="flex items-center gap-2"><Cpu className="h-3 w-3" /> {t('common.vlmProviderOpenai')}</span>
+                      </SelectItem>
+                      <SelectItem value="gemini">
+                        <span className="flex items-center gap-2"><Cpu className="h-3 w-3" /> {t('common.vlmProviderGemini')}</span>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-[10px] text-muted-foreground mt-1">{t('common.vlmProviderHint')}</p>
+                </div>
+              )}
+
               <Separator />
 
               {/* Capture interval */}
               <div>
                 <label className="text-xs text-muted-foreground mb-2 block">
-                  Intervallo cattura: <span className="font-mono text-foreground">{(intervalMs / 1000).toFixed(1)}s</span>
+                  {t('common.ltCaptureInterval')}: <span className="font-mono text-foreground">{(intervalMs / 1000).toFixed(1)}s</span>
                 </label>
                 <Slider
                   value={[intervalMs]}
@@ -260,8 +307,8 @@ export default function LiveTranslatePage() {
                   disabled={isRunning}
                 />
                 <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                  <span>0.5s (veloce)</span>
-                  <span>5s (leggero)</span>
+                  <span>{t('common.ltIntervalFast')}</span>
+                  <span>{t('common.ltIntervalLight')}</span>
                 </div>
               </div>
 
@@ -272,10 +319,10 @@ export default function LiveTranslatePage() {
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="fullscreen">
-                      <span className="flex items-center gap-2"><Monitor className="h-3 w-3" /> Fullscreen</span>
+                      <span className="flex items-center gap-2"><Monitor className="h-3 w-3" /> {t('common.ltFullscreen')}</span>
                     </SelectItem>
                     <SelectItem value="region">
-                      <span className="flex items-center gap-2"><ScanSearch className="h-3 w-3" /> Regione</span>
+                      <span className="flex items-center gap-2"><ScanSearch className="h-3 w-3" /> {t('common.ltRegion')}</span>
                     </SelectItem>
                   </SelectContent>
                 </Select>
@@ -291,19 +338,19 @@ export default function LiveTranslatePage() {
             <Card className="bg-zinc-900/50">
               <CardContent className="p-3 text-center">
                 <div className="text-2xl font-bold text-cyan-400">{stats.captures}</div>
-                <div className="text-xs text-muted-foreground">Catture</div>
+                <div className="text-xs text-muted-foreground">{t('common.ltStatCaptures')}</div>
               </CardContent>
             </Card>
             <Card className="bg-zinc-900/50">
               <CardContent className="p-3 text-center">
                 <div className="text-2xl font-bold text-green-400">{stats.translations}</div>
-                <div className="text-xs text-muted-foreground">Traduzioni</div>
+                <div className="text-xs text-muted-foreground">{t('common.ltStatTranslations')}</div>
               </CardContent>
             </Card>
             <Card className="bg-zinc-900/50">
               <CardContent className="p-3 text-center">
                 <div className="text-2xl font-bold text-yellow-400">{stats.skipped}</div>
-                <div className="text-xs text-muted-foreground">Skip (diff)</div>
+                <div className="text-xs text-muted-foreground">{t('common.ltStatSkipped')}</div>
               </CardContent>
             </Card>
             <Card className="bg-zinc-900/50">
@@ -311,7 +358,7 @@ export default function LiveTranslatePage() {
                 <div className="text-2xl font-bold text-purple-400">
                   {stats.avgLatencyMs > 0 ? `${(stats.avgLatencyMs / 1000).toFixed(1)}s` : '--'}
                 </div>
-                <div className="text-xs text-muted-foreground">Latenza media</div>
+                <div className="text-xs text-muted-foreground">{t('common.ltStatAvgLatency')}</div>
               </CardContent>
             </Card>
           </div>
@@ -335,14 +382,14 @@ export default function LiveTranslatePage() {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm flex items-center gap-2">
-                <BarChart3 className="h-4 w-4" /> Log in tempo reale
+                <BarChart3 className="h-4 w-4" /> {t('common.ltRealtimeLog')}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <ScrollArea className="h-[300px] font-mono text-xs">
                 {logs.length === 0 ? (
                   <div className="text-center text-muted-foreground py-8">
-                    Premi Start per avviare la traduzione live
+                    {t('common.ltLogEmpty')}
                   </div>
                 ) : (
                   logs.map((log, i) => (

@@ -11,9 +11,19 @@
 import { captureScreen, type CaptureOptions } from '@/lib/ocr/screen-capture';
 import { recognizeText, type OCRLanguage, type OCRLine } from '@/lib/ocr/ocr-service';
 import { translateWithFallback, type TranslateOptions } from '@/lib/ai/ai-translate-direct';
+import {
+  vlmBatchTranslate,
+  vlmFullTranslate,
+  type VlmProvider,
+  type VlmBatchResult,
+  type VlmLineOutput,
+} from '@/lib/ocr/vlm-batch-translate';
 import { clientLogger } from './client-logger';
 
 // ── Types ──────────────────────────────────────────────────
+
+/** Modalita' di traduzione del loop live. */
+export type TranslationMode = 'fast' | 'vlm-hybrid' | 'vlm-full';
 
 export interface LiveTranslationConfig {
   targetLanguage: string;
@@ -24,6 +34,22 @@ export interface LiveTranslationConfig {
   captureRegion?: CaptureRegion;
   minConfidence?: number;
   autoHideMs?: number;
+  /**
+   * 'fast'       -> traduzione solo testo (default, come storicamente).
+   * 'vlm-hybrid' -> l'OCR fornisce i bounding box, un VLM traduce vedendo lo screenshot
+   *                (disambiguazione visiva). Consigliata per qualita'.
+   * 'vlm-full'   -> nessun OCR: il VLM rileva, posiziona (bbox normalizzati) e traduce
+   *                tutto il testo. Utile con font stilizzati dove l'OCR fallisce.
+   */
+  mode?: TranslationMode;
+  /** Provider del VLM quando mode e' 'vlm-*'. */
+  vlmProvider?: VlmProvider;
+  /** Modello VLM specifico (es. 'qwen2-vl', 'gpt-4o'); vuoto = default del provider. */
+  vlmModel?: string;
+  /** Lato lungo massimo dello screenshot inviato al VLM (0 = nessun downscale). */
+  vlmDownscaleMaxPx?: number;
+  /** Numero di righe di dialogo precedenti passate come contesto narrativo al VLM. */
+  vlmSendContextLines?: number;
 }
 
 export interface CaptureRegion {
@@ -46,6 +72,8 @@ export interface LiveTranslationStats {
   isPaused: boolean;
   lastText: string;
   lastTranslation: string;
+  /** Confidenza media dell'ultima traduzione VLM (0..1); 0 nel path 'fast'. */
+  lastConfidence: number;
 }
 
 export interface TranslatedOverlayText {
@@ -92,6 +120,9 @@ class LiveTranslationEngine {
   private translationCache = new Map<number, TranslatedOverlayText[]>();
   private latencies: number[] = [];
   private listeners: EventCallback[] = [];
+  /** Ring buffer del dialogo recente, usato come contesto narrativo dal VLM. */
+  private recentDialogue: string[] = [];
+  private static readonly MAX_DIALOGUE_MEMORY = 20;
 
   private stats: LiveTranslationStats = {
     captures: 0,
@@ -104,6 +135,7 @@ class LiveTranslationEngine {
     isPaused: false,
     lastText: '',
     lastTranslation: '',
+    lastConfidence: 0,
   };
 
   constructor() {
@@ -116,6 +148,11 @@ class LiveTranslationEngine {
       captureRegion: { mode: 'fullscreen' },
       minConfidence: 40,
       autoHideMs: 10000,
+      mode: 'fast',
+      vlmProvider: 'ollama',
+      vlmModel: '',
+      vlmDownscaleMaxPx: 1280,
+      vlmSendContextLines: 5,
     };
   }
 
@@ -147,10 +184,12 @@ class LiveTranslationEngine {
     this.stats.isPaused = false;
     this.lastTextHash = 0;
     this.translationCache.clear();
+    this.recentDialogue = [];
 
     clientLogger.info('Live Translation started', 'LIVE_TRANSLATE', {
       target: this.config.targetLanguage,
       provider: this.config.provider,
+      mode: this.config.mode,
       interval: this.config.captureIntervalMs,
     });
 
@@ -245,7 +284,16 @@ class LiveTranslationEngine {
         return;
       }
 
-      // 2. OCR
+      // vlm-full: nessun OCR, il VLM fa tutto (rileva + posiziona + traduce).
+      if (this.config.mode === 'vlm-full') {
+        await this.handleVlmFullFrame(
+          { imageData: capture.imageData, width: capture.width, height: capture.height },
+          frameStart,
+        );
+        return;
+      }
+
+      // 2. OCR (path 'fast' e 'vlm-hybrid')
       const ocrResult = await recognizeText(
         capture.imageData,
         this.config.ocrLanguage
@@ -286,29 +334,61 @@ class LiveTranslationEngine {
 
       this.lastTextHash = currentHash;
 
-      // 4. TRANSLATE — speed priority
+      // 4. TRANSLATE
       const textsToTranslate = lines.map(l => l.text.trim());
       this.stats.lastText = textsToTranslate.join(' | ');
 
-      const translateOpts: TranslateOptions = {
-        texts: textsToTranslate,
-        targetLanguage: this.config.targetLanguage,
-        sourceLanguage: this.config.sourceLanguage,
-      };
+      const screenW = capture.width || 1920;
+      const screenH = capture.height || 1080;
+      let overlayTexts: TranslatedOverlayText[];
 
-      const result = await translateWithFallback(translateOpts);
-      this.stats.translations++;
+      if (this.config.mode === 'vlm-hybrid') {
+        // Contesto visivo: l'OCR da' i bounding box, il VLM traduce VEDENDO lo schermo.
+        const batch = await vlmBatchTranslate({
+          imageBase64: capture.imageData,
+          lines: lines.map((l, i) => ({ id: i, text: l.text.trim(), bbox: l.bbox })),
+          targetLanguage: this.config.targetLanguage,
+          sourceLanguage: this.config.sourceLanguage,
+          contextLines: this.recentDialogue.slice(-this.config.vlmSendContextLines),
+          provider: this.config.vlmProvider,
+          model: this.config.vlmModel || undefined,
+          downscaleMaxPx: this.config.vlmDownscaleMaxPx,
+        });
+        this.stats.translations++;
+        this.logVlmTelemetry(batch);
 
-      if (!result.success || result.translations.length === 0) {
-        this.emit({ type: 'error', message: 'Translation failed' });
-        this.stats.errors++;
-        return;
+        // Riallinea le traduzioni per id alle righe OCR; fallback al testo originale se manca.
+        const byId = new Map<number, string>(
+          batch.lines.map(l => [l.id, l.translated] as [number, string])
+        );
+        const translations = lines.map((_, i) => byId.get(i) ?? textsToTranslate[i]);
+        overlayTexts = this.buildOverlayTexts(lines, translations, screenW, screenH);
+        this.stats.lastTranslation = translations.join(' | ');
+      } else {
+        // 'fast' (default): traduzione solo testo, priorita' velocita'.
+        const translateOpts: TranslateOptions = {
+          texts: textsToTranslate,
+          targetLanguage: this.config.targetLanguage,
+          sourceLanguage: this.config.sourceLanguage,
+          reflection: 'off', // Live OCR: niente secondo passaggio LLM, la latenza domina
+          semanticRag: 'off', // Live OCR: niente roundtrip embeddings, la latenza domina
+        };
+
+        const result = await translateWithFallback(translateOpts);
+        this.stats.translations++;
+
+        if (!result.success || result.translations.length === 0) {
+          this.emit({ type: 'error', message: 'Translation failed' });
+          this.stats.errors++;
+          return;
+        }
+
+        overlayTexts = this.buildOverlayTexts(lines, result.translations, screenW, screenH);
+        this.stats.lastTranslation = result.translations.join(' | ');
       }
 
-      // 5. BUILD OVERLAY TEXTS with positions from OCR bounding boxes
-      const overlayTexts = this.buildOverlayTexts(lines, result.translations, capture.width || 1920, capture.height || 1080);
-
-      this.stats.lastTranslation = result.translations.join(' | ');
+      // Aggiorna la memoria del dialogo per il contesto narrativo dei frame successivi.
+      this.pushDialogue(currentText);
 
       // Cache this translation
       this.translationCache.set(currentHash, overlayTexts);
@@ -334,6 +414,69 @@ class LiveTranslationEngine {
     }
   }
 
+  // ── vlm-full frame (no OCR) ─────────────────────────────
+
+  private async handleVlmFullFrame(
+    capture: { imageData: string; width?: number; height?: number },
+    frameStart: number,
+  ): Promise<void> {
+    const screenW = capture.width || 1920;
+    const screenH = capture.height || 1080;
+
+    // Diff leggero sull'immagine: evita di richiamare il VLM su frame identici.
+    const imgHash = simpleHash(`${capture.imageData.length}:${capture.imageData.slice(0, 4096)}`);
+    if (imgHash === this.lastTextHash) {
+      this.stats.skipped++;
+      this.emit({ type: 'skipped', reason: 'Frame unchanged' });
+      return;
+    }
+    const cached = this.translationCache.get(imgHash);
+    if (cached) {
+      this.lastTextHash = imgHash;
+      this.emitToOverlay(cached);
+      this.emit({ type: 'frame', texts: cached, latencyMs: performance.now() - frameStart });
+      this.stats.skipped++;
+      return;
+    }
+    this.lastTextHash = imgHash;
+
+    const full = await vlmFullTranslate({
+      imageBase64: capture.imageData,
+      targetLanguage: this.config.targetLanguage,
+      sourceLanguage: this.config.sourceLanguage,
+      contextLines: this.recentDialogue.slice(-this.config.vlmSendContextLines),
+      provider: this.config.vlmProvider,
+      model: this.config.vlmModel || undefined,
+      downscaleMaxPx: this.config.vlmDownscaleMaxPx,
+    });
+    this.stats.translations++;
+    this.logVlmTelemetry(full);
+
+    if (full.lines.length === 0) {
+      this.emit({ type: 'skipped', reason: 'No text detected' });
+      this.stats.skipped++;
+      return;
+    }
+
+    const overlayTexts = this.buildOverlayFromNormalized(full.lines, screenW, screenH);
+    this.stats.lastText = full.scene;
+    this.stats.lastTranslation = full.lines.map(l => l.translated).join(' | ');
+
+    this.pushDialogue(full.lines.map(l => l.translated).join('\n'));
+
+    this.translationCache.set(imgHash, overlayTexts);
+    if (this.translationCache.size > 100) {
+      const firstKey = this.translationCache.keys().next().value;
+      if (firstKey !== undefined) this.translationCache.delete(firstKey);
+    }
+
+    this.emitToOverlay(overlayTexts);
+    const latency = performance.now() - frameStart;
+    this.recordLatency(latency);
+    this.emit({ type: 'frame', texts: overlayTexts, latencyMs: latency });
+    this.emit({ type: 'stats', stats: this.getStats() });
+  }
+
   // ── Helpers ─────────────────────────────────────────────
 
   private buildOverlayTexts(
@@ -352,12 +495,66 @@ class LiveTranslationEngine {
     }));
   }
 
+  /** Costruisce l'overlay dal path full usando i bbox normalizzati (0..1). */
+  private buildOverlayFromNormalized(
+    lines: VlmLineOutput[],
+    screenWidth: number,
+    screenHeight: number,
+  ): TranslatedOverlayText[] {
+    return lines.map((l, i) => {
+      if (l.bbox) {
+        return {
+          original: '',
+          translated: l.translated,
+          x: Math.round(l.bbox.x * screenWidth),
+          y: Math.round(l.bbox.y * screenHeight),
+          width: Math.round(l.bbox.w * screenWidth),
+          height: Math.round(l.bbox.h * screenHeight),
+        };
+      }
+      // Fallback: nessun bbox dal modello -> impila verticalmente.
+      return {
+        original: '',
+        translated: l.translated,
+        x: Math.round(screenWidth * 0.1),
+        y: Math.round(screenHeight * 0.1) + i * 32,
+        width: Math.round(screenWidth * 0.8),
+        height: 28,
+      };
+    });
+  }
+
+  /** Telemetria: registra confidenza media e disambiguazioni dell'ultima traduzione VLM. */
+  private logVlmTelemetry(result: VlmBatchResult) {
+    if (result.lines.length === 0) return;
+    const avg = result.lines.reduce((s, l) => s + l.confidence, 0) / result.lines.length;
+    this.stats.lastConfidence = Math.round(avg * 100) / 100;
+    const disambiguations = result.lines
+      .map(l => l.disambiguation)
+      .filter((d): d is string => !!d);
+    clientLogger.debug('VLM telemetry', 'LIVE_TRANSLATE', {
+      scene: result.scene,
+      avgConfidence: this.stats.lastConfidence,
+      disambiguations,
+    });
+  }
+
   private async emitToOverlay(texts: TranslatedOverlayText[]) {
     try {
       const { emit } = await import('@tauri-apps/api/event');
       await emit('ocr-translations', texts);
     } catch {
       // Not in Tauri environment — skip overlay emit
+    }
+  }
+
+  /** Accoda il testo del frame corrente al ring buffer del dialogo (bounded). */
+  private pushDialogue(text: string) {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+    this.recentDialogue.push(trimmed);
+    if (this.recentDialogue.length > LiveTranslationEngine.MAX_DIALOGUE_MEMORY) {
+      this.recentDialogue.shift();
     }
   }
 
@@ -374,4 +571,3 @@ class LiveTranslationEngine {
 
 export const liveTranslationEngine = new LiveTranslationEngine();
 export default liveTranslationEngine;
-
