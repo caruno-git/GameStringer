@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -305,6 +305,269 @@ function CacheStatsCard() {
   );
 }
 
+// Lingue di origine più comuni per la pre-indicizzazione (label neutre code+flag).
+const INDEX_LANGS: { code: string; label: string }[] = [
+  { code: 'en', label: '🇬🇧 EN' },
+  { code: 'ja', label: '🇯🇵 JA' },
+  { code: 'zh', label: '🇨🇳 ZH' },
+  { code: 'ko', label: '🇰🇷 KO' },
+  { code: 'fr', label: '🇫🇷 FR' },
+  { code: 'de', label: '🇩🇪 DE' },
+  { code: 'es', label: '🇪🇸 ES' },
+  { code: 'it', label: '🇮🇹 IT' },
+  { code: 'ru', label: '🇷🇺 RU' },
+  { code: 'pt', label: '🇵🇹 PT' },
+];
+
+// AI Quality Card — Reflection + TM semantica + modello embedding.
+// I tre campi vivono in gameStringerSettings.translation.* e vengono persistiti
+// dal Save globale della pagina (stessa fonte di verità letta da getReflectionMode /
+// getSemanticTMMode / detectEmbeddingModel). Lo stato diagnostico è indipendente:
+// interroga Ollama in tempo reale per mostrare il modello embedding attivo.
+function AiQualityCard({
+  reflectionMode,
+  semanticTM,
+  embeddingModel,
+  defaultTargetLang,
+  onChange,
+}: {
+  reflectionMode: 'auto' | 'off' | 'always';
+  semanticTM: 'auto' | 'off';
+  embeddingModel: string;
+  defaultTargetLang: string;
+  onChange: (key: 'reflectionMode' | 'semanticTM' | 'embeddingModel', value: string) => void;
+}) {
+  const { t } = useTranslation();
+  const [status, setStatus] = useState<{ model: string | null; available: boolean } | null>(null);
+  const [installed, setInstalled] = useState<string[]>([]);
+  const [checking, setChecking] = useState(false);
+
+  // Pre-indicizzazione ("indicizza ora")
+  const [indexSrc, setIndexSrc] = useState('en');
+  const [indexing, setIndexing] = useState(false);
+  const [indexProgress, setIndexProgress] = useState<{ done: number; total: number } | null>(null);
+  const [indexResult, setIndexResult] = useState<string | null>(null);
+
+  const runWarmIndex = useCallback(async () => {
+    setIndexing(true);
+    setIndexResult(null);
+    setIndexProgress({ done: 0, total: 0 });
+    try {
+      const { warmSemanticIndex } = await import('@/lib/ai/semantic-retriever');
+      const res = await warmSemanticIndex(
+        { sourceLang: indexSrc, targetLang: defaultTargetLang },
+        (done, total) => setIndexProgress({ done, total })
+      );
+      if (!res.ok) {
+        setIndexResult(t('semanticIndex.unavailable'));
+      } else if (res.tmTotal === 0) {
+        setIndexResult(t('semanticIndex.emptyTm'));
+      } else {
+        setIndexResult(`${t('semanticIndex.doneLabel')}: ${res.tmIndexed}/${res.tmTotal} ${t('semanticIndex.vectors')}`);
+      }
+    } catch {
+      setIndexResult(t('semanticIndex.unavailable'));
+    } finally {
+      setIndexing(false);
+      setIndexProgress(null);
+    }
+  }, [indexSrc, defaultTargetLang, t]);
+
+  const refresh = useCallback(async () => {
+    setChecking(true);
+    try {
+      const { detectEmbeddingModel, EMBEDDING_MODEL_PREFERENCES } = await import('@/lib/ai/semantic-retriever');
+      // Modello attivo (indipendente dalla modalità salvata: mostra sempre la disponibilità)
+      const model = await detectEmbeddingModel(true);
+      setStatus({ model, available: !!model });
+      // Elenco dei modelli embedding installati in Ollama (best-effort)
+      try {
+        const { ollamaFetch } = await import('@/lib/ai/ollama-http');
+        const res = await ollamaFetch('/api/tags', { timeoutMs: 3000 });
+        if (res.ok) {
+          const data = await res.json();
+          const names: string[] = ((data?.models || []) as { name: string }[]).map((m) => m.name);
+          setInstalled(
+            names.filter((n) => EMBEDDING_MODEL_PREFERENCES.some((p) => n === p || n.startsWith(`${p}:`)))
+          );
+        } else {
+          setInstalled([]);
+        }
+      } catch {
+        setInstalled([]);
+      }
+    } catch {
+      setStatus(null);
+      setInstalled([]);
+    } finally {
+      setChecking(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
+  // Auto + modelli installati + eventuale override custom non ancora rilevato
+  const modelOptions = Array.from(
+    new Set([...installed, ...(embeddingModel ? [embeddingModel] : [])])
+  );
+  const semanticActive = semanticTM !== 'off';
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle as="h2" className="flex items-center space-x-2">
+          <Brain className="h-5 w-5 text-fuchsia-500" />
+          <span>{t('aiQuality.title')}</span>
+        </CardTitle>
+        <p className="text-xs text-muted-foreground mt-1">{t('aiQuality.desc')}</p>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* Reflection */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Label>{t('aiQuality.reflectionTitle')}</Label>
+            <InfoTooltip variant="info" content={<p className="text-xs max-w-xs">{t('aiQuality.reflectionDesc')}</p>} />
+          </div>
+          <Select value={reflectionMode} onValueChange={(v) => onChange('reflectionMode', v)}>
+            <SelectTrigger className="md:w-72"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="auto">{t('aiQuality.modeAuto')}</SelectItem>
+              <SelectItem value="off">{t('aiQuality.modeOff')}</SelectItem>
+              <SelectItem value="always">{t('aiQuality.modeAlways')}</SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-2xs text-muted-foreground">
+            {reflectionMode === 'auto'
+              ? t('aiQuality.reflectionAutoHint')
+              : reflectionMode === 'always'
+                ? t('aiQuality.reflectionAlwaysHint')
+                : t('aiQuality.reflectionOffHint')}
+          </p>
+        </div>
+
+        <Separator />
+
+        {/* TM semantica */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Label>{t('aiQuality.semanticTitle')}</Label>
+            <InfoTooltip variant="info" content={<p className="text-xs max-w-xs">{t('aiQuality.semanticDesc')}</p>} />
+          </div>
+          <Select value={semanticTM} onValueChange={(v) => onChange('semanticTM', v)}>
+            <SelectTrigger className="md:w-72"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="auto">{t('aiQuality.modeAuto')}</SelectItem>
+              <SelectItem value="off">{t('aiQuality.modeOff')}</SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-2xs text-muted-foreground">
+            {semanticTM === 'auto' ? t('aiQuality.semanticAutoHint') : t('aiQuality.semanticOffHint')}
+          </p>
+        </div>
+
+        {/* Modello embedding + diagnostica (solo se la TM semantica è attiva) */}
+        {semanticActive && (
+          <div className="space-y-2 pl-3 border-l-2 border-fuchsia-500/20">
+            <div className="flex items-center gap-2">
+              <Label>{t('aiQuality.embeddingTitle')}</Label>
+              <InfoTooltip variant="info" content={<p className="text-xs max-w-xs">{t('aiQuality.embeddingDesc')}</p>} />
+            </div>
+            <Select
+              value={embeddingModel || 'auto'}
+              onValueChange={(v) => onChange('embeddingModel', v === 'auto' ? '' : v)}
+            >
+              <SelectTrigger className="md:w-72"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="auto">{t('aiQuality.embeddingAuto')}</SelectItem>
+                {modelOptions.map((m) => (
+                  <SelectItem key={m} value={m}>{m}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <div className="flex items-center justify-between gap-3 p-2.5 rounded-lg bg-slate-800/50 border border-slate-700/50">
+              <div className="flex items-center gap-2 min-w-0">
+                <div
+                  className={`h-2.5 w-2.5 rounded-full shrink-0 ${
+                    checking ? 'bg-amber-400 animate-pulse' : status?.available ? 'bg-emerald-400' : 'bg-slate-500'
+                  }`}
+                />
+                <span className="text-xs truncate">
+                  {checking
+                    ? t('aiQuality.statusChecking')
+                    : status?.available
+                      ? `${t('aiQuality.detectedModelLabel')}: ${status.model}`
+                      : t('aiQuality.statusUnavailable')}
+                </span>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 shrink-0"
+                onClick={refresh}
+                disabled={checking}
+                aria-label={t('aiQuality.refresh')}
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${checking ? 'animate-spin' : ''}`} />
+              </Button>
+            </div>
+            {!checking && !status?.available && (
+              <p className="text-2xs text-muted-foreground">{t('aiQuality.noEmbedderHint')}</p>
+            )}
+
+            {/* Pre-indicizzazione TM ("indicizza ora") */}
+            <div className="mt-2 pt-2 border-t border-slate-700/40 space-y-2">
+              <p className="text-2xs text-muted-foreground">{t('semanticIndex.hint')}</p>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-2xs text-muted-foreground">{t('semanticIndex.sourceLabel')}</span>
+                <Select value={indexSrc} onValueChange={setIndexSrc}>
+                  <SelectTrigger className="h-8 w-28"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {INDEX_LANGS.map((l) => (
+                      <SelectItem key={l.code} value={l.code}>{l.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <span className="text-2xs text-muted-foreground">→ {defaultTargetLang.toUpperCase()}</span>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="h-8 gap-1.5"
+                  onClick={runWarmIndex}
+                  disabled={indexing || !status?.available}
+                >
+                  {indexing ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Database className="h-3.5 w-3.5" />}
+                  {indexing ? t('semanticIndex.indexing') : t('semanticIndex.button')}
+                </Button>
+              </div>
+              {indexProgress && indexProgress.total > 0 && (
+                <div className="space-y-1">
+                  <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-fuchsia-500 transition-all duration-300"
+                      style={{ width: `${Math.min(100, Math.round((indexProgress.done / indexProgress.total) * 100))}%` }}
+                    />
+                  </div>
+                  <p className="text-micro text-muted-foreground text-right font-mono">
+                    {indexProgress.done}/{indexProgress.total}
+                  </p>
+                </div>
+              )}
+              {indexResult && !indexing && (
+                <p className="text-2xs text-emerald-400/80">{indexResult}</p>
+              )}
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
 // Type declaration for Tauri
 declare global {
   interface Window {
@@ -336,8 +599,12 @@ interface Settings {
     lmStudioModel: string;
     modelwizApiKey: string;
     modelwizUrl: string;
+    // Qualità AI (reflection + TM semantica)
+    reflectionMode: 'auto' | 'off' | 'always';
+    semanticTM: 'auto' | 'off';
+    embeddingModel: string;
   };
-  
+
   // System
   system: Record<string, never>;
   
@@ -385,7 +652,10 @@ export default function SettingsPage() {
       lmStudioUrl: 'http://localhost:1234',
       lmStudioModel: '',
       modelwizApiKey: '',
-      modelwizUrl: 'http://localhost:8080'
+      modelwizUrl: 'http://localhost:8080',
+      reflectionMode: 'auto',
+      semanticTM: 'auto',
+      embeddingModel: ''
     },
     system: {},
     performance: {
@@ -1110,6 +1380,15 @@ export default function SettingsPage() {
               </details>
             </CardContent>
           </Card>
+
+          {/* Qualità AI: Reflection + TM semantica */}
+          <AiQualityCard
+            reflectionMode={settings.translation.reflectionMode}
+            semanticTM={settings.translation.semanticTM}
+            embeddingModel={settings.translation.embeddingModel}
+            defaultTargetLang={settings.translation.defaultTargetLang}
+            onChange={(key, value) => updateSetting('translation', key, value)}
+          />
 
           {/* Multi-LLM Comparison */}
           <MultiLlmComparisonSettings />

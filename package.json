@@ -27,6 +27,7 @@
     "build:native": "node-gyp rebuild --directory=native",
     "build:native:clean": "node-gyp clean --directory=native",
     "start": "next start",
+    "typecheck": "tsc --noEmit",
     "lint": "next lint",
     "i18n:check": "node scripts/i18n-no-hardcoded.js",
     "i18n:check:report": "node scripts/i18n-no-hardcoded.js --report",
