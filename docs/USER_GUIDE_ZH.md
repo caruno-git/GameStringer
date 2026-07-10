@@ -1,5 +1,14 @@
 ﻿# GameStringer - 完整指南
 
+## 🆕 v1.12.0 新功能
+
+- 👁️ 视觉上下文翻译（VLM）：AI 查看画面并结合上下文翻译，消除歧义词（例如 "Chest" = 宝箱还是胸部）。支持本地（Ollama）或 OpenAI/Gemini
+- 🪞 自我纠正流程（Reflection）：可选的第二轮，依据术语表、语气和一致性，仅在需要处复核并润色译文
+- 🧠 语义记忆（RAG）：通过本地嵌入按语义匹配翻译记忆和术语表，让全游戏术语保持一致
+- ⚡ 更流畅的实时翻译与原生截图处理（调用 AI 前先裁剪/缩放）
+- 🔌 更多开箱即用的提供商：DeepL、Groq、Cerebras、Cohere、Together、Fireworks、Hugging Face、Azure Translator、DashScope、LibreTranslate、Lingva、MyMemory
+- 🧰 新增设置项，可调节 reflection、语义 RAG 和视觉上下文（质量与速度/成本的取舍）
+
 ## 🆕 v1.11.2 新功能
 
 - **更多商店**：现在可自动检测 Humble App、Game Jolt 和 Big Fish Games。

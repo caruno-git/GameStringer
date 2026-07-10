@@ -1,5 +1,14 @@
 ﻿# GameStringer - Complete Guide
 
+## 🆕 New in v1.12.0
+
+- 👁️ Visual-context translation (VLM): the AI sees the screen and translates with context, resolving ambiguous words (e.g. "Chest" = coffer vs. body). Local (Ollama) or OpenAI/Gemini
+- 🪞 Self-correcting pass (Reflection): an optional second pass reviews and refines the translation against glossary, tone and consistency — only where needed
+- 🧠 Semantic memory (RAG): Translation Memory and glossary matched by meaning via local embeddings, for consistent terminology across a game
+- ⚡ Smoother live translation and native screenshot processing (crop/resize before the AI call)
+- 🔌 More providers out of the box: DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory
+- 🧰 New settings to tune reflection, semantic RAG and visual-context (quality vs. speed/cost)
+
 ## 🆕 New in v1.11.2
 
 - **More stores**: Humble App, Game Jolt and Big Fish Games are now auto-detected (see Phase 2).

@@ -6104,6 +6104,14 @@
     "caricamentoVisionLlm": "Cargando Vision LLM..."
   },
   "changelog": {
+    "v1_12_0": {
+      "0": "👁️ Traducción con contexto visual (VLM): la IA ve la pantalla y traduce con contexto, resolviendo palabras ambiguas (p. ej. \"Chest\" = cofre o pecho). Local (Ollama) u OpenAI/Gemini",
+      "1": "🪞 Pasada autocorrectiva (Reflection): una segunda pasada opcional revisa y refina la traducción según glosario, tono y coherencia — solo donde hace falta",
+      "2": "🧠 Memoria semántica (RAG): memoria de traducción y glosario emparejados por significado mediante embeddings locales, para una terminología coherente en todo el juego",
+      "3": "⚡ Traducción en vivo más fluida y procesamiento nativo de capturas (recorte/redimensionado antes de la llamada a la IA)",
+      "4": "🔌 Más proveedores listos para usar: DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory",
+      "5": "🧰 Nuevos ajustes para regular reflection, RAG semántico y contexto visual (calidad vs. velocidad/coste)"
+    },
     "v1_8_2": {
       "0": "Fix Ollama IPC: reemplazadas todas las llamadas IPC check_ollama_status con HTTP directo a localhost:11434 — eliminados errores ipc.localhost ERR_CONNECTION_REFUSED",
       "1": "Fix Stores: añadido enlace Stores en la sección Recursos de la barra lateral",

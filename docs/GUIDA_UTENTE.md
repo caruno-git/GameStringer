@@ -1,5 +1,14 @@
 ﻿# 📖 GameStringer - Guida Utente Completa
 
+## 🆕 Novità v1.12.0
+
+- 👁️ Traduzione con contesto visivo (VLM): l'AI vede lo schermo e traduce col contesto, risolvendo le parole ambigue (es. "Chest" = forziere o petto). Locale (Ollama) o OpenAI/Gemini
+- 🪞 Passaggio auto-correttivo (Reflection): una seconda passata opzionale rivede e rifinisce la traduzione su glossario, tono e coerenza — solo dove serve
+- 🧠 Memoria semantica (RAG): Translation Memory e glossario abbinati per significato tramite embedding locali, per una terminologia coerente in tutto il gioco
+- ⚡ Traduzione live più fluida ed elaborazione nativa degli screenshot (ritaglio/ridimensionamento prima della chiamata AI)
+- 🔌 Più provider pronti all'uso: DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory
+- 🧰 Nuove impostazioni per regolare reflection, RAG semantico e contesto visivo (qualità vs. velocità/costo)
+
 ## 🆕 Novità v1.11.2
 
 - **Più store**: ora vengono rilevati automaticamente anche Humble App, Game Jolt e Big Fish Games.

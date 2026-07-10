@@ -6068,6 +6068,14 @@
     "errorBatch": "Errore batch"
   },
   "changelog": {
+    "v1_12_0": {
+      "0": "👁️ Traduzione con contesto visivo (VLM): l'AI vede lo schermo e traduce col contesto, risolvendo le parole ambigue (es. \"Chest\" = forziere o petto). Locale (Ollama) o OpenAI/Gemini",
+      "1": "🪞 Passaggio auto-correttivo (Reflection): una seconda passata opzionale rivede e rifinisce la traduzione su glossario, tono e coerenza — solo dove serve",
+      "2": "🧠 Memoria semantica (RAG): Translation Memory e glossario abbinati per significato tramite embedding locali, per una terminologia coerente in tutto il gioco",
+      "3": "⚡ Traduzione live più fluida ed elaborazione nativa degli screenshot (ritaglio/ridimensionamento prima della chiamata AI)",
+      "4": "🔌 Più provider pronti all'uso: DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory",
+      "5": "🧰 Nuove impostazioni per regolare reflection, RAG semantico e contesto visivo (qualità vs. velocità/costo)"
+    },
     "v1_8_2": {
       "0": "Fix Ollama IPC: sostituiti tutti i check_ollama_status IPC con HTTP diretto a localhost:11434 — eliminati errori ipc.localhost ERR_CONNECTION_REFUSED",
       "1": "Fix Stores: aggiunto link Stores nella sidebar sezione Risorse",

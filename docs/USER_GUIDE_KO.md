@@ -1,5 +1,14 @@
 ﻿# GameStringer - 완전 가이드
 
+## 🆕 v1.12.0의 새로운 기능
+
+- 👁️ 시각적 맥락 번역(VLM): AI가 화면을 보고 맥락으로 번역해 모호한 단어(예: "Chest" = 상자 또는 가슴)를 해소. 로컬(Ollama) 또는 OpenAI/Gemini 지원
+- 🪞 자기 교정 패스(Reflection): 선택적 2차 패스가 용어집·톤·일관성 기준으로 필요한 부분만 번역을 검토·다듬음
+- 🧠 의미 기반 메모리(RAG): 로컬 임베딩으로 번역 메모리와 용어집을 의미로 매칭해 게임 전체에서 용어를 일관되게 유지
+- ⚡ 더 매끄러운 실시간 번역과 네이티브 스크린샷 처리(AI 호출 전 자르기/리사이즈)
+- 🔌 즉시 사용 가능한 제공자 확대: DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory
+- 🧰 reflection·의미 RAG·시각적 맥락을 조정하는 새 설정(품질 대 속도/비용)
+
 ## 🆕 v1.11.2 새로운 기능
 
 - **더 많은 스토어**: 이제 Humble App, Game Jolt, Big Fish Games를 자동 감지합니다.

@@ -1,5 +1,14 @@
 ﻿# GameStringer - 完全ガイド
 
+## 🆕 v1.12.0の新機能
+
+- 👁️ ビジュアルコンテキスト翻訳（VLM）：AIが画面を見て文脈で翻訳し、曖昧な語（例："Chest"＝宝箱か胸か）を解決。ローカル（Ollama）またはOpenAI/Gemini対応
+- 🪞 自己修正パス（Reflection）：任意の2回目のパスが、用語集・トーン・一貫性に照らして翻訳を必要な箇所だけ見直し・調整
+- 🧠 セマンティックメモリ（RAG）：翻訳メモリと用語集をローカル埋め込みで意味的に照合し、ゲーム全体で用語を統一
+- ⚡ よりスムーズなライブ翻訳とネイティブなスクリーンショット処理（AI呼び出し前にトリミング/リサイズ）
+- 🔌 すぐ使えるプロバイダーを追加：DeepL、Groq、Cerebras、Cohere、Together、Fireworks、Hugging Face、Azure Translator、DashScope、LibreTranslate、Lingva、MyMemory
+- 🧰 Reflection・セマンティックRAG・ビジュアルコンテキストを調整する新設定（品質と速度/コストのバランス）
+
 ## 🆕 v1.11.2 の新機能
 
 - **対応ストア追加**: Humble App、Game Jolt、Big Fish Games を自動検出。

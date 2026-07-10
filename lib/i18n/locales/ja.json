@@ -6104,6 +6104,14 @@
     "caricamentoVisionLlm": "Vision LLMを読み込み中..."
   },
   "changelog": {
+    "v1_12_0": {
+      "0": "👁️ ビジュアルコンテキスト翻訳（VLM）：AIが画面を見て文脈で翻訳し、曖昧な語（例：\"Chest\"＝宝箱か胸か）を解決。ローカル（Ollama）またはOpenAI/Gemini対応",
+      "1": "🪞 自己修正パス（Reflection）：任意の2回目のパスが、用語集・トーン・一貫性に照らして翻訳を必要な箇所だけ見直し・調整",
+      "2": "🧠 セマンティックメモリ（RAG）：翻訳メモリと用語集をローカル埋め込みで意味的に照合し、ゲーム全体で用語を統一",
+      "3": "⚡ よりスムーズなライブ翻訳とネイティブなスクリーンショット処理（AI呼び出し前にトリミング/リサイズ）",
+      "4": "🔌 すぐ使えるプロバイダーを追加：DeepL、Groq、Cerebras、Cohere、Together、Fireworks、Hugging Face、Azure Translator、DashScope、LibreTranslate、Lingva、MyMemory",
+      "5": "🧰 Reflection・セマンティックRAG・ビジュアルコンテキストを調整する新設定（品質と速度/コストのバランス）"
+    },
     "v1_8_2": {
       "0": "Fix Ollama IPC: すべてのcheck_ollama_status IPC呼び出しをlocalhost:11434への直接HTTPに置換 — ipc.localhost ERR_CONNECTION_REFUSEDエラーを排除",
       "1": "Fix Stores: サイドバーのリソースセクションにStoresリンクを追加",

@@ -1,5 +1,14 @@
 ﻿# GameStringer - Vollständige Anleitung
 
+## 🆕 Neu in v1.12.0
+
+- 👁️ Übersetzung mit visuellem Kontext (VLM): Die KI sieht den Bildschirm und übersetzt im Kontext, löst mehrdeutige Wörter auf (z. B. "Chest" = Truhe oder Brust). Lokal (Ollama) oder OpenAI/Gemini
+- 🪞 Selbstkorrigierender Durchlauf (Reflection): ein optionaler zweiter Durchlauf prüft und verfeinert die Übersetzung anhand von Glossar, Ton und Konsistenz — nur wo nötig
+- 🧠 Semantischer Speicher (RAG): Translation Memory und Glossar werden per Bedeutung über lokale Embeddings zugeordnet, für einheitliche Terminologie im ganzen Spiel
+- ⚡ Flüssigere Live-Übersetzung und native Screenshot-Verarbeitung (Zuschneiden/Skalieren vor dem KI-Aufruf)
+- 🔌 Mehr Anbieter out of the box: DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory
+- 🧰 Neue Einstellungen für Reflection, semantisches RAG und visuellen Kontext (Qualität vs. Geschwindigkeit/Kosten)
+
 ## 🆕 Neu in v1.11.2
 
 - **Mehr Stores**: Humble App, Game Jolt und Big Fish Games werden jetzt automatisch erkannt.
