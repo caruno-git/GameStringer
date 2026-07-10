@@ -108,6 +108,9 @@ const en = flatten(enJson as Json);
 // 2026-06-25 Bonifica it.json tappa 8 (coda lunga: ~40 namespace minori,
 // 245 chiavi it==en di cui 72 tradotte e 173 universali tenute identiche).
 // Cognati esposti: es +4, pt +4. Baseline: es 60→64, pt 79→83. fr/de/pl invariati.
+// 2026-07-10 i18n aiQuality/semantic/lore: tradotte le 34 chiavi in 10 lingue.
+// Cognato romanzo legittimo esposto: pt aiQuality.modeAlways "Sempre" (= it, en "Always").
+// Baseline: pt 83->84. es/fr/de/pl/ja/zh/ko/ru invariati.
 const locales: { name: string; json: Json; maxMissing: number; maxLeftover: number }[] = [
   { name: 'en', json: enJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ru', json: ruJson as Json, maxMissing: 0, maxLeftover: 0 },
@@ -117,7 +120,7 @@ const locales: { name: string; json: Json; maxMissing: number; maxLeftover: numb
   { name: 'ja', json: jaJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'zh', json: zhJson as Json, maxMissing: 0, maxLeftover: 0 },
   { name: 'ko', json: koJson as Json, maxMissing: 0, maxLeftover: 0 },
-  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 83 },
+  { name: 'pt', json: ptJson as Json, maxMissing: 0, maxLeftover: 84 },
   { name: 'pl', json: plJson as Json, maxMissing: 0, maxLeftover: 15 },
 ];
 
