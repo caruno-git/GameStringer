@@ -136,14 +136,14 @@ impl TranslationCache {
     /// Salva cache su disco
     pub fn save(&self, cache_dir: &Path) -> Result<(), String> {
         fs::create_dir_all(cache_dir)
-            .map_err(|e| format!("Errore creazione cartella cache: {}", e))?;
+            .map_err(|e| format!("Failed to create cache folder: {}", e))?;
         
         let cache_file = cache_dir.join(format!("{}.json", self.game_id));
         let json = serde_json::to_string_pretty(self)
-            .map_err(|e| format!("Errore serializzazione cache: {}", e))?;
+            .map_err(|e| format!("Failed to serialize cache: {}", e))?;
         
         fs::write(&cache_file, json)
-            .map_err(|e| format!("Errore scrittura cache: {}", e))?;
+            .map_err(|e| format!("Failed to write cache: {}", e))?;
         
         log::info!("💾 Cache salvata: {} entries", self.entries.len());
         Ok(())
@@ -158,10 +158,10 @@ impl TranslationCache {
         }
         
         let json = fs::read_to_string(&cache_file)
-            .map_err(|e| format!("Errore lettura cache: {}", e))?;
+            .map_err(|e| format!("Failed to read cache: {}", e))?;
         
         let cache: Self = serde_json::from_str(&json)
-            .map_err(|e| format!("Errore parsing cache: {}", e))?;
+            .map_err(|e| format!("Failed to parse cache: {}", e))?;
         
         log::info!("📦 Cache caricata: {} entries", cache.entries.len());
         Ok(cache)
@@ -178,7 +178,7 @@ impl TranslationCache {
         }
         
         fs::write(path, content)
-            .map_err(|e| format!("Errore esportazione: {}", e))?;
+            .map_err(|e| format!("Failed to export cache: {}", e))?;
         
         Ok(())
     }
@@ -186,7 +186,7 @@ impl TranslationCache {
     /// Importa traduzioni da file testo
     pub fn import_text(&mut self, path: &Path, source_lang: &str, target_lang: &str) -> Result<u32, String> {
         let content = fs::read_to_string(path)
-            .map_err(|e| format!("Errore lettura file: {}", e))?;
+            .map_err(|e| format!("Failed to read file: {}", e))?;
         
         let mut imported = 0;
         

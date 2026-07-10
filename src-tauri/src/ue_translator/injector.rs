@@ -22,7 +22,7 @@ pub fn inject_translator_dll(process_id: u32, dll_path: &Path) -> Result<Injecti
     use std::ptr::null_mut;
     
     if !dll_path.exists() {
-        return Err(format!("DLL non trovata: {}", dll_path.display()));
+        return Err(format!("DLL not found: {}", dll_path.display()));
     }
 
     // 🛡️ GATE ANTI-CHEAT — choke-point obbligatorio prima di CreateRemoteThread/LoadLibraryW.
@@ -47,7 +47,7 @@ pub fn inject_translator_dll(process_id: u32, dll_path: &Path) -> Result<Injecti
         );
         
         if process_handle.is_null() {
-            return Err(format!("Impossibile aprire processo {}: errore {}", 
+            return Err(format!("Failed to open process {}: error {}", 
                 process_id, GetLastError()));
         }
         
@@ -63,7 +63,7 @@ pub fn inject_translator_dll(process_id: u32, dll_path: &Path) -> Result<Injecti
         
         if remote_memory.is_null() {
             CloseHandle(process_handle);
-            return Err(format!("Impossibile allocare memoria: errore {}", GetLastError()));
+            return Err(format!("Failed to allocate memory: error {}", GetLastError()));
         }
         
         // Scrivi il path della DLL nella memoria allocata
@@ -79,7 +79,7 @@ pub fn inject_translator_dll(process_id: u32, dll_path: &Path) -> Result<Injecti
         if write_result == 0 {
             VirtualFreeEx(process_handle, remote_memory, 0, MEM_RELEASE);
             CloseHandle(process_handle);
-            return Err(format!("Impossibile scrivere memoria: errore {}", GetLastError()));
+            return Err(format!("Failed to write process memory: error {}", GetLastError()));
         }
         
         // Ottieni indirizzo di LoadLibraryW
@@ -87,14 +87,14 @@ pub fn inject_translator_dll(process_id: u32, dll_path: &Path) -> Result<Injecti
         if kernel32.is_null() {
             VirtualFreeEx(process_handle, remote_memory, 0, MEM_RELEASE);
             CloseHandle(process_handle);
-            return Err("Impossibile ottenere handle kernel32".to_string());
+            return Err("Failed to get kernel32 handle".to_string());
         }
         
         let load_library_addr = GetProcAddress(kernel32, b"LoadLibraryW\0".as_ptr() as *const i8);
         if load_library_addr.is_null() {
             VirtualFreeEx(process_handle, remote_memory, 0, MEM_RELEASE);
             CloseHandle(process_handle);
-            return Err("Impossibile ottenere indirizzo LoadLibraryW".to_string());
+            return Err("Failed to get LoadLibraryW address".to_string());
         }
         
         // Crea thread remoto per caricare la DLL
@@ -111,7 +111,7 @@ pub fn inject_translator_dll(process_id: u32, dll_path: &Path) -> Result<Injecti
         if remote_thread.is_null() {
             VirtualFreeEx(process_handle, remote_memory, 0, MEM_RELEASE);
             CloseHandle(process_handle);
-            return Err(format!("Impossibile creare thread remoto: errore {}", GetLastError()));
+            return Err(format!("Failed to create remote thread: error {}", GetLastError()));
         }
         
         // Aspetta che il thread completi
@@ -134,7 +134,7 @@ pub fn inject_translator_dll(process_id: u32, dll_path: &Path) -> Result<Injecti
 
 #[cfg(not(target_os = "windows"))]
 pub fn inject_translator_dll(_process_id: u32, _dll_path: &Path) -> Result<InjectionResult, String> {
-    Err("DLL injection supportata solo su Windows".to_string())
+    Err("DLL injection is only supported on Windows".to_string())
 }
 
 /// Trova il processo di un gioco UE dato il path dell'eseguibile

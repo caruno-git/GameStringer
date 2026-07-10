@@ -230,11 +230,26 @@ export function UnrealTranslator() {
       if (result.success) {
         toast.success(result.message);
       } else {
-        toast.warning(result.message);
+        // Caso noto (DLL runtime non inclusa nella build) -> messaggio localizzato.
+        const warnMsg = result.message.includes('runtime DLL is not included')
+          ? t('ueTranslator.errDllMissing')
+          : result.message;
+        toast.warning(warnMsg);
       }
     } catch (err: unknown) {
       clientLogger.error('Translator start error:', err);
-      toast.error('Error starting translator');
+      // Mostra il motivo reale invece del generico "Error starting translator"
+      // e localizza i casi noti tramite i18n — vedi issue #52.
+      const detail = err instanceof Error ? err.message : String(err);
+      let message = detail;
+      if (/^Process .+ not found/.test(detail)) {
+        message = t('ueTranslator.errProcessNotFound').replace('{exe}', exeName);
+      } else if (detail.startsWith('Game folder not found')) {
+        message = t('ueTranslator.errGameFolderNotFound');
+      } else if (detail.startsWith('DLL not found')) {
+        message = t('ueTranslator.errDllMissing');
+      }
+      toast.error(message || t('ueTranslator.errStartGeneric'));
     }
   };
 

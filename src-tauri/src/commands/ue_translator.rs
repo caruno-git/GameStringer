@@ -43,12 +43,12 @@ pub async fn start_ue_translator(
     
     let game_dir = Path::new(&game_path);
     if !game_dir.exists() {
-        return Err("Cartella gioco non trovata".to_string());
+        return Err("Game folder not found".to_string());
     }
     
     // Trova il processo del gioco
     let process_id = find_game_process(&executable)
-        .ok_or_else(|| format!("Processo {} non trovato. Avvia prima il gioco.", executable))?;
+        .ok_or_else(|| format!("Process {} not found. Launch the game first, then press Start Translator.", executable))?;
     
     log::info!("📍 Trovato processo {} con PID {}", executable, process_id);
     
@@ -63,13 +63,13 @@ pub async fn start_ue_translator(
         // Crea cartella se non esiste
         if let Some(parent) = dll_path.parent() {
             std::fs::create_dir_all(parent)
-                .map_err(|e| format!("Errore creazione cartella: {}", e))?;
+                .map_err(|e| format!("Failed to create folder: {}", e))?;
         }
         
         // Per ora restituiamo un messaggio che la DLL deve essere compilata
         return Ok(UETranslatorResult {
             success: false,
-            message: "La DLL del translator deve ancora essere compilata. Questa è la struttura base.".to_string(),
+            message: "The translator runtime DLL is not included in this build yet. This feature is experimental.".to_string(),
             state: TRANSLATOR_STATE.lock().unwrap_or_else(|e| e.into_inner()).clone(),
         });
     }
@@ -102,17 +102,17 @@ pub async fn start_ue_translator(
     // Salva configurazione
     let config_dir = game_dir.join("GameStringer");
     std::fs::create_dir_all(&config_dir)
-        .map_err(|e| format!("Errore creazione cartella config: {}", e))?;
+        .map_err(|e| format!("Failed to create config folder: {}", e))?;
     
     let config_path = config_dir.join("translator_config.json");
     let config_json = serde_json::to_string_pretty(&config)
-        .map_err(|e| format!("Errore serializzazione config: {}", e))?;
+        .map_err(|e| format!("Failed to serialize config: {}", e))?;
     std::fs::write(&config_path, config_json)
-        .map_err(|e| format!("Errore scrittura config: {}", e))?;
+        .map_err(|e| format!("Failed to write config: {}", e))?;
     
     Ok(UETranslatorResult {
         success: true,
-        message: format!("UE AutoTranslator avviato per {} (PID: {})", executable, process_id),
+        message: format!("UE AutoTranslator started for {} (PID: {})", executable, process_id),
         state: TRANSLATOR_STATE.lock().unwrap_or_else(|e| e.into_inner()).clone(),
     })
 }
@@ -140,7 +140,7 @@ pub async fn stop_ue_translator(game_path: String) -> Result<UETranslatorResult,
     
     Ok(UETranslatorResult {
         success: true,
-        message: "Translator fermato".to_string(),
+        message: "Translator stopped".to_string(),
         state: TRANSLATOR_STATE.lock().unwrap_or_else(|e| e.into_inner()).clone(),
     })
 }
@@ -166,7 +166,7 @@ pub async fn get_ue_cache_stats() -> Result<CacheStats, String> {
     let cache = ACTIVE_CACHE.lock().unwrap_or_else(|e| e.into_inner());
     match &*cache {
         Some(c) => Ok(c.stats()),
-        None => Err("Nessuna cache attiva".to_string()),
+        None => Err("No active cache".to_string()),
     }
 }
 
@@ -178,9 +178,9 @@ pub async fn clear_ue_cache() -> Result<String, String> {
         c.entries.clear();
         c.total_hits = 0;
         c.total_misses = 0;
-        Ok("Cache pulita".to_string())
+        Ok("Cache cleared".to_string())
     } else {
-        Err("Nessuna cache attiva".to_string())
+        Err("No active cache".to_string())
     }
 }
 
@@ -190,7 +190,7 @@ pub async fn check_ue_translator_compatibility(game_path: String) -> Result<Comp
     let game_dir = Path::new(&game_path);
     
     if !game_dir.exists() {
-        return Err("Cartella non trovata".to_string());
+        return Err("Folder not found".to_string());
     }
     
     // Verifica indicatori Unreal Engine
@@ -220,11 +220,11 @@ pub async fn check_ue_translator_compatibility(game_path: String) -> Result<Comp
     let has_anticheat = has_eac || has_battleye;
     
     let (compatible, message) = if !is_unreal {
-        (false, "Non sembra essere un gioco Unreal Engine".to_string())
+        (false, "This does not look like an Unreal Engine game".to_string())
     } else if has_anticheat {
-        (false, "⚠️ Rilevato anti-cheat. Il translator potrebbe non funzionare o causare ban.".to_string())
+        (false, "⚠️ Anti-cheat detected. The translator may not work or may cause a ban.".to_string())
     } else {
-        (true, "✓ Gioco Unreal Engine compatibile con UE AutoTranslator".to_string())
+        (true, "✓ Unreal Engine game compatible with UE AutoTranslator".to_string())
     };
     
     Ok(CompatibilityResult {

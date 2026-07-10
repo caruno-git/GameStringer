@@ -72,9 +72,9 @@ pub struct TranslationResponse {
 /// Ottiene il percorso della DLL del translator
 pub fn get_translator_dll_path() -> Result<PathBuf, String> {
     let exe_dir = std::env::current_exe()
-        .map_err(|e| format!("Errore ottenimento path exe: {}", e))?
+        .map_err(|e| format!("Failed to get executable path: {}", e))?
         .parent()
-        .ok_or("Impossibile ottenere cartella exe")?
+        .ok_or("Failed to get executable folder")?
         .to_path_buf();
     
     // La DLL sarà in resources/ue-translator/
