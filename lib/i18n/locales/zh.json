@@ -5105,6 +5105,7 @@
   "ueTranslator": {
     "title": "UE Translator",
     "subtitle": "Unreal Engine 4/5实时翻译",
+    "experimentalBadge": "实验性",
     "experimentalWarning": "实验性功能 - 反作弊警告",
     "experimentalDesc": "请勿在带有活动反作弊的游戏中使用。需要单独编译的注入DLL。",
     "unrealGames": "Unreal游戏",

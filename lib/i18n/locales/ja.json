@@ -5105,6 +5105,7 @@
   "ueTranslator": {
     "title": "UE Translator",
     "subtitle": "Unreal Engine 4/5用リアルタイム翻訳",
+    "experimentalBadge": "実験的",
     "experimentalWarning": "実験的機能 - アンチチート警告",
     "experimentalDesc": "アクティブなアンチチートがあるゲームでは使用しないでください。別途コンパイルされたインジェクションDLLが必要です。",
     "unrealGames": "Unrealゲーム",

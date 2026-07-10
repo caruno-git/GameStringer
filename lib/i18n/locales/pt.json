@@ -5494,6 +5494,7 @@
   "ueTranslator": {
     "title": "Tradutor UE",
     "subtitle": "Traduzir jogos Unreal Engine",
+    "experimentalBadge": "Experimental",
     "experimentalWarning": "Funcionalidade Experimental - Aviso Anti-Cheat",
     "experimentalDesc": "NÃO use em jogos com anti-cheat ativo. Requer DLL de injection compilada separadamente.",
     "unrealGames": "Jogos Unreal",

@@ -5305,6 +5305,7 @@
   "ueTranslator": {
     "title": "UE Translator",
     "subtitle": "Traduction en temps réel pour Unreal Engine 4/5",
+    "experimentalBadge": "Expérimental",
     "experimentalWarning": "Fonctionnalité Expérimentale - Avertissement Anti-Cheat",
     "experimentalDesc": "NE PAS utiliser sur des jeux avec anti-cheat actif. Nécessite une DLL d'injection compilée séparément.",
     "unrealGames": "Jeux Unreal",

@@ -5494,6 +5494,7 @@
   "ueTranslator": {
     "title": "UE 번역기",
     "subtitle": "Unreal Engine 게임 번역",
+    "experimentalBadge": "실험적",
     "experimentalWarning": "실험적 기능 - 안티 치트 주의",
     "experimentalDesc": "활성화된 안티 치트가 있는 게임에는 사용하지 마세요. 별도로 컴파일된 주입 DLL이 필요합니다.",
     "unrealGames": "Unreal 게임",

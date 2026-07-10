@@ -4969,6 +4969,7 @@
   "ueTranslator": {
     "title": "Μεταφραστής UE",
     "subtitle": "Μετάφραση runtime για Unreal Engine 4/5",
+    "experimentalBadge": "Πειραματικό",
     "experimentalWarning": "Πειραματική Λειτουργία - Προειδοποίηση Anti-Cheat",
     "experimentalDesc": "ΜΗΝ τη χρησιμοποιείτε σε παιχνίδια με ενεργό anti-cheat. Απαιτεί DLL injection μεταγλωττισμένο ξεχωριστά.",
     "unrealGames": "Παιχνίδια Unreal",

@@ -339,9 +339,17 @@ export function UnrealTranslator() {
               <Cpu className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
-                {t('ueTranslator.title')}
-              </h2>
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
+                  {t('ueTranslator.title')}
+                </h2>
+                <Badge
+                  variant="outline"
+                  className="text-2xs px-1.5 py-0 uppercase tracking-wide font-semibold bg-amber-400/20 text-amber-100 border-amber-300/50"
+                >
+                  {t('ueTranslator.experimentalBadge')}
+                </Badge>
+              </div>
               <p className="text-white/70 text-xs drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
                 {t('ueTranslator.subtitle')}
               </p>

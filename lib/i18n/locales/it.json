@@ -4675,6 +4675,7 @@
     "errStartGeneric": "Errore all'avvio del translator",
     "title": "UE Translator",
     "subtitle": "Traduzione runtime per Unreal Engine 4/5",
+    "experimentalBadge": "Sperimentale",
     "experimentalWarning": "Funzionalità Sperimentale - Attenzione Anti-Cheat",
     "experimentalDesc": "NON usare su giochi con anti-cheat attivo. Richiede DLL di injection compilata separatamente.",
     "unrealGames": "Giochi Unreal",

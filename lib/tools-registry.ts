@@ -369,6 +369,7 @@ export function getToolsRegistry(): ToolDefinition[] {
       color: 'emerald',
       category: 'tools',
       subcategory: 'patcher',
+      experimental: true,
       features: [
         'Estrazione file .locres da giochi Unreal Engine 4/5',
         'Traduzione in memoria senza modificare file originali',

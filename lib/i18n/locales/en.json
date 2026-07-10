@@ -4931,6 +4931,7 @@
     "errStartGeneric": "Error starting translator",
     "title": "UE Translator",
     "subtitle": "Runtime translation for Unreal Engine 4/5",
+    "experimentalBadge": "Experimental",
     "experimentalWarning": "Experimental Feature - Anti-Cheat Warning",
     "experimentalDesc": "Do NOT use on games with active anti-cheat. Requires injection DLL compiled separately.",
     "unrealGames": "Unreal Games",

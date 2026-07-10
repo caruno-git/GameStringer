@@ -5494,6 +5494,7 @@
   "ueTranslator": {
     "title": "UE Переводчик",
     "subtitle": "Перевод игр Unreal Engine",
+    "experimentalBadge": "Экспериментально",
     "experimentalWarning": "Экспериментальная функция — внимание: античит",
     "experimentalDesc": "НЕ используйте в играх с активным античитом. Требуется DLL для инъекции, скомпилированная отдельно.",
     "unrealGames": "Игры Unreal",
