@@ -26,6 +26,7 @@ interface ChatMessage {
   timestamp: Date;
   relevantDialogues?: DialogueEntry[];
   confidence?: number;
+  retrieval?: 'semantic' | 'keyword';
 }
 
 export function LoreAssistantChat({ defaultExpanded = true }: { defaultExpanded?: boolean }) {
@@ -72,6 +73,7 @@ export function LoreAssistantChat({ defaultExpanded = true }: { defaultExpanded?
         timestamp: new Date(),
         relevantDialogues: response.relevantDialogues,
         confidence: response.confidence,
+        retrieval: response.retrieval,
       };
       setMessages(prev => [...prev, assistantMsg]);
     } catch {
@@ -183,6 +185,15 @@ export function LoreAssistantChat({ defaultExpanded = true }: { defaultExpanded?
                       <span className="text-micro text-amber-400/40">
                         Confidenza: {Math.round(msg.confidence * 100)}%
                       </span>
+                      {msg.retrieval && (
+                        <Badge
+                          variant="outline"
+                          className="text-2xs px-1 py-0 h-3.5 ml-1 border-amber-500/20 text-amber-400/60"
+                          title={msg.retrieval === 'semantic' ? t('loreRetrieval.semanticHint') : t('loreRetrieval.keywordHint')}
+                        >
+                          {msg.retrieval === 'semantic' ? t('loreRetrieval.semantic') : t('loreRetrieval.keyword')}
+                        </Badge>
+                      )}
                     </div>
                   )}
                 </div>

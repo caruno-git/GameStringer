@@ -1,4 +1,5 @@
 import { AgenticTranslator } from './agentic-translator';
+import { maybeReflect, type ReflectionMode } from './reflection-translator';
 import { type BatchHarvestResult, type HarvestInput } from '@/lib/context-harvester';
 import { type GameGenre } from './genre-prompts';
 import { clientLogger } from '@/lib/client-logger';
@@ -52,8 +53,10 @@ export interface TranslateOptions {
   glossaryHint?: string;
   gameId?: string; // Usato per caricare il RAG locale
   useAgenticPipeline?: boolean; // Se true, usa il QA multi-agente per la massima qualità
+  reflection?: ReflectionMode; // Pipeline auto-correttiva (write → reflect → refine): 'auto' (default, selettiva), 'always', 'off'
   styleInstruction?: string; // DeepL Custom Instructions — es. "Usa un tono informale e amichevole"
   tmContext?: string; // RAG dalla Translation Memory — traduzioni simili come riferimento stile/terminologia
+  semanticRag?: 'auto' | 'off'; // RAG semantico (embeddings Ollama su TM/glossario): 'auto' (default), 'off' per i path latency-sensitive (es. Live OCR)
   harvestedContext?: BatchHarvestResult; // Contesto auto-estratto dal Context Harvester
   harvestInputs?: HarvestInput[]; // Input per auto-harvest (se harvestedContext non fornito)
   gameGenre?: GameGenre; // Genere del gioco per prompt engineering avanzato
@@ -72,6 +75,8 @@ export interface TranslateResult {
   translations: string[];
   provider: string;
   success: boolean;
+  /** Statistiche del passaggio di riflessione (write → reflect → refine), se eseguito */
+  reflection?: { candidates: number; refined: number };
 }
 
 
@@ -649,6 +654,34 @@ async function translateWithDeepL(
     ca: 'CA', gl: 'GL', af: 'AF', zu: 'ZU',
   };
   const targetLang = langMap[opts.targetLanguage] || opts.targetLanguage.toUpperCase();
+
+  // In Tauri il fetch diretto verso api(-free).deepl.com fallisce: DeepL non manda
+  // header CORS per chiamate browser, quindi il webview blocca la risposta e il
+  // provider veniva scartato in silenzio (issue #52). Instradiamo via comando Rust
+  // `translate_deepl_batch` (reqwest, nessun CORS). NB: il percorso Rust non supporta
+  // ancora custom_instructions/context.
+  if (typeof window !== 'undefined' && ((window as unknown as Record<string, unknown>).__TAURI_INTERNALS__ || (window as unknown as Record<string, unknown>).__TAURI_IPC__)) {
+    try {
+      const { invoke } = await import('@tauri-apps/api/core');
+      const result = await invoke<{ translations: { translated: string }[]; failed: number; total: number }>(
+        'translate_deepl_batch',
+        {
+          texts: opts.texts,
+          targetLang,
+          sourceLang: opts.sourceLanguage || null,
+          apiKey,
+        }
+      );
+      if (result.failed > 0 && result.translations.length === 0) {
+        throw new Error(`DeepL: ${result.failed}/${result.total} traduzioni fallite`);
+      }
+      return result.translations.map((t) => t.translated);
+    } catch (e: unknown) {
+      blockProvider('deepl');
+      throw e instanceof Error ? e : new Error(String(e));
+    }
+  }
+
   // Determina endpoint (free vs pro)
   const isFree = apiKey.endsWith(':fx');
   const baseUrl = isFree ? 'https://api-free.deepl.com' : 'https://api.deepl.com';
@@ -1841,6 +1874,28 @@ export async function translateWithFallback(
     }
   }
 
+  // Semantic RAG: retrieval semantico su TM + glossario via embeddings Ollama locali.
+  // Additivo al blocco keyword sopra: cattura parafrasi/tono/concetti che il
+  // matching esatto non vede. Fail-open: senza Ollama o modello embedding → no-op.
+  if (opts.semanticRag !== 'off' && opts.texts.length > 0 && opts.texts.length <= 50) {
+    try {
+      const { getSemanticContext } = await import('./semantic-retriever');
+      const semCtx = await getSemanticContext({
+        texts: opts.texts,
+        sourceLang: opts.sourceLanguage || 'en',
+        targetLang: opts.targetLanguage,
+        gameId: opts.gameId,
+        existingContext: opts.tmContext,
+      });
+      if (semCtx) {
+        opts = { ...opts, tmContext: `${opts.tmContext || ''}${semCtx}` };
+        clientLogger.debug('[Semantic-RAG] Contesto semantico iniettato nel prompt');
+      }
+    } catch {
+      // Retrieval semantico non disponibile — procedi senza
+    }
+  }
+
   // Auto-lookup shared TM Network for pre-translated strings
   if (opts.texts.length > 0 && opts.texts.length <= 100) {
     try {
@@ -1975,7 +2030,37 @@ export async function translateWithFallback(
           }
           recordProviderQuality(provider.name, opts.targetLanguage, unchangedRatio, true);
           clientLogger.debug(`[translateWithFallback] ✅ ${provider.name}: ${translations.length} traduzioni, ${translations.length - unchanged} modificate (es: "${opts.texts[0]?.substring(0, 40)}" → "${translations[0]?.substring(0, 40)}")`);
-          return { translations, provider: provider.name, success: true };
+
+          // Pipeline auto-correttiva (write → reflect → refine): un secondo passaggio
+          // dello STESSO provider critica le stringhe a rischio (glossario, contesto,
+          // placeholder, tono) e le riscrive. Selettiva di default, fail-open.
+          let reflectionStats: { candidates: number; refined: number } | undefined;
+          if (opts.reflection !== 'off') {
+            try {
+              const outcome = await maybeReflect(
+                {
+                  texts: opts.texts,
+                  translations,
+                  sourceLanguage: opts.sourceLanguage,
+                  targetLanguage: opts.targetLanguage,
+                  context: opts.context,
+                  glossaryHint: opts.glossaryHint,
+                  gameId: opts.gameId,
+                  mode: opts.reflection,
+                },
+                provider.name,
+                provider.key
+              );
+              if (outcome.candidates > 0) {
+                translations = outcome.translations;
+                reflectionStats = { candidates: outcome.candidates, refined: outcome.refined };
+              }
+            } catch (e: unknown) {
+              clientLogger.warn(`[Reflection] Passaggio saltato per errore: ${String(e)}`);
+            }
+          }
+
+          return { translations, provider: provider.name, success: true, reflection: reflectionStats };
         }
         break;
       } catch (err: unknown) {
