@@ -117,6 +117,18 @@ pub async fn start_ue_translator(
     })
 }
 
+/// Verifica se il processo del gioco è in esecuzione.
+///
+/// Usato dal frontend come pre-check prima di `start_ue_translator`: il
+/// translator inietta una DLL nel processo del gioco, quindi il gioco deve
+/// essere già avviato. Restituire un booleano permette alla UI di mostrare un
+/// messaggio chiaro ("Avvia prima il gioco") invece del generico errore di
+/// avvio — vedi issue #52.
+#[command]
+pub async fn is_ue_game_running(executable: String) -> Result<bool, String> {
+    Ok(find_game_process(&executable).is_some())
+}
+
 /// Ferma il translator
 #[command]
 pub async fn stop_ue_translator(game_path: String) -> Result<UETranslatorResult, String> {

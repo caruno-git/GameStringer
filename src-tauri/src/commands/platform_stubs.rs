@@ -199,6 +199,11 @@ pub async fn start_ue_translator(_game_path: String, _executable: String, _confi
 }
 
 #[tauri::command]
+pub async fn is_ue_game_running(_executable: String) -> Result<bool, String> {
+    Ok(false)
+}
+
+#[tauri::command]
 pub async fn stop_ue_translator(_game_path: String) -> Result<UETranslatorResult, String> {
     Err(PLATFORM_ERR.into())
 }

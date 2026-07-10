@@ -213,7 +213,22 @@ export function UnrealTranslator() {
       toast.error(t('common.selectAGameFirst'));
       return;
     }
-    
+
+    // Pre-check: il translator inietta una DLL nel processo del gioco, quindi
+    // il gioco deve essere già avviato. Verificarlo qui evita il generico
+    // "Error starting translator" quando il gioco è chiuso — vedi issue #52.
+    try {
+      const running = await invoke<boolean>('is_ue_game_running', { executable: exeName });
+      if (!running) {
+        toast.error(t('ueTranslator.errProcessNotFound').replace('{exe}', exeName));
+        return;
+      }
+    } catch (err: unknown) {
+      // Se il check stesso fallisce (es. piattaforma non supportata) non
+      // blocchiamo: lasciamo procedere e gestiamo l'esito di start_ue_translator.
+      clientLogger.warn('is_ue_game_running check failed:', err);
+    }
+
     try {
       const result = await invoke<{ success: boolean; message: string; state: UETranslatorState }>('start_ue_translator', {
         gamePath,

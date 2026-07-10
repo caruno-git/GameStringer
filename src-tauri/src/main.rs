@@ -693,6 +693,7 @@ fn main() {
 
             // UE AutoTranslator (Runtime Translation for Unreal Engine)
             commands::ue_translator::start_ue_translator,
+            commands::ue_translator::is_ue_game_running,
             commands::ue_translator::stop_ue_translator,
             commands::ue_translator::get_ue_translator_state,
             commands::ue_translator::toggle_ue_translation,
@@ -1008,6 +1009,7 @@ fn main() {
             commands::screen_capture::capture_screen,
             commands::screen_capture::get_windows,
             commands::screen_capture::capture_window,
+            commands::image_process::downscale_capture,
             // Batch Processor System
             commands::batch_processor::scan_folder_for_translation,
             commands::batch_processor::read_file_for_translation,
