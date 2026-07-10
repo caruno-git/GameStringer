@@ -5127,7 +5127,11 @@
     "antiCheatDetected": "アンチチート検出",
     "cacheStats": "キャッシュ統計",
     "translations": "翻訳",
-    "hitRate": "ヒット率"
+    "hitRate": "ヒット率",
+    "errProcessNotFound": "ゲームのプロセスが見つかりません（{exe}）。先にゲームを起動してから Start Translator を押してください。",
+    "errGameFolderNotFound": "ゲームフォルダが見つかりません。パスを確認してください。",
+    "errDllMissing": "このビルドには翻訳ランタイムDLLがまだ含まれていません。実験的な機能です。",
+    "errStartGeneric": "トランスレーターの起動エラー"
   },
   "telltale": {
     "title": "Telltale Patcher",
@@ -6574,6 +6578,14 @@
       "11": "🐛 API keys and cloud calls are now saved and routed via the native backend (survive restarts)",
       "12": "🐛 Checkpoints: normalized game-path keys so resume works reliably across path variants",
       "13": "🐛 Community: forum likes work, and Supabase migrations are replay-safe on preview branches"
+    },
+    "v1_12_0": {
+      "0": "👁️ 視覚コンテキスト翻訳（VLM）：AIが画面を見て文脈を踏まえて翻訳し、曖昧な語を解決します（例：「Chest」＝宝箱か胸か）。ローカル（Ollama）または OpenAI/Gemini",
+      "1": "🪞 自己修正パス（Reflection）：任意の2回目の処理が、用語集・トーン・一貫性に照らして翻訳を見直し、必要な箇所だけ改善します",
+      "2": "🧠 セマンティックメモリ（RAG）：翻訳メモリと用語集をローカル埋め込みで意味的に照合し、ゲーム全体で用語を一貫させます",
+      "3": "⚡ よりスムーズなライブ翻訳と、スクリーンショットのネイティブ処理（AI呼び出し前に切り抜き／リサイズ）",
+      "4": "🔌 すぐ使えるプロバイダーが増加：DeepL、Groq、Cerebras、Cohere、Together、Fireworks、Hugging Face、Azure Translator、DashScope、LibreTranslate、Lingva、MyMemory",
+      "5": "🧰 reflection、セマンティックRAG、視覚コンテキストを調整する新しい設定（品質と速度／コストのバランス）"
     }
   },
   "communityChat": {

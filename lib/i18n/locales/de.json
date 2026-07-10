@@ -5435,7 +5435,11 @@
     "antiCheatDetected": "Anti-Cheat erkannt",
     "cacheStats": "Cache-Statistiken",
     "translations": "Übersetzungen",
-    "hitRate": "Trefferquote"
+    "hitRate": "Trefferquote",
+    "errProcessNotFound": "Spielprozess nicht gefunden ({exe}). Starte zuerst das Spiel und klicke dann auf Start Translator.",
+    "errGameFolderNotFound": "Spielordner nicht gefunden. Überprüfe den Pfad.",
+    "errDllMissing": "Die Translator-Runtime-DLL ist in diesem Build noch nicht enthalten. Experimentelle Funktion.",
+    "errStartGeneric": "Fehler beim Starten des Translators"
   },
   "telltale": {
     "title": "Telltale Patcher",
@@ -6574,6 +6578,14 @@
       "11": "🐛 API keys and cloud calls are now saved and routed via the native backend (survive restarts)",
       "12": "🐛 Checkpoints: normalized game-path keys so resume works reliably across path variants",
       "13": "🐛 Community: forum likes work, and Supabase migrations are replay-safe on preview branches"
+    },
+    "v1_12_0": {
+      "0": "👁️ Übersetzung mit visuellem Kontext (VLM): Die KI sieht den Bildschirm und übersetzt mit Kontext, wodurch mehrdeutige Wörter aufgelöst werden (z. B. „Chest“ = Truhe oder Brust). Lokal (Ollama) oder OpenAI/Gemini",
+      "1": "🪞 Selbstkorrigierender Durchlauf (Reflection): Ein optionaler zweiter Durchlauf überprüft und verfeinert die Übersetzung anhand von Glossar, Ton und Konsistenz – nur wo nötig",
+      "2": "🧠 Semantischer Speicher (RAG): Translation Memory und Glossar werden über lokale Embeddings nach Bedeutung abgeglichen, für einheitliche Terminologie im ganzen Spiel",
+      "3": "⚡ Flüssigere Live-Übersetzung und native Screenshot-Verarbeitung (Zuschneiden/Skalieren vor dem KI-Aufruf)",
+      "4": "🔌 Mehr Anbieter out of the box: DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory",
+      "5": "🧰 Neue Einstellungen zum Feinabstimmen von Reflection, semantischem RAG und visuellem Kontext (Qualität vs. Geschwindigkeit/Kosten)"
     }
   },
   "communityChat": {

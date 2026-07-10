@@ -5516,7 +5516,11 @@
     "antiCheatDetected": "Обнаружен античит",
     "cacheStats": "Статистика кэша",
     "translations": "Переводы",
-    "hitRate": "Процент попаданий"
+    "hitRate": "Процент попаданий",
+    "errProcessNotFound": "Процесс игры не найден ({exe}). Сначала запустите игру, затем нажмите Start Translator.",
+    "errGameFolderNotFound": "Папка игры не найдена. Проверьте путь.",
+    "errDllMissing": "DLL среды выполнения переводчика ещё не включена в эту сборку. Экспериментальная функция.",
+    "errStartGeneric": "Ошибка запуска переводчика"
   },
   "telltale": {
     "title": "Telltale Патчер",
@@ -6574,6 +6578,14 @@
       "11": "🐛 API keys and cloud calls are now saved and routed via the native backend (survive restarts)",
       "12": "🐛 Checkpoints: normalized game-path keys so resume works reliably across path variants",
       "13": "🐛 Community: forum likes work, and Supabase migrations are replay-safe on preview branches"
+    },
+    "v1_12_0": {
+      "0": "👁️ Перевод с визуальным контекстом (VLM): ИИ видит экран и переводит с учётом контекста, снимая неоднозначность слов (напр. «Chest» = сундук или грудь). Локально (Ollama) или OpenAI/Gemini",
+      "1": "🪞 Самокорректирующий проход (Reflection): необязательный второй проход проверяет и дорабатывает перевод по глоссарию, тону и согласованности — только где нужно",
+      "2": "🧠 Семантическая память (RAG): память переводов и глоссарий сопоставляются по смыслу через локальные эмбеддинги для единой терминологии по всей игре",
+      "3": "⚡ Более плавный живой перевод и нативная обработка скриншотов (обрезка/масштабирование перед вызовом ИИ)",
+      "4": "🔌 Больше готовых провайдеров: DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory",
+      "5": "🧰 Новые настройки для тонкой регулировки reflection, семантического RAG и визуального контекста (качество против скорости/стоимости)"
     }
   },
   "communityChat": {

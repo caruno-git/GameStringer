@@ -5327,7 +5327,11 @@
     "antiCheatDetected": "Anti-cheat détecté",
     "cacheStats": "Statistiques du Cache",
     "translations": "Traductions",
-    "hitRate": "Taux de Réussite"
+    "hitRate": "Taux de Réussite",
+    "errProcessNotFound": "Processus du jeu introuvable ({exe}). Lancez d'abord le jeu, puis cliquez sur Start Translator.",
+    "errGameFolderNotFound": "Dossier du jeu introuvable. Vérifiez le chemin.",
+    "errDllMissing": "La DLL runtime du traducteur n'est pas encore incluse dans cette version. Fonction expérimentale.",
+    "errStartGeneric": "Erreur au démarrage du traducteur"
   },
   "telltale": {
     "title": "Telltale Patcher",
@@ -6574,6 +6578,14 @@
       "11": "🐛 API keys and cloud calls are now saved and routed via the native backend (survive restarts)",
       "12": "🐛 Checkpoints: normalized game-path keys so resume works reliably across path variants",
       "13": "🐛 Community: forum likes work, and Supabase migrations are replay-safe on preview branches"
+    },
+    "v1_12_0": {
+      "0": "👁️ Traduction avec contexte visuel (VLM) : l'IA voit l'écran et traduit avec le contexte, en levant l'ambiguïté des mots (p. ex. « Chest » = coffre ou poitrine). Local (Ollama) ou OpenAI/Gemini",
+      "1": "🪞 Passe d'autocorrection (Reflection) : une seconde passe facultative revoit et affine la traduction selon le glossaire, le ton et la cohérence — seulement là où c'est nécessaire",
+      "2": "🧠 Mémoire sémantique (RAG) : mémoire de traduction et glossaire appariés par le sens via des embeddings locaux, pour une terminologie cohérente dans tout le jeu",
+      "3": "⚡ Traduction en direct plus fluide et traitement natif des captures d'écran (rognage/redimensionnement avant l'appel à l'IA)",
+      "4": "🔌 Plus de fournisseurs prêts à l'emploi : DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory",
+      "5": "🧰 Nouveaux réglages pour ajuster reflection, RAG sémantique et contexte visuel (qualité vs. vitesse/coût)"
     }
   },
   "communityChat": {

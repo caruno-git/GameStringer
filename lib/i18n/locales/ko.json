@@ -5516,7 +5516,11 @@
     "antiCheatDetected": "안티 치트 감지됨",
     "cacheStats": "캐시 통계",
     "translations": "번역",
-    "hitRate": "적중률"
+    "hitRate": "적중률",
+    "errProcessNotFound": "게임 프로세스를 찾을 수 없습니다({exe}). 먼저 게임을 실행한 후 Start Translator를 누르세요.",
+    "errGameFolderNotFound": "게임 폴더를 찾을 수 없습니다. 경로를 확인하세요.",
+    "errDllMissing": "이 빌드에는 번역 런타임 DLL이 아직 포함되어 있지 않습니다. 실험적 기능입니다.",
+    "errStartGeneric": "번역기 시작 오류"
   },
   "telltale": {
     "title": "Telltale 패처",
@@ -6574,6 +6578,14 @@
       "11": "🐛 API keys and cloud calls are now saved and routed via the native backend (survive restarts)",
       "12": "🐛 Checkpoints: normalized game-path keys so resume works reliably across path variants",
       "13": "🐛 Community: forum likes work, and Supabase migrations are replay-safe on preview branches"
+    },
+    "v1_12_0": {
+      "0": "👁️ 시각적 맥락 번역(VLM): AI가 화면을 보고 맥락에 맞게 번역하여 모호한 단어를 해결합니다(예: \"Chest\" = 상자 또는 가슴). 로컬(Ollama) 또는 OpenAI/Gemini",
+      "1": "🪞 자기 교정 단계(Reflection): 선택적 두 번째 단계가 용어집, 어조, 일관성을 기준으로 번역을 검토하고 다듬습니다 — 필요한 곳에만",
+      "2": "🧠 의미 기반 메모리(RAG): 로컬 임베딩으로 번역 메모리와 용어집을 의미로 매칭해 게임 전체에서 일관된 용어를 유지합니다",
+      "3": "⚡ 더 매끄러운 실시간 번역과 네이티브 스크린샷 처리(AI 호출 전 자르기/크기 조정)",
+      "4": "🔌 기본 제공 제공자 확대: DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory",
+      "5": "🧰 reflection, 의미 기반 RAG, 시각적 맥락을 조정하는 새 설정(품질 대 속도/비용)"
     }
   },
   "communityChat": {

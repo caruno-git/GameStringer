@@ -5516,7 +5516,11 @@
     "antiCheatDetected": "Anti-cheat detectado",
     "cacheStats": "Estatísticas de Cache",
     "translations": "Traduções",
-    "hitRate": "Hit Rate"
+    "hitRate": "Hit Rate",
+    "errProcessNotFound": "Processo do jogo não encontrado ({exe}). Inicie o jogo primeiro e depois clique em Start Translator.",
+    "errGameFolderNotFound": "Pasta do jogo não encontrada. Verifique o caminho.",
+    "errDllMissing": "A DLL de runtime do tradutor ainda não está incluída nesta versão. Recurso experimental.",
+    "errStartGeneric": "Erro ao iniciar o tradutor"
   },
   "telltale": {
     "title": "Telltale Patcher",
@@ -6574,6 +6578,14 @@
       "11": "🐛 API keys and cloud calls are now saved and routed via the native backend (survive restarts)",
       "12": "🐛 Checkpoints: normalized game-path keys so resume works reliably across path variants",
       "13": "🐛 Community: forum likes work, and Supabase migrations are replay-safe on preview branches"
+    },
+    "v1_12_0": {
+      "0": "👁️ Tradução com contexto visual (VLM): a IA vê a tela e traduz com contexto, resolvendo palavras ambíguas (p. ex. \"Chest\" = baú ou peito). Local (Ollama) ou OpenAI/Gemini",
+      "1": "🪞 Passagem autocorretiva (Reflection): uma segunda passagem opcional revê e refina a tradução conforme glossário, tom e coerência — apenas onde necessário",
+      "2": "🧠 Memória semântica (RAG): Memória de Tradução e glossário combinados por significado via embeddings locais, para uma terminologia coerente em todo o jogo",
+      "3": "⚡ Tradução ao vivo mais fluida e processamento nativo de capturas de tela (corte/redimensionamento antes da chamada à IA)",
+      "4": "🔌 Mais provedores prontos para usar: DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory",
+      "5": "🧰 Novas configurações para ajustar reflection, RAG semântico e contexto visual (qualidade vs. velocidade/custo)"
     }
   },
   "communityChat": {

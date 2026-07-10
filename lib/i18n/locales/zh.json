@@ -5127,7 +5127,11 @@
     "antiCheatDetected": "检测到反作弊",
     "cacheStats": "缓存统计",
     "translations": "翻译",
-    "hitRate": "命中率"
+    "hitRate": "命中率",
+    "errProcessNotFound": "未找到游戏进程（{exe}）。请先启动游戏，然后点击 Start Translator。",
+    "errGameFolderNotFound": "未找到游戏文件夹。请检查路径。",
+    "errDllMissing": "此版本尚未包含翻译器运行时 DLL。该功能为实验性功能。",
+    "errStartGeneric": "启动翻译器时出错"
   },
   "telltale": {
     "title": "Telltale Patcher",
@@ -6574,6 +6578,14 @@
       "11": "🐛 API keys and cloud calls are now saved and routed via the native backend (survive restarts)",
       "12": "🐛 Checkpoints: normalized game-path keys so resume works reliably across path variants",
       "13": "🐛 Community: forum likes work, and Supabase migrations are replay-safe on preview branches"
+    },
+    "v1_12_0": {
+      "0": "👁️ 视觉上下文翻译（VLM）：AI 看到屏幕并结合上下文翻译，解决歧义词（例如“Chest”＝箱子还是胸部）。本地（Ollama）或 OpenAI/Gemini",
+      "1": "🪞 自我校正过程（Reflection）：可选的第二遍会根据术语表、语气和一致性审阅并润色翻译——仅在需要处",
+      "2": "🧠 语义记忆（RAG）：通过本地嵌入按含义匹配翻译记忆库和术语表，使整个游戏的术语保持一致",
+      "3": "⚡ 更流畅的实时翻译和原生截图处理（在调用 AI 之前裁剪／缩放）",
+      "4": "🔌 更多开箱即用的提供方：DeepL、Groq、Cerebras、Cohere、Together、Fireworks、Hugging Face、Azure Translator、DashScope、LibreTranslate、Lingva、MyMemory",
+      "5": "🧰 用于调节 reflection、语义 RAG 和视觉上下文的新设置（质量与速度／成本）"
     }
   },
   "communityChat": {
