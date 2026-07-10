@@ -5303,10 +5303,6 @@
     "gameNotFound": "non trouvé parmi les jeux Unity. Sélectionnez-le manuellement."
   },
   "ueTranslator": {
-    "errProcessNotFound": "Processus du jeu introuvable ({exe}). Lancez d'abord le jeu, puis cliquez sur Start Translator.",
-    "errGameFolderNotFound": "Dossier du jeu introuvable. Vérifiez le chemin.",
-    "errDllMissing": "La DLL runtime du traducteur n'est pas encore incluse dans cette version. Fonction expérimentale.",
-    "errStartGeneric": "Erreur au démarrage du traducteur",
     "title": "UE Translator",
     "subtitle": "Traduction en temps réel pour Unreal Engine 4/5",
     "experimentalWarning": "Fonctionnalité Expérimentale - Avertissement Anti-Cheat",
@@ -6104,14 +6100,6 @@
     "caricamentoVisionLlm": "Chargement du Vision LLM..."
   },
   "changelog": {
-    "v1_12_0": {
-      "0": "👁️ Traduction avec contexte visuel (VLM) : l'IA voit l'écran et traduit avec le contexte, levant les ambiguïtés (ex. \"Chest\" = coffre ou poitrine). Local (Ollama) ou OpenAI/Gemini",
-      "1": "🪞 Passe autocorrective (Reflection) : une seconde passe optionnelle revoit et affine la traduction selon le glossaire, le ton et la cohérence — seulement si nécessaire",
-      "2": "🧠 Mémoire sémantique (RAG) : mémoire de traduction et glossaire appariés par le sens via des embeddings locaux, pour une terminologie cohérente dans tout le jeu",
-      "3": "⚡ Traduction en direct plus fluide et traitement natif des captures (recadrage/redimensionnement avant l'appel à l'IA)",
-      "4": "🔌 Plus de fournisseurs prêts à l'emploi : DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory",
-      "5": "🧰 Nouveaux réglages pour ajuster reflection, RAG sémantique et contexte visuel (qualité vs. vitesse/coût)"
-    },
     "v1_8_2": {
       "0": "Fix Ollama IPC: remplacé tous les appels IPC check_ollama_status par HTTP direct vers localhost:11434 — éliminé les erreurs ipc.localhost ERR_CONNECTION_REFUSED",
       "1": "Fix Stores: ajouté le lien Stores dans la section Ressources de la barre latérale",
@@ -7056,27 +7044,27 @@
     "localizationFoldersFound": "Dossiers de Localisation Trouvés"
   },
   "aiQuality": {
-    "title": "Qualité de traduction IA",
-    "desc": "Passes optionnelles qui améliorent la cohérence et le style à l'aide de modèles locaux (Ollama), sans envoyer de données à des serveurs externes.",
+    "title": "Qualité de la traduction IA",
+    "desc": "Étapes facultatives qui améliorent la cohérence et le style à l'aide de modèles locaux (Ollama), sans envoyer de données à des serveurs externes.",
     "reflectionTitle": "Autocorrection (Reflection)",
-    "reflectionDesc": "Une seconde passe relit les chaînes les plus risquées (espaces réservés, longs dialogues, termes du glossaire) et les réécrit si nécessaire, avec le même fournisseur que la traduction.",
+    "reflectionDesc": "Une seconde passe relit les chaînes les plus à risque (espaces réservés, longs dialogues, termes du glossaire) et les réécrit si nécessaire, avec le même fournisseur que la traduction.",
     "semanticTitle": "Mémoire de traduction sémantique",
-    "semanticDesc": "Récupère les traductions passées et les entrées du glossaire conceptuellement proches du texte actuel — y compris paraphrases, synonymes et flexions — via des embeddings locaux Ollama.",
+    "semanticDesc": "Récupère les traductions passées et les entrées de glossaire conceptuellement proches du texte actuel — y compris paraphrases, synonymes et flexions — via des embeddings locaux d'Ollama.",
     "embeddingTitle": "Modèle d'embedding",
-    "embeddingDesc": "Modèle Ollama utilisé pour la recherche sémantique. En mode automatique, le meilleur installé est choisi.",
+    "embeddingDesc": "Modèle Ollama utilisé pour la recherche sémantique. En mode automatique, le meilleur modèle installé est choisi.",
     "embeddingAuto": "Automatique (détecter le meilleur)",
     "modeAuto": "Automatique",
     "modeOff": "Désactivé",
     "modeAlways": "Toujours",
-    "reflectionAutoHint": "Seulement les chaînes risquées, avec un plafond par lot pour limiter les coûts.",
+    "reflectionAutoHint": "Uniquement les chaînes à risque, avec une limite par lot pour maîtriser les coûts.",
     "reflectionAlwaysHint": "Revoit toutes les chaînes éligibles du lot : plus précis, mais plus lent et plus coûteux.",
     "reflectionOffHint": "Pas de seconde passe : la traduction est renvoyée telle quelle.",
-    "semanticAutoHint": "Active la recherche sémantique quand un modèle d'embedding est disponible dans Ollama.",
+    "semanticAutoHint": "Active la recherche sémantique lorsqu'un modèle d'embedding est disponible dans Ollama.",
     "semanticOffHint": "Utilise uniquement la correspondance par mots-clés (comportement classique).",
     "detectedModelLabel": "Modèle détecté",
     "statusUnavailable": "Aucun modèle d'embedding dans Ollama",
-    "statusChecking": "Vérification…",
-    "noEmbedderHint": "Installez un modèle avec \"ollama pull nomic-embed-text\" (léger) ou \"ollama pull bge-m3\" (multilingue, idéal pour JA/ZH/KO → EN).",
+    "statusChecking": "Vérification en cours…",
+    "noEmbedderHint": "Installez un modèle avec « ollama pull nomic-embed-text » (léger) ou « ollama pull bge-m3 » (multilingue, idéal pour JA/ZH/KO → FR).",
     "refresh": "Actualiser l'état"
   },
   "loreRetrieval": {
@@ -7086,13 +7074,13 @@
     "keywordHint": "Dialogues trouvés par correspondance de mots-clés (TF-IDF)"
   },
   "semanticIndex": {
-    "hint": "Précalcule les embeddings de la mémoire de traduction pour la paire choisie, afin que les premiers lots trouvent l'index prêt.",
+    "hint": "Précalcule les embeddings de la mémoire de traduction pour la paire choisie : les premiers lots trouvent l'index déjà prêt.",
     "sourceLabel": "Source",
     "button": "Indexer maintenant",
     "indexing": "Indexation…",
-    "doneLabel": "Indexé",
+    "doneLabel": "Indexés",
     "vectors": "vecteurs",
     "emptyTm": "Aucune traduction en mémoire pour cette paire.",
-    "unavailable": "Activez la mémoire sémantique et installez un modèle d'embedding pour préindexer."
+    "unavailable": "Activez la MT sémantique et installez un modèle d'embedding pour préindexer."
   }
 }

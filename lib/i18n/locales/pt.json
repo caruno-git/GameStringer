@@ -5492,10 +5492,6 @@
     "gameNotFound": "não encontrado entre os jogos Unity. Selecione manualmente."
   },
   "ueTranslator": {
-    "errProcessNotFound": "Processo do jogo não encontrado ({exe}). Inicie o jogo primeiro e depois clique em Start Translator.",
-    "errGameFolderNotFound": "Pasta do jogo não encontrada. Verifique o caminho.",
-    "errDllMissing": "A DLL de runtime do tradutor ainda não está incluída nesta versão. Recurso experimental.",
-    "errStartGeneric": "Erro ao iniciar o tradutor",
     "title": "Tradutor UE",
     "subtitle": "Traduzir jogos Unreal Engine",
     "experimentalWarning": "Funcionalidade Experimental - Aviso Anti-Cheat",
@@ -6104,14 +6100,6 @@
     "caricamentoVisionLlm": "Carregando Vision LLM..."
   },
   "changelog": {
-    "v1_12_0": {
-      "0": "👁️ Tradução com contexto visual (VLM): a IA vê a tela e traduz com contexto, resolvendo palavras ambíguas (ex.: \"Chest\" = baú ou peito). Local (Ollama) ou OpenAI/Gemini",
-      "1": "🪞 Passagem autocorretiva (Reflection): uma segunda passagem opcional revisa e refina a tradução conforme glossário, tom e consistência — apenas onde é preciso",
-      "2": "🧠 Memória semântica (RAG): memória de tradução e glossário combinados por significado via embeddings locais, para terminologia consistente no jogo todo",
-      "3": "⚡ Tradução ao vivo mais fluida e processamento nativo de capturas (recorte/redimensionamento antes da chamada à IA)",
-      "4": "🔌 Mais provedores prontos para uso: DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory",
-      "5": "🧰 Novas configurações para ajustar reflection, RAG semântico e contexto visual (qualidade vs. velocidade/custo)"
-    },
     "v1_8_2": {
       "0": "Fix Ollama IPC: substituídas todas as chamadas IPC check_ollama_status por HTTP direto para localhost:11434 — eliminados erros ipc.localhost ERR_CONNECTION_REFUSED",
       "1": "Fix Stores: adicionado link Stores na seção Recursos da barra lateral",
@@ -7056,27 +7044,27 @@
     "localizationFoldersFound": "Pastas de Localização Encontradas"
   },
   "aiQuality": {
-    "title": "Qualidade de tradução com IA",
-    "desc": "Passagens opcionais que melhoram a consistência e o estilo usando modelos locais (Ollama), sem enviar dados a servidores externos.",
+    "title": "Qualidade da tradução por IA",
+    "desc": "Passos opcionais que melhoram a coerência e o estilo usando modelos locais (Ollama), sem enviar dados a servidores externos.",
     "reflectionTitle": "Autocorreção (Reflection)",
-    "reflectionDesc": "Uma segunda passagem relê as strings mais arriscadas (marcadores, diálogos longos, termos do glossário) e as reescreve quando necessário, usando o mesmo provedor da tradução.",
+    "reflectionDesc": "Uma segunda passagem relê as cadeias mais arriscadas (marcadores de posição, diálogos longos, termos de glossário) e reescreve-as quando necessário, usando o mesmo provedor da tradução.",
     "semanticTitle": "Memória de tradução semântica",
-    "semanticDesc": "Recupera traduções anteriores e entradas do glossário conceitualmente semelhantes ao texto atual — incluindo paráfrases, sinônimos e flexões — via embeddings locais do Ollama.",
+    "semanticDesc": "Recupera traduções anteriores e entradas de glossário conceitualmente semelhantes ao texto atual — incluindo paráfrases, sinônimos e flexões — via embeddings locais do Ollama.",
     "embeddingTitle": "Modelo de embedding",
-    "embeddingDesc": "Modelo do Ollama usado na busca semântica. No modo automático escolhe-se o melhor instalado.",
+    "embeddingDesc": "Modelo do Ollama usado para a busca semântica. No modo automático, é escolhido o melhor instalado.",
     "embeddingAuto": "Automático (detectar o melhor)",
     "modeAuto": "Automático",
     "modeOff": "Desativado",
     "modeAlways": "Sempre",
-    "reflectionAutoHint": "Apenas as strings arriscadas, com um limite por lote para conter os custos.",
-    "reflectionAlwaysHint": "Revisa todas as strings elegíveis do lote: mais preciso, porém mais lento e caro.",
+    "reflectionAutoHint": "Apenas as cadeias arriscadas, com um limite por lote para conter os custos.",
+    "reflectionAlwaysHint": "Revisa todas as cadeias elegíveis do lote: mais preciso, mas mais lento e custoso.",
     "reflectionOffHint": "Sem segunda passagem: a tradução é devolvida como está.",
     "semanticAutoHint": "Ativa a busca semântica quando há um modelo de embedding disponível no Ollama.",
-    "semanticOffHint": "Usa apenas correspondência por palavras-chave (comportamento clássico).",
+    "semanticOffHint": "Usa apenas a correspondência por palavras-chave (comportamento clássico).",
     "detectedModelLabel": "Modelo detectado",
     "statusUnavailable": "Nenhum modelo de embedding no Ollama",
     "statusChecking": "Verificando…",
-    "noEmbedderHint": "Instale um modelo com \"ollama pull nomic-embed-text\" (leve) ou \"ollama pull bge-m3\" (multilíngue, ideal para JA/ZH/KO → EN).",
+    "noEmbedderHint": "Instale um modelo com \"ollama pull nomic-embed-text\" (leve) ou \"ollama pull bge-m3\" (multilíngue, ideal para JA/ZH/KO → PT).",
     "refresh": "Atualizar estado"
   },
   "loreRetrieval": {
@@ -7086,13 +7074,13 @@
     "keywordHint": "Diálogos encontrados por correspondência de palavras-chave (TF-IDF)"
   },
   "semanticIndex": {
-    "hint": "Pré-calcula os embeddings da memória de tradução para o par escolhido, para que os primeiros lotes encontrem o índice pronto.",
+    "hint": "Pré-calcula os embeddings da memória de tradução para o par escolhido: os primeiros lotes encontram o índice já pronto.",
     "sourceLabel": "Origem",
     "button": "Indexar agora",
     "indexing": "Indexando…",
-    "doneLabel": "Indexado",
+    "doneLabel": "Indexados",
     "vectors": "vetores",
-    "emptyTm": "Nenhuma tradução em memória para este par.",
-    "unavailable": "Ative a memória semântica e instale um modelo de embedding para pré-indexar."
+    "emptyTm": "Nenhuma tradução na memória para este par.",
+    "unavailable": "Ative a MT semântica e instale um modelo de embedding para pré-indexar."
   }
 }

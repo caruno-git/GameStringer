@@ -5492,10 +5492,6 @@
     "gameNotFound": "Unity 게임에서 찾을 수 없습니다. 수동으로 선택하세요."
   },
   "ueTranslator": {
-    "errProcessNotFound": "게임 프로세스를 찾을 수 없습니다({exe}). 먼저 게임을 실행한 후 Start Translator를 누르세요.",
-    "errGameFolderNotFound": "게임 폴더를 찾을 수 없습니다. 경로를 확인하세요.",
-    "errDllMissing": "이 빌드에는 번역 런타임 DLL이 아직 포함되어 있지 않습니다. 실험적 기능입니다.",
-    "errStartGeneric": "번역기 시작 오류",
     "title": "UE 번역기",
     "subtitle": "Unreal Engine 게임 번역",
     "experimentalWarning": "실험적 기능 - 안티 치트 주의",
@@ -6104,14 +6100,6 @@
     "caricamentoVisionLlm": "Vision LLM 로딩 중..."
   },
   "changelog": {
-    "v1_12_0": {
-      "0": "👁️ 시각적 맥락 번역(VLM): AI가 화면을 보고 맥락으로 번역해 모호한 단어(예: \"Chest\" = 상자 또는 가슴)를 해소. 로컬(Ollama) 또는 OpenAI/Gemini 지원",
-      "1": "🪞 자기 교정 패스(Reflection): 선택적 2차 패스가 용어집·톤·일관성 기준으로 필요한 부분만 번역을 검토·다듬음",
-      "2": "🧠 의미 기반 메모리(RAG): 로컬 임베딩으로 번역 메모리와 용어집을 의미로 매칭해 게임 전체에서 용어를 일관되게 유지",
-      "3": "⚡ 더 매끄러운 실시간 번역과 네이티브 스크린샷 처리(AI 호출 전 자르기/리사이즈)",
-      "4": "🔌 즉시 사용 가능한 제공자 확대: DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory",
-      "5": "🧰 reflection·의미 RAG·시각적 맥락을 조정하는 새 설정(품질 대 속도/비용)"
-    },
     "v1_8_2": {
       "0": "Fix Ollama IPC: 모든 check_ollama_status IPC 호출을 localhost:11434로의 직접 HTTP로 교체 — ipc.localhost ERR_CONNECTION_REFUSED 오류 제거",
       "1": "Fix Stores: 사이드바 리소스 섹션에 Stores 링크 추가",
@@ -7057,42 +7045,42 @@
   },
   "aiQuality": {
     "title": "AI 번역 품질",
-    "desc": "로컬 모델(Ollama)을 사용해 일관성과 문체를 높이는 선택적 패스로, 데이터를 외부 서버로 보내지 않습니다.",
+    "desc": "로컬 모델(Ollama)을 사용해 일관성과 문체를 개선하는 선택적 단계로, 데이터를 외부 서버로 보내지 않습니다.",
     "reflectionTitle": "자기 교정(Reflection)",
-    "reflectionDesc": "2차 패스가 가장 위험한 문자열(플레이스홀더, 긴 대사, 용어집 용어)을 다시 읽고 필요할 때 번역과 동일한 제공자로 다시 씁니다.",
+    "reflectionDesc": "두 번째 단계에서 위험도가 높은 문자열(자리 표시자, 긴 대사, 용어집 용어)을 다시 읽고 필요할 때 번역과 동일한 제공자로 다시 작성합니다.",
     "semanticTitle": "의미 기반 번역 메모리",
-    "semanticDesc": "현재 텍스트와 개념적으로 유사한 이전 번역과 용어집 항목을 — 패러프레이즈, 동의어, 활용형 포함 — 로컬 Ollama 임베딩으로 가져옵니다.",
+    "semanticDesc": "Ollama의 로컬 임베딩을 통해 현재 텍스트와 개념적으로 유사한 과거 번역과 용어집 항목을 의역·동의어·활용형까지 포함해 검색합니다.",
     "embeddingTitle": "임베딩 모델",
-    "embeddingDesc": "의미 검색에 사용하는 Ollama 모델. 자동 모드에서는 설치된 것 중 최적을 선택합니다.",
+    "embeddingDesc": "의미 검색에 사용하는 Ollama 모델입니다. 자동 모드에서는 설치된 것 중 최적의 모델이 선택됩니다.",
     "embeddingAuto": "자동(최적 감지)",
     "modeAuto": "자동",
-    "modeOff": "끄기",
+    "modeOff": "끔",
     "modeAlways": "항상",
-    "reflectionAutoHint": "위험한 문자열만, 배치당 상한을 두어 비용을 억제합니다.",
-    "reflectionAlwaysHint": "배치 내 대상 문자열을 모두 검토: 더 정확하지만 느리고 비용이 큽니다.",
-    "reflectionOffHint": "2차 패스 없음: 번역을 그대로 반환합니다.",
+    "reflectionAutoHint": "위험한 문자열만 처리하며, 비용을 억제하기 위해 배치당 한도를 둡니다.",
+    "reflectionAlwaysHint": "배치의 모든 해당 문자열을 검토합니다. 더 정확하지만 더 느리고 비용이 큽니다.",
+    "reflectionOffHint": "두 번째 단계 없음: 번역이 그대로 반환됩니다.",
     "semanticAutoHint": "Ollama에 임베딩 모델이 있을 때 의미 검색을 활성화합니다.",
-    "semanticOffHint": "키워드 일치만 사용(기존 동작).",
+    "semanticOffHint": "키워드 일치만 사용합니다(기존 동작).",
     "detectedModelLabel": "감지된 모델",
-    "statusUnavailable": "Ollama에 임베딩 모델이 없음",
+    "statusUnavailable": "Ollama에 임베딩 모델이 없습니다",
     "statusChecking": "확인 중…",
-    "noEmbedderHint": "\"ollama pull nomic-embed-text\"(경량) 또는 \"ollama pull bge-m3\"(다국어, JA/ZH/KO → EN에 적합)로 모델을 설치하세요.",
-    "refresh": "상태 새로고침"
+    "noEmbedderHint": "\"ollama pull nomic-embed-text\"(경량) 또는 \"ollama pull bge-m3\"(다국어, JA/ZH/KO → KO에 적합)로 모델을 설치하세요.",
+    "refresh": "상태 새로 고침"
   },
   "loreRetrieval": {
-    "semantic": "의미",
+    "semantic": "의미 기반",
     "keyword": "키워드",
     "semanticHint": "의미 유사도로 찾은 대사(로컬 임베딩)",
     "keywordHint": "키워드 일치로 찾은 대사(TF-IDF)"
   },
   "semanticIndex": {
-    "hint": "선택한 언어 쌍의 번역 메모리 임베딩을 미리 계산해 첫 배치부터 색인이 준비되게 합니다.",
-    "sourceLabel": "소스",
-    "button": "지금 색인",
-    "indexing": "색인 중…",
-    "doneLabel": "색인됨",
+    "hint": "선택한 언어 쌍에 대해 번역 메모리 임베딩을 미리 계산합니다. 첫 배치는 인덱스가 이미 준비된 상태로 시작합니다.",
+    "sourceLabel": "원본",
+    "button": "지금 인덱싱",
+    "indexing": "인덱싱 중…",
+    "doneLabel": "인덱싱됨",
     "vectors": "벡터",
-    "emptyTm": "이 언어 쌍에 대한 메모리에 번역이 없습니다.",
-    "unavailable": "의미 기반 TM을 켜고 임베딩 모델을 설치하면 미리 색인할 수 있습니다."
+    "emptyTm": "이 언어 쌍에 대한 번역이 메모리에 없습니다.",
+    "unavailable": "의미 기반 TM을 켜고 임베딩 모델을 설치해 미리 인덱싱하세요."
   }
 }

@@ -5411,10 +5411,6 @@
     "gameNotFound": "nicht unter den Unity-Spielen gefunden. Manuell auswählen."
   },
   "ueTranslator": {
-    "errProcessNotFound": "Spielprozess nicht gefunden ({exe}). Starte zuerst das Spiel und klicke dann auf Start Translator.",
-    "errGameFolderNotFound": "Spielordner nicht gefunden. Überprüfe den Pfad.",
-    "errDllMissing": "Die Translator-Runtime-DLL ist in diesem Build noch nicht enthalten. Experimentelle Funktion.",
-    "errStartGeneric": "Fehler beim Starten des Translators",
     "title": "UE Translator",
     "subtitle": "Echtzeit-Übersetzung für Unreal Engine 4/5",
     "experimentalWarning": "Experimentelle Funktion - Anti-Cheat Warnung",
@@ -6104,14 +6100,6 @@
     "caricamentoVisionLlm": "Vision LLM wird geladen..."
   },
   "changelog": {
-    "v1_12_0": {
-      "0": "👁️ Übersetzung mit visuellem Kontext (VLM): Die KI sieht den Bildschirm und übersetzt im Kontext, löst mehrdeutige Wörter auf (z. B. \"Chest\" = Truhe oder Brust). Lokal (Ollama) oder OpenAI/Gemini",
-      "1": "🪞 Selbstkorrigierender Durchlauf (Reflection): ein optionaler zweiter Durchlauf prüft und verfeinert die Übersetzung anhand von Glossar, Ton und Konsistenz — nur wo nötig",
-      "2": "🧠 Semantischer Speicher (RAG): Translation Memory und Glossar werden per Bedeutung über lokale Embeddings zugeordnet, für einheitliche Terminologie im ganzen Spiel",
-      "3": "⚡ Flüssigere Live-Übersetzung und native Screenshot-Verarbeitung (Zuschneiden/Skalieren vor dem KI-Aufruf)",
-      "4": "🔌 Mehr Anbieter out of the box: DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory",
-      "5": "🧰 Neue Einstellungen für Reflection, semantisches RAG und visuellen Kontext (Qualität vs. Geschwindigkeit/Kosten)"
-    },
     "v1_8_2": {
       "0": "Fix Ollama IPC: alle check_ollama_status IPC-Aufrufe durch direktes HTTP zu localhost:11434 ersetzt — ipc.localhost ERR_CONNECTION_REFUSED-Fehler eliminiert",
       "1": "Fix Stores: Stores-Link im Sidebar-Bereich Ressourcen hinzugefügt",
@@ -7059,40 +7047,40 @@
     "title": "KI-Übersetzungsqualität",
     "desc": "Optionale Durchläufe, die Konsistenz und Stil mit lokalen Modellen (Ollama) verbessern, ohne Daten an externe Server zu senden.",
     "reflectionTitle": "Selbstkorrektur (Reflection)",
-    "reflectionDesc": "Ein zweiter Durchlauf liest die riskantesten Strings (Platzhalter, lange Dialoge, Glossarbegriffe) erneut und schreibt sie bei Bedarf neu — mit demselben Anbieter wie die Übersetzung.",
+    "reflectionDesc": "Ein zweiter Durchlauf liest die riskantesten Zeichenketten (Platzhalter, lange Dialoge, Glossarbegriffe) erneut und schreibt sie bei Bedarf neu – mit demselben Anbieter wie die Übersetzung.",
     "semanticTitle": "Semantischer Übersetzungsspeicher",
-    "semanticDesc": "Ruft frühere Übersetzungen und Glossareinträge ab, die dem aktuellen Text inhaltlich ähneln — inklusive Paraphrasen, Synonyme und Flexionen — über lokale Ollama-Embeddings.",
+    "semanticDesc": "Ruft frühere Übersetzungen und Glossareinträge ab, die dem aktuellen Text konzeptionell ähneln – einschließlich Paraphrasen, Synonymen und Flexionen – über lokale Ollama-Embeddings.",
     "embeddingTitle": "Embedding-Modell",
-    "embeddingDesc": "Ollama-Modell für die semantische Suche. Im Automatikmodus wird das beste installierte gewählt.",
+    "embeddingDesc": "Ollama-Modell für die semantische Suche. Im Automatikmodus wird das beste installierte Modell gewählt.",
     "embeddingAuto": "Automatisch (bestes erkennen)",
     "modeAuto": "Automatisch",
     "modeOff": "Aus",
     "modeAlways": "Immer",
-    "reflectionAutoHint": "Nur riskante Strings, mit einem Limit pro Batch, um Kosten gering zu halten.",
-    "reflectionAlwaysHint": "Prüft jeden infrage kommenden String im Batch: genauer, aber langsamer und teurer.",
+    "reflectionAutoHint": "Nur riskante Zeichenketten, mit einer Obergrenze pro Stapel, um die Kosten zu begrenzen.",
+    "reflectionAlwaysHint": "Überprüft jede geeignete Zeichenkette im Stapel: genauer, aber langsamer und teurer.",
     "reflectionOffHint": "Kein zweiter Durchlauf: Die Übersetzung wird unverändert zurückgegeben.",
     "semanticAutoHint": "Aktiviert die semantische Suche, wenn ein Embedding-Modell in Ollama verfügbar ist.",
-    "semanticOffHint": "Nutzt nur Schlagwort-Abgleich (klassisches Verhalten).",
+    "semanticOffHint": "Verwendet nur den Schlüsselwortabgleich (klassisches Verhalten).",
     "detectedModelLabel": "Erkanntes Modell",
     "statusUnavailable": "Kein Embedding-Modell in Ollama",
-    "statusChecking": "Prüfe…",
-    "noEmbedderHint": "Installiere ein Modell mit \"ollama pull nomic-embed-text\" (leichtgewichtig) oder \"ollama pull bge-m3\" (mehrsprachig, ideal für JA/ZH/KO → EN).",
+    "statusChecking": "Wird geprüft…",
+    "noEmbedderHint": "Installiere ein Modell mit „ollama pull nomic-embed-text“ (leichtgewichtig) oder „ollama pull bge-m3“ (mehrsprachig, ideal für JA/ZH/KO → DE).",
     "refresh": "Status aktualisieren"
   },
   "loreRetrieval": {
     "semantic": "semantisch",
-    "keyword": "Schlagwörter",
+    "keyword": "Schlüsselwörter",
     "semanticHint": "Dialoge nach Bedeutungsähnlichkeit gefunden (lokale Embeddings)",
-    "keywordHint": "Dialoge nach Schlagwort-Treffer gefunden (TF-IDF)"
+    "keywordHint": "Dialoge nach Schlüsselwortübereinstimmung gefunden (TF-IDF)"
   },
   "semanticIndex": {
-    "hint": "Berechnet die Embeddings des Übersetzungsspeichers für das gewählte Paar vorab, damit die ersten Batches den Index bereit finden.",
+    "hint": "Berechnet die Embeddings des Übersetzungsspeichers für das gewählte Paar vor, sodass die ersten Stapel den Index bereits fertig vorfinden.",
     "sourceLabel": "Quelle",
     "button": "Jetzt indizieren",
-    "indexing": "Indiziere…",
+    "indexing": "Indizierung…",
     "doneLabel": "Indiziert",
     "vectors": "Vektoren",
     "emptyTm": "Keine Übersetzungen im Speicher für dieses Paar.",
-    "unavailable": "Aktiviere den semantischen Speicher und installiere ein Embedding-Modell zum Vorindizieren."
+    "unavailable": "Aktiviere den semantischen TM und installiere ein Embedding-Modell zum Vorindizieren."
   }
 }

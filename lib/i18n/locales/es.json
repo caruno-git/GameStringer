@@ -5421,10 +5421,6 @@
     "gameNotFound": "no encontrado entre los juegos Unity. Selecciónalo manualmente."
   },
   "ueTranslator": {
-    "errProcessNotFound": "Proceso del juego no encontrado ({exe}). Inicia primero el juego y luego pulsa Start Translator.",
-    "errGameFolderNotFound": "Carpeta del juego no encontrada. Comprueba la ruta.",
-    "errDllMissing": "La DLL de runtime del traductor aún no está incluida en esta versión. Función experimental.",
-    "errStartGeneric": "Error al iniciar el traductor",
     "title": "UE Translator",
     "subtitle": "Traducción en tiempo real para Unreal Engine 4/5",
     "experimentalWarning": "Función Experimental - Advertencia Anti-Cheat",
@@ -6104,14 +6100,6 @@
     "caricamentoVisionLlm": "Cargando Vision LLM..."
   },
   "changelog": {
-    "v1_12_0": {
-      "0": "👁️ Traducción con contexto visual (VLM): la IA ve la pantalla y traduce con contexto, resolviendo palabras ambiguas (p. ej. \"Chest\" = cofre o pecho). Local (Ollama) u OpenAI/Gemini",
-      "1": "🪞 Pasada autocorrectiva (Reflection): una segunda pasada opcional revisa y refina la traducción según glosario, tono y coherencia — solo donde hace falta",
-      "2": "🧠 Memoria semántica (RAG): memoria de traducción y glosario emparejados por significado mediante embeddings locales, para una terminología coherente en todo el juego",
-      "3": "⚡ Traducción en vivo más fluida y procesamiento nativo de capturas (recorte/redimensionado antes de la llamada a la IA)",
-      "4": "🔌 Más proveedores listos para usar: DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory",
-      "5": "🧰 Nuevos ajustes para regular reflection, RAG semántico y contexto visual (calidad vs. velocidad/coste)"
-    },
     "v1_8_2": {
       "0": "Fix Ollama IPC: reemplazadas todas las llamadas IPC check_ollama_status con HTTP directo a localhost:11434 — eliminados errores ipc.localhost ERR_CONNECTION_REFUSED",
       "1": "Fix Stores: añadido enlace Stores en la sección Recursos de la barra lateral",
@@ -7056,27 +7044,27 @@
     "localizationFoldersFound": "Carpetas de Localización Encontradas"
   },
   "aiQuality": {
-    "title": "Calidad de traducción con IA",
-    "desc": "Pasadas opcionales que mejoran la coherencia y el estilo usando modelos locales (Ollama), sin enviar datos a servidores externos.",
+    "title": "Calidad de la traducción con IA",
+    "desc": "Pasos opcionales que mejoran la coherencia y el estilo usando modelos locales (Ollama), sin enviar datos a servidores externos.",
     "reflectionTitle": "Autocorrección (Reflection)",
-    "reflectionDesc": "Una segunda pasada relee las cadenas más arriesgadas (marcadores, diálogos largos, términos del glosario) y las reescribe cuando hace falta, usando el mismo proveedor que la traducción.",
+    "reflectionDesc": "Una segunda pasada vuelve a leer las cadenas más arriesgadas (marcadores de posición, diálogos largos, términos del glosario) y las reescribe cuando hace falta, usando el mismo proveedor que la traducción.",
     "semanticTitle": "Memoria de traducción semántica",
     "semanticDesc": "Recupera traducciones anteriores y entradas del glosario conceptualmente similares al texto actual —incluidas paráfrasis, sinónimos y flexiones— mediante embeddings locales de Ollama.",
     "embeddingTitle": "Modelo de embedding",
-    "embeddingDesc": "Modelo de Ollama usado para la búsqueda semántica. En modo automático se elige el mejor instalado.",
+    "embeddingDesc": "Modelo de Ollama usado para la búsqueda semántica. En modo automático se elige el mejor de los instalados.",
     "embeddingAuto": "Automático (detectar el mejor)",
     "modeAuto": "Automático",
     "modeOff": "Desactivado",
     "modeAlways": "Siempre",
     "reflectionAutoHint": "Solo las cadenas arriesgadas, con un límite por lote para contener los costes.",
-    "reflectionAlwaysHint": "Revisa todas las cadenas elegibles del lote: más preciso, pero más lento y costoso.",
+    "reflectionAlwaysHint": "Revisa todas las cadenas aptas del lote: más preciso, pero más lento y costoso.",
     "reflectionOffHint": "Sin segunda pasada: la traducción se devuelve tal cual.",
     "semanticAutoHint": "Activa la búsqueda semántica cuando hay un modelo de embedding disponible en Ollama.",
-    "semanticOffHint": "Usa solo coincidencia por palabras clave (comportamiento clásico).",
+    "semanticOffHint": "Usa solo la coincidencia por palabras clave (comportamiento clásico).",
     "detectedModelLabel": "Modelo detectado",
     "statusUnavailable": "Ningún modelo de embedding en Ollama",
     "statusChecking": "Comprobando…",
-    "noEmbedderHint": "Instala un modelo con \"ollama pull nomic-embed-text\" (ligero) o \"ollama pull bge-m3\" (multilingüe, ideal para JA/ZH/KO → EN).",
+    "noEmbedderHint": "Instala un modelo con «ollama pull nomic-embed-text» (ligero) o «ollama pull bge-m3» (multilingüe, ideal para JA/ZH/KO → ES).",
     "refresh": "Actualizar estado"
   },
   "loreRetrieval": {
@@ -7086,13 +7074,13 @@
     "keywordHint": "Diálogos encontrados por coincidencia de palabras clave (TF-IDF)"
   },
   "semanticIndex": {
-    "hint": "Precalcula los embeddings de la memoria de traducción para el par elegido, para que los primeros lotes encuentren el índice listo.",
+    "hint": "Precalcula los embeddings de la memoria de traducción para el par elegido: los primeros lotes encuentran el índice ya listo.",
     "sourceLabel": "Origen",
     "button": "Indexar ahora",
     "indexing": "Indexando…",
-    "doneLabel": "Indexado",
+    "doneLabel": "Indexados",
     "vectors": "vectores",
     "emptyTm": "No hay traducciones en memoria para este par.",
-    "unavailable": "Activa la memoria semántica e instala un modelo de embedding para preindexar."
+    "unavailable": "Activa la TM semántica e instala un modelo de embedding para preindexar."
   }
 }

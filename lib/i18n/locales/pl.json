@@ -5492,10 +5492,6 @@
     "gameNotFound": "nie znaleziono wśród gier Unity. Wybierz ręcznie."
   },
   "ueTranslator": {
-    "errProcessNotFound": "Nie znaleziono procesu gry ({exe}). Najpierw uruchom grę, a następnie kliknij Start Translator.",
-    "errGameFolderNotFound": "Nie znaleziono folderu gry. Sprawdź ścieżkę.",
-    "errDllMissing": "Biblioteka DLL translatora nie jest jeszcze dołączona do tej wersji. Funkcja eksperymentalna.",
-    "errStartGeneric": "Błąd uruchamiania translatora",
     "title": "Tłumacz UE",
     "subtitle": "Tłumaczenie gier Unreal Engine",
     "experimentalWarning": "Funkcja Eksperymentalna - Ostrzeżenie Anti-Cheat",
@@ -6104,14 +6100,6 @@
     "caricamentoVisionLlm": "Ładowanie Vision LLM..."
   },
   "changelog": {
-    "v1_12_0": {
-      "0": "👁️ Tłumaczenie z kontekstem wizualnym (VLM): AI widzi ekran i tłumaczy z kontekstem, rozwiązując wieloznaczne słowa (np. \"Chest\" = skrzynia lub klatka piersiowa). Lokalnie (Ollama) lub OpenAI/Gemini",
-      "1": "🪞 Przebieg samokorygujący (Reflection): opcjonalny drugi przebieg sprawdza i dopracowuje tłumaczenie względem glosariusza, tonu i spójności — tylko tam, gdzie trzeba",
-      "2": "🧠 Pamięć semantyczna (RAG): pamięć tłumaczeń i glosariusz dopasowywane znaczeniowo dzięki lokalnym embeddingom, dla spójnej terminologii w całej grze",
-      "3": "⚡ Płynniejsze tłumaczenie na żywo i natywne przetwarzanie zrzutów ekranu (przycinanie/skalowanie przed wywołaniem AI)",
-      "4": "🔌 Więcej dostawców od ręki: DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory",
-      "5": "🧰 Nowe ustawienia do regulacji reflection, semantycznego RAG i kontekstu wizualnego (jakość vs. szybkość/koszt)"
-    },
     "v1_8_2": {
       "0": "Fix Ollama IPC: wszystkie wywołania IPC check_ollama_status zastąpione bezpośrednim HTTP do localhost:11434 — usunięto błędy ipc.localhost ERR_CONNECTION_REFUSED",
       "1": "Fix Stores: dodano link Stores w sekcji Zasoby paska bocznego",
@@ -7057,42 +7045,42 @@
   },
   "aiQuality": {
     "title": "Jakość tłumaczenia AI",
-    "desc": "Opcjonalne przebiegi poprawiające spójność i styl przy użyciu modeli lokalnych (Ollama), bez wysyłania danych na zewnętrzne serwery.",
+    "desc": "Opcjonalne przebiegi poprawiające spójność i styl za pomocą modeli lokalnych (Ollama), bez wysyłania danych na zewnętrzne serwery.",
     "reflectionTitle": "Autokorekta (Reflection)",
-    "reflectionDesc": "Drugi przebieg ponownie czyta najbardziej ryzykowne ciągi (placeholdery, długie dialogi, terminy z glosariusza) i przepisuje je w razie potrzeby, używając tego samego dostawcy co tłumaczenie.",
+    "reflectionDesc": "Drugi przebieg ponownie czyta najbardziej ryzykowne ciągi (symbole zastępcze, długie dialogi, terminy z glosariusza) i w razie potrzeby przepisuje je tym samym dostawcą co tłumaczenie.",
     "semanticTitle": "Semantyczna pamięć tłumaczeń",
-    "semanticDesc": "Pobiera wcześniejsze tłumaczenia i wpisy glosariusza pojęciowo podobne do bieżącego tekstu — w tym parafrazy, synonimy i formy fleksyjne — dzięki lokalnym embeddingom Ollama.",
-    "embeddingTitle": "Model embeddingów",
-    "embeddingDesc": "Model Ollama używany do wyszukiwania semantycznego. W trybie automatycznym wybierany jest najlepszy zainstalowany.",
+    "semanticDesc": "Pobiera wcześniejsze tłumaczenia i wpisy glosariusza koncepcyjnie podobne do bieżącego tekstu — w tym parafrazy, synonimy i formy fleksyjne — przez lokalne osadzenia Ollama.",
+    "embeddingTitle": "Model osadzeń",
+    "embeddingDesc": "Model Ollama używany do wyszukiwania semantycznego. W trybie automatycznym wybierany jest najlepszy z zainstalowanych.",
     "embeddingAuto": "Automatycznie (wykryj najlepszy)",
     "modeAuto": "Automatycznie",
     "modeOff": "Wyłączone",
     "modeAlways": "Zawsze",
     "reflectionAutoHint": "Tylko ryzykowne ciągi, z limitem na partię, aby ograniczyć koszty.",
     "reflectionAlwaysHint": "Sprawdza każdy kwalifikujący się ciąg w partii: dokładniej, ale wolniej i drożej.",
-    "reflectionOffHint": "Bez drugiego przebiegu: tłumaczenie zwracane jest bez zmian.",
-    "semanticAutoHint": "Włącza wyszukiwanie semantyczne, gdy w Ollama dostępny jest model embeddingów.",
-    "semanticOffHint": "Używa tylko dopasowania słów kluczowych (zachowanie klasyczne).",
+    "reflectionOffHint": "Bez drugiego przebiegu: tłumaczenie jest zwracane bez zmian.",
+    "semanticAutoHint": "Włącza wyszukiwanie semantyczne, gdy w Ollamie dostępny jest model osadzeń.",
+    "semanticOffHint": "Używa tylko dopasowania słów kluczowych (klasyczne zachowanie).",
     "detectedModelLabel": "Wykryty model",
-    "statusUnavailable": "Brak modelu embeddingów w Ollama",
+    "statusUnavailable": "Brak modelu osadzeń w Ollamie",
     "statusChecking": "Sprawdzanie…",
-    "noEmbedderHint": "Zainstaluj model poleceniem \"ollama pull nomic-embed-text\" (lekki) lub \"ollama pull bge-m3\" (wielojęzyczny, idealny dla JA/ZH/KO → EN).",
+    "noEmbedderHint": "Zainstaluj model poleceniem „ollama pull nomic-embed-text” (lekki) lub „ollama pull bge-m3” (wielojęzyczny, idealny dla JA/ZH/KO → PL).",
     "refresh": "Odśwież status"
   },
   "loreRetrieval": {
     "semantic": "semantyczne",
     "keyword": "słowa kluczowe",
-    "semanticHint": "Dialogi znalezione przez podobieństwo znaczenia (lokalne embeddingi)",
-    "keywordHint": "Dialogi znalezione przez dopasowanie słów kluczowych (TF-IDF)"
+    "semanticHint": "Dialogi znalezione według podobieństwa znaczeń (lokalne osadzenia)",
+    "keywordHint": "Dialogi znalezione według dopasowania słów kluczowych (TF-IDF)"
   },
   "semanticIndex": {
-    "hint": "Wstępnie oblicza embeddingi pamięci tłumaczeń dla wybranej pary, aby pierwsze partie znalazły gotowy indeks.",
+    "hint": "Wstępnie oblicza osadzenia pamięci tłumaczeń dla wybranej pary: pierwsze partie znajdują gotowy indeks.",
     "sourceLabel": "Źródło",
     "button": "Indeksuj teraz",
     "indexing": "Indeksowanie…",
     "doneLabel": "Zindeksowano",
-    "vectors": "wektorów",
+    "vectors": "wektory",
     "emptyTm": "Brak tłumaczeń w pamięci dla tej pary.",
-    "unavailable": "Włącz pamięć semantyczną i zainstaluj model embeddingów, aby wstępnie zindeksować."
+    "unavailable": "Włącz semantyczną pamięć tłumaczeń i zainstaluj model osadzeń, aby wstępnie zindeksować."
   }
 }

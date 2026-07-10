@@ -5103,10 +5103,6 @@
     "gameNotFound": "在Unity游戏中未找到。请手动选择。"
   },
   "ueTranslator": {
-    "errProcessNotFound": "未找到游戏进程（{exe}）。请先启动游戏，然后点击 Start Translator。",
-    "errGameFolderNotFound": "未找到游戏文件夹。请检查路径。",
-    "errDllMissing": "此版本尚未包含翻译器运行时 DLL。该功能为实验性功能。",
-    "errStartGeneric": "启动翻译器时出错",
     "title": "UE Translator",
     "subtitle": "Unreal Engine 4/5实时翻译",
     "experimentalWarning": "实验性功能 - 反作弊警告",
@@ -6104,14 +6100,6 @@
     "caricamentoVisionLlm": "正在加载Vision LLM..."
   },
   "changelog": {
-    "v1_12_0": {
-      "0": "👁️ 视觉上下文翻译（VLM）：AI 查看画面并结合上下文翻译，消除歧义词（例如 \"Chest\" = 宝箱还是胸部）。支持本地（Ollama）或 OpenAI/Gemini",
-      "1": "🪞 自我纠正流程（Reflection）：可选的第二轮，依据术语表、语气和一致性，仅在需要处复核并润色译文",
-      "2": "🧠 语义记忆（RAG）：通过本地嵌入按语义匹配翻译记忆和术语表，让全游戏术语保持一致",
-      "3": "⚡ 更流畅的实时翻译与原生截图处理（调用 AI 前先裁剪/缩放）",
-      "4": "🔌 更多开箱即用的提供商：DeepL、Groq、Cerebras、Cohere、Together、Fireworks、Hugging Face、Azure Translator、DashScope、LibreTranslate、Lingva、MyMemory",
-      "5": "🧰 新增设置项，可调节 reflection、语义 RAG 和视觉上下文（质量与速度/成本的取舍）"
-    },
     "v1_8_2": {
       "0": "Fix Ollama IPC: 将所有check_ollama_status IPC调用替换为直接HTTP到localhost:11434 — 消除ipc.localhost ERR_CONNECTION_REFUSED错误",
       "1": "Fix Stores: 在侧边栏资源部分添加Stores链接",
@@ -7057,26 +7045,26 @@
   },
   "aiQuality": {
     "title": "AI 翻译质量",
-    "desc": "使用本地模型（Ollama）提升一致性与文风的可选流程，不会将数据发送到外部服务器。",
+    "desc": "使用本地模型（Ollama）提升一致性和风格的可选步骤，不会将数据发送到外部服务器。",
     "reflectionTitle": "自我校正（Reflection）",
-    "reflectionDesc": "第二轮会重读风险最高的字符串（占位符、长对话、术语表词条），必要时用与翻译相同的提供商重写。",
-    "semanticTitle": "语义翻译记忆",
-    "semanticDesc": "通过本地 Ollama 嵌入，检索与当前文本在概念上相似的历史译文和术语表词条——包括改述、同义词和词形变化。",
+    "reflectionDesc": "第二遍会重新阅读风险最高的字符串（占位符、长对话、术语表词条），并在需要时用与翻译相同的提供方重写。",
+    "semanticTitle": "语义翻译记忆库",
+    "semanticDesc": "通过 Ollama 的本地嵌入，检索与当前文本在概念上相似的过往翻译和术语表条目——包括释义、同义词和词形变化。",
     "embeddingTitle": "嵌入模型",
     "embeddingDesc": "用于语义搜索的 Ollama 模型。自动模式下会选择已安装的最佳模型。",
     "embeddingAuto": "自动（检测最佳）",
     "modeAuto": "自动",
     "modeOff": "关闭",
     "modeAlways": "始终",
-    "reflectionAutoHint": "仅处理风险字符串，并对每批设置上限以控制成本。",
-    "reflectionAlwaysHint": "复核该批次中每个符合条件的字符串：更准确，但更慢、成本更高。",
-    "reflectionOffHint": "不做第二轮：译文按原样返回。",
+    "reflectionAutoHint": "仅处理有风险的字符串，并按批次设置上限以控制成本。",
+    "reflectionAlwaysHint": "审阅批次中所有符合条件的字符串：更准确，但更慢且成本更高。",
+    "reflectionOffHint": "不进行第二遍：直接返回原翻译。",
     "semanticAutoHint": "当 Ollama 中有可用的嵌入模型时启用语义搜索。",
     "semanticOffHint": "仅使用关键词匹配（经典行为）。",
     "detectedModelLabel": "检测到的模型",
     "statusUnavailable": "Ollama 中没有嵌入模型",
-    "statusChecking": "检查中…",
-    "noEmbedderHint": "请用 \"ollama pull nomic-embed-text\"（轻量）或 \"ollama pull bge-m3\"（多语言，适合 JA/ZH/KO → EN）安装模型。",
+    "statusChecking": "正在检查…",
+    "noEmbedderHint": "使用“ollama pull nomic-embed-text”（轻量）或“ollama pull bge-m3”（多语言，适合 JA/ZH/KO → ZH）安装模型。",
     "refresh": "刷新状态"
   },
   "loreRetrieval": {
@@ -7086,13 +7074,13 @@
     "keywordHint": "按关键词匹配找到的对话（TF-IDF）"
   },
   "semanticIndex": {
-    "hint": "为所选语言对预先计算翻译记忆的嵌入，让最初几批就能用上现成的索引。",
-    "sourceLabel": "源",
+    "hint": "为所选语言对预先计算翻译记忆库的嵌入：最初的批次会发现索引已就绪。",
+    "sourceLabel": "来源",
     "button": "立即索引",
     "indexing": "正在索引…",
     "doneLabel": "已索引",
-    "vectors": "个向量",
-    "emptyTm": "该语言对的记忆中没有译文。",
-    "unavailable": "启用语义 TM 并安装嵌入模型即可预先索引。"
+    "vectors": "向量",
+    "emptyTm": "此语言对在记忆库中没有翻译。",
+    "unavailable": "启用语义 TM 并安装嵌入模型以进行预索引。"
   }
 }

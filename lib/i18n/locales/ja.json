@@ -5103,10 +5103,6 @@
     "gameNotFound": "がUnityゲームの中に見つかりません。手動で選択してください。"
   },
   "ueTranslator": {
-    "errProcessNotFound": "ゲームのプロセスが見つかりません（{exe}）。先にゲームを起動してから Start Translator を押してください。",
-    "errGameFolderNotFound": "ゲームフォルダが見つかりません。パスを確認してください。",
-    "errDllMissing": "このビルドには翻訳ランタイムDLLがまだ含まれていません。実験的な機能です。",
-    "errStartGeneric": "トランスレーターの起動エラー",
     "title": "UE Translator",
     "subtitle": "Unreal Engine 4/5用リアルタイム翻訳",
     "experimentalWarning": "実験的機能 - アンチチート警告",
@@ -6104,14 +6100,6 @@
     "caricamentoVisionLlm": "Vision LLMを読み込み中..."
   },
   "changelog": {
-    "v1_12_0": {
-      "0": "👁️ ビジュアルコンテキスト翻訳（VLM）：AIが画面を見て文脈で翻訳し、曖昧な語（例：\"Chest\"＝宝箱か胸か）を解決。ローカル（Ollama）またはOpenAI/Gemini対応",
-      "1": "🪞 自己修正パス（Reflection）：任意の2回目のパスが、用語集・トーン・一貫性に照らして翻訳を必要な箇所だけ見直し・調整",
-      "2": "🧠 セマンティックメモリ（RAG）：翻訳メモリと用語集をローカル埋め込みで意味的に照合し、ゲーム全体で用語を統一",
-      "3": "⚡ よりスムーズなライブ翻訳とネイティブなスクリーンショット処理（AI呼び出し前にトリミング/リサイズ）",
-      "4": "🔌 すぐ使えるプロバイダーを追加：DeepL、Groq、Cerebras、Cohere、Together、Fireworks、Hugging Face、Azure Translator、DashScope、LibreTranslate、Lingva、MyMemory",
-      "5": "🧰 Reflection・セマンティックRAG・ビジュアルコンテキストを調整する新設定（品質と速度/コストのバランス）"
-    },
     "v1_8_2": {
       "0": "Fix Ollama IPC: すべてのcheck_ollama_status IPC呼び出しをlocalhost:11434への直接HTTPに置換 — ipc.localhost ERR_CONNECTION_REFUSEDエラーを排除",
       "1": "Fix Stores: サイドバーのリソースセクションにStoresリンクを追加",
@@ -7057,42 +7045,42 @@
   },
   "aiQuality": {
     "title": "AI翻訳の品質",
-    "desc": "ローカルモデル（Ollama）を使って一貫性と文体を高める任意のパス。データを外部サーバーに送信しません。",
+    "desc": "ローカルモデル（Ollama）を使って一貫性と文体を高める任意の処理です。外部サーバーにデータを送信しません。",
     "reflectionTitle": "自己修正（Reflection）",
-    "reflectionDesc": "2回目のパスがリスクの高い文字列（プレースホルダー、長い台詞、用語集の語）を読み直し、必要に応じて翻訳と同じプロバイダーで書き直します。",
+    "reflectionDesc": "2回目の処理でリスクの高い文字列（プレースホルダー、長い台詞、用語集の語）を読み直し、必要に応じて翻訳と同じプロバイダーで書き直します。",
     "semanticTitle": "セマンティック翻訳メモリ",
-    "semanticDesc": "現在のテキストに概念的に近い過去の翻訳や用語集項目を、言い換え・類義語・語形変化も含めて、ローカルのOllama埋め込みで取得します。",
+    "semanticDesc": "現在のテキストに概念的に近い過去の翻訳や用語集エントリを、言い換え・類義語・活用形も含めて、Ollamaのローカル埋め込みで取得します。",
     "embeddingTitle": "埋め込みモデル",
-    "embeddingDesc": "セマンティック検索に使うOllamaモデル。自動モードでは最適なインストール済みモデルが選ばれます。",
+    "embeddingDesc": "セマンティック検索に使うOllamaモデル。自動モードではインストール済みの中から最適なものが選ばれます。",
     "embeddingAuto": "自動（最適を検出）",
     "modeAuto": "自動",
     "modeOff": "オフ",
-    "modeAlways": "常時",
-    "reflectionAutoHint": "リスクの高い文字列のみ。バッチごとに上限を設けてコストを抑えます。",
-    "reflectionAlwaysHint": "バッチ内の対象文字列をすべて確認：より正確ですが、遅くコストも高くなります。",
-    "reflectionOffHint": "2回目のパスなし：翻訳をそのまま返します。",
-    "semanticAutoHint": "Ollamaに埋め込みモデルがある場合にセマンティック検索を有効化します。",
-    "semanticOffHint": "キーワード一致のみを使用（従来の動作）。",
+    "modeAlways": "常に",
+    "reflectionAutoHint": "リスクの高い文字列のみ。コストを抑えるためバッチごとに上限を設けます。",
+    "reflectionAlwaysHint": "バッチ内の対象文字列をすべて見直します。精度は高いですが、遅くコストもかかります。",
+    "reflectionOffHint": "2回目の処理なし。翻訳はそのまま返されます。",
+    "semanticAutoHint": "Ollamaに埋め込みモデルがある場合にセマンティック検索を有効にします。",
+    "semanticOffHint": "キーワード一致のみを使用します（従来の動作）。",
     "detectedModelLabel": "検出されたモデル",
     "statusUnavailable": "Ollamaに埋め込みモデルがありません",
     "statusChecking": "確認中…",
-    "noEmbedderHint": "\"ollama pull nomic-embed-text\"（軽量）または \"ollama pull bge-m3\"（多言語対応、JA/ZH/KO → EN に最適）でモデルをインストールしてください。",
+    "noEmbedderHint": "「ollama pull nomic-embed-text」（軽量）または「ollama pull bge-m3」（多言語、JA/ZH/KO → JA に最適）でモデルをインストールしてください。",
     "refresh": "状態を更新"
   },
   "loreRetrieval": {
-    "semantic": "意味",
+    "semantic": "セマンティック",
     "keyword": "キーワード",
-    "semanticHint": "意味の類似で見つかった台詞（ローカル埋め込み）",
+    "semanticHint": "意味の類似性で見つかった台詞（ローカル埋め込み）",
     "keywordHint": "キーワード一致で見つかった台詞（TF-IDF）"
   },
   "semanticIndex": {
-    "hint": "選んだ言語ペアの翻訳メモリ埋め込みを事前計算し、最初のバッチで索引がすぐ使えるようにします。",
+    "hint": "選択したペアの翻訳メモリの埋め込みを事前計算します。最初のバッチではインデックスがすでに用意されています。",
     "sourceLabel": "ソース",
-    "button": "今すぐ索引化",
-    "indexing": "索引化中…",
-    "doneLabel": "索引済み",
+    "button": "今すぐインデックス",
+    "indexing": "インデックス作成中…",
+    "doneLabel": "インデックス済み",
     "vectors": "ベクトル",
-    "emptyTm": "このペアのメモリに翻訳がありません。",
-    "unavailable": "セマンティックTMを有効にし、埋め込みモデルをインストールすると事前索引化できます。"
+    "emptyTm": "このペアの翻訳がメモリにありません。",
+    "unavailable": "セマンティックTMを有効にし、埋め込みモデルをインストールして事前インデックスしてください。"
   }
 }
