@@ -1,14 +1,27 @@
 {
-  "version": "1.11.2",
+  "version": "1.12.0",
   "major": 1,
-  "minor": 11,
-  "patch": 2,
+  "minor": 12,
+  "patch": 0,
   "prerelease": null,
-  "buildNumber": 128,
-  "buildDate": "2026-07-04T12:35:55.269Z",
+  "buildNumber": 129,
+  "buildDate": "2026-07-10T09:10:00.000Z",
   "gitHash": "c6468a40",
   "branch": "main",
   "changelog": {
+    "1.12.0": {
+      "date": "2026-07-10",
+      "type": "minor",
+      "changes": [
+        "👁️ Visual-context translation (VLM): the AI sees the frame and translates with context, resolving OCR ambiguities (e.g. \"Chest\" = coffer vs. body). Modes: OCR+VLM and full-VLM. Providers: Ollama, OpenAI, Gemini",
+        "🖼️ Native downscale_capture command (Rust image/base64): crop + resize + JPEG re-encode screenshots before the VLM call — no new dependencies",
+        "🪞 Reflection translator: optional self-correcting pass (write → reflect → refine) reviewing risky strings against glossary, tone, consistency and placeholders; selective by default, cost-capped",
+        "🧠 Semantic RAG retriever: Translation Memory + glossary matched by meaning via local Ollama embeddings; lazy indexing, IndexedDB vector cache, fail-open to keyword matching",
+        "🧰 Settings: controls for reflection mode, semantic RAG and the visual-context options (quality vs. latency/cost)",
+        "🔌 Providers: broadened the allowlist (DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory)",
+        "⚡ Smoother live-translation pipeline and native image handling"
+      ]
+    },
     "1.9.1": {
       "date": "2026-04-29",
       "type": "patch",
