@@ -470,4 +470,58 @@ git clone https://github.com/rouges78/GameStringer.git
 cd GameStringer
 npm install
 npm run dev          # development
-npm run tauri:build  # 
+npm run tauri:build  # production build
+```
+
+Rust backend: `cd src-tauri && cargo check` to verify the Tauri commands compile on your platform.
+
+---
+
+## 💖 Support
+
+If GameStringer helped you play games in your language:
+
+<p align="center">
+  <a href="https://buymeacoffee.com/gamestringer">
+    <img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?logo=buy-me-a-coffee&logoColor=black" alt="Buy Me a Coffee" />
+  </a>
+  <a href="https://ko-fi.com/gamestringer">
+    <img src="https://img.shields.io/badge/Ko--fi-FF5E5B?logo=ko-fi&logoColor=white" alt="Ko-fi" />
+  </a>
+  <a href="https://github.com/sponsors/rouges78">
+    <img src="https://img.shields.io/badge/GitHub%20Sponsors-EA4AAA?logo=github-sponsors&logoColor=white" alt="GitHub Sponsors" />
+  </a>
+</p>
+
+---
+
+## 📜 License
+
+**Source-Available License v1.1** — the source code is public and you can build it yourself, but it is not OSI-approved "Open Source".
+
+- ✅ Free for personal use
+- ✅ Free to inspect, build, and modify for yourself
+- ❌ Commercial use requires written permission
+- ❌ Redistribution of modified versions requires written permission
+
+See [LICENSE](LICENSE) for details. Questions? Open a [Discussion](https://github.com/rouges78/GameStringer/discussions).
+
+---
+
+## 🙏 Credits
+
+- **[BepInEx](https://github.com/BepInEx/BepInEx)** — Unity modding framework (BepInEx Team)
+- **[XUnity.AutoTranslator](https://github.com/bbepis/XUnity.AutoTranslator)** — Unity translation framework (bbepis)
+- **[UnrealLocres](https://github.com/akintos/UnrealLocres)** — Unreal `.locres` parser (akintos)
+- **[UndertaleModTool](https://github.com/krzys-h/UndertaleModTool)** — GameMaker modding (krzys-h)
+- **[Tauri](https://tauri.app)** — Desktop app framework
+- **[Tesseract.js](https://github.com/naptha/tesseract.js)** — OCR engine
+- **[Ollama](https://ollama.com)** — Local LLM runtime
+- **[Supabase](https://supabase.com)** — Realtime backend for Community Chat
+
+---
+
+<p align="center">
+  Made with ❤️ for gamers who want to play in their own language<br>
+  <strong>GameStringer v1.12.0</strong> · <a href="https://www.gamestringer.ai">gamestringer.ai</a> · © 2025-2026 GameStringer Team
+</p>

@@ -518,4 +518,57 @@
 
 - Parser Godot Engine (.tres, .tscn, .cfg, .translation)
 - Parser Ren'Py (.rpy) per visual novel
-- Telltale Patcher: 
+- Telltale Patcher: backup automatico e ripristino
+- Telltale Patcher: verifica installazione
+- Theme toggle (chiaro/scuro/auto) nell'header
+- Script version-manager sincronizza tutti i file versione
+
+## 🔧 v0.8.2-beta - 2026-01-08
+
+- Telltale Patcher per Wolf Among Us, Walking Dead, Batman
+- Parser Telltale (.langdb, .landb, .dlog)
+- Fix immagini giochi nella pagina dettaglio
+- Steam API 403 rate limiting gestito gracefully
+- Tauri CLI aggiornato a v2.5.0
+
+## 🔧 v0.8.1-beta - 2026-01-04
+
+- Dizionario righe compatte
+- Estensioni layout unificato con Parser
+- Campanella notifiche gialla fosforescente
+- Placeholder colorati per copertine mancanti
+
+## 🚀 v0.8.0-beta - 2026-01-02
+
+- Integrazione Epic Games Store via Legendary CLI
+- Filtro asset/plugin Unreal Engine (41 giochi)
+- Badge piattaforma Epic Games nella scheda gioco
+- Versione cliccabile per vedere changelog
+
+## 🔧 v3.2.2 - 2025-07-07
+
+- Implementato sistema versioning automatico completo
+- Integrazione UI dinamica
+- Git hooks configurati
+
+## 🔧 v3.2.1 - 2025-01-07
+
+- Sistema versioning automatico implementato
+- System Status spostato nella sidebar
+- Dashboard layout migliorato
+- Quick Actions compattate
+
+## 🚀 v3.2.0 - 2025-01-06
+
+- Pagina impostazioni completamente ridisegnata
+- Debug tools integrati nelle impostazioni
+- Sidebar collassabile con animazioni
+- Steam API debugging migliorato
+
+## 🚀 v3.1.0 - 2025-01-05
+
+- Force refresh implementato per Steam games
+- Sistema manual game addition
+- Badge system per VR games
+- Dashboard design futuristico
+
