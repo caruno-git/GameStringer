@@ -132,3 +132,10 @@ scripts/_*.js
 # Agent / skill tooling (non parte dell'app)
 .agents/
 skills-lock.json
+
+# Local credential cache (never track)
+src-tauri/.cache/
+
+# i18n tooling temp dirs
+.gs-i18n-tmp/
+_gs_split/
