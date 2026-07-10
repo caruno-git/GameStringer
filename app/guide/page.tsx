@@ -458,7 +458,7 @@ export default function GuidePage() {
                   <CardTitle className="text-sm flex items-center gap-2">
                     <Rocket className="w-4 h-4 text-blue-400" />
                     {g.novTitle}
-                    <Badge variant="outline" className="ml-auto text-2xs border-blue-500/40 text-blue-300">v1.11</Badge>
+                    <Badge variant="outline" className="ml-auto text-2xs border-blue-500/40 text-blue-300">v1.12</Badge>
                   </CardTitle>
                   <CardDescription className="text-xs">{g.novDesc}</CardDescription>
                 </CardHeader>
