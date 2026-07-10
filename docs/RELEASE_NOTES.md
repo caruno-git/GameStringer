@@ -1,4 +1,6 @@
-﻿# 🎮 GameStringer v1.8.1
+﻿# 🎮 GameStringer v1.8.0
+
+> ℹ️ **Note**: this file covers historical releases. For the latest versions (up to v1.12.0) see [CHANGELOG.md](../CHANGELOG.md).
 
 > **Release Date**: April 9, 2026
 > **Type**: Live Translation Overlay + Hub Marketplace + Translation Memory Network + AI Dubbing Pipeline + Plugin System
@@ -84,8 +86,8 @@ Community-created game engine patchers via a `PatcherPlugin` interface:
 
 | File | Description |
 |------|-------------|
-| `GameStringer-1.8.1-Setup.exe` | Windows Installer (recommended) |
-| `GameStringer-1.8.1-Portable.zip` | Portable version (no install) |
+| `GameStringer-1.8.0-Setup.exe` | Windows Installer (recommended) |
+| `GameStringer-1.8.0-Portable.zip` | Portable version (no install) |
 | `checksums-sha256.txt` | SHA256 checksums for verification |
 
 ### System Requirements
@@ -100,14 +102,14 @@ Community-created game engine patchers via a `PatcherPlugin` interface:
 
 ### Setup (Recommended)
 
-1. Download `GameStringer-1.8.1-Setup.exe`
+1. Download `GameStringer-1.8.0-Setup.exe`
 2. Run the installer
 3. Follow the installation wizard
 4. Launch GameStringer from Start Menu
 
 ### Portable
 
-1. Download `GameStringer-1.8.1-Portable.zip`
+1. Download `GameStringer-1.8.0-Portable.zip`
 2. Extract to any folder
 3. Run `GameStringer.exe`
 
@@ -194,14 +196,14 @@ Generate mouth animation data from audio for game dubbing:
 
 ---
 
-# 🎮 GameStringer v1.9.0
+# 🎮 GameStringer v1.6.0
 
 > **Release Date**: April 4, 2026
 > **Type**: Game Engine Patchers + Accessibility + Design System
 
 ---
 
-## 🏰 Bethesda Engine Patcher (v1.9.0)
+## 🏰 Bethesda Engine Patcher (v1.6.0)
 
 Native support for the classic Bethesda titles, end to end:
 
@@ -212,7 +214,7 @@ Native support for the classic Bethesda titles, end to end:
 - **ESP / ESM plugins**: parser with extraction of translatable fields (`FULL`, `DESC`, `NAM1`)
 - **Export**: PO (gettext), CSV, and patched STRINGS files
 
-## 🎵 CRI Middleware Patcher (v1.9.0)
+## 🎵 CRI Middleware Patcher (v1.6.0)
 
 Native support for games built on CRI Middleware — used by Atlus, Sega, Bandai Namco and many Japanese studios:
 
@@ -222,7 +224,7 @@ Native support for games built on CRI Middleware — used by Atlus, Sega, Bandai
 - **Text formats**: MSG / BMD / FTD (Persona), plus generic JSON/XML
 - **Encoding detection**: automatic Shift-JIS / UTF-8 / UTF-16 detection
 
-## 🎯 Unity Localization Package Pipeline (v1.9.0)
+## 🎯 Unity Localization Package Pipeline (v1.6.0)
 
 First-class support for the modern Unity Localization Package (StringTable + Addressables):
 
@@ -329,4 +331,4 @@ If GameStringer helped you enjoy games in your language:
 
 ---
 
-**Full Changelog**: <https://github.com/rouges78/GameStringer/compare/v1.5.0...v1.9.0>
+**Full Changelog**: <https://github.com/rouges78/GameStringer/compare/v1.5.0...v1.6.0>

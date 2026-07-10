@@ -1,88 +1,32 @@
 # GameStringer Changelog
 
+## 🚀 v1.12.0 - 2026-07-10
+
+- ✨ Visual-context translation (VLM): live/on-screen text is translated by a vision model that *sees* the frame, resolving OCR ambiguities (e.g. "Chest" = coffer vs. body). Two modes — OCR+VLM (keep OCR boxes) and full-VLM (model returns its own normalized boxes). Providers: Ollama (local), OpenAI, Gemini
+- ✨ Native `downscale_capture` command (Rust `image`/`base64`, no new deps): crop + resize + JPEG re-encode screenshots before the VLM call
+- ✨ Reflection translator: optional self-correcting pass (write → reflect → refine) that reviews risky strings against glossary, tone, consistency and placeholders and rewrites only when needed; selective by default, cost-capped, pure-MT providers skipped
+- ✨ Semantic RAG retriever: Translation Memory + glossary matched by meaning via local Ollama embeddings (not just keywords) for consistent terminology; lazy indexing, IndexedDB vector cache, fail-open to keyword matching when embeddings aren't available
+- ✨ Settings: controls for reflection mode, semantic RAG and the visual-context options (tune quality vs. latency/cost per workflow)
+- ✨ Providers: broadened the CSP allowlist so more translation/AI backends work out of the box (DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory)
+- ⚡ Smoother live-translation pipeline and native image handling
+- 🧰 Dev: added `typecheck` script (`tsc --noEmit`); stopped tracking cached GOG credentials
+
 ## 🔧 v1.11.2 - 2026-07-04
 
-- ✨ community: Add Community Hub overview panel with recent activity
-- ✨ news: Add Italian fan-translation RSS feeds; skip Next proxy under Tauri
-- ✨ stores: Detect Humble/GameJolt/BigFish installs + PCGW & ITA-patch lookup
-- ✨ projects: Publish completed project to Patch Hub (reuses publishPack, 7 i18n keys x12 langs)
-- ✨ engines: Wire String it! routing for Unity/Unreal/Godot + TyranoScript cloud pipeline
-- ✨ unity: Local Ollama translation bridge for XUnity (CustomTranslate)
-- 🐛 stores: Gate Big Fish registry reads behind cfg(windows) to fix Linux build
-- 🐛 supabase: Make forum migration replay-safe on preview branches
-- 🐛 i18n: Correct hardcoded-strings baseline to actual count (1432)
-- 🐛 settings: Skip corrections without gameId in fine-tuning game selector (tsc)
-- 🐛 checkpoint: Normalize gamePath identity keys (separators, casing, trailing slash) with legacy key migration
-- 🐛 settings: Fine-tuning panel usable without gameId (game selector, generate feedback, defensive metrics, locale-aware dates)
-- 🐛 godot: V3 directory-at-end (dir_offset) — correctly reads real Godot 4.4+ pck (verified on Slay the Spire 2: 15658 files, JSON localization found)
-- 🐛 godot: Correct .pck parser — remove phantom dir_offset, fix inverted flag bits, support format v3 (Godot 4.4+), reject encrypted dir
-- 🐛 tyrano: Iscript-aware .ks parser — skip [iscript]/[html] blocks and inline JS/config lines
-- 🐛 editor,logger: Guard setState/log after unmount to stop 'window is not defined' test leaks
-- 🐛 editor: Mount-guard to prevent flaky 'window is not defined' during static-export prerender
-- 🐛 lint: Escape literal quotes in JSX to satisfy react/no-unescaped-entities
-- 🐛 Handle last unguarded /api calls in Tauri (stream translate, export patch)
-- 🐛 unity-ink: Guard tool in Tauri (backend not ported; no more 501s)
-- 🐛 editor: Load project translations from IndexedDB TM (last /api removed)
-- 🐛 editor: Migrate translations CRUD to IndexedDB (drop dead /api routes)
-- 🐛 editor: Load game list via get_games (Tauri) instead of /api/games
-- 🐛 Guard legacy /api calls in Tauri (injekt stats, voice transcribe)
-- 🐛 unity: Resolve BepInEx download assets from GitHub API (drop hardcoded URLs)
-- 🐛 unity: Resolve XUnity/TMP download assets from GitHub API (drop hardcoded URLs)
-- 🐛 unity: Resolve UABEA download asset from GitHub API (fix 404)
-- 🐛 Save API keys + cloud LLM/store calls via Rust (drop dead /api routes)
-- 🐛 projects: Register hero project eagerly (id fallback to path) so jobs always appear in Projects
-- 🐛 forum: Make likes work (reactions read/delete policies + like_count trigger)
-- ♻️ settings: Slim Ollama card to lifecycle only, link Model Manager for models (dedup)
-- • Fill EN-fallback strings + missing guidePage keys across 10 locales
-- • Add ollamaManagerComp + fineTuningManager keys (12 langs), drop orphan key
-- • De-hardcode visual-translation-editor (toolbar, overlays, properties, export dialog)
-- • De-hardcode fine-tuning-manager (dataset/model panels, add useTranslation)
-- • De-hardcode main-layout (command palette, language selector, skip link)
-- • De-hardcode game-detail-client MB unit (rest are dev logs/brands)
-- • De-hardcode community-chat (offline/login prompts, messages, room dialog)
-- • De-hardcode injekt-overlay-config (section headers, px/ms units, actions)
-- • De-hardcode guide page (P.T./Dry Run/ranking/String it cards, flow diagram)
-- • De-hardcode custom-prompt-settings (persona/tone/prompt config, voice, toasts)
-- • De-hardcode inline-translator (title, language selectors, cost, actions)
-- • De-hardcode lip-sync-panel (audio input, recognizer, stats, engine targets)
-- • De-hardcode smart-context-panel (stats units, tabs, character/term forms)
-- • De-hardcode retro-ocr-panel (preprocessing params, controls, tips)
-- • De-hardcode secrets-dashboard (toasts, status cards, validate/generate panels)
-- • De-hardcode ai-translation-assistant (toasts, language selectors, translate controls)
-- • De-hardcode ocr-translator page (capture, upload, provider options, VLM desc)
-- • De-hardcode dubbing page (labs warning, config panels, pipeline, segments)
-- • De-hardcode file-selector (wizard banner, search, upload, file lists)
-- • De-hardcode steam-family-sharing (toasts, detect/analyze panels, shared games list)
-- • De-hardcode prediction-tool ranking page (stats, table headers, empty state)
-- • De-hardcode auto-translate page (diff, hints, progress units, patch results)
-- • De-hardcode live-ocr-overlay (controls, capture modes, language selectors, stats)
-- • De-hardcode gamemaker-translator (tabs, stats, pagination, note)
-- • De-hardcode context-harvester page (input, stats, constraints, saved harvests)
-- • De-hardcode ocr-image-processor (settings panel, upload area, results)
-- • De-hardcode translator/mtpe page (workflow steps, language selectors, review stats)
-- • De-hardcode injekt-ui-enhanced (stats, tabs, process list, profile management)
-- • De-hardcode editor page (notifications, explorer, translation area, glossary)
-- • De-hardcode settings page (API key headers, input placeholders)
-- • De-hardcode translator/pro page (AI recommendation, language selectors, cost estimate, export)
-- • De-hardcode translation-bridge page (add/import/lookup panels, language pair selectors)
-- • De-hardcode voice-profile-manager (form fields, expanded profile view, placeholders)
-- • De-hardcode projects page (card, filters, stat labels, toasts)
-- • De-hardcode emulator-translator (capture/screenshot UI, advanced settings, footer stats)
-- • De-hardcode translation-profile-manager (stats, form, actions, dialogs)
-- • De-hardcode notification-center (sort/filter controls, bulk actions, a11y labels)
-- • De-hardcode unity-csv-translator (tables, diff banner, ink, checkpoint, inject stats)
-- • De-hardcode binary-patcher page (extract/translate/review flow, anti-cheat, labels)
-- • De-hardcode translation-recommendation (engine toasts, chain UI, validation)
-- • De-hardcode wad-extractor (stats, workflow steps, filters, labels)
-- • De-hardcode rom-patcher-ui (apply/create patch flows, format info, labels)
-- • De-hardcode community-translations (form, filters, reviews, language/category options)
-- • De-hardcode unity-ink-translator (steps, stats, preview, log labels)
-- • De-hardcode security-dialog (tabs, password/session/2FA labels and toasts)
-- • De-hardcode cover-picker component (sources, filters, API key panel)
-- • De-hardcode bethesda-patcher page (labels, filters, export options)
-- • De-hardcode unity-localization page (labels, filters, export options)
-- • De-hardcode cri-patcher page (labels, badges, export options)
-- • De-hardcode translation-wizard page labels and language autonyms
+- ✨ Stores: detect Humble App, Game Jolt and Big Fish Games local installs
+- ✨ Translation lookup: check language availability via PCGamingWiki, plus Italian fan-patch search links
+- ✨ Publish a completed project to the community Patch Hub in one step
+- ✨ Community Hub: new overview panel with recent activity, latest packs and categories
+- ✨ News: added Italian fan-translation RSS feeds (Ctrl+Trad, OldGamesItalia, Romhacking.it, Language Pack Italia, Q-Gin and more)
+- ✨ One-click "String it!" routing for Unity, Unreal and Godot, plus a TyranoScript cloud pipeline
+- ✨ Unity: local Ollama translation bridge for XUnity (CustomTranslate)
+- 🐛 Godot: rewritten .pck parser reads real Godot 4.4+ archives (verified on Slay the Spire 2)
+- 🐛 TyranoScript: .ks parser now skips [iscript]/[html] blocks and inline code
+- 🐛 Unity: BepInEx, XUnity, TMP and UABEA downloads resolve from the GitHub API (no more 404s)
+- 🐛 Desktop: removed the last web /api calls — the editor uses the local TM and translate/export/voice/store calls go through the native backend
+- 🐛 API keys and cloud calls are now saved and routed via the native backend (survive restarts)
+- 🐛 Checkpoints: normalized game-path keys so resume works reliably across path variants
+- 🐛 Community: forum likes work, and Supabase migrations are replay-safe on preview branches
 
 ## 🔧 v1.11.1 - 2026-06-26
 
@@ -574,57 +518,4 @@
 
 - Parser Godot Engine (.tres, .tscn, .cfg, .translation)
 - Parser Ren'Py (.rpy) per visual novel
-- Telltale Patcher: backup automatico e ripristino
-- Telltale Patcher: verifica installazione
-- Theme toggle (chiaro/scuro/auto) nell'header
-- Script version-manager sincronizza tutti i file versione
-
-## 🔧 v0.8.2-beta - 2026-01-08
-
-- Telltale Patcher per Wolf Among Us, Walking Dead, Batman
-- Parser Telltale (.langdb, .landb, .dlog)
-- Fix immagini giochi nella pagina dettaglio
-- Steam API 403 rate limiting gestito gracefully
-- Tauri CLI aggiornato a v2.5.0
-
-## 🔧 v0.8.1-beta - 2026-01-04
-
-- Dizionario righe compatte
-- Estensioni layout unificato con Parser
-- Campanella notifiche gialla fosforescente
-- Placeholder colorati per copertine mancanti
-
-## 🚀 v0.8.0-beta - 2026-01-02
-
-- Integrazione Epic Games Store via Legendary CLI
-- Filtro asset/plugin Unreal Engine (41 giochi)
-- Badge piattaforma Epic Games nella scheda gioco
-- Versione cliccabile per vedere changelog
-
-## 🔧 v3.2.2 - 2025-07-07
-
-- Implementato sistema versioning automatico completo
-- Integrazione UI dinamica
-- Git hooks configurati
-
-## 🔧 v3.2.1 - 2025-01-07
-
-- Sistema versioning automatico implementato
-- System Status spostato nella sidebar
-- Dashboard layout migliorato
-- Quick Actions compattate
-
-## 🚀 v3.2.0 - 2025-01-06
-
-- Pagina impostazioni completamente ridisegnata
-- Debug tools integrati nelle impostazioni
-- Sidebar collassabile con animazioni
-- Steam API debugging migliorato
-
-## 🚀 v3.1.0 - 2025-01-05
-
-- Force refresh implementato per Steam games
-- Sistema manual game addition
-- Badge system per VR games
-- Dashboard design futuristico
-
+- Telltale Patcher: 

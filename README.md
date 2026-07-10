@@ -11,7 +11,7 @@
 
 <p align="center">
   <a href="https://www.gamestringer.ai"><img src="https://img.shields.io/badge/🌐_Website-gamestringer.ai-indigo" alt="Website" /></a>
-  <img src="https://img.shields.io/badge/version-1.11.2-blue" alt="Version" />
+  <img src="https://img.shields.io/badge/version-1.12.0-blue" alt="Version" />
   <img src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey" alt="Platform" />
   <img src="https://img.shields.io/badge/license-Source--Available-green" alt="License" />
   <img src="https://img.shields.io/badge/Tauri_2-24C8DB?logo=tauri&logoColor=white" alt="Tauri" />
@@ -34,8 +34,16 @@
 > ⚠️ **Upgrading from v1.8.x?** v1.9.0 migrated from Tauri v1 to **Tauri v2** — auto-updater won't work for this jump. Download **v1.9.1** manually: [GameStringer_1.9.1_x64-setup.exe](https://github.com/rouges78/GameStringer/releases/download/v1.9.1/GameStringer_1.9.1_x64-setup.exe). Future updates (v1.9.1 → v1.9.x) will work automatically.
 
 <p align="center">
-  <strong>🌍 Available in 11 languages</strong> — switch language directly on the <a href="https://www.gamestringer.ai">website</a> or inside the app (IT, EN, ES, FR, DE, PT, PL, RU, JA, ZH, KO).
+  <strong>🌍 Available in 12 languages</strong> — switch language inside the app (IT, EN, ES, FR, DE, PT, PL, RU, JA, ZH, KO, EL) or on the <a href="https://www.gamestringer.ai">website</a> (11 languages).
 </p>
+
+---
+
+> ### 💜 A note from the developer
+>
+> GameStringer is built by **one person — me — and I have Parkinson's**, so updates sometimes land slower than I'd like. **Thank you for your patience.** I'm **not doing this for money**: I just want to change the way game translation works and put a genuinely useful tool in players' hands. I'll be **opening a Discord channel soon** so we can talk, swap ideas, and make GameStringer better — together. If that sounds good, watch this space. 🙏
+>
+> — *Davide ([@rouges78](https://github.com/rouges78))*
 
 ---
 
@@ -85,6 +93,8 @@ GameStringer is free and source-available; the website and AI costs come out of 
 
 ## 🎮 What is GameStringer?
 
+> **In simple terms:** pick a game → pick your language → click one button. GameStringer finds the game's text, translates it with AI, and puts it back — making a backup first. No modding, no command line, no technical knowledge.
+
 GameStringer is a **desktop application** (Windows, Linux & macOS) that lets you translate video games that don't have your language.
 
 Most games store their text in files — JSON, XML, CSV, `.locres`, `.rpy`, BSA/BA2, CPK, Unity Localization StringTables, and many other formats. GameStringer **scans your game folder**, finds those files, sends the text through an **AI translation provider** of your choice (OpenAI, Claude, Gemini, DeepSeek, Ollama, 20+ more), and **patches the translated text back** into the game. One click, no technical knowledge needed.
@@ -101,14 +111,14 @@ Get the latest release from **[GitHub Releases](https://github.com/rouges78/Game
 
 | Platform | File | Notes |
 |----------|------|-------|
-| **Windows** | `GameStringer_1.11.2_x64-setup.exe` | Installer (recommended) |
-| **Windows** | `GameStringer_1.11.2_x64-portable.zip` | No install needed |
-| **Windows** | `GameStringer_1.11.2_x64_en-US.msi` | MSI alternative |
-| **macOS** | `GameStringer_1.11.2_x64.dmg` | Intel Mac |
-| **macOS** | `GameStringer_1.11.2_aarch64.dmg` | Apple Silicon |
-| **Linux** | `GameStringer_1.11.2_amd64.AppImage` | Universal (recommended) |
-| **Linux** | `GameStringer_1.11.2_amd64.deb` | Debian / Ubuntu |
-| **Linux** | `GameStringer-1.11.2-1.x86_64.rpm` | Fedora / RHEL |
+| **Windows** | `GameStringer_1.12.0_x64-setup.exe` | Installer (recommended) |
+| **Windows** | `GameStringer_1.12.0_x64-portable.zip` | No install needed |
+| **Windows** | `GameStringer_1.12.0_x64_en-US.msi` | MSI alternative |
+| **macOS** | `GameStringer_1.12.0_x64.dmg` | Intel Mac |
+| **macOS** | `GameStringer_1.12.0_aarch64.dmg` | Apple Silicon |
+| **Linux** | `GameStringer_1.12.0_amd64.AppImage` | Universal (recommended) |
+| **Linux** | `GameStringer_1.12.0_amd64.deb` | Debian / Ubuntu |
+| **Linux** | `GameStringer-1.12.0-1.x86_64.rpm` | Fedora / RHEL |
 
 **Requirements:** Windows 10+, macOS 10.15+, or Linux (Ubuntu 22.04+, Fedora 38+). 4 GB RAM (8 GB+ for local AI), 500 MB disk. Releases are **code-signed** and **auto-updated** via Tauri Updater.
 
@@ -123,6 +133,28 @@ Get the latest release from **[GitHub Releases](https://github.com/rouges78/Game
 5. **Play in your language** — backups are always created before patching
 
 That's it. No command line, no manual file editing, no modding experience needed.
+
+### The pipeline at a glance
+
+```mermaid
+flowchart LR
+    A["📚 Scan<br/>library & files"] --> B["🧠 P.T.<br/>analyze first"]
+    B --> C["🎯 Detect<br/>engine"]
+    C --> D["📤 Extract<br/>strings"]
+    D --> E["🤖 Translate<br/>AI + TM + glossary"]
+    E --> F["✅ QA<br/>score 0–100"]
+    F --> G["🩹 Patch<br/>auto-backup"]
+    G --> H["🎮 Play<br/>in your language"]
+
+    classDef core fill:#6d28d9,stroke:#8b5cf6,color:#fff
+    classDef trans fill:#1d4ed8,stroke:#3b82f6,color:#fff
+    classDef patch fill:#047857,stroke:#10b981,color:#fff
+    classDef res fill:#c2410c,stroke:#f97316,color:#fff
+    class A,H res
+    class B,C core
+    class D,E,F trans
+    class G patch
+```
 
 ---
 
@@ -153,9 +185,47 @@ Don't want to analyze one game at a time? Run **Dry Run** from the Library page 
 
 The **"String it!"** button on the game detail page is smart: if the game has already been analyzed by P.T. within the last 24h, it launches the translation wizard directly. Otherwise it suggests running P.T. first (with a one-click "Run P.T. first" / "String it! anyway" choice). No more wasted runs on games that turn out to be DRM-locked or 5-minute affairs.
 
+```mermaid
+flowchart LR
+    CLICK["🖱️ Click String it!"] --> GATE{"P.T. run<br/>in last 24h?"}
+    GATE -- "Yes" --> WIZ["🚀 Translation wizard<br/>starts directly"]
+    GATE -- "No" --> CHOICE{"Your choice"}
+    CHOICE -- "Run P.T. first" --> PT["🧠 P.T. analysis<br/>difficulty · DRM · time"] --> WIZ
+    CHOICE -- "String it! anyway" --> WIZ
+
+    classDef core fill:#6d28d9,stroke:#8b5cf6,color:#fff
+    classDef gate fill:#334155,stroke:#94a3b8,color:#fff
+    classDef go fill:#047857,stroke:#10b981,color:#fff
+    class CLICK,PT core
+    class GATE,CHOICE gate
+    class WIZ go
+```
+
 ---
 
 ## 🎯 Supported Game Engines
+
+One engine detection, **three translation roads** — GameStringer picks the best one automatically:
+
+```mermaid
+flowchart TD
+    DET["🎯 Engine detection"] --> R1["🗂️ File-based patcher<br/>parse & patch game files<br/><i>Unreal, Godot, RPG Maker MV/MZ, Ren'Py,<br/>Bethesda, CRI, Telltale, Visionaire…</i>"]
+    DET --> R2["💉 Runtime injection<br/>BepInEx · gs-hook DLL (Windows)<br/><i>Unity, hardcoded-text games</i>"]
+    DET --> R3["👁️ On-screen OCR<br/>live overlay translation<br/><i>Classic RPG Maker 2000/2003, retro games</i>"]
+    R1 --> PLAY["🎮 Play translated"]
+    R2 --> PLAY
+    R3 --> PLAY
+
+    classDef core fill:#6d28d9,stroke:#8b5cf6,color:#fff
+    classDef patch fill:#047857,stroke:#10b981,color:#fff
+    classDef inj fill:#1d4ed8,stroke:#3b82f6,color:#fff
+    classDef ocr fill:#c2410c,stroke:#f97316,color:#fff
+    class DET core
+    class R1 patch
+    class R2 inj
+    class R3 ocr
+    class PLAY core
+```
 
 GameStringer supports **20+ engines** with varying levels of depth:
 
@@ -185,6 +255,14 @@ GameStringer supports **20+ engines** with varying levels of depth:
 ---
 
 ## ✨ Features
+
+### 🆕 New in v1.12.0 — smarter, self-checking translations
+
+- **👁️ Visual-context translation (VLM)** — for live / on-screen translation, an AI vision model now *sees the frame* and translates with that context, so it stops guessing on ambiguous words (is *"Chest"* a treasure chest or a body part?). Works with a **local** model (Ollama) or **OpenAI / Gemini**. Screenshots are cropped and resized natively for speed.
+- **🪞 Self-correcting translations (Reflection)** — after translating, GameStringer can run a quick second pass that reviews its own work against your **glossary, tone and formatting** and fixes only the lines that actually need it. Selective by default, so it stays fast and cheap.
+- **🧠 Semantic memory (RAG)** — your Translation Memory and glossary are now matched by **meaning**, not just exact words, so a phrase you translated before is reused even when it's worded differently — keeping terminology consistent across a whole game. Fully local (Ollama embeddings); falls back to keyword matching if it's not available.
+- **⚡ Smoother live translation** — reworked live overlay pipeline and native image handling for a faster, cleaner on-screen result.
+- **🔌 More providers out of the box** — broadened the allowlist so more backends just work: DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory.
 
 ### 🆕 New in v1.11.2
 
@@ -310,7 +388,7 @@ GameStringer supports **20+ engines** with varying levels of depth:
 - **WCAG 2.1 AA sweep** — `aria-label` on icon buttons, semantic `CardTitle` headings, `focus-visible` on all primitives, skip-to-content link, `main` landmark, Italian `sr-only` helpers
 - **`prefers-reduced-motion`** respected throughout animations
 - **`forced-colors`** (Windows High Contrast Mode) respected
-- **11-language UI**: IT, EN, ES, FR, DE, JA, ZH, KO, PT, RU, PL
+- **12-language UI**: IT, EN, ES, FR, DE, JA, ZH, KO, PT, RU, PL, EL (Greek added in v1.10.0)
 - **RTL layout** support with automatic direction detection
 
 ### 🎨 Design System (v1.9.0)
@@ -327,7 +405,7 @@ GameStringer supports **20+ engines** with varying levels of depth:
 - **Profiles**: multiple user profiles with recovery keys
 - **Global Hotkeys**: `Ctrl+Shift+T` OCR, `Ctrl+Shift+Q` Quick Translate, `Ctrl+Alt+O` Overlay, `Alt+T` XUnity toggle
 - **System Tray**: quick actions, live Ollama status, tools submenu, native OS notifications with preferences
-- **Cross-platform**: Windows & Linux with native builds
+- **Cross-platform**: Windows, macOS & Linux with native builds
 - **Windows tray fix**: prevents console flash loop on child process spawn
 
 ---
@@ -364,7 +442,7 @@ GameStringer supports **20+ engines** with varying levels of depth:
 
 ## 📖 Documentation
 
-### User Guides (11 languages)
+### User Guides (12 languages)
 
 | | | |
 |---|---|---|
@@ -392,58 +470,4 @@ git clone https://github.com/rouges78/GameStringer.git
 cd GameStringer
 npm install
 npm run dev          # development
-npm run tauri:build  # production build
-```
-
-Rust backend: `cd src-tauri && cargo check` to verify the Tauri commands compile on your platform.
-
----
-
-## 💖 Support
-
-If GameStringer helped you play games in your language:
-
-<p align="center">
-  <a href="https://buymeacoffee.com/gamestringer">
-    <img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?logo=buy-me-a-coffee&logoColor=black" alt="Buy Me a Coffee" />
-  </a>
-  <a href="https://ko-fi.com/gamestringer">
-    <img src="https://img.shields.io/badge/Ko--fi-FF5E5B?logo=ko-fi&logoColor=white" alt="Ko-fi" />
-  </a>
-  <a href="https://github.com/sponsors/rouges78">
-    <img src="https://img.shields.io/badge/GitHub%20Sponsors-EA4AAA?logo=github-sponsors&logoColor=white" alt="GitHub Sponsors" />
-  </a>
-</p>
-
----
-
-## 📜 License
-
-**Source-Available License v1.1** — the source code is public and you can build it yourself, but it is not OSI-approved "Open Source".
-
-- ✅ Free for personal use
-- ✅ Free to inspect, build, and modify for yourself
-- ❌ Commercial use requires written permission
-- ❌ Redistribution of modified versions requires written permission
-
-See [LICENSE](LICENSE) for details. Questions? Open a [Discussion](https://github.com/rouges78/GameStringer/discussions).
-
----
-
-## 🙏 Credits
-
-- **[BepInEx](https://github.com/BepInEx/BepInEx)** — Unity modding framework (BepInEx Team)
-- **[XUnity.AutoTranslator](https://github.com/bbepis/XUnity.AutoTranslator)** — Unity translation framework (bbepis)
-- **[UnrealLocres](https://github.com/akintos/UnrealLocres)** — Unreal `.locres` parser (akintos)
-- **[UndertaleModTool](https://github.com/krzys-h/UndertaleModTool)** — GameMaker modding (krzys-h)
-- **[Tauri](https://tauri.app)** — Desktop app framework
-- **[Tesseract.js](https://github.com/naptha/tesseract.js)** — OCR engine
-- **[Ollama](https://ollama.com)** — Local LLM runtime
-- **[Supabase](https://supabase.com)** — Realtime backend for Community Chat
-
----
-
-<p align="center">
-  Made with ❤️ for gamers who want to play in their own language<br>
-  <strong>GameStringer v1.11.2</strong> · <a href="https://www.gamestringer.ai">gamestringer.ai</a> · © 2025-2026 GameStringer Team
-</p>
+npm run tauri:build  # 
