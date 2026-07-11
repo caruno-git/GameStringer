@@ -1,12 +1,12 @@
 {
-  "version": "1.12.0",
+  "version": "1.13.0",
   "major": 1,
-  "minor": 12,
+  "minor": 13,
   "patch": 0,
   "prerelease": null,
   "buildNumber": 129,
-  "buildDate": "2026-07-10T09:10:00.000Z",
-  "gitHash": "c6468a40",
+  "buildDate": "2026-07-11T01:40:03.293Z",
+  "gitHash": "4d734b17",
   "branch": "main",
   "changelog": {
     "1.12.0": {
@@ -813,6 +813,26 @@
         "• De-hardcode unity-localization page (labels, filters, export options)",
         "• De-hardcode cri-patcher page (labels, badges, export options)",
         "• De-hardcode translation-wizard page labels and language autonyms"
+      ]
+    },
+    "1.13.0": {
+      "date": "2026-07-11",
+      "type": "minor",
+      "changes": [
+        "✨ ue-translator: Mark the real-time tool as experimental",
+        "✨ site: V1.12.0 section with infographics + developer note (12 languages)",
+        "✨ settings: Controls for new translation-quality features + broaden provider allowlist",
+        "✨ ai: Self-correcting reflection pass + local semantic RAG retriever",
+        "✨ live: Visual-context (VLM) translation with native screenshot downscaling",
+        "✨ ue-translator: Verifica che il gioco sia avviato prima di partire",
+        "🐛 i18n: Backfill aiQuality/semantic/lore keys in all locales (locale-integrity)",
+        "🐛 ci: Build release from current branch, not the not-yet-created tag",
+        "🐛 supabase: Recreate forum INSERT policies in RLS hardening + graceful bridge bailout",
+        "🐛 supabase: Dedupe migration version 20260626 (rename reactions_like_fix to 20260627)",
+        "• Backfill v1.12.0 changelog and ueTranslator error keys across 10 locales",
+        "• Completa le traduzioni aiQuality/loreRetrieval/semanticIndex in 10 lingue",
+        "• Translate v1.12.0 aiQuality/semantic/lore keys in 10 languages",
+        "• ue-translator: Localizza in inglese gli errori del backend e aggiunge le chiavi errore"
       ]
     }
   }
