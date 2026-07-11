@@ -6553,20 +6553,20 @@
       "13": "🐛 Community: i like del forum funzionano e le migrazioni Supabase sono idempotenti sui preview branch"
     },
     "v1_13_0": {
-      "0": "✨ ue-translator: Mark the real-time tool as experimental",
-      "1": "✨ site: V1.12.0 section with infographics + developer note (12 languages)",
-      "2": "✨ settings: Controls for new translation-quality features + broaden provider allowlist",
-      "3": "✨ ai: Self-correcting reflection pass + local semantic RAG retriever",
-      "4": "✨ live: Visual-context (VLM) translation with native screenshot downscaling",
+      "0": "✨ ue-translator: Il tool in tempo reale è ora marcato come sperimentale",
+      "1": "✨ site: Sezione v1.12.0 con infografiche + nota dello sviluppatore (12 lingue)",
+      "2": "✨ settings: Controlli per le nuove funzioni di qualità della traduzione + allowlist provider ampliata",
+      "3": "✨ ai: Passata di riflessione auto-correttiva + retriever RAG semantico locale",
+      "4": "✨ live: Traduzione con contesto visivo (VLM) + riduzione nativa degli screenshot",
       "5": "✨ ue-translator: Verifica che il gioco sia avviato prima di partire",
-      "6": "🐛 i18n: Backfill aiQuality/semantic/lore keys in all locales (locale-integrity)",
-      "7": "🐛 ci: Build release from current branch, not the not-yet-created tag",
-      "8": "🐛 supabase: Recreate forum INSERT policies in RLS hardening + graceful bridge bailout",
-      "9": "🐛 supabase: Dedupe migration version 20260626 (rename reactions_like_fix to 20260627)",
-      "10": "• Backfill v1.12.0 changelog and ueTranslator error keys across 10 locales",
-      "11": "• Completa le traduzioni aiQuality/loreRetrieval/semanticIndex in 10 lingue",
-      "12": "• Translate v1.12.0 aiQuality/semantic/lore keys in 10 languages",
-      "13": "• ue-translator: Localizza in inglese gli errori del backend e aggiunge le chiavi errore"
+      "6": "🐛 i18n: Chiavi aiQuality/semantic/lore aggiunte in tutti i locale (locale-integrity)",
+      "7": "🐛 ci: La build di release parte dal branch corrente, non dal tag non ancora creato",
+      "8": "🐛 supabase: Ricreate le policy INSERT del forum nell'hardening RLS + uscita pulita del bridge",
+      "9": "🐛 supabase: Deduplicata la migrazione 20260626 (reactions_like_fix rinominata in 20260627)",
+      "10": "• Changelog v1.12.0 e chiavi errore ueTranslator aggiunti in 10 locale",
+      "11": "• Completate le traduzioni aiQuality/loreRetrieval/semanticIndex in 10 lingue",
+      "12": "• Tradotte le chiavi v1.12.0 aiQuality/semantic/lore in 10 lingue",
+      "13": "• ue-translator: Errori del backend localizzati in inglese + chiavi errore aggiunte"
     }
   },
   "communityChat": {

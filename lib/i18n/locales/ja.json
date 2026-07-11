@@ -6587,6 +6587,22 @@
       "3": "⚡ よりスムーズなライブ翻訳と、スクリーンショットのネイティブ処理（AI呼び出し前に切り抜き／リサイズ）",
       "4": "🔌 すぐ使えるプロバイダーが増加：DeepL、Groq、Cerebras、Cohere、Together、Fireworks、Hugging Face、Azure Translator、DashScope、LibreTranslate、Lingva、MyMemory",
       "5": "🧰 reflection、セマンティックRAG、視覚コンテキストを調整する新しい設定（品質と速度／コストのバランス）"
+    },
+    "v1_13_0": {
+      "0": "✨ ue-translator: リアルタイムツールを実験的機能としてマーク",
+      "1": "✨ site: インフォグラフィック付き v1.12.0 セクション + 開発者ノート（12言語）",
+      "2": "✨ settings: 新しい翻訳品質機能の設定 + プロバイダー許可リストの拡充",
+      "3": "✨ ai: 自己修正リフレクションパス + ローカルのセマンティック RAG リトリーバー",
+      "4": "✨ live: 視覚コンテキスト（VLM）翻訳 + スクリーンショットのネイティブ縮小",
+      "5": "✨ ue-translator: 開始前にゲームが起動しているか確認",
+      "6": "🐛 i18n: aiQuality/semantic/lore キーを全ロケールに追加（locale-integrity）",
+      "7": "🐛 ci: リリースビルドを未作成のタグではなく現在のブランチから実行",
+      "8": "🐛 supabase: RLS 強化でフォーラムの INSERT ポリシーを再作成 + ブリッジの安全な終了",
+      "9": "🐛 supabase: マイグレーション 20260626 の重複を解消（reactions_like_fix を 20260627 に改名）",
+      "10": "• v1.12.0 の変更履歴と ueTranslator エラーキーを10ロケールに追加",
+      "11": "• aiQuality/loreRetrieval/semanticIndex の翻訳を10言語で完了",
+      "12": "• v1.12.0 の aiQuality/semantic/lore キーを10言語に翻訳",
+      "13": "• ue-translator: バックエンドのエラーを英語化し、エラーキーを追加"
     }
   },
   "communityChat": {

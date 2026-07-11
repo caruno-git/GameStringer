@@ -6587,6 +6587,22 @@
       "3": "⚡ 更流畅的实时翻译和原生截图处理（在调用 AI 之前裁剪／缩放）",
       "4": "🔌 更多开箱即用的提供方：DeepL、Groq、Cerebras、Cohere、Together、Fireworks、Hugging Face、Azure Translator、DashScope、LibreTranslate、Lingva、MyMemory",
       "5": "🧰 用于调节 reflection、语义 RAG 和视觉上下文的新设置（质量与速度／成本）"
+    },
+    "v1_13_0": {
+      "0": "✨ ue-translator: 实时工具现已标记为实验性功能",
+      "1": "✨ site: 带信息图的 v1.12.0 版块 + 开发者说明（12 种语言）",
+      "2": "✨ settings: 新翻译质量功能的设置项 + 扩充提供商许可列表",
+      "3": "✨ ai: 自我修正的 Reflection 流程 + 本地语义 RAG 检索器",
+      "4": "✨ live: 视觉上下文（VLM）翻译 + 原生截图缩放",
+      "5": "✨ ue-translator: 启动前检查游戏是否正在运行",
+      "6": "🐛 i18n: 在所有语言中补齐 aiQuality/semantic/lore 键（locale-integrity）",
+      "7": "🐛 ci: 发布构建改用当前分支，而非尚未创建的标签",
+      "8": "🐛 supabase: 在 RLS 加固中重建论坛 INSERT 策略 + bridge 优雅退出",
+      "9": "🐛 supabase: 迁移版本 20260626 去重（reactions_like_fix 重命名为 20260627）",
+      "10": "• 在 10 种语言中补齐 v1.12.0 更新日志和 ueTranslator 错误键",
+      "11": "• 完成 10 种语言的 aiQuality/loreRetrieval/semanticIndex 翻译",
+      "12": "• 将 v1.12.0 的 aiQuality/semantic/lore 键翻译为 10 种语言",
+      "13": "• ue-translator: 后端错误改为英文并新增错误键"
     }
   },
   "communityChat": {

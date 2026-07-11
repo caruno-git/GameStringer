@@ -6587,6 +6587,22 @@
       "3": "⚡ Traducción en vivo más fluida y procesamiento nativo de capturas (recorte/redimensión antes de la llamada a la IA)",
       "4": "🔌 Más proveedores listos para usar: DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory",
       "5": "🧰 Nuevos ajustes para regular reflection, RAG semántico y contexto visual (calidad vs. velocidad/coste)"
+    },
+    "v1_13_0": {
+      "0": "✨ ue-translator: La herramienta en tiempo real ahora está marcada como experimental",
+      "1": "✨ site: Sección v1.12.0 con infografías + nota del desarrollador (12 idiomas)",
+      "2": "✨ settings: Controles para las nuevas funciones de calidad de traducción + allowlist de proveedores ampliada",
+      "3": "✨ ai: Pasada de reflexión autocorrectiva + retriever RAG semántico local",
+      "4": "✨ live: Traducción con contexto visual (VLM) + reducción nativa de capturas de pantalla",
+      "5": "✨ ue-translator: Comprueba que el juego esté en ejecución antes de empezar",
+      "6": "🐛 i18n: Claves aiQuality/semantic/lore añadidas en todos los idiomas (locale-integrity)",
+      "7": "🐛 ci: La build de release parte de la rama actual, no de la etiqueta aún no creada",
+      "8": "🐛 supabase: Recreadas las políticas INSERT del foro en el endurecimiento RLS + salida limpia del bridge",
+      "9": "🐛 supabase: Deduplicada la migración 20260626 (reactions_like_fix renombrada a 20260627)",
+      "10": "• Changelog v1.12.0 y claves de error de ueTranslator añadidos en 10 idiomas",
+      "11": "• Completadas las traducciones aiQuality/loreRetrieval/semanticIndex en 10 idiomas",
+      "12": "• Traducidas las claves v1.12.0 aiQuality/semantic/lore en 10 idiomas",
+      "13": "• ue-translator: Errores del backend localizados en inglés + claves de error añadidas"
     }
   },
   "communityChat": {

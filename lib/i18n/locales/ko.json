@@ -6587,6 +6587,22 @@
       "3": "⚡ 더 매끄러운 실시간 번역과 네이티브 스크린샷 처리(AI 호출 전 자르기/크기 조정)",
       "4": "🔌 기본 제공 제공자 확대: DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory",
       "5": "🧰 reflection, 의미 기반 RAG, 시각적 맥락을 조정하는 새 설정(품질 대 속도/비용)"
+    },
+    "v1_13_0": {
+      "0": "✨ ue-translator: 실시간 도구를 실험적 기능으로 표시",
+      "1": "✨ site: 인포그래픽이 포함된 v1.12.0 섹션 + 개발자 노트(12개 언어)",
+      "2": "✨ settings: 새 번역 품질 기능 설정 + 공급자 허용 목록 확대",
+      "3": "✨ ai: 자체 교정 리플렉션 패스 + 로컬 시맨틱 RAG 리트리버",
+      "4": "✨ live: 시각적 컨텍스트(VLM) 번역 + 네이티브 스크린샷 축소",
+      "5": "✨ ue-translator: 시작 전에 게임 실행 여부를 확인",
+      "6": "🐛 i18n: 모든 로케일에 aiQuality/semantic/lore 키 추가(locale-integrity)",
+      "7": "🐛 ci: 아직 생성되지 않은 태그가 아닌 현재 브랜치에서 릴리스 빌드",
+      "8": "🐛 supabase: RLS 강화에서 포럼 INSERT 정책 재생성 + 브리지 정상 종료",
+      "9": "🐛 supabase: 마이그레이션 버전 20260626 중복 제거(reactions_like_fix를 20260627로 이름 변경)",
+      "10": "• 10개 로케일에 v1.12.0 변경 로그와 ueTranslator 오류 키 추가",
+      "11": "• 10개 언어로 aiQuality/loreRetrieval/semanticIndex 번역 완료",
+      "12": "• v1.12.0 aiQuality/semantic/lore 키를 10개 언어로 번역",
+      "13": "• ue-translator: 백엔드 오류를 영어로 현지화하고 오류 키 추가"
     }
   },
   "communityChat": {

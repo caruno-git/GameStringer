@@ -6077,6 +6077,22 @@
       "4": "🔌 More providers out of the box: DeepL, Groq, Cerebras, Cohere, Together, Fireworks, Hugging Face, Azure Translator, DashScope, LibreTranslate, Lingva, MyMemory",
       "5": "🧰 New settings to tune reflection, semantic RAG and visual-context (quality vs. speed/cost)"
     },
+    "v1_13_0": {
+      "0": "✨ ue-translator: Mark the real-time tool as experimental",
+      "1": "✨ site: v1.12.0 section with infographics + developer note (12 languages)",
+      "2": "✨ settings: Controls for the new translation-quality features + broadened provider allowlist",
+      "3": "✨ ai: Self-correcting reflection pass + local semantic RAG retriever",
+      "4": "✨ live: Visual-context (VLM) translation with native screenshot downscaling",
+      "5": "✨ ue-translator: Checks that the game is running before starting",
+      "6": "🐛 i18n: Backfill aiQuality/semantic/lore keys in all locales (locale-integrity)",
+      "7": "🐛 ci: Build the release from the current branch, not the not-yet-created tag",
+      "8": "🐛 supabase: Recreate forum INSERT policies in RLS hardening + graceful bridge bailout",
+      "9": "🐛 supabase: Dedupe migration version 20260626 (rename reactions_like_fix to 20260627)",
+      "10": "• Backfill v1.12.0 changelog and ueTranslator error keys across 10 locales",
+      "11": "• Complete aiQuality/loreRetrieval/semanticIndex translations in 10 languages",
+      "12": "• Translate v1.12.0 aiQuality/semantic/lore keys in 10 languages",
+      "13": "• ue-translator: Localize backend errors in English and add the error keys"
+    },
     "v1_8_2": {
       "0": "Fix Ollama IPC: replaced all check_ollama_status IPC calls with direct HTTP to localhost:11434 — eliminated ipc.localhost ERR_CONNECTION_REFUSED errors",
       "1": "Fix Stores: added Stores link in sidebar Resources section",
