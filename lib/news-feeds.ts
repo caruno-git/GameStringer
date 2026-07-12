@@ -7,6 +7,7 @@
 
 import { clientLogger } from '@/lib/client-logger';
 import { isTauri } from '@/lib/tauri-api';
+import { decode } from 'html-entities';
 
 export interface NewsFeedSource {
   id: string;
@@ -137,6 +138,34 @@ const CORS_PROXIES = [
   'https://api.allorigins.win/raw?url=',
   'https://corsproxy.io/?',
 ];
+
+
+/** Post promozionali/offerte (e-commerce) da nascondere di default: non pertinenti a uno strumento di traduzione. */
+export const HIDE_PROMOTIONAL_POSTS = true;
+
+/** Riconosce le notizie di offerte/e-commerce: prezzo + parola-chiave sconto/negozio. */
+export function isPromotionalNewsItem(title: string, description = ''): boolean {
+  const hay = `${title} ${description}`;
+  const hasPrice = /\d{1,4}[.,]?\d{0,2}\s?€|€\s?\d|[$£]\s?\d/.test(hay);
+  const discount = /-\s?\d{1,3}\s?%|\bsconto\b|\bscontat/i.test(hay);
+  const dealWord = /\b(amazon|offert\w*|coupon|black\s?friday|prime\s?day|deal|sale|bundle|cofanetto|al minimo|minimo storico|prezzo più basso|risparmi\w*)\b/i.test(hay);
+  return (hasPrice && (dealWord || discount)) || (dealWord && discount);
+}
+
+/** Pulisce la descrizione di un item feed. Per i feed MediaWiki (diff grezzo, es. PCGW) dà un riassunto leggibile. */
+export function cleanFeedDescription(rawDesc: string, source: NewsFeedSource): string {
+  const looksLikeWikiDiff =
+    /feedrecentchanges/i.test(source.rssUrl) ||
+    /class="diff|diff-(added|deleted|context)line/i.test(rawDesc) ||
+    /(^|\W)(Line|Riga)\s+\d+\s*:/.test(rawDesc);
+  if (looksLikeWikiDiff) {
+    return source.language === 'it'
+      ? 'Aggiornamento nella lista PCGamingWiki delle traduzioni fan ITA.'
+      : 'Update to the PCGamingWiki fan-translations list.';
+  }
+  const text = decode(rawDesc.replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
+  return text.substring(0, 300);
+}
 
 class NewsFeedService {
   private sources: NewsFeedSource[] = [];
@@ -313,7 +342,7 @@ class NewsFeedService {
           }
 
           // Pulisci HTML dal description
-          const cleanDesc = desc.replace(/<[^>]+>/g, '').substring(0, 300);
+          const cleanDesc = cleanFeedDescription(desc, source);
 
           const timestamp = pubDate ? new Date(pubDate).getTime() : Date.now() - idx * 3600000;
 
@@ -372,7 +401,7 @@ class NewsFeedService {
           image = this.getFallbackImage(source, link);
         }
 
-        const cleanDesc = desc.replace(/<[^>]+>/g, '').substring(0, 300);
+        const cleanDesc = cleanFeedDescription(desc, source);
         const timestamp = pubDate ? new Date(pubDate).getTime() : Date.now() - idx * 3600000;
 
         items.push({
@@ -506,6 +535,7 @@ class NewsFeedService {
     allItems.sort((a, b) => b.timestamp - a.timestamp);
     const seen = new Set<string>();
     const deduped = allItems.filter(item => {
+      if (HIDE_PROMOTIONAL_POSTS && isPromotionalNewsItem(item.title, item.description)) return false;
       const key = item.title.toLowerCase().substring(0, 60);
       if (seen.has(key)) return false;
       seen.add(key);
