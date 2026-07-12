@@ -6074,7 +6074,13 @@
     "clearAllFilters": "✕ Wyczyść wszystkie filtry",
     "nessunaLinguaRilevata": "Nie wykryto języka",
     "shared": "Współdzielony",
-    "aggiornaDb": "Aktualizuj BD"
+    "aggiornaDb": "Aktualizuj BD",
+    "scanLanguages": "Wykryj języki",
+    "scanLanguagesTitle": "Wykryj języki obsługiwane przez widoczne gry (przez Steam)",
+    "scanLanguagesCancel": "Trwa wykrywanie — kliknij, aby anulować",
+    "langScanDone": "Wykryto języki dla {n} gier",
+    "langScanNone": "Nie znaleziono nowych języków",
+    "langScanError": "Błąd podczas wykrywania języków"
   },
   "unityBundlePage": {
     "auto": "Auto",

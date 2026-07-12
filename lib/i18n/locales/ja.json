@@ -6074,7 +6074,13 @@
     "clearAllFilters": "✕ すべてのフィルターをクリア",
     "nessunaLinguaRilevata": "言語が検出されませんでした",
     "shared": "共有済み",
-    "aggiornaDb": "DBを更新"
+    "aggiornaDb": "DBを更新",
+    "scanLanguages": "言語を検出",
+    "scanLanguagesTitle": "表示中のゲームが対応する言語を検出（Steam経由）",
+    "scanLanguagesCancel": "検出中 — クリックでキャンセル",
+    "langScanDone": "{n}件のゲームの言語を検出しました",
+    "langScanNone": "新しい言語は見つかりませんでした",
+    "langScanError": "言語の検出中にエラーが発生しました"
   },
   "unityBundlePage": {
     "auto": "自動",

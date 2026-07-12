@@ -6074,7 +6074,13 @@
     "clearAllFilters": "✕ Limpar todos os filtros",
     "nessunaLinguaRilevata": "Nenhum idioma detectado",
     "shared": "Compartilhado",
-    "aggiornaDb": "Atualizar DB"
+    "aggiornaDb": "Atualizar DB",
+    "scanLanguages": "Detectar idiomas",
+    "scanLanguagesTitle": "Deteta os idiomas suportados pelos jogos visíveis (via Steam)",
+    "scanLanguagesCancel": "Deteção em curso — clique para cancelar",
+    "langScanDone": "Idiomas detetados para {n} jogos",
+    "langScanNone": "Nenhum novo idioma encontrado",
+    "langScanError": "Erro ao detetar os idiomas"
   },
   "unityBundlePage": {
     "auto": "Automático",

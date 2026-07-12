@@ -23,6 +23,7 @@ import { useTranslation, translations } from '@/lib/i18n';
 import { CoverPicker } from '@/components/cover-picker';
 import { StoreGate } from '@/components/auth/store-gate';
 import { clientLogger } from '@/lib/client-logger';
+import { scanGameLanguages } from '@/lib/steam-languages';
 
 // Guard globale: sopravvive a HMR/Fast Refresh e doppio mount React 18
 interface LibCacheEntry<T> { loaded: boolean; data: T }
@@ -564,6 +565,9 @@ function LibraryListView() {
   // 📷 Carica cache cover SteamGridDB all'avvio
   const [addedDatesCache, setAddedDatesCache] = useState<Record<string, number>>({});
   const [languagesCache, setLanguagesCache] = useState<Record<string, string[]>>({});
+  const [isScanningLangs, setIsScanningLangs] = useState(false);
+  const [langScanProgress, setLangScanProgress] = useState<{ done: number; total: number; found: number } | null>(null);
+  const langScanAbortRef = React.useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (_libCache.cachesLoadStarted) {
@@ -1122,39 +1126,19 @@ function LibraryListView() {
               if (gamesToFetch.length === 0) return;
 
               clientLogger.debug(`[Library] 🌍 Caricamento lingue per ${gamesToFetch.length} giochi in background...`);
-              const newCache = { ...existingCache };
-              let fetched = 0;
-              let consecutiveErrors = 0;
-
-              for (let i = 0; i < Math.min(gamesToFetch.length, 50); i++) {
-                const game = gamesToFetch[i];
-                try {
-                  const languages = await invoke<string[]>('fetch_game_languages', { appId: game.app_id });
-                  if (languages && languages.length > 0) {
-                    newCache[game.app_id!] = languages;
-                    fetched++;
-                    consecutiveErrors = 0;
-                  }
-                  // Delay adattivo: più breve normalmente, più lungo dopo errori
-                  await new Promise(r => setTimeout(r, 600));
-                } catch (e: unknown) {
-                  consecutiveErrors++;
-                  if (consecutiveErrors >= 5) break;
-                  const errMsg = e instanceof Error ? e.message : String(e);
-                  const isRateLimit = errMsg.includes('429') || errMsg.includes('403');
-                  if (isRateLimit) {
-                    await new Promise(r => setTimeout(r, 8000));
-                    consecutiveErrors = Math.max(consecutiveErrors - 1, 0);
-                  } else {
-                    await new Promise(r => setTimeout(r, 1500));
-                  }
-                }
-              }
-
-              if (fetched > 0) {
+              const before = Object.keys(existingCache).length;
+              const newCache = await scanGameLanguages(gamesToFetch, existingCache, {
+                onItem: (appId, langs) => {
+                  _libCache.lang.data = { ..._libCache.lang.data, [appId]: langs };
+                  setLanguagesCache((prev) => ({ ...prev, [appId]: langs }));
+                },
+              });
+              if (Object.keys(newCache).length > before) {
+                _libCache.lang.data = newCache;
+                _libCache.lang.loaded = true;
                 await invoke('save_languages_cache', { languages: newCache });
                 setLanguagesCache(newCache);
-                clientLogger.debug(`[Library] 🌍 Salvate ${fetched} nuove lingue in cache`);
+                clientLogger.debug(`[Library] 🌍 Salvate ${Object.keys(newCache).length - before} nuove lingue in cache`);
               }
             } catch (e: unknown) {
               clientLogger.warn(`[Library] Errore caricamento lingue: ${String(e)}`);
@@ -1419,6 +1403,42 @@ function LibraryListView() {
       </Link>
     );
   }, [filteredGames, coverCache, getGameDetailUrl, languagesCache]);
+
+  const scanLanguagesNow = useCallback(async () => {
+    if (isScanningLangs) {
+      langScanAbortRef.current?.abort();
+      return;
+    }
+    const controller = new AbortController();
+    langScanAbortRef.current = controller;
+    setIsScanningLangs(true);
+    setLangScanProgress({ done: 0, total: 0, found: 0 });
+    const base: Record<string, string[]> = { ..._libCache.lang.data, ...languagesCache };
+    const before = Object.keys(base).length;
+    try {
+      const updated = await scanGameLanguages(filteredGames, base, {
+        signal: controller.signal,
+        onItem: (appId, langs) => {
+          _libCache.lang.data = { ..._libCache.lang.data, [appId]: langs };
+          setLanguagesCache((prev) => ({ ...prev, [appId]: langs }));
+        },
+        onProgress: (pr) => setLangScanProgress(pr),
+      });
+      _libCache.lang.data = updated;
+      _libCache.lang.loaded = true;
+      await invoke('save_languages_cache', { languages: updated });
+      setLanguagesCache(updated);
+      const found = Object.keys(updated).length - before;
+      toast.success(found > 0 ? t('libraryPage.langScanDone').replace('{n}', String(found)) : t('libraryPage.langScanNone'));
+    } catch (e: unknown) {
+      clientLogger.warn(`[Library] scan lingue: ${String(e)}`);
+      toast.error(t('libraryPage.langScanError'));
+    } finally {
+      setIsScanningLangs(false);
+      setLangScanProgress(null);
+      langScanAbortRef.current = null;
+    }
+  }, [isScanningLangs, filteredGames, languagesCache, t]);
 
   const renderContent = () => {
     if (isLoading) {
@@ -1819,6 +1839,30 @@ function LibraryListView() {
             <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 pointer-events-none" />
           </div>
           
+          {/* Rileva lingue supportate */}
+          <button
+            onClick={scanLanguagesNow}
+            disabled={filteredGames.length === 0}
+            title={isScanningLangs ? t('libraryPage.scanLanguagesCancel') : t('libraryPage.scanLanguagesTitle')}
+            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-all border shadow-sm ${
+              isScanningLangs
+                ? 'bg-amber-600/20 text-amber-300 border-amber-500/50'
+                : 'bg-slate-900/60 text-slate-300 border-slate-700/50 hover:bg-slate-800/80 hover:text-white'
+            } disabled:opacity-40 disabled:cursor-not-allowed`}
+          >
+            {isScanningLangs ? (
+              <>
+                <RefreshCw className="h-4 w-4 animate-spin" />
+                <span className="tabular-nums">{langScanProgress ? `${langScanProgress.done}/${langScanProgress.total}` : ''}</span>
+              </>
+            ) : (
+              <>
+                <Languages className="h-4 w-4" />
+                <span className="hidden sm:inline">{t('libraryPage.scanLanguages')}</span>
+              </>
+            )}
+          </button>
+
           {/* Toggle Filtri con badge contatore */}
           <button
             onClick={() => setShowFilters(!showFilters)}

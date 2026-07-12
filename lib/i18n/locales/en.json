@@ -1830,7 +1830,13 @@
     "clearAllFilters": "✕ Clear all filters",
     "nessunaLinguaRilevata": "No language detected",
     "shared": "Shared",
-    "aggiornaDb": "Refresh DB"
+    "aggiornaDb": "Refresh DB",
+    "scanLanguages": "Detect languages",
+    "scanLanguagesTitle": "Detect the languages supported by the visible games (via Steam)",
+    "scanLanguagesCancel": "Detection in progress — click to cancel",
+    "langScanDone": "Languages detected for {n} games",
+    "langScanNone": "No new languages found",
+    "langScanError": "Error while detecting languages"
   },
   "unityBundlePage": {
     "auto": "Auto",

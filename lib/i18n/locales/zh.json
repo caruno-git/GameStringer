@@ -6074,7 +6074,13 @@
     "clearAllFilters": "✕ 清除所有筛选器",
     "nessunaLinguaRilevata": "未检测到语言",
     "shared": "已共享",
-    "aggiornaDb": "更新数据库"
+    "aggiornaDb": "更新数据库",
+    "scanLanguages": "检测语言",
+    "scanLanguagesTitle": "检测可见游戏支持的语言（通过 Steam）",
+    "scanLanguagesCancel": "正在检测 — 点击取消",
+    "langScanDone": "已检测 {n} 个游戏的语言",
+    "langScanNone": "未找到新语言",
+    "langScanError": "检测语言时出错"
   },
   "unityBundlePage": {
     "auto": "自动",

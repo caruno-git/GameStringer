@@ -1872,7 +1872,13 @@
     "clearAllFilters": "✕ Καθαρισμός όλων των φίλτρων",
     "nessunaLinguaRilevata": "Δεν εντοπίστηκε γλώσσα",
     "shared": "Κοινόχρηστο",
-    "aggiornaDb": "Ενημέρωση DB"
+    "aggiornaDb": "Ενημέρωση DB",
+    "scanLanguages": "Εντοπισμός γλωσσών",
+    "scanLanguagesTitle": "Εντοπισμός των γλωσσών που υποστηρίζουν τα ορατά παιχνίδια (μέσω Steam)",
+    "scanLanguagesCancel": "Εντοπισμός σε εξέλιξη — κάντε κλικ για ακύρωση",
+    "langScanDone": "Εντοπίστηκαν γλώσσες για {n} παιχνίδια",
+    "langScanNone": "Δεν βρέθηκαν νέες γλώσσες",
+    "langScanError": "Σφάλμα κατά τον εντοπισμό γλωσσών"
   },
   "unityBundlePage": {
     "auto": "Αυτόματο",

@@ -1830,7 +1830,13 @@
     "clearAllFilters": "✕ Azzera tutti i filtri",
     "nessunaLinguaRilevata": "Nessuna lingua rilevata",
     "shared": "Condiviso",
-    "aggiornaDb": "Aggiorna DB"
+    "aggiornaDb": "Aggiorna DB",
+    "scanLanguages": "Rileva lingue",
+    "scanLanguagesTitle": "Rileva le lingue supportate dai giochi visibili (via Steam)",
+    "scanLanguagesCancel": "Rilevamento in corso — clicca per annullare",
+    "langScanDone": "Lingue rilevate per {n} giochi",
+    "langScanNone": "Nessuna nuova lingua trovata",
+    "langScanError": "Errore durante il rilevamento delle lingue"
   },
   "unityBundlePage": {
     "auto": "Auto",

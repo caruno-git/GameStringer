@@ -6074,7 +6074,13 @@
     "clearAllFilters": "✕ Alle Filter zurücksetzen",
     "nessunaLinguaRilevata": "Keine Sprache erkannt",
     "shared": "Geteilt",
-    "aggiornaDb": "DB aktualisieren"
+    "aggiornaDb": "DB aktualisieren",
+    "scanLanguages": "Sprachen erkennen",
+    "scanLanguagesTitle": "Erkennt die von den sichtbaren Spielen unterstützten Sprachen (über Steam)",
+    "scanLanguagesCancel": "Erkennung läuft — zum Abbrechen klicken",
+    "langScanDone": "Sprachen für {n} Spiele erkannt",
+    "langScanNone": "Keine neuen Sprachen gefunden",
+    "langScanError": "Fehler bei der Spracherkennung"
   },
   "unityBundlePage": {
     "auto": "Auto",

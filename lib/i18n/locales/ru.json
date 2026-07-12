@@ -6074,7 +6074,13 @@
     "clearAllFilters": "✕ Сбросить все фильтры",
     "nessunaLinguaRilevata": "Язык не обнаружен",
     "shared": "Общий",
-    "aggiornaDb": "Обновить БД"
+    "aggiornaDb": "Обновить БД",
+    "scanLanguages": "Определить языки",
+    "scanLanguagesTitle": "Определить языки, поддерживаемые видимыми играми (через Steam)",
+    "scanLanguagesCancel": "Идёт определение — нажмите, чтобы отменить",
+    "langScanDone": "Языки определены для {n} игр",
+    "langScanNone": "Новых языков не найдено",
+    "langScanError": "Ошибка при определении языков"
   },
   "unityBundlePage": {
     "auto": "Авто",
