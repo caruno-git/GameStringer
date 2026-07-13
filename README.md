@@ -122,6 +122,8 @@ Get the latest release from **[GitHub Releases](https://github.com/rouges78/Game
 
 **Requirements:** Windows 10+, macOS 10.15+, or Linux (Ubuntu 22.04+, Fedora 38+). 4 GB RAM (8 GB+ for local AI), 500 MB disk. Releases are **code-signed** and **auto-updated** via Tauri Updater.
 
+> 🛡️ **Antivirus or SmartScreen warning?** That's a known **false positive** — runtime translation uses DLL injection (BepInEx / gs-hook), a technique heuristic scanners are suspicious of, and every new release starts with zero SmartScreen reputation. **[Read docs/ANTIVIRUS.md](docs/ANTIVIRUS.md)** for what triggers it, how to verify your download, and how to report the false positive.
+
 ---
 
 ## 🚀 How it works
@@ -454,8 +456,10 @@ GameStringer supports **20+ engines** with varying levels of depth:
 ### Project Docs
 
 - **[CHANGELOG.md](CHANGELOG.md)** — full version history
+- **[ROADMAP.md](ROADMAP.md)** — prioritized roadmap (P0/P1/P2)
 - **[docs/VERSIONING.md](docs/VERSIONING.md)** — versioning policy
-- **[docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md)** — current roadmap
+- **[docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md)** — current status at a glance
+- **[docs/ANTIVIRUS.md](docs/ANTIVIRUS.md)** — antivirus / SmartScreen false positives
 - **[PLUGIN_SYSTEM.md](docs/PLUGIN_SYSTEM.md)** — plugin architecture design
 - **[LICENSE](LICENSE)** — Source-Available License v1.1
 

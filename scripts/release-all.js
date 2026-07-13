@@ -63,14 +63,22 @@ function parseArgs(argv) {
   return a;
 }
 
-function confirm(question) {
-  // Conferma sincrona via /dev/stdin (no dipendenze). In CI usa --yes.
+async function confirm(question) {
+  // Conferma interattiva via readline (no dipendenze). In CI usa --yes.
+  // NB: la vecchia versione usava fs.readFileSync(0) che legge stdin FINO A
+  // EOF: nella console Windows "y"+Invio non produce EOF, quindi lo script
+  // restava appeso per sempre sulla conferma. readline risolve una riga alla
+  // volta e funziona su Windows/macOS/Linux.
+  if (!process.stdin.isTTY) return false; // stdin non interattivo: rifiuta (usa --yes)
+  const readline = require('readline');
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
   try {
-    process.stdout.write(`${question} [y/N] `);
-    const buf = fs.readFileSync(0, 'utf8'); // legge stdin
-    return /^\s*y(es)?\s*$/i.test(buf.split('\n')[0] || '');
+    const answer = await new Promise((resolve) => rl.question(`${question} [y/N] `, resolve));
+    return /^\s*y(es)?\s*$/i.test(answer || '');
   } catch {
     return false;
+  } finally {
+    rl.close();
   }
 }
 
@@ -134,7 +142,7 @@ async function main() {
   // ---- 2. Conferma --------------------------------------------------------
   if (!args.dryRun && !args.yes) {
     const what = args.noPublish ? 'preparare la release (senza pubblicare)' : 'PUBBLICARE la release su tutti gli OS';
-    if (!confirm(`\n${C.yel}Procedo a ${what} v${next}?${C.r}`)) { log.warn('Annullato.'); process.exit(0); }
+    if (!(await confirm(`\n${C.yel}Procedo a ${what} v${next}?${C.r}`))) { log.warn('Annullato.'); process.exit(0); }
   }
   if (args.dryRun) { log.step('✓', 'Dry-run completato: nessuna modifica scritta.'); printVerify(next, args); return; }
 
@@ -156,9 +164,10 @@ async function main() {
   else log.warn('changelog i18n: solo italiano (fallback grezzo per le altre lingue).');
 
   // ---- 6. README / guide --------------------------------------------------
-  log.step(6, 'Aggiorno README e versione guide (senior-versioning-agent fix)');
+  log.step(6, 'Aggiorno README, versione guide e PROJECT_STATUS');
   try { execFileSync('node', [AGENT, 'fix'], { stdio: 'inherit', cwd: ROOT }); }
   catch { log.warn('senior-versioning-agent fix ha segnalato problemi (non bloccante).'); }
+  bumpProjectStatus(version);
 
   // ---- 7. Sito ------------------------------------------------------------
   log.step(7, 'Aggiorno versione nel sito (docs/sito)');
@@ -210,6 +219,23 @@ function bumpSiteVersion(version) {
   }
   if (touched) log.ok(`sito: versione aggiornata in ${touched} file (deploy automatico via deploy-site.yml al push)`);
   else log.info('sito: nessun riferimento di versione trovato da aggiornare.');
+}
+
+function bumpProjectStatus(version) {
+  // Stampa versione e data correnti in docs/PROJECT_STATUS.md, così il file
+  // non invecchia più (prima era fermo alla versione di aprile).
+  const p = path.join(ROOT, 'docs', 'PROJECT_STATUS.md');
+  if (!fs.existsSync(p)) { log.info('docs/PROJECT_STATUS.md assente, salto.'); return; }
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  const today = `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+  let txt = fs.readFileSync(p, 'utf8');
+  const before = txt;
+  // Tocca SOLO le righe marcate, non eventuali versioni storiche citate nel testo.
+  txt = txt.replace(/(\*\*Versione corrente:\s*)v\d+\.\d+\.\d+(\*\*)/g, `$1v${version}$2`);
+  txt = txt.replace(/(Ultimo rilascio:\s*\*?\*?)\d{2}\/\d{2}\/\d{4}/g, `$1${today}`);
+  if (txt !== before) { fs.writeFileSync(p, txt); log.ok(`PROJECT_STATUS.md → v${version} (${today})`); }
+  else log.info('PROJECT_STATUS.md: nessun riferimento da aggiornare.');
 }
 
 function printVerify(version, args) {

@@ -1,191 +1,58 @@
-﻿# Stato del Progetto GameStringer
+# Stato del Progetto GameStringer
 
-## Ultimo Aggiornamento: 13/04/2026 - v1.8.1
+> **Versione corrente: v1.13.0** · Ultimo rilascio: 11/07/2026
+>
+> Questa intestazione è aggiornata **automaticamente** da `npm run ship`
+> (`scripts/release-all.js` → `bumpProjectStatus`). Non modificarla a mano.
 
-### PROGETTO v1.8.1 RILASCIATO
+## Cos'è
 
-**GameStringer**: Suite completa di localizzazione videogiochi con AI. 20+ provider AI, 20+ engine supportati, 200+ lingue, 11 lingue UI. Live Translation Overlay, Hub Marketplace, AI Dubbing, Plugin System.
+Suite desktop (Tauri 2 + Next.js 15 + Rust) per la localizzazione di
+videogiochi con AI: libreria auto-rilevata da 10 store, analisi predittiva
+(P.T.), estrazione/patch per 20+ engine, traduzione con 20+ provider AI,
+Translation Memory con retrieval semantico (RAG locale), reflection
+self-correcting, QA score per stringa, overlay OCR live, Patch Hub community.
+UI in 12 lingue.
 
----
+## Dove guardare
 
-### Code Quality Cleanup (April 2026)
+| Documento | Contenuto |
+|---|---|
+| [CHANGELOG.md](../CHANGELOG.md) | Storia completa delle versioni (fonte di verità) |
+| [ROADMAP.md](../ROADMAP.md) | Cose da fare, prioritizzate P0/P1/P2 |
+| [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) | Architettura, directory map, pattern, gotcha |
+| [GUIDA_UTENTE.md](GUIDA_UTENTE.md) | Guida utente (12 lingue in `docs/`) |
+| [VERSIONING.md](VERSIONING.md) | Politica di versioning e processo di release |
 
-Audit generale del codebase con fix sistematici su 380+ file in 4 commit.
+## Capacità principali (stato attuale)
 
-1. **ESLint**: Da 1218 errori a 20 (non risolvibili: generic `T` params, `require()` imports, `Function` type, empty shadcn interfaces). 299 file puliti — rimossi import inutili, prefisso `_` su variabili unused, `let`→`const`, escape entità JSX, bare `catch {}`.
+- **Pipeline**: scan → P.T. → detect engine → extract → translate (AI + TM +
+  glossario + contesto semantico) → reflection → QA 0–100 → patch (con backup) → play.
+- **Engine**: Unity (BepInEx/XUnity + Localization Package), Unreal (.locres,
+  `_P.pak`), Godot, RPG Maker, Ren'Py, Bethesda (BSA/BA2/ESP), CRI (CPK/MSG/BMD),
+  Telltale, Kirikiri, TyranoScript, Wolf RPG, Visionaire, Danganronpa, Electron, altri.
+- **Qualità AI**: reflection selettiva, TM semantica (embeddings Ollama,
+  IndexedDB), lore assistant RAG, vision-context (VLM), Multi-LLM compare,
+  Auto-Select provider per lingua/genere.
+- **Community**: Patch Hub (.gspack), TM Network federata, chat realtime,
+  feed news di settore in home.
 
-2. **TypeScript Strict Mode**: Da 2427 errori a 2 (non risolvibili: `.next/types` auto-generato, `vitest.config` moduleResolution). 189 file fixati:
-   - `clientLogger`/`logger` ora accettano `unknown` come 2° arg via `normalizeArgs()`
-   - Aggiunte interfacce e type params a tutti i `invoke<T>()` calls
-   - Import `clientLogger` aggiunto a 23 file lib/
-   - State hooks tipizzati con interfacce proprie invece di `unknown[]`
-   - Guard `instanceof Error` su tutti i catch block
+## Debito noto / caveat
 
-3. **npm Audit**: Da 39 vulnerabilità (7 critical, 17 high) a 2 (0 critical, 0 high):
-   - Patchate 25 vuln via `npm audit fix` (axios, vite, rollup, undici, etc.)
-   - Upgrade lodash 4.17.21→4.18.1 (fix prototype pollution + code injection)
-   - Downgrade to-ico 1.1.5→1.0.1 (rimossa catena vulnerabile request→jimp)
-   - Rimanenti 2: postcss (moderate, pinned da Next.js), webpack buildHttp (low, feature non usata)
+- **CSP con `unsafe-eval`** (audit H12): i 2 test in `__tests__/middleware.test.ts`
+  codificano lo stato desiderato e restano `skip` finché la CSP non sarà
+  ristretta senza rompere la WebView Tauri.
+- **UI Translation Memory**: 2 suite in `__tests__/translation-memory/` sono
+  `describe.skip` perché il componente React non esiste ancora (c'è solo il
+  singleton `lib/translation-memory.ts`).
+- **Tool UE runtime**: marcato SPERIMENTALE (vedi issue #52); DLL non bundlata.
+- **GameMaker**: supporto parziale (via UndertaleModTool).
 
-4. **Build**: Passa pulito. Test invariati (27/43 falliti — pre-esistenti, mock obsoleti).
+## Salute del codice
 
-5. **Performance & Bundle**:
-   - Rimosse 11 dipendenze inutilizzate (0 import nel codebase): react-use, @headlessui/react, swr, @tanstack/react-query, react-select, @tabler/icons-react, @google-cloud/translate, cheerio, react-flag-kit, @node-steam/vdf, react-is
-   - `dynamic()` imports su /settings (748→686 kB, -62 kB) e /translator/pro (732→708 kB, -24 kB)
-   - Rimosso type orphan `types/react-flag-kit.d.ts`, pulito `next.config.js`
-   - package-lock.json: -1.716 righe (alberi dipendenze rimossi)
-
-6. **Documentazione**: DEVELOPER_GUIDE.md (~310 righe) — architettura, directory map, pattern chiave, howto, testing, 10 gotcha comuni.
-
----
-
-### Nuove Feature v1.8.1
-
-- **Live Translation Overlay**: Traduzione in tempo reale via OCR overlay trasparente sopra qualsiasi gioco. Cattura schermo → OCR multi-engine → AI (Groq/Cerebras) → overlay gaming-style. Hotkey Ctrl+Alt+O. Diff detection + translation cache.
-- **Hub Marketplace**: Marketplace community per translation pack con 1-click install. Supabase backend (10 tabelle, RLS, moderazione). Profili utente con reputazione e badge. Rating, recensioni, commenti.
-- **Translation Memory Network**: Rete federata di TM via Supabase. Contributi anonymizzati (opt-in, privacy-first). Source text hashato. Auto-integrato nel pipeline translateWithFallback(). Game-scoped.
-- **AI Dubbing Pipeline**: Pipeline 7-step: scan audio → Whisper STT → traduzione AI → TTS (OpenAI/ElevenLabs/Azure) con voice matching → duration matching → patch audio → Rhubarb lip sync → sottotitoli SRT/VTT/ASS. 16 archetipi personaggio.
-- **Plugin System**: PatcherPlugin interface per patcher community. Lifecycle: detect→extract→patch→verify→restore. Template generator. JavaScript sandboxed, no compilazione Rust.
-- **Sicurezza**: CSP senza unsafe-eval, XSS eliminato, AES-256-GCM key storage, CSRF, Zod validation, rate limiting globale, 42/42 routes con error handler.
-- **Architettura**: CI con tsc+eslint+vitest+npm audit. 71 nuovi test. 18 moduli estratti. 1197/1203 console migrati. 893 catch tipizzati.
-- **Refactoring**: -1841 righe da 3 file monolitici. Rimossi react-hot-toast e vdf (-42 pacchetti).
-
-### Nuove Feature v1.7.0
-
-- **Auto-Select Engine**: preset 'Auto' che seleziona provider AI per lingua/genere
-- **Quality History**: tracking qualita provider per sessione
-- **Gridly CSV**: export/import multi-lingua compatibile Gridly/Lokalise/Crowdin
-- **Duration Matching**: TTS con adattamento durata audio originale
-- **Rhubarb Lip Sync**: visemi A-X con export Unity/Unreal
-
----
-
-### Nuove Feature v1.9.0
-
-- **Bethesda Engine Patcher**: Skyrim LE/SE/AE, Fallout 3/NV/4, Oblivion, Starfield — BSA v103-105, BA2 GNRL/DX10, ESP/ESM, STRINGS
-- **CRI Middleware Patcher**: Persona 5 Royal, Yakuza, Tales of, Dragon Ball — CPK + CRILAYLA + MSG/BMD/FTD
-- **Unity Localization Package**: StringTable + Addressables + Smart Strings validator
-- **Universal PO Export**: gettext export per ogni patcher
-- **Accessibility**: WCAG 2.1 AA sweep — aria-label, semantic headings, focus-visible, skip link, prefers-reduced-motion, Windows High Contrast
-- **Design System**: Card variants via cva, Button xs/icon-sm, text-micro/text-2xs utilities
-- **OCR**: real Tauri Tesseract backend (sostituisce stub)
-- **Fix**: Console flash loop Windows quando l'app è in tray
-
-### Feature v1.4.2
-
-- **Vision LLM Translator**: Traduzione context-aware con screenshot del gioco (Ollama, Gemini, OpenAI)
-- **Lore Assistant**: Chat RAG per lore e dialoghi del gioco
-- **Auto-Hook Scanner**: Scansione memoria processo con WinAPI
-- **System Monitor**: Monitoraggio VRAM/RAM in tempo reale (backend Rust)
-- **Ollama Setup Wizard**: Installazione guidata AI locale step-by-step
-- **Debug Console**: Console di debug con intercept console integrato
-- **Plugin System**: Design doc per architettura plugin
-- **GitHub Discussions**: 12 discussioni create, Community Hub con REST API pubblica
-- **Fix**: Dynamic imports con ssr:false per prevenire hooks mismatch
-
-### Feature v1.4.1
-
-- **i18n 11 Lingue UI**: IT, EN, ES, FR, DE, JA, ZH, KO, PT, RU, PL
-- **translations.ts**: +9.056 righe (da 13.472 a 22.528)
-- **11 Guide Utente**: Tutte le lingue aggiornate con sezioni v1.1-v1.4
-- **CI/CD**: Workflow Linux + Windows fixato e funzionante
-
-### Feature v1.4.0
-
-- **Radix UI Unificato**: 37 file migrati, 27 pacchetti rimossi
-- **Quality Badge**: Punteggio qualita per-riga (0-100) nel Traduttore Pro
-- **Supporto RTL**: Rilevamento automatico direzione testo
-- **Ollama Generico**: Con chain presets fallback
-
-### Feature v1.3.0
-
-- **Danganronpa WAD Patcher v15**: All-Ice base + GameStringer override (35.865 stringhe)
-- **WAD Extractor UI**: Editor con ricerca, filtri e traduzione batch AI
-- **Export Patch Distribuibile**: ZIP con WAD + install.bat + LEGGIMI.txt
-
-### Feature v1.2.0
-
-- **Fallback Provider**: Traduzione automatica Gemini -> DeepSeek -> OpenAI
-- **Audit /api/**: 0 fetch('/api/') attive, tutto compatibile Tauri
-- **Danganronpa Filtro Smart**: 18K -> 3K stringhe
-- **Test E2E Playwright**: 38 test reali
-
-### Feature v1.1.0
-
-- **Website Multilingua**: 9 lingue con auto-detect browser
-- **Danganronpa Auto-Translator**: Traduzione automatica con estrazione PAK nativa
-- **Verifica API Key**: Controllo chiavi prima di traduzione
-- **Rate Limit Handler**: Retry automatico con delay
-
-### Store Manager - 8 Piattaforme Integrate
-
-- **Steam**: Auto-connessione, API completa, Family Sharing (600+ giochi)
-- **Epic Games**: Legendary CLI, credenziali AES-256, auto-detection
-- **GOG Galaxy**: API pubblica, scansione locale, credenziali criptate
-- **Origin/EA App**: Registro Windows, credenziali AES-256
-- **Battle.net**: Giochi Blizzard, credenziali criptate, BattleTag
-- **Ubisoft Connect**: Scansione locale, credenziali criptate
-- **itch.io**: API pubblica, scansione locale
-- **Xbox/Game Pass**: Scansione locale UWP apps
-
-### Provider AI Traduzione (18+)
-
-| Provider | Tipo | Note |
-|----------|------|------|
-| OpenAI | Cloud | GPT-4o, a pagamento |
-| Gemini | Cloud | Free tier generoso |
-| DeepSeek | Cloud | Economico |
-| DeepL | Cloud | 106 lingue, custom instructions |
-| Mistral | Cloud | Mistral Large |
-| Groq | Cloud | LLaMA 3.3 70B, veloce |
-| Groq GPT-OSS | Cloud | GPT-OSS 120B |
-| Cerebras | Cloud | Velocissimo |
-| Together AI | Cloud | Open source models |
-| Fireworks AI | Cloud | Veloce |
-| Cohere | Cloud | Command R+ |
-| OpenRouter | Cloud | Multi-model gateway |
-| Ollama | Locale | Qualsiasi modello locale |
-| TranslateGemma | Locale | Google Translate via Ollama |
-| HYMT | Locale | Helsinki-NLP via Ollama |
-| Qwen 3 | Locale | Ottimo per CJK |
-| NLLB-200 | Cloud | 200 lingue, HuggingFace |
-| MyMemory | Gratis | Rate limited |
-| Lingva | Gratis | Google Translate mirror |
-| Google Translate | Cloud | API v2, a pagamento |
-| LibreTranslate | Self-host | Open source |
-
-### Engine Supportati (10+)
-
-- **Unity**: BepInEx + XUnity.AutoTranslator
-- **Unreal Engine**: PAK/UTOC/IoStore, UAsset parser nativo
-- **Ren'Py**: Parser .rpy nativo
-- **RPG Maker**: MV/MZ JSON, VX/XP Ruby
-- **Godot**: .tres, .tscn, .cfg, .translation
-- **Telltale**: .langdb, .landb, .dlog
-- **GameMaker**: data.win
-- **Danganronpa**: WAD Patcher v15 con All-Ice base
-- **Retro ROM**: NES, SNES, GB, GBA, Genesis, PSX
-
-### Architettura
-
-- **Frontend**: Next.js 15.5.2, TailwindCSS, shadcn/ui, Radix UI
-- **Backend**: Tauri v2 (Rust), comandi nativi
-- **AI Pipeline**: Multi-step (Harvest -> Translate -> QA -> Fix -> Review -> Score)
-- **Adaptive MT**: Few-shot learning da correzioni umane
-- **OCR**: 4 engine (OneOCR, PaddleOCR, RapidOCR, Tesseract)
-- **Profili**: AES-256-GCM, Recovery Key BIP39, multi-profilo
-- **i18n**: 11 lingue UI complete
-
-### Statistiche Codebase
-
-- **700+ giochi** rilevati (Steam + Epic + GOG + altri)
-- **22.528 righe** di traduzioni UI
-- **11 lingue** UI supportate
-- **18+ provider** AI traduzione
-- **10+ engine** gioco supportati
-- **38 test** E2E Playwright
-- **74 file** documentazione
-
----
-
-Ultimo aggiornamento: 03/03/2026
+- Test unit/integration: **verdi** (vitest, ~40 file / 600 test; gli skip sono
+  i debiti documentati qui sopra, non fallimenti).
+- Gate CI: `tsc --noEmit`, ESLint, vitest, npm audit, parità i18n
+  (`__tests__/lib/i18n-locale-integrity.test.ts`).
+- Release: `npm run ship` orchestra bump, changelog (12 lingue), README/guide,
+  sito, tag e build multi-OS via `release.yml`.

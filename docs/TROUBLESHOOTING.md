@@ -1,5 +1,9 @@
 # Guida alla Risoluzione dei Problemi - GameStringer
 
+> 🛡️ **L'antivirus o SmartScreen blocca GameStringer / BepInEx / gs-hook?**
+> È un falso positivo noto: vedi **[ANTIVIRUS.md](ANTIVIRUS.md)** per capire
+> perché succede, come verificare il download e come segnalarlo a Microsoft.
+
 ## 🚨 Problemi Comuni e Soluzioni
 
 ### 1. Errore 500 - Pagina Patches
